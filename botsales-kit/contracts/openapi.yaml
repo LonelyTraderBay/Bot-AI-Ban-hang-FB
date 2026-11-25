@@ -340,7 +340,7 @@ paths:
       - $ref: '#/components/parameters/Limit'
       - $ref: '#/components/parameters/Cursor'
       - $ref: '#/components/parameters/Query'
-      - $ref: '#/components/parameters/StatusFilter'
+      - $ref: '#/components/parameters/ShopStatusFilter'
       - $ref: '#/components/parameters/Sort'
       responses:
         '200':
@@ -675,6 +675,178 @@ paths:
               $ref: '#/components/schemas/ShopPatch'
       description: 'Validate current session/tenant/resource/field permissions and
         v2 invariants; unknown side-effect results reconcile via command ID. '
+  /shops/{shopId}/close:
+    post:
+      operationId: closeShop
+      summary: closeShop
+      tags:
+      - workspace
+      x-permission: shop.manage
+      x-stage: SPECIFICATION_NOT_IMPLEMENTED
+      parameters:
+      - name: shopId
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/Id'
+      - $ref: '#/components/parameters/CSRF'
+      - $ref: '#/components/parameters/Idempotency'
+      - $ref: '#/components/parameters/IfMatch'
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ShopResponse'
+          headers:
+            ETag:
+              description: Version ETag dùng cho If-Match khi update.
+              schema:
+                type: string
+        '400':
+          description: Bad Request
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '401':
+          description: Unauthorized
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '403':
+          description: Forbidden
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '404':
+          description: Not Found
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '409':
+          description: Conflict. SHOP_CLOSE_BLOCKED returns the blocking groups in
+            Problem.errors using each entry code and path /status.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '412':
+          description: Precondition Failed
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '428':
+          description: Precondition Required
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '429':
+          description: Rate Limited
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '503':
+          description: Unavailable
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+      description: An active owner of this shop can close it while preserving its
+        data and read access.
+  /shops/{shopId}/reopen:
+    post:
+      operationId: reopenShop
+      summary: reopenShop
+      tags:
+      - workspace
+      x-permission: shop.manage
+      x-stage: SPECIFICATION_NOT_IMPLEMENTED
+      parameters:
+      - name: shopId
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/Id'
+      - $ref: '#/components/parameters/CSRF'
+      - $ref: '#/components/parameters/Idempotency'
+      - $ref: '#/components/parameters/IfMatch'
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ShopResponse'
+          headers:
+            ETag:
+              description: Version ETag dùng cho If-Match khi update.
+              schema:
+                type: string
+        '400':
+          description: Bad Request
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '401':
+          description: Unauthorized
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '403':
+          description: Forbidden
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '404':
+          description: Not Found
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '409':
+          description: Conflict. An idempotency key cannot be reused for a different
+            request.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '412':
+          description: Precondition Failed
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '428':
+          description: Precondition Required
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '429':
+          description: Rate Limited
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '503':
+          description: Unavailable
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+      description: An active owner of this shop can reopen it and resume business
+        operations.
   /shops/{shopId}/members:
     get:
       operationId: listMembers
@@ -24129,6 +24301,17 @@ components:
         type: string
         maxLength: 80
       description: Giá trị enum phải hợp lệ cho resource; sai trả 422.
+    ShopStatusFilter:
+      name: status
+      in: query
+      schema:
+        type: string
+        enum:
+        - active
+        - closed
+        default: active
+      description: Filter shops by lifecycle status. A cursor must be reused with
+        the same status filter. An invalid status returns 422.
     Sort:
       name: sort
       in: query
@@ -24656,6 +24839,18 @@ components:
           type: string
           minLength: 1
           maxLength: 160
+        status:
+          type: string
+          enum:
+          - active
+          - closed
+          description: Current shop lifecycle status.
+        closedAt:
+          type:
+          - string
+          - 'null'
+          format: date-time
+          description: Time the shop closed. Active shops return null.
         currency:
           $ref: '#/components/schemas/Currency'
         timezone:
@@ -24672,6 +24867,8 @@ components:
       required:
       - id
       - name
+      - status
+      - closedAt
       - currency
       - timezone
       - locale

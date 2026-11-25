@@ -19,7 +19,7 @@ export type Role = "owner" | "manager" | "sales" | "warehouse" | "accountant" | 
 export type User = { "id": Id; "displayName": string; "email": string; [key: string]: unknown; };
 export type Membership = { "id": Id; "userId": Id; "shopId": Id; "roles": Array<Role>; "permissions": Array<Permission>; "permissionVersion": number; "status": "active" | "invited" | "revoked"; [key: string]: unknown; };
 export type Session = { "user": User; "memberships": Array<Membership>; "csrfToken": string; "expiresAt": DateTime; [key: string]: unknown; };
-export type Shop = { "businessCountry"?: string | null; "id": Id; "name": string; "currency": Currency; "timezone": string; "locale": string; "defaultWarehouseId": Id; "version": number; "policyVersion": string; [key: string]: unknown; };
+export type Shop = { "businessCountry"?: string | null; "id": Id; "name": string; "status": "active" | "closed"; "closedAt": string | null; "currency": Currency; "timezone": string; "locale": string; "defaultWarehouseId": Id; "version": number; "policyVersion": string; [key: string]: unknown; };
 export type ShopWrite = { "businessCountry"?: string | null; "name": string; "currency": Currency; "timezone": string; "locale": string; };
 export type ShopPatch = { "businessCountry"?: string | null; "name"?: string; "timezone"?: string; "locale"?: string; };
 export type Csrf = { "csrfToken": string; };
@@ -389,10 +389,12 @@ export interface Operations {
 "logout": { method: "POST"; versionRequired: false; request: undefined; response: undefined; path: {  }; query: {  } };
 "stepUp": { method: "POST"; versionRequired: false; request: StepUpRequest; response: StepUpResultResponse; path: {  }; query: {  } };
 "getSession": { method: "GET"; versionRequired: false; request: undefined; response: SessionResponse; path: {  }; query: {  } };
-"listShops": { method: "GET"; versionRequired: false; request: undefined; response: ShopListResponse; path: {  }; query: { "limit"?: number; "cursor"?: string; "q"?: string; "status"?: string; "sort"?: string } };
+"listShops": { method: "GET"; versionRequired: false; request: undefined; response: ShopListResponse; path: {  }; query: { "limit"?: number; "cursor"?: string; "q"?: string; "status"?: "active" | "closed"; "sort"?: string } };
 "createShop": { method: "POST"; versionRequired: false; request: ShopWrite; response: ShopResponse; path: {  }; query: {  } };
 "getShop": { method: "GET"; versionRequired: false; request: undefined; response: ShopResponse; path: { "shopId": Id }; query: {  } };
 "updateShop": { method: "PATCH"; versionRequired: true; request: ShopPatch; response: ShopResponse; path: { "shopId": Id }; query: {  } };
+"closeShop": { method: "POST"; versionRequired: true; request: undefined; response: ShopResponse; path: { "shopId": Id }; query: {  } };
+"reopenShop": { method: "POST"; versionRequired: true; request: undefined; response: ShopResponse; path: { "shopId": Id }; query: {  } };
 "listMembers": { method: "GET"; versionRequired: false; request: undefined; response: MembershipListResponse; path: { "shopId": Id }; query: { "limit"?: number; "cursor"?: string; "q"?: string; "status"?: string; "sort"?: string } };
 "inviteMember": { method: "POST"; versionRequired: false; request: MemberInvite; response: MembershipResponse; path: { "shopId": Id }; query: {  } };
 "updateMemberRoles": { method: "PATCH"; versionRequired: true; request: MemberRolePatch; response: MembershipResponse; path: { "shopId": Id; "memberId": Id }; query: {  } };

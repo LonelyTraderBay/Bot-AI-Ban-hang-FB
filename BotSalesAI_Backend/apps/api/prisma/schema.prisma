@@ -564,6 +564,7 @@ model Shop {
   catalogVersion     BigInt        @default(0) @map("catalog_version")
   defaultWarehouseId String        @map("default_warehouse_id") @db.Uuid
   createdAt          DateTime      @default(now()) @map("created_at") @db.Timestamptz(3)
+  closedAt           DateTime?     @map("closed_at") @db.Timestamptz(3)
   defaultWarehouse   Warehouse     @relation("DefaultWarehouse", fields: [id, defaultWarehouseId], references: [shopId, id], onDelete: NoAction, onUpdate: NoAction, map: "shops_default_warehouse_fkey")
   warehouses         Warehouse[]   @relation("ShopWarehouses")
   memberships        Membership[]

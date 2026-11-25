@@ -582,6 +582,22 @@
             "minLength": 1,
             "maxLength": 160
           },
+          "status": {
+            "type": "string",
+            "enum": [
+              "active",
+              "closed"
+            ],
+            "description": "Current shop lifecycle status."
+          },
+          "closedAt": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "date-time",
+            "description": "Time the shop closed. Active shops return null."
+          },
           "currency": {
             "$ref": "#/components/schemas/Currency"
           },
@@ -605,6 +621,8 @@
         "required": [
           "id",
           "name",
+          "status",
+          "closedAt",
           "currency",
           "timezone",
           "locale",

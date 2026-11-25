@@ -110,7 +110,11 @@
         "required": false,
         "schema": {
           "type": "string",
-          "maxLength": 80
+          "enum": [
+            "active",
+            "closed"
+          ],
+          "default": "active"
         }
       },
       {
@@ -182,6 +186,100 @@
     "permission": "shop.manage",
     "versionRequired": true,
     "requestSchema": "ShopPatch",
+    "responseSchema": "ShopResponse",
+    "status": 200,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
+    "headers": [
+      {
+        "name": "X-CSRF-Token",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16
+        }
+      },
+      {
+        "name": "Idempotency-Key",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16,
+          "maxLength": 200
+        }
+      },
+      {
+        "name": "If-Match",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    ],
+    "queryParameters": [],
+    "bodyType": "json"
+  },
+  "closeShop": {
+    "method": "POST",
+    "path": "/shops/{shopId}/close",
+    "permission": "shop.manage",
+    "versionRequired": true,
+    "requestSchema": null,
+    "responseSchema": "ShopResponse",
+    "status": 200,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
+    "headers": [
+      {
+        "name": "X-CSRF-Token",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16
+        }
+      },
+      {
+        "name": "Idempotency-Key",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16,
+          "maxLength": 200
+        }
+      },
+      {
+        "name": "If-Match",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    ],
+    "queryParameters": [],
+    "bodyType": "json"
+  },
+  "reopenShop": {
+    "method": "POST",
+    "path": "/shops/{shopId}/reopen",
+    "permission": "shop.manage",
+    "versionRequired": true,
+    "requestSchema": null,
     "responseSchema": "ShopResponse",
     "status": 200,
     "pathParameters": [
