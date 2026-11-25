@@ -1,6 +1,7 @@
 import { ConflictException } from '@nestjs/common';
 import { createHash } from 'node:crypto';
 import type { Command, Prisma } from '../../generated/prisma/client.js';
+import { DomainConflict } from '../../http/contracts.js';
 import { validUuid } from '../../http/query.js';
 import { enqueueCommandUpdate } from '../outbox/index.js';
 
@@ -8,6 +9,12 @@ type CommandIntent = Pick<Prisma.CommandUncheckedCreateInput, 'shopId' | 'actorI
 export type ResourceRef = { type: string; id: string; scope?: string };
 export type CommandRef = Pick<Command, 'shopId' | 'id'>;
 const hash = (value: string) => createHash('sha256').update(value).digest('hex');
+
+export class IdempotencyMismatch extends DomainConflict {
+    constructor() {
+        super('IDEMPOTENCY_MISMATCH', 'Khóa thao tác đã gắn với dữ liệu khác. Kiểm tra kết quả lệnh đã gửi trước khi tạo thao tác mới.');
+    }
+}
 
 export function commandResult(value: Prisma.JsonValue | null): ResourceRef | null {
     if (!value || typeof value !== 'object' || Array.isArray(value)) return null;
@@ -25,8 +32,9 @@ export async function recordCommand(
             : value));
     const recorded = await tx.command.findUnique({ where: { shopId_actorId_operationId_idempotencyKey: key } });
     if (recorded) {
+        if (recorded.requestHash !== requestHash) throw new IdempotencyMismatch();
         const result = commandResult(recorded.result);
-        if (recorded.requestHash !== requestHash || (!deferred && recorded.status !== 'succeeded') || !result) {
+        if ((!deferred && recorded.status !== 'succeeded') || !result) {
             throw new ConflictException();
         }
         return { result, command: recorded };

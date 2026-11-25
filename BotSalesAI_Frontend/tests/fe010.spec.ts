@@ -37,6 +37,31 @@ function observeShopRequests(page: import('@playwright/test').Page){
     return requests;
 }
 
+test('SC-012 keeps catalog filters when opening and saving a product', async ({ page }, info) => {
+    await page.setViewportSize(info.project.name === 'firefox' ? { width: 390, height: 844 } : { width: 1440, height: 900 });
+    const filters = '/s/shop-demo/products?q=FE010-RETURN&status=active';
+    await gotoDemo(page, filters);
+    const create = page.getByRole('button', { name: 'Thêm sản phẩm', exact: true });
+    const back = page.getByRole('link', { name: 'Danh sách', exact: true });
+    await create.click();
+    await expect(back).toHaveAttribute('href', filters);
+    await back.click();
+    await expect(page).toHaveURL(new URL(filters, demoUrl).toString());
+
+    await create.click();
+    await page.getByLabel('Tên sản phẩm', { exact: true }).fill('Kiểm bộ lọc FE010-RETURN');
+    await page.getByLabel('SKU', { exact: true }).fill('FE010-RETURN');
+    await page.getByLabel('Giá bán (VND)', { exact: true }).fill('249000');
+    const created = page.waitForResponse(response => response.request().method() === 'POST'
+        && new URL(response.url()).pathname === '/api/v2/shops/shop-demo/products');
+    await page.getByRole('button', { name: 'Lưu sản phẩm', exact: true }).click();
+    expect((await created).status()).toBe(201);
+    await expect(page.getByRole('heading', { name: 'Thông tin sản phẩm', exact: true })).toBeVisible();
+    await expect(back).toHaveAttribute('href', filters);
+    await back.click();
+    await expect(page).toHaveURL(new URL(filters, demoUrl).toString());
+});
+
 test('product editor validates positive prices, protects image-only drafts, and saves variant payload through mock HTTP',async({page})=>{
     const calls=observeShopRequests(page);
     const categories=await navigateDemoAndRead(page,new URL('/s/shop-demo/products/new',demoUrl).toString(),
@@ -117,6 +142,66 @@ test('product editor validates positive prices, protects image-only drafts, and 
     await clothingRestore;
     await expect(page.getByText('Sản phẩm FE010',{exact:true})).toBeVisible();
     await expect(page.getByRole('button',{name:'Trang tiếp'})).toBeDisabled();
+});
+
+test('SC-013 duplicate SKU marks only the conflicting create row and keeps the draft', async ({ page }, info) => {
+    await page.setViewportSize(info.project.name === 'firefox' ? { width: 390, height: 844 } : { width: 1440, height: 900 });
+    await gotoDemo(page, '/s/shop-demo/products/new');
+    const name = page.getByLabel('Tên sản phẩm');
+    const sku = page.getByLabel('SKU');
+    const price = page.getByLabel('Giá bán (VND)');
+    await name.fill('Bản nháp SKU SC-013');
+    await sku.first().fill('SC013-DOUBLE');
+    await price.first().fill('15000');
+    await page.getByRole('button', { name: 'Thêm biến thể' }).click();
+    await sku.nth(1).fill('sc013-double');
+    await page.getByLabel('Tên / màu / kích cỡ').nth(1).fill('Ca trùng SKU');
+    await price.nth(1).fill('17000');
+
+    const result = page.waitForResponse(response => response.request().method() === 'POST'
+        && new URL(response.url()).pathname === '/api/v2/shops/shop-demo/products');
+    await page.getByRole('button', { name: 'Lưu sản phẩm', exact: true }).click();
+    const response = await result;
+    await expect(page.getByRole('alert').filter({ hasText: /Yêu cầu chưa hoàn tất|Mã SKU|SKU đã/ })).toBeVisible();
+    await page.screenshot({ path: info.outputPath('sc013-create-conflict.png'), animations: 'disabled' });
+    expect(response.status()).toBe(409);
+    expect(await response.json()).toMatchObject({ code: 'CONFLICT', errors: [{ path: '/variants/1/sku', code: 'SKU_CONFLICT' }] });
+    await expect(sku.first()).not.toHaveAttribute('aria-invalid', 'true');
+    await expect(sku.nth(1)).toHaveAttribute('aria-invalid', 'true');
+    await expect(sku.nth(1)).toHaveAccessibleDescription('Mã SKU đã tồn tại trong cửa hàng.');
+    await expect(sku.nth(1)).toBeFocused();
+    await expect(sku.nth(1)).toHaveValue('sc013-double');
+    await expect(name).toHaveValue('Bản nháp SKU SC-013');
+    await expect(price.nth(1)).toHaveValue('17000');
+});
+
+test('SC-013 stored SKU conflict marks the edit field and accepts a corrected draft', async ({ page }, info) => {
+    await page.setViewportSize(info.project.name === 'firefox' ? { width: 390, height: 844 } : { width: 1440, height: 900 });
+    await gotoDemo(page, '/s/shop-demo/products/p1');
+    const sku = page.getByLabel('SKU', { exact: true });
+    await expect(sku).toHaveValue('DEMO-001');
+    await sku.fill('AO-002');
+    const save = page.getByRole('button', { name: 'Lưu sản phẩm', exact: true });
+    const patch = () => page.waitForResponse(response => response.request().method() === 'PATCH'
+        && new URL(response.url()).pathname === '/api/v2/shops/shop-demo/products/p1');
+    const request = patch();
+    await save.click();
+    const response = await request;
+    await expect(page.getByRole('alert').filter({ hasText: /Yêu cầu chưa hoàn tất|Mã SKU|SKU đã/ })).toBeVisible();
+    await page.screenshot({ path: info.outputPath('sc013-update-conflict.png'), animations: 'disabled' });
+    expect(response.status()).toBe(409);
+    expect(await response.json()).toMatchObject({ code: 'CONFLICT', errors: [{ path: '/variants/0/sku', code: 'SKU_CONFLICT' }] });
+    await expect(sku).toBeFocused();
+    await expect(sku).toHaveAttribute('aria-invalid', 'true');
+    await expect(sku).toHaveAccessibleDescription('Mã SKU đã tồn tại trong cửa hàng.');
+    await expect(sku).toHaveValue('AO-002');
+
+    await sku.fill('SC013-CORRECTED');
+    const corrected = patch();
+    await save.click();
+    expect((await corrected).status()).toBe(200);
+    await expect(sku).not.toHaveAttribute('aria-invalid', 'true');
+    await expect(sku).toHaveValue('SC013-CORRECTED');
 });
 
 test('product update sends If-Match and keeps edits visible after a 412 conflict',async({page})=>{

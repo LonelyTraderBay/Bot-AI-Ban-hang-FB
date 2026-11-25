@@ -1,7 +1,8 @@
 import { useCallback, useEffect, useState } from 'react';
 import type { ReactNode } from 'react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
-import { request, cancelScopeRequests, setCsrfToken } from '@/shared/api/client';
+import { request, cancelScopeRequests, setCsrfToken, subscribeSessionInvalidation } from '@/shared/api/client';
+import { ApiError } from '@/shared/api/errors';
 import { SessionContext } from '@/shared/model/auth';
 export { useSession } from '@/shared/model/auth';
 export function SessionProvider({ children }: {
@@ -12,8 +13,18 @@ export function SessionProvider({ children }: {
     const [forcedAnonymous, setForcedAnonymous] = useState(false);
     const query = useQuery({ queryKey: ['session'], queryFn: ({ signal }) => request('getSession', { signal }), retry: false, staleTime: 15000 });
     const { refetch } = query;
-    useEffect(() => { if (query.data)
-        setCsrfToken(query.data.data.csrfToken); }, [query.data]);
+    const sessionRejected = query.error instanceof ApiError && query.error.status === 401;
+    const clearSession = useCallback(() => {
+        setForcedAnonymous(true);
+        cancelScopeRequests();
+        setCsrfToken('');
+        cache.clear();
+    }, [cache]);
+    useEffect(() => subscribeSessionInvalidation(clearSession), [clearSession]);
+    useEffect(() => {
+        if (sessionRejected && query.data) clearSession();
+        else if (!forcedAnonymous && query.data) setCsrfToken(query.data.data.csrfToken);
+    }, [clearSession, forcedAnonymous, query.data, sessionRejected]);
     const refresh = useCallback(async () => {
         cancelScopeRequests();
         await Promise.all([
@@ -53,10 +64,10 @@ export function SessionProvider({ children }: {
         if (query.data)
             setCsrfToken(query.data.data.csrfToken);
         await request('logout');
-        setForcedAnonymous(true);
-        cancelScopeRequests();
-        setCsrfToken('');
-        cache.clear();
-    }, [cache, query.data]);
-    return <SessionContext.Provider value={{ session: forcedAnonymous ? null : query.data?.data || null, loading: query.isPending, error: query.error, refresh, logout, online }}>{children}</SessionContext.Provider>;
+        clearSession();
+    }, [clearSession, query.data]);
+    return <SessionContext.Provider value={{
+        session: forcedAnonymous || sessionRejected ? null : query.data?.data ?? null,
+        loading: !forcedAnonymous && query.isPending, error: query.error, refresh, logout, online,
+    }}>{children}</SessionContext.Provider>;
 }

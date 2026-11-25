@@ -1,0 +1,10 @@
+F-19 / SC-001 and SC-002 on isolated BotSales AI fixture
+Base 292d4bd4115820d23c27f97a7fa1b2ff124ec061 plus local candidate, PostgreSQL, two shops, Firefox trusted HTTPS.
+Before: after PostgreSQL session expiry with the SSE notification held by the test, the inbox request returned 401 and the browser retained the message and draft.
+{"scenario":"SC-001","mode":"http401","loginReached":false,"permission":401,"message":true,"form":true,"stored":false,"streamClosed":true,"revocation":1,"appRevocation":0,"pass":false}
+After: exit 0
+{"scenario":"SC-001","mode":"http401","loginReached":true,"permission":401,"message":false,"form":false,"stored":false,"streamClosed":true,"revocation":0,"appRevocation":0,"pass":true}
+{"scenario":"SC-001","mode":"sse","loginReached":true,"permission":401,"message":false,"form":false,"stored":false,"streamClosed":true,"revocation":1,"appRevocation":1,"pass":true}
+{"scenario":"SC-001","mode":"logout","loginReached":true,"permission":401,"message":false,"form":false,"stored":false,"streamClosed":true,"revocation":0,"appRevocation":0,"pass":true}
+{"scenario":"SC-002","lateResponseStatus":200,"lateHasMarker":true,"signalAborted":true,"oldStreamClosed":true,"newStreamOpened":true,"frames":40,"noOldFrame":true,"emptyDraft":true,"pass":true}
+Focused Playwright session, logout and shop-switch checks on Chromium and Firefox: exit 0, 12 passed.

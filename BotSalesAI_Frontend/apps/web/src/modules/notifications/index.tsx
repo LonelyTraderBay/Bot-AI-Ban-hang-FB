@@ -16,7 +16,7 @@ import { useCan, useScope } from '@/shared/model/scope';
 import { useListQuery } from '@/shared/model/filters';
 import { limitCodePoints, dateTime } from '@/shared/model/format';
 import { PageHeader, Panel, DataTable, QueryState, Toolbar, Pager, Status, MutationButton, ErrorNotice, ConfirmDialog, EditDialog, DetailLine, RouteLink, LookupLoadMore } from '@/shared/ui/components';
-import { assertPushCapability, assertPushPermissionGranted } from './push-capabilities';
+import { assertPushCapability, assertPushPermissionGranted, describePushAvailability } from './push-capabilities';
 export function NotificationsPage() {
     const { shop, session } = useScope();
     const canOpenExceptions = useCan('operations.read');
@@ -82,6 +82,15 @@ export function DevicesPage() {
         refresh: () => policy.refetch({ throwOnError: true }),
     });
     const policyForm = useDraftForm(editor.dirty);
+    const pushCapability = {
+        secureContext: window.isSecureContext,
+        serviceWorker: 'serviceWorker' in navigator,
+        pushManager: typeof window.PushManager === 'function',
+        notification: typeof window.Notification === 'function',
+    };
+    const pushKey = import.meta.env.VITE_WEB_PUSH_PUBLIC_KEY?.trim();
+    const permission = pushCapability.notification ? Notification.permission : 'default';
+    const pushAvailability = describePushAvailability(pushCapability, Boolean(pushKey), permission);
     const deviceRegister = async () => {
         setError(null);
         setPending(true);
@@ -90,14 +99,13 @@ export function DevicesPage() {
                 await register.execute({ body: { deviceName: deviceName.trim(), endpoint: 'https://example.test/mock-push', p256dh: 'synthetic-device-public-key', auth: 'synthetic-device-auth' } });
                 return;
             }
-            assertPushCapability({ secureContext: window.isSecureContext, serviceWorker: 'serviceWorker' in navigator, pushManager: 'PushManager' in window, notification: 'Notification' in window });
-            const key = import.meta.env.VITE_WEB_PUSH_PUBLIC_KEY;
-            if (!key)
+            assertPushCapability(pushCapability);
+            if (!pushKey)
                 throw new Error('Chưa có khóa VAPID công khai từ backend trong VITE_WEB_PUSH_PUBLIC_KEY.');
             assertPushPermissionGranted(await Notification.requestPermission());
             const service = await navigator.serviceWorker.register('/app-sw.js', { scope: '/' });
             await navigator.serviceWorker.ready;
-            const subscription = await service.pushManager.getSubscription() || await service.pushManager.subscribe({ userVisibleOnly: true, applicationServerKey: base64Bytes(key) });
+            const subscription = await service.pushManager.getSubscription() || await service.pushManager.subscribe({ userVisibleOnly: true, applicationServerKey: base64Bytes(pushKey) });
             const json = subscription.toJSON();
             if (!json.endpoint || !json.keys?.p256dh || !json.keys.auth)
                 throw new Error('Đăng ký Push không trả đủ dữ liệu.');
@@ -126,7 +134,12 @@ export function DevicesPage() {
     const knownUsers = members.data?.data.filter(m => m.status === 'active').map(m => ({ id: m.userId, label: m.userId === session.user.id ? 'Bạn' : m.userId })) || [{ id: session.user.id, label: 'Bạn' }];
     const selectedUserIds = [...new Set([...primary, ...fallback])];
     const retainedUsers = selectedUserIds.filter(id => !knownUsers.some(user => user.id === id)).map(id => ({ id, label: `${id} (đã lưu, chưa tải thành viên)` }));
-    return <><PageHeader title="Điện thoại & lịch trực" subtitle="Thiết bị, xác nhận nhận việc, giờ yên lặng và người dự phòng."/><PageSections><SectionGrid columns={{ xs: '1fr', lg: '1.2fr 1fr' }} shrinkChildren geometry={{minWidth: 0}}><PageSections shrinkChildren geometry={{minWidth: 0}}><Panel title="Thiết bị nhận thông báo" bodyMode="inset"><SurfaceContent ><ErrorNotice error={error || register.error || test.error || pair.error}/>{deviceTestMessage && <Alert severity="info">{deviceTestMessage}</Alert>}<SurfaceContent direction="row"  alignItems="center"><SmartphoneRounded sx={{ fontSize: tokens.iconSizes.devicePreview, color: 'primary.main' }}/><Typography>Thông báo tối giản trên màn hình khóa; xem địa chỉ khách sau khi đăng nhập.</Typography></SurfaceContent><TextField label="Tên thiết bị" value={deviceName} onChange={e => setDeviceName(limitCodePoints(e.target.value, 120))} /><MutationButton permission="notifications.manage" variant="contained" busy={pending} disabled={!deviceName.trim()} onClick={() => void deviceRegister()}>{__MOCK__ ? 'Mô phỏng đăng ký thiết bị' : 'Bật thông báo trên thiết bị này'}</MutationButton>{__MOCK__ && <Alert severity="info">Mô phỏng không yêu cầu quyền hệ điều hành, không đăng ký Push thật và giữ thiết bị ở trạng thái chờ xác minh.</Alert>}</SurfaceContent>{devices.isError && !devices.data ? null : <QueryState query={devices} pendingProfile="section">{devices.data && <DataTable label="Thiết bị nhận thông báo" rows={devices.data.data} rowKey={d => d.id} columns={[
+    return <><PageHeader title="Điện thoại & lịch trực" subtitle="Thiết bị, xác nhận nhận việc, giờ yên lặng và người dự phòng."/><PageSections><SectionGrid columns={{ xs: '1fr', lg: '1.2fr 1fr' }} shrinkChildren geometry={{minWidth: 0}}><PageSections shrinkChildren geometry={{minWidth: 0}}><Panel title="Thiết bị nhận thông báo" bodyMode="inset"><SurfaceContent ><ErrorNotice error={error || register.error || test.error || pair.error}/>{deviceTestMessage && <Alert severity="info">{deviceTestMessage}</Alert>}<SurfaceContent direction="row"  alignItems="center"><SmartphoneRounded sx={{ fontSize: tokens.iconSizes.devicePreview, color: 'primary.main' }}/><Typography>Thông báo tối giản trên màn hình khóa; xem địa chỉ khách sau khi đăng nhập.</Typography></SurfaceContent>
+        {!__MOCK__ && <>
+            <Typography variant="body2" role="status">{pushAvailability.message}</Typography>
+            <Typography variant="body2" color="text.secondary">Cài ứng dụng từ menu trình duyệt nếu có mục Cài đặt ứng dụng hoặc Thêm vào màn hình chính. Sau đó mở lại trang này để bật thông báo.</Typography>
+        </>}
+        <TextField label="Tên thiết bị" value={deviceName} onChange={e => setDeviceName(limitCodePoints(e.target.value, 120))} /><MutationButton permission="notifications.manage" variant="contained" busy={pending} disabled={!deviceName.trim() || (!__MOCK__ && !pushAvailability.available)} onClick={() => void deviceRegister()}>{__MOCK__ ? 'Mô phỏng đăng ký thiết bị' : 'Bật thông báo trên thiết bị này'}</MutationButton>{__MOCK__ && <Alert severity="info">Mô phỏng không yêu cầu quyền hệ điều hành, không đăng ký Push thật và giữ thiết bị ở trạng thái chờ xác minh.</Alert>}</SurfaceContent>{devices.isError && !devices.data ? null : <QueryState query={devices} pendingProfile="section">{devices.data && <DataTable label="Thiết bị nhận thông báo" rows={devices.data.data} rowKey={d => d.id} columns={[
         { key: 'name', label: 'Thiết bị', render: d => d.deviceName }, { key: 'state', label: 'Trạng thái', render: d => <Status value={d.status}/> },
         {
             key: 'actions', label: 'Thao tác', render: d => <Stack direction="row" flexWrap="wrap"><MutationButton permission="notifications.manage" disabled={d.status === 'revoked'} busy={test.pending} onClick={async () => { try { await test.execute({ path: { resourceId: d.id }, body: { expectedVersion: d.version } }); setDeviceTestMessage(__MOCK__ ? 'Mô phỏng: chưa gửi Push thật; thiết bị vẫn chờ xác minh.' : 'Yêu cầu kiểm tra đã được tiếp nhận; xem trạng thái backend trước khi kết luận đã gửi.'); } catch { setDeviceTestMessage(__MOCK__ ? 'Mô phỏng: không gửi Push thật; kiểm tra bị từ chối và trạng thái thiết bị không đổi.' : ''); } }}>{__MOCK__ ? 'Kiểm tra mô phỏng' : 'Gửi thử'}</MutationButton><MutationButton permission="notifications.manage" color="error" disabled={d.status === 'revoked'} onClick={() => setSelected(d)}>Thu hồi</MutationButton></Stack>

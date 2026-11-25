@@ -804,3 +804,124 @@ Trước sửa, R35 chỉ tạo và liệt kê yêu cầu lưu giữ. Ca demo ro
 R03 đã tạo shop và mở trang tổng quan qua Firefox trên API thật. Baseline của `workspace/index.tsx` là SHA-256 `d8001d1c5b094653909f6dbde4dc017203d937f806b92f535b5ca57ff66e7911`. Form gọi `createShop` với khóa sinh tự động ở mỗi request. Vì cửa hàng chỉ có ID sau khi tạo, form giữ khóa cho lần gửi lại cùng nội dung khi còn mở, theo hợp đồng `createShop`. Giữ nguyên bố cục `AuthCard` và toàn bộ consumer khác của workspace.
 
 `npm run test:privacy:browser` qua Firefox và HTTPS local đã xác nhận R03 gửi lại cùng khóa sau khi server ghi nhưng trình duyệt mất phản hồi. PostgreSQL có một shop. R33 lưu đúng thiết lập. R35 mở và gửi form xác minh ở viewport 390 px, không tràn ngang ở cấp trang. Worker ghi kết quả và cho tải đúng hồ sơ JSON qua R14, báo cáo CSV qua R31/R14. R61 trên phiên khách đã nhận consent rồi rút quyền. Log cục bộ `BotSalesAI_Backend/test-results/backend/be21/browser.txt` có SHA-256 `9948a804b43d43a02c01f59284db67f5a19e4c690f158a6c336d3b1feb831290`. Native zoom, screen reader, ảnh paired trước/sau của dialog mới, stage và IdP step-up thật còn chưa kiểm.
+
+## 23/11/2026 · SC-013 hiển thị lỗi SKU tại đúng dòng
+
+R10/R11 dùng `Problem.errors` hiện có để hiển thị mã `SKU_CONFLICT` cạnh đúng trường, đưa tiêu điểm về trường đó và giữ bản nháp. Nếu người dùng đã sửa giá trị trong lúc chờ, phản hồi cũ không đặt lỗi lên giá trị mới. Trước sửa, bốn ca demo nhận 422 và thiếu vị trí lỗi. Sau sửa, toàn bộ FE010 đạt 22/22 trên Chromium và Firefox. Firefox live qua HTTPS kiểm thêm trên shop A ở 1440 px và shop B ở 390 px. Cả hai shop nhận 409 ở trường SKU khi tạo hoặc sửa trùng, đọc được mô tả lỗi gắn với input và lưu thành công sau khi sửa SKU ở R11. [Kết quả kiểm SC-013](audit-sku-conflict-20261123.txt)
+
+## 23/11/2026 · SC-001 dọn phiên khi API trả 401
+
+Baseline Firefox HTTPS hiển thị tin nhắn và bản nháp trong R06. Khi PostgreSQL hết phiên, API tin nhắn trả 401. Trong ca cô lập nhánh HTTP, bộ kiểm giữ riêng thông báo SSE, và R06 vẫn hiển thị nội dung cùng bản nháp. Owner của phân loại phản hồi HTTP là API client. Owner của đóng phiên, hủy truy vấn và xóa cache là SessionProvider. Hợp đồng 401 và route login hiện hành vẫn áp dụng. Ca hồi quy kiểm Inbox, các route dùng chung phiên, logout và luồng consent công khai. Phạm vi thay đổi là hành vi phiên và vòng đời dữ liệu.
+
+Sau sửa, Firefox HTTPS kiểm đạt cả ba nhánh 401, thu hồi phiên qua SSE và đăng xuất khi đang mở R06. Bản nháp mất cùng dữ liệu Inbox sau khi phiên kết thúc. Khi đổi shop, trình duyệt hủy request cũ, đóng stream A, mở stream B và không hiển thị dữ liệu A trong các khung được quan sát khi phản hồi A về muộn. Playwright kiểm phiên, logout và đổi shop đạt 12/12 trên Chromium và Firefox. Phạm vi là fixture tổng hợp. [Bằng chứng SC-001 và SC-002](audit-sensitive-session-20261123.txt)
+
+## 23/11/2026 · SC-020 báo đúng trường giá vốn khi tăng tồn
+
+Baseline R15 trên Firefox HTTPS. Vị trí tồn rỗng ở phiên bản 3 nhận 422 khi gửi điều chỉnh tăng với unitCost null. Giao diện hướng dẫn kiểm tra các trường lỗi nhưng payload chưa có lỗi trường, còn hướng dẫn nhập cho phép để trống. API điều chỉnh tồn sở hữu quy tắc giá vốn và trả Problem 422 theo hợp đồng. R15 dùng lại ErrorNotice để nêu trường lỗi và đưa tiêu điểm đến ô nhập, giữ bản nháp. Tình huống ảnh hưởng là điều chỉnh tăng từ vị trí trống và phiên bản tồn bị thay đổi khi đang nhập. Kiểm layout và hành vi ở viewport desktop và di động.
+
+
+Sau sửa, phiên bản cũ trả 412 tại 1440 px, giữ bản nháp. Ở 390 px, Problem 422 chỉ đúng trường giá vốn và đưa tiêu điểm đến ô nhập. Số tồn trong bảng và PostgreSQL giữ nguyên sau hai lần từ chối. Trang ở 390 px không tràn ngang. [Bằng chứng SC-020](audit-stock-cost-20261123.txt)
+## 23/11/2026 · SC-017 lý do cách ly tệp nhập sản phẩm
+
+Baseline R13 ở Firefox HTTPS với shop thử tại 1440 px, ghi trước sửa trong hồ sơ AUD-06 R8. Sai MIME, nội dung XLSX có công thức hoặc dấu hiệu macro, và CSV vượt số dòng đều được cách ly nhưng hiện cùng một lời nhắc kiểm định dạng. Files API sở hữu nguyên nhân, lưu trên metadata của tệp và ghi audit. Hợp đồng FileObject chỉ thêm trường tùy chọn. R13 ánh xạ mã an toàn vào Alert hiện có; giữ cảnh báo cùng nút chọn tệp và kiểm cả lỗi dung lượng. Ảnh hưởng trực tiếp đến R13. Các consumer upload khác tiếp tục dựa trên status/ID. Hồi quy cần kiểm bản cũ không có lý do, replay, quyền đọc và luồng nhập tệp hợp lệ.
+
+Sau sửa, Firefox HTTPS trên hai shop VND và LAK ở 1.440 px và 320 px hiển thị hướng dẫn tương ứng với từng nhóm bị từ chối. Sáu trường hợp cách ly ở mỗi shop giữ đúng mã qua đọc metadata và gửi lại cùng khóa, không sinh blob hoặc yêu cầu preview từ giao diện. Tệp quá 5 MB nhận 413 và hướng dẫn chia nhỏ tệp. Nút chọn tệp tham chiếu tới cảnh báo. Hai viewport không tràn ngang trong các ca đã đo. Tệp cách ly từ trước migration vẫn trả metadata hợp lệ. [Bằng chứng SC-017](audit-upload-reasons-20261123.txt)
+
+## 23/11/2026 · SC-023 thay đổi hoặc hết hạn báo giá
+
+Baseline ở R19 Firefox HTTPS. Đã tạo báo giá 100.000 trên shop VND, ghi bằng chứng khách, đổi giá sản phẩm thành 101.000 rồi dùng giao diện chốt lại báo giá cũ. API trả 409 CONFLICT và giữ đơn nháp, còn R19 hiển thị thông báo chung và vẫn cho gửi lại báo giá cũ. Orders API sở hữu mã lý do, R19 sở hữu trạng thái báo giá và bằng chứng sau khi bị từ chối. Dùng hợp đồng Problem và ErrorNotice hiện hành. Bằng chứng mới phải gắn với báo giá mới. Kiểm lại cả thay đổi giá, hết hạn tại server, nhận lại bằng chứng mới, giữ đơn nháp và ca mất phản hồi ở bộ kiểm FE.
+
+Sau sửa, Firefox HTTPS cho `PRICE_CHANGED` trên shop VND ở 1.440 px và `QUOTE_EXPIRED` trên shop LAK ở 320 px. Nhánh hết hạn dùng thời hạn đã qua trên hàng báo giá của DB thử để kiểm quyết định của server. R19 bỏ báo giá cũ, hiện hướng dẫn lấy báo giá mới và giữ đơn nháp. Báo giá mới chờ bằng chứng mới. Cả hai ca từ chối bằng chứng cũ, sau đó chốt đúng giá với một lần giữ hàng khi có bằng chứng mới. Không tràn ngang ở hai viewport đã đo. [Bằng chứng SC-023](audit-quote-recovery-20261123.txt)
+
+## 23/11/2026 · SC-033 tên người tiếp quản hội thoại
+
+Baseline Firefox HTTPS tại R06. Hàng đợi có tin bot gắn generation 8. Thao tác Tiếp quản tạo generation 9 và API trả đúng assignedUserId. Giao diện báo chế độ nhân viên nhưng vùng Bối cảnh khách hàng không hiển thị tên người phụ trách. ConversationContextPanel đã có metadata nhân viên, session và DetailLine dùng chung. Thêm dòng tên theo ID đã được API xác nhận. Kiểm R06 trên hai shop, ảnh hưởng trong panel bối cảnh.
+
+Sau sửa, R06 hiển thị tên người phụ trách đúng với assignedUserId trên hai shop, ở 1.440 px và 390 px. SC-033 xác nhận generation tăng từ 8 lên 9 và tin bot trong hàng đợi cũ bị đánh dấu không gửi thành công. SC-034 kiểm nút gửi bị vô hiệu và hiện lý do khi chính sách chưa xác định hoặc cửa sổ gửi đã đóng, kể cả sau khi tiếp quản. [Bằng chứng R06](audit-inbox-takeover-20261123.txt)
+
+## 23/11/2026 · SC-037 đọc lịch sử khi có tin mới
+
+Baseline Firefox HTTPS tại R06. Shop VND ở 1.440 px đã nhận một tin khách qua luồng realtime khi đang đọc lịch sử. Hộp tin cuộn xuống cuối và thiếu nút xem tin mới hoặc vùng thông báo tóm tắt. Nội dung đánh dấu vô hại hiển thị nguyên văn. Tệp PNG của hội thoại đọc được, SVG bị từ chối và shop kia nhận 404. `ConversationPanel` sở hữu cuộn và thông báo vì quản lý trang tin mới nhất. Giữ phân trang, nguồn tin và cách trình bày từng tin. Dùng nút MUI hiện có và một vùng thông báo polite chỉ chứa câu cố định. Kiểm ở 1.440 và 390 px, có tin trực tiếp và tải lại cùng dữ liệu.
+
+Sau sửa, cả VND 1.440 px và LAK 390 px nhận tin qua SSE trong lúc đang đọc, giữ vị trí và hiện nút xem tin mới. Vùng polite/atomic chỉ chứa một câu cố định. Kích hoạt nút bằng Enter đưa tiêu điểm vào lịch sử và cuộn tới cuối. Nội dung gửi lại được nhận diện trùng ở webhook. Hồi quy F09 tái hiện việc đổi kích thước khung tạm thời làm hiện nút dù đang theo dõi cuối. Điều chỉnh quyết định cuộn dựa trên hướng di chuyển, sau đó kiểm lại 2/2 trên Chromium và Firefox với tiêu điểm giữ ở ô trả lời. Kiểm phát âm thực tiếp tục ở AUD-07. [Bằng chứng R06](audit-inbox-stream-20261123.txt)
+
+## 23/11/2026 · SC-039 duyệt phản hồi trước khi tạo bản nháp
+
+Baseline Firefox HTTPS ở R25, VND 1.440 px và LAK 390 px. Ô nội dung đã loại dữ liệu riêng tư tự điền phản hồi gốc có số điện thoại tổng hợp. Sau khi chỉ nhập lý do, cả hai shop trả 200 và ghi số tổng hợp vào bản nháp. R25 sở hữu luồng nhập và đọc phản hồi gốc. Backend sở hữu điều kiện ghi bản nháp và kiểm quyền. Giữ hợp đồng API và quy trình duyệt, dùng EditDialog, DetailLine và ErrorNotice hiện có. Kiểm bản nháp mới, lỗi ở đúng trường, bảo toàn tiêu điểm và quyền đọc.
+
+## 23/11/2026 · SC-041 ngừng nguồn đang chạy khi có bản nháp
+
+Baseline Firefox HTTPS trên hai shop ở 1.440 và 390 px. R24 giữ revision 1 đang chạy khi mở revision 3 thành nháp, nhưng nút Ngừng sử dụng bị vô hiệu. Gọi API đúng phiên bản trên cùng dữ liệu thử thành công, ghi một audit và loại revision khỏi truy xuất. R24 lấy điều kiện hiển thị theo khóa phiên bản đã xuất bản. Giữ quyền nút, hộp xác nhận, kiểm phiên bản và giao dịch backend hiện có. Tái kiểm thao tác ở hai kích thước và đối chiếu lịch sử cùng con trỏ nháp.
+
+R14 sau sửa trên hai shop. R25 bắt đầu với ô nội dung trống, giữ phản hồi gốc ở vùng chỉ đọc. API trả lỗi 422 chỉ tới ô đã loại thông tin riêng tư khi số thử vẫn còn, focus trở về ô và dữ liệu đang nhập được giữ. Nội dung đã làm sạch sinh một nháp và một audit sau gửi lại cùng khóa. R24 tạo và khôi phục qua ba revision, từ chối dùng đánh giá bản 1 cho bản 2 và giữ đầu vào trong hộp thoại. R24 cho phép ngừng bản đang chạy dù còn nháp. Sau ngừng, tìm kiếm và tra theo ID đều không lấy bản đã nghỉ, bản nháp giữ nguyên. [Bằng chứng R14](audit-knowledge-review-20261123.txt)
+
+## 23/11/2026 · SC-046 chế độ thử AI
+
+FE018 kiểm câu hỏi tổng hợp và ý định lập nháp trong R27 trên Chromium/Firefox. Cả hai trả `externalMessageSent=false`, chi phí `null` hiển thị Chưa có dữ liệu. Trong ca kiểm, trang chỉ gửi hai POST tới playground và không yêu cầu HTTP(S) tới origin khác. Mock xuất bản giữ điều kiện đánh giá khớp, đủ số ca và ngân sách. Tác nghiệp, giá và kết nối nhà cung cấp thật vẫn thuộc hồ sơ target. [Bằng chứng FE018](audit-ai-playground-20261123.txt)
+
+## 23/11/2026 · SC-052 mốc dữ liệu của báo cáo CSV
+
+Ở baseline Firefox HTTPS, R31 gắn nhãn “Thời điểm dữ liệu” cho mốc xem báo cáo và thiếu cảnh báo giới hạn của CSV. Backend sở hữu thời điểm chụp và cảnh báo. R31 giữ bố cục form hiện có, đổi nhãn thành “Mốc xem báo cáo” và đặt cảnh báo API ngay trước nút xuất.
+
+Trên hai shop VND 1.440 px và LAK 390 px, cảnh báo xuất hiện trước khi tạo tệp, form không tràn ngang, worker hoàn tất và tệp tải qua phiên có mốc chụp khớp API. FE021 đạt 6/6 ca mục tiêu trên Chromium và Firefox, gồm lưu bộ lọc, tải CSV, phân trang, quyền nguồn và múi giờ không hợp lệ. [Bằng chứng R31](audit-report-snapshot-20261123.txt)
+
+## 23/11/2026 · SC-055 thu hồi dữ liệu khi chuyển cửa hàng
+
+Trước sửa, khi rời shop, Shell xóa query khỏi cache trước lúc màn con bỏ đăng ký. Vì vậy thư viện có thể đặt lại timer GC trên query đã bỏ khỏi cache. Trên bản build cục bộ với 100.000 SKU và 1.000.000 tin nhắn tổng hợp, Chromium còn giữ 25 phản hồi tin nhắn của shop vừa rời và 274 timeout ở lần chuyển thứ 50.
+
+Shell vẫn hủy request ngay khi rời phạm vi. Việc dọn query theo người dùng, shop và phiên bản quyền chạy sau khi màn con bỏ đăng ký. Cùng bài kiểm 50 lần chuyển sau sửa ghi 0 phản hồi đã rời phạm vi, 24 timeout và một luồng SSE đang hoạt động. Trình duyệt tải tối đa 20 sản phẩm hoặc 100 tin mỗi trang. Hồi quy chuyển shop, bảo toàn nháp, onboarding và thu hồi quyền đạt 8/8 trên Chromium và Firefox. [Bằng chứng SC-055](audit-scope-memory-20261123.txt)
+
+## 23/11/2026 · SC-009 bàn phím hộp thoại nhân sự và bản nháp
+
+Baseline R19 qua Chrome HTTPS trên VND và LAK. Hộp chi tiết R32 mắc Shift+Tab tại 768 và 1.440 px vì hai nút nằm trong vùng CSS ẩn. R03, R33 và R35 ở zoom 400% có vùng cuộn thiếu điểm nhận tiêu điểm. Bản kê trước sửa và log R19 nằm ngoài checkout theo §6.4 của kế hoạch audit. R32 sở hữu vị trí nút theo breakpoint theme, giữ quyền và hành động trong danh sách hoặc chi tiết. Hộp rời màn hình và hộp bỏ nháp dùng pattern vùng nội dung có tên và nhận focus của EditDialog. Giữ vị trí title, nội dung, nút, thứ tự và cơ chế giữ hoặc bỏ nháp. Kiểm vòng phím, nút hữu hình, Home/End trên nội dung cuộn, Escape, focus trở về và số yêu cầu ghi khi chỉ kiểm thao tác.
+
+Sau sửa, R32 dùng cùng breakpoint tablet của theme để gắn nút phù hợp vào DOM. Hộp rời màn hình và bỏ thay đổi có vùng nội dung nhận tiêu điểm theo mẫu EditDialog. Chrome HTTPS đạt 49/49 trên hai shop mẫu, gồm 767/768 px và zoom thật 200%/400%. Ở 400%, ba vùng mô tả R03/R33/R35 cuộn được bằng phím, giữ thao tác và trả focus. Bộ test Chromium và Firefox đạt 12/12. Kiểm phát âm bằng trình đọc màn hình tiếp tục ở AUD-07. [Bằng chứng SC-009](audit-dialog-keyboard-20261123.txt)
+
+## Chi phí quảng cáo và đóng gói · 23/11/2026
+
+Phiếu R21 có mã chứng từ mới. Chrome HTTPS tạo và ghi phiếu trên hai shop mẫu, rồi đối chiếu số đã ghi ở R22 và R53 với bút toán. Chrome và Firefox demo qua bốn tổ hợp ở 390 và 1.440 px. Kiểm số tiền, nguồn, trạng thái thiếu mã và không tràn ngang. Điều kiện còn mở và bằng chứng cơ sở dữ liệu nằm trong kế hoạch audit. [Log kiểm](audit-expenses-20261123.txt)
+
+## Dự trù quảng cáo R53 · 23/11/2026
+
+Chrome HTTPS dùng số liệu từ hai shop PostgreSQL và kiểm ngày thiếu ở 390 và 1.440 px. Số dự trù, số đã chi, ngày có dữ liệu và thời điểm nhập được hiển thị độc lập. [Log kiểm](audit-estimates-20261123.txt)
+
+## Chất lượng đánh giá AI · SC2-F08 · 23–24/11/2026
+
+Phạm vi trước sửa gồm R28 ở trạng thái có báo cáo và đường vào từ R52 theo quyền đọc bot. Backend sở hữu số ca đã đăng ký, kết quả từng ca, độ trễ đo được, chi phí ước tính và loại nguồn. R28 dùng lại EditDialog, DetailLine, Status và DataTable. R52 dùng RouteLink. Không đổi token hoặc hình học shared. Bảng từng ca phải đọc được trong hộp thoại ở màn nhỏ, và dữ liệu cũ phải hiện giá trị chưa biết.
+
+Firefox HTTPS ở 390 và 1.440 px đã qua luồng cấu hình, tạo đánh giá, kiểm kết quả và xuất bản trên fixture. Bản API trước sửa giao diện trả 5 ca đăng ký. Hộp R28 hiện 5 / 5, thiếu số ca đăng ký và từng ca. Ảnh, hash nguồn và log gốc được lưu trong thư mục evidence của lượt AUD-07 R30. Lượt kiểm lại sẽ đối chiếu trạng thái đã chạy, lỗi, thiếu số đo và việc mở R28 từ R52 theo quyền.
+
+Sau sửa, R28 hiện số mẫu đăng ký, kết quả theo ca và các giá trị chưa đo từ backend. Firefox HTTPS kiểm 390 và 1.440 px, mở R28 từ R52, xem được từng ca và giữ thao tác trong hộp thoại. API kiểm ca sai trước khi gián đoạn, độ trễ và chi phí ước tính chỉ cho các lần quan sát được. Nguồn sửa tay trả đúng phiên bản và dấu hiệu đã duyệt, nội dung phản hồi không nằm trong báo cáo. Bộ thử dùng dữ liệu tổng hợp và lớp truyền tải cục bộ. [Bằng chứng SC2-F08](audit-ai-quality-20261123.txt)
+
+## Giữ bộ lọc sản phẩm · SC-012 · 24/11/2026
+
+Phạm vi trước sửa là R09, nút mở trình sửa từ danh sách và đường quay lại từ R10/R11. Route, token, layout và quyền giữ theo nguồn hiện hành. Nguồn lưu lại truy vấn là helper listReturnState đang dùng cho điều hướng danh sách, có lọc khóa theo hợp đồng. Giữ bộ lọc khi mở, lưu rồi thay URL, hoặc quay về khi chưa sửa.
+
+Firefox trên HTTPS fixture đã xác nhận R09 mở từ tìm kiếm có q, nhưng R10 hiển thị liên kết quay lại không có q. Quay về danh sách cho returnedSearch null. State baseline, hash nguồn và ảnh màn trước sửa nằm trong hồ sơ AUD-07 R33. Kiểm lại cùng đường dẫn trên hành trình tạo và lưu sản phẩm.
+
+Firefox HTTPS đã tạo sản phẩm hai biến thể, giữ tìm kiếm sau khi lưu và khi quay lại. Đơn tạo trước khi ngừng bán giữ nguyên dòng hàng. Hai phiên ghi cùng phiên bản cho 412 và hộp đối chiếu hiển thị server v2, giữ bản nháp rồi lưu thành v3. Cây danh mục từ chối chu trình và cha chéo shop, giữ cả tên lẫn lựa chọn trên form. Chromium desktop và Firefox mobile qua hồi quy riêng với tìm kiếm và lọc trạng thái. [Bằng chứng](audit-catalog-return-20261124.txt)
+
+
+## Audit SC-036, lịch sử và đồng bộ Inbox
+
+R06 sở hữu vị trí đọc và cách hiển thị lịch sử. R05 tiếp tục dùng cursor danh sách riêng. Query và sự kiện dùng scope hiện có theo người dùng, shop và phiên bản quyền. Firefox HTTPS tại 390 và 1.440 px xác nhận mất sequence dẫn đến đọc snapshot và hiện hai tin, bỏ sự kiện đến muộn hoặc trùng, chênh vị trí đoạn đang đọc 0 px. Nút Trang tiếp thay 100 tin đang hiện bằng 8 tin cũ. Bản baseline ghi dữ liệu thử, hash nguồn, log và ảnh trước khi sửa tại hồ sơ AUD-07 R34.
+
+Bổ sung tải tin cũ theo cursor bên trong R06 và giữ các liên kết cursor đã lưu. Đối chiếu số tin và vị trí đoạn đọc khi tải thêm, nút báo tin mới sau gap, gửi lại sự kiện cũ và đổi phạm vi truy cập giữa hai shop. Chạy lại hồi quy URL, bản nháp, bàn phím, dữ liệu rỗng và lỗi tải của Inbox. Đối chiếu layout bằng checker hiện hành.
+
+R06 tải thêm tin theo cursor và giữ tiêu điểm ở vùng tin. Firefox HTTPS tại cả hai kích thước giữ vị trí 0 px khi tải 106 tin, nạp đúng 108 tin sau sequence bị bỏ qua và 109 tin sau kết nối lại thực. Sự kiện đến muộn và sự kiện lặp không phát sinh lượt đọc. Tin lịch sử không bật cảnh báo tin mới. Liên kết phân trang theo URL vẫn mở được. Chủ shop B đọc được shop của mình và bị từ chối khi đọc hội thoại shop A. [Bằng chứng SC-036](audit-inbox-history-20261124.txt)
+
+## Audit SC-047, khả năng gọi công cụ trước khi xuất bản
+
+R30 công bố khả năng của model qua catalog và chi tiết kết nối. R26 sở hữu điều khiển xuất bản bản nháp. Baseline Firefox 390 và 1.440 px dùng API mô phỏng, tạo kết nối có toolCalling unsupported, lưu bản nháp hai bước công cụ rồi vẫn mở được hộp xuất bản. Hồ sơ AUD-07 R35 giữ ảnh trước sửa, dữ liệu, hash nguồn và layout report. Chặn ở R26 bằng khả năng của đúng kết nối và vẫn dùng quyết định của API khi chạy lệnh. Kiểm cấu hình có công cụ, cấu hình văn bản, quyền hiện có, trạng thái tải và ca xuất bản hợp lệ.
+
+Sau sửa, Firefox kiểm cả hai bề rộng. R26 dùng chi tiết của đúng kết nối qua API để hiện lý do và khóa lệnh khi bản nháp dùng công cụ. Đặt số bước về 0 lưu được bản nháp văn bản với cùng kết nối. Backend kiểm khả năng theo danh mục adapter, trả 409 và giữ nguyên bản đang chạy. Ca đánh giá và xuất bản vẫn có các điều kiện phiên bản, tri thức và ngân sách của BE-19. [Bằng chứng SC-047](audit-tool-capability-20261124.txt)
+
+## Audit SC2-A01, trạng thái thiết bị và hướng dẫn cài ứng dụng
+
+R40 sở hữu khả năng nhận thông báo và thao tác đăng ký. Firefox HTTPS ở 390 và 1.440 px có API Web Push nhưng trước thao tác không hiện khả năng thiết bị hoặc cách cài ứng dụng. Lượt kiểm cố định phản hồi từ chối của trình duyệt cho thấy yêu cầu quyền chỉ xảy ra sau nút bật, không tạo thiết bị. Baseline nguồn, layout, ảnh và log thuộc AUD-07 R37. Hiện trạng cần bổ sung phản hồi cho trình duyệt, cấu hình khóa công khai và quyền trang. Giữ yêu cầu quyền trong thao tác người dùng và dùng cùng điều kiện khi kiểm tra trước khi đăng ký.
+
+R40 hiện trạng thái hỗ trợ, cấu hình đăng ký và quyền trang trước nút bật. Hướng dẫn cài được đặt cùng khu vực đăng ký, chỉ xuất hiện khi dùng API thật. Firefox HTTPS ở 390 và 1.440 px nhận đúng hướng dẫn và trạng thái khả dụng, 0 lượt xin quyền trước thao tác. Phản hồi từ chối được điều khiển sau nút bật và không có POST tạo thiết bị. Ba ca unit đối chiếu điều kiện khả dụng, HTTPS và quyền. Phần cài PWA và thông báo trên điện thoại vật lý tiếp tục thuộc AUD-07. [Bằng chứng SC2-A01](audit-push-availability-20261124.txt)
+
+### Nhập sao kê khi mất kết nối · SC2-E04
+
+Chromium và Firefox mở bản xem trước hợp lệ, giữ bản xem trước khi ngoại tuyến và ghi nhận 0 POST nhập. Sau khi kết nối trở lại, không tự gửi yêu cầu hoặc tạo dòng sao kê. Hai trace từ lượt trước ghi hộp xem trước đóng khi hệ thống làm mới phiên. F-60 theo dõi việc giữ bản xem trước khi xác minh cùng người dùng, cửa hàng và quyền. [Bằng chứng SC2-E04](audit-offline-reconciliation-20261124.txt)

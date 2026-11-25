@@ -3,6 +3,7 @@ import { dateOnlyInTimezone, isValidDateOnly } from '../shared/model/format';
 import { all, ensure, first, money, now, record, str, units } from './database';
 import type { Input } from './database';
 import { marketingFixture } from './marketing-fixture';
+import { classifiedExpenses } from './accounting';
 
 const DAY_MS = 24 * 60 * 60 * 1000;
 const BUCKETS: readonly MarketingBucket[] = ['day', 'week', 'month'];
@@ -60,7 +61,6 @@ function aggregate(rows: typeof marketingFixture, fromDate: string, toDate: stri
         knownAttributedOrders: selected.reduce((sum, row) => sum + row.knownAttributedOrders, 0),
         unknownAttributionOrders: selected.reduce((sum, row) => sum + row.unknownAttributionOrders, 0),
         estimatedSpend: sumMoney(selected.map(row => row.estimatedSpend), currency),
-        actualSpend: sumMoney(selected.map(row => row.actualSpend), currency),
         topQuestions: [...questionCounts].sort(([left, a], [right, b]) => b - a || left.localeCompare(right, 'vi')).slice(0, 4).map(([question]) => question),
         lostSaleReasons: [...reasonCounts].sort(([left, a], [right, b]) => b - a || left.localeCompare(right, 'vi')).map(([reason, count]) => ({ reason, count })),
     };
@@ -89,17 +89,22 @@ function getRange(input: Input, timezone: string, asOf: string) {
 }
 
 /** Aggregate only the synthetic event rows that fall inside the shop-local date range. */
-export function marketingSummary(input: Input, asOf = now()): MarketingSummary {
+export function marketingSummary(input: Input, asOf = now(), canReadFinance = true): MarketingSummary {
     const shop = first('shops', input.shopId);
     const timezone = String(shop.timezone);
     const currency = String(shop.currency);
     const range = getRange(input, timezone, asOf);
     const source = input.shopId === 'shop-demo' ? marketingFixture : [];
+    const advertising = canReadFinance ? classifiedExpenses(input.shopId).filter(row => row.category === 'advertising_expense') : [];
+    const actualSpend = (fromDate: string, toDate: string) => {
+        const entries = advertising.filter(row => row.day >= fromDate && row.day <= toDate);
+        return entries.length ? money(entries.reduce((total, row) => total + row.total, 0n), currency) : null;
+    };
     const points: MarketingTrendPoint[] = [];
     for (let fromDate = range.fromDate; fromDate <= range.toDate;) {
         const toDate = bucketEnd(fromDate, range.bucket, range.toDate);
         const values = aggregate(source, fromDate, toDate, currency);
-        points.push({ fromDate, toDate, knownAttributedOrders: values.knownAttributedOrders, unknownAttributionOrders: values.unknownAttributionOrders, estimatedSpend: values.estimatedSpend, actualSpend: values.actualSpend });
+        points.push({ fromDate, toDate, knownAttributedOrders: values.knownAttributedOrders, unknownAttributionOrders: values.unknownAttributionOrders, estimatedSpend: values.estimatedSpend, actualSpend: actualSpend(fromDate, toDate) });
         fromDate = addDays(toDate, 1);
     }
     const totals = aggregate(source, range.fromDate, range.toDate, currency);
@@ -119,5 +124,6 @@ export function marketingSummary(input: Input, asOf = now()): MarketingSummary {
     const promotionResults = Array.from(usedPromotions, ([promotionId, group]) => ({
         promotionId, name: group.name, orders: group.orders, discount: money(group.discount, currency), netSales: money(group.sales, currency),
     }));
-    return { asOf, period: { ...range, timezone }, trend: points, ...totals, ...(promotionResults.length ? { promotionResults } : {}) };
+    return { asOf, period: { ...range, timezone }, trend: points, ...totals, actualSpend: actualSpend(range.fromDate, range.toDate),
+        ...(promotionResults.length ? { promotionResults } : {}) };
 }

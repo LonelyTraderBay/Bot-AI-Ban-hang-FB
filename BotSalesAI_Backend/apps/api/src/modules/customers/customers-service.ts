@@ -33,6 +33,18 @@ const caseTransitions: Record<ServiceCaseState, readonly ServiceCaseState[]> = {
     open: ['assigned', 'resolved', 'closed'], assigned: ['resolved', 'closed'], resolved: ['closed'], closed: [],
 };
 
+export async function createServiceCaseRecord(tx: Prisma.TransactionClient, shopId: string, input: CaseInput, workItemId?: string) {
+    const customer = await customerInShop(tx, shopId, input.customerId);
+    if (customer.privacyErasedAt) throw new ConflictException();
+    if (input.orderId !== null && (!validUuid(input.orderId) || !await tx.salesOrder.findUnique({
+        where: {
+            shopId_customerId_id: { shopId, customerId: input.customerId, id: input.orderId },
+            orderState: { in: ['confirmed', 'completed'] },
+        }, select: { id: true },
+    }))) throw new UnprocessableEntityException();
+    return tx.serviceCase.create({ data: { ...input, shopId, workItemId, summary: cleanText(input.summary) } });
+}
+
 export class CustomersService {
     constructor(private readonly db?: PrismaClient, private readonly config?: AuthConfig) {}
 
@@ -164,17 +176,8 @@ export class CustomersService {
     }
 
     createCase(headers: IncomingHttpHeaders, shopId: string, input: CaseInput, requestId: string) {
-        return this.change(headers, shopId, 'createServiceCase', 'service_case', input, requestId, async tx => {
-            const customer = await customerInShop(tx, shopId, input.customerId);
-            if (customer.privacyErasedAt) throw new ConflictException();
-            if (input.orderId !== null && (!validUuid(input.orderId) || !await tx.salesOrder.findUnique({
-                where: {
-                    shopId_customerId_id: { shopId, customerId: input.customerId, id: input.orderId },
-                    orderState: { in: ['confirmed', 'completed'] },
-                }, select: { id: true },
-            }))) throw new UnprocessableEntityException();
-            return tx.serviceCase.create({ data: { ...input, shopId, summary: cleanText(input.summary) } });
-        }, (tx, result) => caseInShop(tx, shopId, result.id));
+        return this.change(headers, shopId, 'createServiceCase', 'service_case', input, requestId,
+            tx => createServiceCaseRecord(tx, shopId, input), (tx, result) => caseInShop(tx, shopId, result.id));
     }
 
     changeCase(headers: IncomingHttpHeaders, shopId: string, id: string, input: CaseChange, requestId: string) {

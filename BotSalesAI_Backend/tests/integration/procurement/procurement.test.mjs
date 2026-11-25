@@ -56,10 +56,11 @@ async function assertData(response, status, schema) {
     return schema === 'Problem' ? body : body.data;
 }
 
-function call(path, { body, method = 'GET', actor = owner, shop = shopA, key = randomUUID() } = {}) {
+function call(path, { body, method = 'GET', actor = owner, shop = shopA, key = randomUUID(), version } = {}) {
     const headers = { cookie: actor.cookie };
     if (method !== 'GET') Object.assign(headers, { origin: auth.appOrigin, 'content-type': 'application/json',
         'idempotency-key': key, 'x-csrf-token': actor.csrf });
+    if (version !== undefined) headers['if-match'] = '"' + version + '"';
     return fetch(base + '/shops/' + shop.id + '/' + path, { method, headers, body: body === undefined ? undefined : JSON.stringify(body) });
 }
 
@@ -144,6 +145,7 @@ test('SC2-D02, SC2-D03, SC2-D04 and SC2-D07: supplier and offer scopes, fixed re
     const offer = await write('supplier-offers', offerData(vendor, variant), 201, 'SupplierOfferResponse');
     await write('purchase-orders', purchaseInput(vendor, offer, 6), 409, 'Problem');
     const supplier = await status(updated);
+    await write('supplier-offers', offerData(supplier, variant), 404, 'Problem', { shop: shopB, actor: other });
     const expired = await write('supplier-offers', { ...offerData(supplier, variant), validUntil: '2001-01-01T00:00:00Z' },
         201, 'SupplierOfferResponse');
     await write('purchase-orders', purchaseInput(supplier, expired, 6), 422, 'Problem');
@@ -172,6 +174,7 @@ test('SC2-D02, SC2-D03, SC2-D04 and SC2-D07: supplier and offer scopes, fixed re
         const [proposal] = matched;
         assert.equal(proposal.suggestedQuantity, 6);
         assert.equal(proposal.available, 0);
+        assert.match(proposal.reason, /^Quy tắc min-max/);
         const selected = purchaseInput(supplier, offer, proposal.suggestedQuantity, proposal.id);
         const race = await Promise.all([call('purchase-orders', { method: 'POST', body: selected }),
             call('purchase-orders', { method: 'POST', body: selected })]);
@@ -179,6 +182,12 @@ test('SC2-D02, SC2-D03, SC2-D04 and SC2-D07: supplier and offer scopes, fixed re
         const order = await assertData(race.find(response => response.status === 201), 201, 'PurchaseOrderResponse');
         await assertData(race.find(response => response.status === 409), 409, 'Problem');
         assert.deepEqual(order.total, money('200.01'));
+        const laterOffer = await write('supplier-offers', { ...offerData(supplier, variant), unitCost: money('40') },
+            201, 'SupplierOfferResponse');
+        assert.notEqual(laterOffer.id, offer.id);
+        assert.deepEqual((await get('supplier-offers/' + offer.id, 'SupplierOfferResponse')).unitCost, offer.unitCost);
+        assert.deepEqual((await purchase(order.id)).lines[0].unitCost, offer.unitCost);
+        assert.deepEqual(laterOffer.unitCost, money('40'));
         await evaluate();
         const waiting = await get('purchase-suggestions/' + proposal.id, 'PurchaseSuggestionResponse');
         assert.equal(waiting.activePurchaseOrderId, order.id);
@@ -194,6 +203,48 @@ test('SC2-D02, SC2-D03, SC2-D04 and SC2-D07: supplier and offer scopes, fixed re
     } finally {
         await write('reorder-rules/' + rule.id, { ...input, enabled: false, expectedVersion: changed.version },
             200, 'ReorderRuleResponse', { method: 'PUT' });
+    }
+});
+
+test('SC2-C05-WAREHOUSE: an open purchase blocks archive and purchase creation cannot race past archive', async () => {
+    const member = { shopId_userId: { shopId, userId: reader.userId } };
+    const prior = await admin.membership.findUniqueOrThrow({ where: member });
+    await admin.membership.update({ where: member, data: { roles: ['manager'], permissionVersion: { increment: 1 } } });
+    try {
+        const createWarehouse = () => write('warehouses', {
+            name: 'Kho nhập hàng', code: 'PO-' + randomUUID().slice(0, 8), addressLine: 'Địa chỉ kho thử',
+        }, 201, 'WarehouseResponse', { actor: reader });
+        const created = await createWarehouse();
+        const warehousePath = 'warehouses/' + created.id;
+        const updated = await write(warehousePath, { addressLine: 'Địa chỉ đã kiểm' }, 200, 'WarehouseResponse',
+            { actor: reader, method: 'PATCH', version: created.version });
+        const variant = await product();
+        const { supplier, offer } = await prepareSupplier(variant);
+        const purchaseAt = warehouseId => ({ ...purchaseInput(supplier, offer, 6), warehouseId });
+        const archive = warehouse => call('warehouses/' + warehouse.id + '/archive', { method: 'POST', actor: reader,
+            body: { expectedVersion: warehouse.version, reason: 'Đã kiểm các đơn nhập của kho' } });
+        const order = await write('purchase-orders', purchaseAt(updated.id), 201, 'PurchaseOrderResponse');
+        await assertData(await archive(updated), 409, 'Problem');
+        assert.equal((await get(warehousePath, 'WarehouseResponse')).status, 'active');
+        await write('purchase-orders/' + order.id + '/cancel', { expectedVersion: order.version, reason: 'Hủy đơn nhập thử' }, 202, 'CommandResponse');
+        await assertData(await archive(updated), 202, 'CommandResponse');
+        assert.equal((await get(warehousePath, 'WarehouseResponse')).status, 'archived');
+        const historical = await purchase(order.id);
+        assert.deepEqual([historical.status, historical.warehouseId, historical.total], ['cancelled', updated.id, order.total]);
+        await write('purchase-orders', purchaseAt(updated.id), 409, 'Problem');
+
+        const raceWarehouse = await createWarehouse();
+        const [bought, archived] = await Promise.all([
+            call('purchase-orders', { method: 'POST', body: purchaseAt(raceWarehouse.id) }),
+            archive(raceWarehouse),
+        ]);
+        assert.equal(bought.status, archived.status === 202 ? 409 : 201);
+        assert.equal(archived.status, bought.status === 201 ? 409 : 202);
+        await Promise.all([bought.body.cancel(), archived.body.cancel()]);
+        console.log(JSON.stringify({ status: 'SC2_C05_WAREHOUSE_OPEN_PURCHASE', blockedWithOrder: true,
+            archivedAfterCancellation: true, managerWrite: true, historicalRead: true, exclusiveRace: true }));
+    } finally {
+        await admin.membership.update({ where: member, data: { roles: prior.roles, permissionVersion: { increment: 1 } } });
     }
 });
 

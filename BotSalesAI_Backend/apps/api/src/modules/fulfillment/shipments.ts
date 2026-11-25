@@ -190,18 +190,19 @@ export class ShipmentsService {
             const applied = at >= shipment.lastEventAt && (following[shipment.state]?.includes(observed.state) ?? false);
             if (applied && observed.state === 'delivered') {
                 const { order } = shipment;
-                let cost = new ExactDecimal(0);
+                const recognition = await bookDelivery(tx, { shopId, sourceId: id, at, currency: shipment.currency }, order);
                 for (const line of shipment.lines) {
                     await recordStockMovement(tx, {
                         shopId, warehouseId: shipment.warehouseId, variantId: line.orderLine.variantId, actorId,
                         kind: 'fulfillment', source: { type: 'shipment_delivery', id, lineId: line.orderLineId },
                         reason: 'Hàng đã giao có bằng chứng', delta: { transit: -line.quantity },
                     });
-                    cost = cost.plus(line.costValue);
                 }
-                await bookDelivery(tx, { shopId, sourceId: id, at, currency: shipment.currency }, order, cost);
                 const changed = await tx.salesOrder.update({
-                    where: key(shopId, order.id), data: { orderState: 'completed', fulfillmentState: 'delivered', version: { increment: 1 } },
+                    where: key(shopId, order.id), data: {
+                        orderState: 'completed', fulfillmentState: 'delivered', recognitionPolicyVersion: recognition?.policyVersion,
+                        version: { increment: 1 },
+                    },
                 });
                 await enqueueResourceUpdate(tx, 'order.updated', changed);
             }

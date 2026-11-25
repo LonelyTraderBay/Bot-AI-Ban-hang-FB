@@ -21,7 +21,7 @@ def token_extension_integrity(approved,tokens,extension,current_digest):
         and not any(key.startswith('colors.') or key=='theme' for key in added))
     return preserved,bound
 
-def run(root=R, distribution=False):
+def run(root=R, distribution=False, historical_contracts=None):
     checks=[]
     def rec(name,ok,**detail):checks.append({'name':name,'status':'PASS' if ok else 'FAIL',**detail})
     def load(p):return json.loads((root/p).read_text(encoding='utf-8'))
@@ -46,9 +46,13 @@ def run(root=R, distribution=False):
     rec('Palette copies are generated from the identical token bytes',sha('prototype/src/tokens.json')==sha('design/tokens.json'))
     rec('CSS copies match exactly',sha('design/tokens.css')==sha('prototype/src/tokens.css'))
     rec('Universal unchanged from source release and attached source record',sha('AI_RULES.md')==baseline['AI_RULES.md']==load('execution/universal-source.json')['sha256'])
-    for p in sorted((root/'contracts').glob('*')):
-        if p.is_file():
-            rel=p.relative_to(root).as_posix();rec('Business contract unchanged: '+rel,sha(rel)==baseline[rel])
+    contracts_dir=historical_contracts if historical_contracts is not None else root/'contracts'
+    expected_contracts={Path(rel).name: digest for rel,digest in baseline.items() if rel.startswith('contracts/')}
+    observed_contracts={p.name for p in contracts_dir.glob('*') if p.is_file()}
+    rec('Preserved contract snapshot has the complete baseline file set',observed_contracts==expected_contracts.keys())
+    for name,digest in sorted(expected_contracts.items()):
+        file=contracts_dir/name
+        rec('Business contract unchanged: contracts/'+name,file.is_file() and hashlib.sha256(file.read_bytes()).hexdigest()==digest)
     for rel in ['prototype/src/domain.js','prototype/src/domain-v2.js','prototype/src/seed.js','prototype/src/permissions.js','prototype/src/app.css','prototype/test_domain_v2.cjs','prototype/test_browser_v2.py']:
         rec('Domain/behavior source unchanged: '+rel,sha(rel)==baseline[rel])
     normalized=text('prototype/src/app.js').replace('UI REVIEW · V__BOTSALES_RELEASE_VERSION__','UI REVIEW · V2.1')
@@ -75,7 +79,12 @@ def run(root=R, distribution=False):
     rec('Theme implementation occurs at T010, not obsolete G1','tại **T010**' in text('design/IMPLEMENTATION_NOTES.md') and 'tại G1' not in text('design/IMPLEMENTATION_NOTES.md'))
     rec('Source guide is not mislabeled as a generated artifact','là phần mở đầu nguồn' in guide)
     docs=sorted((root/'docs').glob('*.md'))
-    rec('All 28 main specifications remain present',len(docs)==28)
+    if historical_contracts is None:
+        rec('All 28 main specifications remain present',len(docs)==28)
+    else:
+        numbered=sorted(p.name[:2] for p in docs if re.match(r'^\d{2}_',p.name))
+        rec('All 28 numbered specifications and the project context are present',
+            numbered==[f'{n:02}' for n in range(28)] and len(docs)==29 and (root/'docs/PROJECT_CONTEXT.md').is_file())
     for p in docs:
         s=p.read_text(encoding='utf-8')
         rec('Current metadata: '+p.name,s.count('<!-- BEGIN RELEASE META -->')==1 and f'Bộ chuẩn {release["version"]}' in s and 'Graphite Gold: ĐÃ DUYỆT' in s)
@@ -114,8 +123,13 @@ def mechanics(plan):
     return {'planId':plan['planId'],'phases':plan['phases'],'tasks':[{k:t[k] for k in ['id','phase','priority','kind','dependsOn','featureIds','writeScope','deliverables','handoff','commandPolicy','stopConditions']} | {'steps':[{k:s[k] for k in ['id','weight','required','requiredEvidenceKind','verification']} for s in t['implementationSteps']]} for t in plan['tasks']]}
 
 if __name__=='__main__':
-    ap=argparse.ArgumentParser();ap.add_argument('--no-write',action='store_true');ap.add_argument('--distribution',action='store_true',help='Also require the untouched 0% distribution tracker, not for active working repositories.');args=ap.parse_args()
-    try:report=run(distribution=args.distribution)
+    ap=argparse.ArgumentParser()
+    ap.add_argument('--no-write',action='store_true')
+    scope=ap.add_mutually_exclusive_group()
+    scope.add_argument('--distribution',action='store_true',help='Also require the untouched distribution tracker.')
+    scope.add_argument('--historical-contracts',type=Path,help='Validate active documentation against a byte-preserved Kit 2.1 contract snapshot.')
+    args=ap.parse_args()
+    try:report=run(distribution=args.distribution,historical_contracts=args.historical_contracts)
     except Exception as exc:
         print('RELEASE_VALIDATION_ERROR: '+str(exc),file=sys.stderr);raise SystemExit(1)
     if not args.no_write:(R/'evidence/release-validation.json').write_text(json.dumps(report,ensure_ascii=False,indent=2)+'\n',encoding='utf-8')

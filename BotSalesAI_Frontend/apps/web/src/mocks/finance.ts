@@ -17,7 +17,14 @@ function postingAccount(shopId:string,code:string|undefined) {
     ensure(account,'Chưa cấu hình tài khoản cho chính sách ghi sổ mẫu.',409,'ACCOUNT_POLICY_MISSING');
     return str(activeAccount(shopId,str(account.id)).id);
 }
-const classificationCodes:Record<string,string>={sales_receipt:'511',inventory_purchase:'156',shipping:'64101',platform_fee:'64102',payment_fee:'64103',ai_expense:'64201',operating_expense:'642',capital:'411',loan_principal:'341',transfer:'112',other:'711'};
+const classificationCodes:Record<string,string>={sales_receipt:'511',inventory_purchase:'156',shipping:'64101',platform_fee:'64102',payment_fee:'64103',ai_expense:'64201',advertising_expense:'642',packaging_expense:'642',operating_expense:'642',capital:'411',loan_principal:'341',transfer:'112',other:'711'};
+
+function requireExpenseSource(entry: Row) {
+    if (entry.classification !== 'advertising_expense' && entry.classification !== 'packaging_expense') return;
+    const source = record(entry.sourceRef);
+    ensure(/^manual(?:_[a-z0-9_]{1,45})?$/.test(str(source.type)) && /^[A-Za-z0-9_-]{1,160}$/.test(str(source.id)),
+        'Cần mã chứng từ nguồn cho chi phí quảng cáo hoặc đóng gói.', 422);
+}
 type ReportWindow = { from: string; to: string; timezone: string; start: number; end: number };
 export function allTimeReportWindow(shopId: string): ReportWindow {
     const timezone = str(all('shops', shopId)[0]?.timezone) || 'UTC';
@@ -82,12 +89,14 @@ export function finance(op: string, input: Input): Row | undefined {
         case 'getProfitLoss': return profitLoss(shopId, reportWindow(input));
         case 'createFinanceEntry': {
             ensure(units(body.amount) > 0n, 'Số tiền phải lớn hơn 0.', 422);
+            requireExpenseSource(body);
             return insert('financeEntries', 'FinanceEntry', shopId, { ...body, status: 'draft', reversalOf: null });
         }
         case 'updateFinanceEntry': {
             const entry = find('financeEntries', input.id, shopId);
             checkVersion(entry, input);
             ensure(entry.status === 'draft', 'Phiếu đã ghi, không sửa trực tiếp.');
+            requireExpenseSource({ ...entry, ...body });
             return touch(Object.assign(entry, body));
         }
         case 'postFinanceEntry': {
@@ -96,7 +105,7 @@ export function finance(op: string, input: Input): Row | undefined {
             ensure(e.status === 'draft', 'Phiếu không còn nháp.');
             const period = assertOpenPeriod(shopId,fiscalDate(shopId,str(e.occurredAt)));
             if (e.sourceRef)
-                ensure(!all('financeEntries', shopId).some(other => other.id !== e.id && other.status === 'posted' && JSON.stringify(other.sourceRef) === JSON.stringify(e.sourceRef)), 'Chứng từ nguồn đã ghi tiền.');
+                ensure(!all('financeEntries', shopId).some(other => other.id !== e.id && ['posted', 'reversed'].includes(str(other.status)) && JSON.stringify(other.sourceRef) === JSON.stringify(e.sourceRef)), 'Chứng từ nguồn đã ghi tiền.');
             const currency=str(find('shops',shopId,shopId).currency);
             ensure(record(e.amount).currency===currency,'Phiếu chỉ dùng đồng tiền cơ sở của cửa hàng.',422,'JOURNAL_CURRENCY');
             let debt:Row|undefined;

@@ -2,12 +2,13 @@ import { ConflictException, NotFoundException, UnprocessableEntityException } fr
 import { createHash } from 'node:crypto';
 import type { AiConnection, BotConfig, BotRevision, Prisma } from '../../generated/prisma/client.js';
 import { validUuid } from '../../http/query.js';
+import { DomainConflict } from '../../http/contracts.js';
 import { financeMoney, parseMoney, type Money } from '../finance/index.js';
 import { assignedKnowledge } from '../knowledge/index.js';
 import { salesAutomationAllowed } from '../operations/index.js';
 import type { AuthConfig } from '../workspace/index.js';
 import { approvedRuntimeBot, type ApprovedEvaluationConfig } from './approved-evaluation.js';
-import { aiConnectionInShop, aiConnectionReady, aiKey } from './connections.js';
+import { aiConnectionInShop, aiConnectionReady, aiKey, connectionCapabilities } from './connections.js';
 
 export type ConfigDraft = {
     connectionId: string; instructions: string; knowledgeRevisionIds: string[]; maxToolSteps: number; dailyBudget: Money;
@@ -99,10 +100,14 @@ export async function appendBotRevision(tx: Prisma.TransactionClient, profile: B
     return revision;
 }
 
+function requiresUnsupportedTools(revision: BotRevision & { connection: AiConnection | null }) {
+    return revision.maxToolSteps > 0 && revision.connection !== null && connectionCapabilities(revision.connection).toolCalling === 'unsupported';
+}
+
 export async function botContext(tx: Prisma.TransactionClient, shop: BotShop, revision: BotRevision & { connection: AiConnection | null }) {
     const knowledge = await assignedKnowledge(tx, shop.id, revision.knowledgeRevisionIds);
     const current = knowledge.length === revision.knowledgeRevisionIds.length && revision.currency === shop.currency &&
-        Boolean(revision.instructions && revision.dailyBudget?.gt(0));
+        Boolean(revision.instructions && revision.dailyBudget?.gt(0)) && !requiresUnsupportedTools(revision);
     const contentHash = createHash('sha256').update(JSON.stringify([
         shop.policyVersion, revision.id, revision.connection?.id, revision.connection?.version,
         revision.instructions, revision.maxToolSteps, revision.dailyBudget?.toFixed(), revision.currency,
@@ -119,11 +124,23 @@ export async function modelContext(tx: Prisma.TransactionClient, shop: BotShop, 
 export async function currentBotRevision(tx: Prisma.TransactionClient, shopId: string, index: number, auth?: AuthConfig) {
     const revision = await botRevisionAt(tx, shopId, index);
     if (!revision) throw new NotFoundException();
+    if (requiresUnsupportedTools(revision)) {
+        throw new DomainConflict('AI_TOOL_CALLING_UNSUPPORTED', 'Kết nối đang chọn không hỗ trợ gọi công cụ cho cấu hình này.');
+    }
     const shop = await botShop(tx, shopId);
     const context = await modelContext(tx, shop, revision, auth);
     if (!context.current) throw new ConflictException('Cấu hình, chính sách, kết nối hoặc tri thức cần được kiểm lại.');
     return { shop, revision, context };
 }
+
+export function botAuditContext(policyVersion: string, revision: BotRevision & { connection: AiConnection | null }, configHash: string | null) {
+    return {
+        policyVersion, configRevision: revision.revision, configHash, knowledgeRevisionIds: revision.knowledgeRevisionIds,
+        connectionId: revision.connectionId, connectionVersion: revision.connection?.version ?? null,
+    };
+}
+
+export type BotAgentAuditContext = ReturnType<typeof botAuditContext> & { actorKind: 'agent'; agentKind: 'sales_admin' };
 
 export async function liveBotSnapshot(tx: Prisma.TransactionClient, shopId: string, generation: number, auth?: AuthConfig,
     provider?: ApprovedEvaluationConfig) {
@@ -140,7 +157,10 @@ export async function liveBotSnapshot(tx: Prisma.TransactionClient, shopId: stri
     if (!context.current) return null;
     if (evaluation?.status !== 'passed' || evaluation.configHash !== context.contentHash || evaluation.policyVersion !== shop.policyVersion) return null;
     if (!await salesAutomationAllowed(tx, shopId, revision.approvedBy, revision.connectionId, shop.policyVersion, auth, Boolean(runtime))) return null;
-    return { shop, revision, context, actorId: revision.approvedBy, runtime };
+    const auditContext: BotAgentAuditContext = {
+        ...botAuditContext(shop.policyVersion, revision, context.contentHash), actorKind: 'agent', agentKind: 'sales_admin',
+    };
+    return { shop, revision, context, actorId: revision.approvedBy, runtime, auditContext };
 }
 
 export async function activePublishedBot(tx: Prisma.TransactionClient, shopId: string, auth?: AuthConfig, provider?: ApprovedEvaluationConfig) {

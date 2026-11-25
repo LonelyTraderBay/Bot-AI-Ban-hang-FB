@@ -1,0 +1,20 @@
+SC-036 · R06 · Firefox HTTPS fixture on PostgreSQL and Redis, 390 and 1440 px
+Start with 105 persisted messages. Browser participant from shop A. Separate owner of shop B can read shop B and receives 404 for the shop A thread.
+Scope: local fixture browser, missing sequence, late and duplicate delivery, natural EventSource reconnect after forced loopback stream EOF, draft and URL navigation covered by FE016.
+AUD-07-r34-browser-before.txt SHA-256 d88f4471344eb78655cb09537c8d1028790b2038c53511c599dddefc7aae8ddb
+{"status":"R34_GAP_BASELINE","width":1440,"previousSequence":26,"releasedSequence":29,"gapRefetches":1,"bothRecovered":true,"ignoredLateAndDuplicate":true,"anchorBefore":46,"anchorAfter":46,"unstablePixels":0}
+{"status":"R34_PAGE_BASELINE","width":1440,"replaced":true,"cursorInUrl":true,"bubbles":8,"crossShop":404}
+{"status":"R34_GAP_BASELINE","width":390,"previousSequence":38,"releasedSequence":43,"gapRefetches":1,"bothRecovered":true,"ignoredLateAndDuplicate":true,"anchorBefore":46,"anchorAfter":46,"unstablePixels":0}
+{"status":"R34_PAGE_BASELINE","width":390,"replaced":true,"cursorInUrl":true,"bubbles":8,"crossShop":404}
+AUD-07-r34-browser-final.txt SHA-256 2961ec2c56c94f1e6e79221be11ac58c47965f0b907b49f52aa2c3ef70efa250
+{"status":"R34_PREPEND","width":1440,"loaded":106,"anchorShift":0,"newNotice":false,"focusedHistory":true}
+{"status":"R34_GAP_AND_LATE","width":1440,"previousSequence":250,"releasedSequence":255,"gapRefetches":2,"bothRecovered":true,"ignoredLateAndDuplicate":true,"loaded":108,"anchorBefore":46,"anchorAfter":46,"unstablePixels":0}
+{"status":"R34_RECONNECT","width":1440,"reconnectedHttpStatus":200,"loaded":109,"anchorShift":0,"missedWhileOfflineRecovered":true,"jumpAvailable":true}
+{"status":"R34_LATEST","width":1440,"focusedHistory":true}
+{"status":"R34_LEGACY_CURSOR","width":1440,"replaced":true,"cursorInUrl":true,"bubbles":9,"crossShop":404}
+{"status":"R34_PREPEND","width":390,"loaded":106,"anchorShift":0,"newNotice":false,"focusedHistory":true}
+{"status":"R34_GAP_AND_LATE","width":390,"previousSequence":265,"releasedSequence":271,"gapRefetches":2,"bothRecovered":true,"ignoredLateAndDuplicate":true,"loaded":108,"anchorBefore":46,"anchorAfter":46,"unstablePixels":0}
+{"status":"R34_RECONNECT","width":390,"reconnectedHttpStatus":200,"loaded":109,"anchorShift":0,"missedWhileOfflineRecovered":true,"jumpAvailable":true}
+{"status":"R34_LATEST","width":390,"focusedHistory":true}
+{"status":"R34_LEGACY_CURSOR","width":390,"replaced":true,"cursorInUrl":true,"bubbles":9,"crossShop":404}
+AUD-07-r34-mock-before.txt SHA-256 9b2ed3eb6dfbb3ae6e9fd1c6b5af79d1820ff2f89febf5017dec55ff30b22045

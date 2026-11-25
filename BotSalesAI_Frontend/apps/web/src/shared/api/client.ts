@@ -7,10 +7,15 @@ let csrfToken = '';
 let scopeEpoch = 0;
 const activeRequests = new Set<AbortController>();
 const scopeCancellations = new Set<() => void>();
+const sessionInvalidations = new Set<() => void>();
 /** Includes executions waiting between HTTP requests, not just active fetches. */
 export function subscribeScopeCancellation(cancel: () => void) {
     scopeCancellations.add(cancel);
     return () => { scopeCancellations.delete(cancel); };
+}
+export function subscribeSessionInvalidation(invalidate: () => void) {
+    sessionInvalidations.add(invalidate);
+    return () => { sessionInvalidations.delete(invalidate); };
 }
 export function setCsrfToken(token: string) {
     if (token === '') {
@@ -249,8 +254,16 @@ export async function request<K extends OperationId>(op: K, rawOptions?: Runtime
                 rememberUnknown({ intentId: intent, shopId: options.path?.shopId || '', operation: op, commandId: commandId || null });
             throw new UnknownResultError(intent, commandId);
         }
-        if (error instanceof ApiError)
+        if (error instanceof ApiError) {
+            // Login and public consent use independent credentials. Only an active session can be invalidated here.
+            const protectedPath = spec.path.startsWith('/shops/') || spec.path === '/shops' ||
+                op === 'logout' || op === 'stepUp';
+            if (error.status === 401 && protectedPath && epoch === scopeEpoch) {
+                for (const invalidate of sessionInvalidations)
+                    invalidate();
+            }
             throw error;
+        }
         if (epoch !== scopeEpoch || options.signal?.aborted)
             throw new DOMException('Yêu cầu đã hủy theo phạm vi', 'AbortError');
         if (timedOut)

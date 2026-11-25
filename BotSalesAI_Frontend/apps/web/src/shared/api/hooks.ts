@@ -52,6 +52,7 @@ export function usePagedApi<K extends QueryOperationId>(op: K, options: Omit<Que
     return {
         ...query,
         data,
+        firstPage: pages[0],
         loadedCount: data ? ((data as unknown as { data: unknown[] }).data.length) : 0,
         loadMore: () => query.hasNextPage ? query.fetchNextPage() : Promise.resolve(undefined),
         hasMore: Boolean(query.hasNextPage),

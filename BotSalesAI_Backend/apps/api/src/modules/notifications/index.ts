@@ -18,7 +18,7 @@ const ackBody = new SchemaPipe(validator.compile(schemaFromContract('ClaimWorkRe
 export const acknowledgeCommand = { operationId: 'acknowledgeNotification', resourceType: 'notification' };
 export { acceptFixturePairing, deviceCommands, deviceTestHandler } from './devices.js';
 export { notificationPolicyCommand } from './policy.js';
-export { dispatchPreparationNotifications, duringQuietHours, notifyPreparation } from './schedule.js';
+export { cancelPreparationReminders, dispatchPreparationNotifications, duringQuietHours, notifyPreparation } from './schedule.js';
 export { publishOperationNotices } from './operation-notices.js';
 export { deliverNotification } from './deliveries.js';
 export { readWebPushConfig, type WebPushConfig } from './web-push.js';

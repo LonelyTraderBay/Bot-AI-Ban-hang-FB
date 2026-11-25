@@ -6,10 +6,11 @@ import { idPipe, listQuery } from '../../http/query.js';
 import { envelope, noStore } from '../../http/response.js';
 import { ExactDecimal } from '../../platform/money/index.js';
 import { readAsSession, requireShopAccess } from '../workspace/index.js';
-import { reportSourcePermissions } from '../files/index.js';
+import { reportSourcePermissions } from '../../platform/jobs/sources.js';
 import { FinanceAccess } from './access.js';
 import { accountingDate, financeMoney, financeShop } from './journal.js';
-import { accountTotals, journalScope, netDebit, reportJournalIds, reportWindow, sumAmounts } from './report-data.js';
+import { accountTotals, classifiedExpenses, journalScope, netDebit, reportExportSnapshotNotice, reportJournalIds, reportWindow, sumAmounts } from './report-data.js';
+import { hasIncompleteShipmentCost } from './shipment-cost.js';
 
 const reportMetadata = (shopId: string, policyVersion: string) => ({
     shopId, policyVersion, asOf: new Date().toISOString(), completeness: 'provisional',
@@ -43,18 +44,10 @@ export async function profitLossProjection(tx: Prisma.TransactionClient, shopId:
     const { currency, timezone, policyVersion } = await financeShop(tx, shopId);
     const { firstDay, lastDay, ...window } = reportWindow(listQuery(raw, 'report'), timezone);
     const range = { shopId, currency, firstDay, lastDay };
+    const incompleteCost = await hasIncompleteShipmentCost(tx, shopId, currency, timezone, firstDay, lastDay);
     const accounts = await accountTotals(tx, range, false);
     const amount = (key: string) => sumAmounts(accounts.filter(row => row.systemKey === key), netDebit);
-    const charges = await tx.$queryRaw<{ category: string; total: Prisma.Decimal }[]>(Prisma.sql`
-        SELECT coalesce(e.classification, origin.classification)::text AS category, sum(l.debit-l.credit) AS total
-        FROM finance_journals j JOIN finance_journal_lines l ON l.shop_id=j.shop_id AND l.journal_id=j.id
-        JOIN finance_accounts a ON a.shop_id=l.shop_id AND a.id=l.account_id
-        LEFT JOIN finance_entries e ON e.shop_id=j.shop_id AND e.journal_id=j.id
-        LEFT JOIN finance_entries origin ON origin.shop_id=j.shop_id AND origin.journal_id=j.reversal_of
-        WHERE ${journalScope(shopId, currency)} AND j.effective_date BETWEEN ${firstDay}::date AND ${lastDay}::date
-          AND a.system_key='operating_expense' AND coalesce(e.classification, origin.classification) IN ('platform_fee','payment_fee','ai_expense')
-        GROUP BY 1
-    `);
+    const charges = await classifiedExpenses(tx, range, ['platform_fee', 'payment_fee', 'ai_expense', 'advertising_expense', 'packaging_expense']);
     const [{ discount }] = await tx.$queryRaw<{ discount: Prisma.Decimal }[]>(Prisma.sql`
         SELECT coalesce(sum(ol.discount), 0) AS discount
         FROM finance_journals j JOIN shipments s ON s.shop_id=j.shop_id AND s.id::text=j.source_id
@@ -62,11 +55,13 @@ export async function profitLossProjection(tx: Prisma.TransactionClient, shopId:
         WHERE ${journalScope(shopId, currency)} AND j.source_type='shipment' AND j.event_type='delivery'
           AND j.effective_date BETWEEN ${firstDay}::date AND ${lastDay}::date
     `);
-    const charge = (key: string) => new ExactDecimal(charges.find(row => row.category === key)?.total ?? 0);
+    const charge = (key: string) => sumAmounts(charges.filter(row => row.category === key), row => row.total);
     const shippingExpense = amount('carrier_fees');
     const platformFees = charge('platform_fee');
     const paymentFees = charge('payment_fee');
     const aiExpense = charge('ai_expense');
+    const advertisingExpense = charge('advertising_expense');
+    const packagingExpense = charge('packaging_expense');
     const sales = amount('sales').neg();
     const returns = amount('sales_returns');
     const netSales = sales.minus(returns);
@@ -74,12 +69,17 @@ export async function profitLossProjection(tx: Prisma.TransactionClient, shopId:
     const income = sumAmounts(accounts.filter(row => row.group === 'income'), row => netDebit(row).neg());
     const expenses = sumAmounts(accounts.filter(row => row.group === 'expense'), netDebit);
     const money = (value: Prisma.Decimal) => financeMoney(value, currency);
+    const metadata = reportMetadata(shopId, policyVersion);
+    if (incompleteCost) metadata.warnings.push('Chứng từ giá vốn giao hàng thiếu hoặc không khớp trong kỳ. Chưa thể xác định giá vốn và lợi nhuận.');
     return {
-        ...reportMetadata(shopId, policyVersion), ...window, grossSales: money(sales.plus(discount)), discounts: money(discount),
-        salesReturns: money(returns), netSales: money(netSales), cogs: money(cogs), grossProfit: money(netSales.minus(cogs)),
-        operatingProfit: money(income.minus(expenses)), shippingIncome: null, shippingExpense: money(shippingExpense),
+        ...metadata, ...window, completeness: incompleteCost ? 'incomplete' : metadata.completeness,
+        grossSales: money(sales.plus(discount)), discounts: money(discount),
+        salesReturns: money(returns), netSales: money(netSales), cogs: incompleteCost ? null : money(cogs),
+        grossProfit: incompleteCost ? null : money(netSales.minus(cogs)),
+        operatingProfit: incompleteCost ? null : money(income.minus(expenses)), shippingIncome: null, shippingExpense: money(shippingExpense),
         platformFees: money(platformFees), paymentFees: money(paymentFees), aiExpense: money(aiExpense),
-        otherOperatingExpenses: money(expenses.minus(cogs).minus(shippingExpense).minus(platformFees).minus(paymentFees).minus(aiExpense)),
+        advertisingExpense: money(advertisingExpense), packagingExpense: money(packagingExpense),
+        otherOperatingExpenses: money(expenses.minus(cogs).minus(shippingExpense).minus(sumAmounts(charges, row => row.total))),
         sourceJournalIds: await reportJournalIds(tx, range),
     };
 }
@@ -151,7 +151,7 @@ export class FinanceReports extends FinanceAccess {
     summary(headers: IncomingHttpHeaders, shopId: string) {
         return readAsSession(this.db, headers, async (tx, actor) => {
             const { permissions } = await requireShopAccess(tx, actor, shopId, 'reports.read');
-            return { shopId, asOf: new Date().toISOString(), warnings: [],
+            return { shopId, asOf: new Date().toISOString(), warnings: [reportExportSnapshotNotice],
                 availableReports: Object.entries(reportSourcePermissions).flatMap(([report, permission]) => permissions.includes(permission) ? [report] : []) };
         });
     }

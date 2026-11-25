@@ -5,6 +5,7 @@ import { enqueueCommandUpdate, enqueueResourceUpdate } from '../../platform/outb
 import { liveBotSnapshot } from '../ai/index.js';
 import { messengerFixtureEnabled, type MetaInboundConfig } from '../channels/index.js';
 import { requireShopAccess, type AuthConfig } from '../workspace/index.js';
+import { authorizedAfterSales } from './after-sales.js';
 import { inboxKey, metaReplyTarget, sendEligibility } from './message-data.js';
 import { sendMetaReply, type MetaSendResult } from './meta-send.js';
 
@@ -34,6 +35,9 @@ async function executeFixtureDispatch(tx: Prisma.TransactionClient, config: Auth
     if (!dispatch || dispatch.finishedAt || dispatch.command.status !== 'accepted' || dispatch.message.origin !== 'fixture') return;
     const { command, message } = dispatch;
     const { conversation } = message;
+    if (dispatch.afterSalesRequestId) {
+        await tx.$queryRaw`SELECT id FROM customers WHERE shop_id=${shopId}::uuid AND id=${conversation.customerId}::uuid FOR SHARE`;
+    }
     await tx.$queryRaw`SELECT id FROM channel_conversations WHERE shop_id=${shopId}::uuid AND id=${conversation.id}::uuid FOR UPDATE`;
     await tx.$queryRaw`SELECT id FROM channel_connections WHERE shop_id=${shopId}::uuid AND id=${conversation.channelId}::uuid FOR SHARE`;
     let enabled = false;
@@ -46,6 +50,11 @@ async function executeFixtureDispatch(tx: Prisma.TransactionClient, config: Auth
             await tx.$queryRaw`SELECT shop_id FROM bot_configs WHERE shop_id=${shopId}::uuid FOR SHARE`;
             const bot = dispatch.botGeneration ? await liveBotSnapshot(tx, shopId, dispatch.botGeneration, config) : null;
             enabled = bot?.actorId === command.actorId && scope.permissions.includes('bot.publish');
+            if (enabled && dispatch.afterSalesRequestId) {
+                const current = await authorizedAfterSales(tx, { shopId, conversationId: conversation.id,
+                    messageId: dispatch.afterSalesRequestId }, scope.permissions);
+                enabled = !message.redactedAt && current?.text === message.text;
+            }
         }
     } catch (error) {
         const status = (error as { getStatus?: () => number }).getStatus?.();
@@ -63,7 +72,8 @@ async function submitMetaReply(tx: Prisma.TransactionClient, key: DispatchKey, a
     // Serialize dispatch with erasure, handoff, disconnect and role changes.
     await tx.$queryRaw`SELECT id FROM customers WHERE shop_id=${shopId}::uuid AND id=${customerId}::uuid FOR SHARE`;
     await tx.$queryRaw`SELECT id FROM channel_conversations WHERE shop_id=${shopId}::uuid AND id=${id}::uuid FOR UPDATE`;
-    await tx.$queryRaw`SELECT id FROM channel_connections WHERE shop_id=${shopId}::uuid AND id=${channelId}::uuid FOR SHARE`;
+    // A confirmed token rejection can expire this channel before another send proceeds.
+    await tx.$queryRaw`SELECT id FROM channel_connections WHERE shop_id=${shopId}::uuid AND id=${channelId}::uuid FOR UPDATE`;
     await tx.$queryRaw`SELECT id FROM memberships WHERE shop_id=${shopId}::uuid AND user_id=${actorId}::uuid FOR SHARE`;
     await tx.$queryRaw`SELECT id FROM channel_messages WHERE shop_id=${shopId}::uuid AND id=${messageId}::uuid FOR UPDATE`;
     const dispatch = await tx.messageDispatch.findUniqueOrThrow({ where: { shopId_messageId: key }, include: {
@@ -85,7 +95,14 @@ async function submitMetaReply(tx: Prisma.TransactionClient, key: DispatchKey, a
         if (status === 403 || status === 404) return blocked;
         throw error;
     }
-    return sendMetaReply(target, message.text, request);
+    const result = await sendMetaReply(target, message.text, request);
+    if (result.reason === 'token_rejected') {
+        const channel = await tx.channelConnection.update({ where: inboxKey(shopId, channelId), data: {
+            status: 'expired', generation: { increment: 1 }, version: { increment: 1 },
+        } });
+        await enqueueResourceUpdate(tx, 'health.updated', channel);
+    }
+    return result;
 }
 
 async function executeMetaDispatch(db: PrismaClient, key: DispatchKey, recover: boolean,

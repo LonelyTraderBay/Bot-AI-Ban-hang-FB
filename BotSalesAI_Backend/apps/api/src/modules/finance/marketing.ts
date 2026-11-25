@@ -4,9 +4,12 @@ import type { Prisma, PrismaClient } from '../../generated/prisma/client.js';
 import { ContractOperation } from '../../http/operations.js';
 import { idPipe, listQuery } from '../../http/query.js';
 import { envelope, noStore } from '../../http/response.js';
+import { ExactDecimal } from '../../platform/money/index.js';
 import { confirmedOrderMarketing } from '../orders/index.js';
 import { readAsSession, requireShopAccess } from '../workspace/index.js';
 import { accountingDate, financeMoney, financeShop, localAccountingDate } from './journal.js';
+import { classifiedExpenses, sumAmounts } from './report-data.js';
+import { latestAdvertisingEstimates } from './advertising-estimates.js';
 
 const dayMs = 86400000;
 const asDate = (time: number) => new Date(time).toISOString().slice(0, 10);
@@ -21,7 +24,8 @@ function marketingWindow(raw: Record<string, unknown>, timezone: string, now: Da
     return { start, end, bucket, period: { fromDate: asDate(start), toDate: asDate(end), bucket, timezone } };
 }
 
-function trendFor(daily: { day: string; orders: number }[], { start, end, bucket }: ReturnType<typeof marketingWindow>) {
+function trendFor(daily: { day: string; orders: number }[], { start, end, bucket }: ReturnType<typeof marketingWindow>,
+    expenses: ReadonlyMap<string, Prisma.Decimal>, estimates: ReadonlyMap<string, Prisma.Decimal>, currency: string) {
     const counts = new Map(daily.map(row => [row.day, row.orders]));
     const trend = [];
     for (let cursor = start; cursor <= end;) {
@@ -31,8 +35,19 @@ function trendFor(daily: { day: string; orders: number }[], { start, end, bucket
         const next = bucket === 'month' ? day.setUTCMonth(day.getUTCMonth() + 1) : cursor + daysToNext * dayMs;
         const last = Math.min(next - dayMs, end);
         let unknownAttributionOrders = 0;
-        for (let time = cursor; time <= last; time += dayMs) unknownAttributionOrders += counts.get(asDate(time)) ?? 0;
-        trend.push({ fromDate: asDate(cursor), toDate: asDate(last), knownAttributedOrders: 0, unknownAttributionOrders, estimatedSpend: null, actualSpend: null });
+        let actualSpend: Prisma.Decimal | null = null;
+        let estimatedSpend: Prisma.Decimal | null = null;
+        for (let time = cursor; time <= last; time += dayMs) {
+            const date = asDate(time);
+            unknownAttributionOrders += counts.get(date) ?? 0;
+            const amount = expenses.get(date);
+            if (amount) actualSpend = (actualSpend ?? new ExactDecimal(0)).plus(amount);
+            const estimate = estimates.get(date);
+            if (estimate) estimatedSpend = (estimatedSpend ?? new ExactDecimal(0)).plus(estimate);
+        }
+        trend.push({ fromDate: asDate(cursor), toDate: asDate(last), knownAttributedOrders: 0, unknownAttributionOrders,
+            estimatedSpend: estimatedSpend === null ? null : financeMoney(estimatedSpend, currency),
+            actualSpend: actualSpend === null ? null : financeMoney(actualSpend, currency) });
         cursor = next;
     }
     return trend;
@@ -40,11 +55,13 @@ function trendFor(daily: { day: string; orders: number }[], { start, end, bucket
 
 const reasons = { stock_insufficient: 'Tồn hiện tại chưa đủ', sku_unavailable: 'SKU không bán được', budget_limit: 'Đã đạt giới hạn AI' };
 
-export async function marketingProjection(tx: Prisma.TransactionClient, shopId: string, raw: Record<string, unknown>, now = new Date()) {
+export async function marketingProjection(tx: Prisma.TransactionClient, shopId: string, raw: Record<string, unknown>, canReadFinance: boolean, now = new Date()) {
     const { timezone, currency } = await financeShop(tx, shopId);
     const window = marketingWindow(raw, timezone, now);
     const { daily, promotions } = await confirmedOrderMarketing(tx, { shopId, currency, ...window.period });
     const { fromDate, toDate } = window.period;
+    const advertising = canReadFinance ? await classifiedExpenses(tx, { shopId, currency, firstDay: fromDate, lastDay: toDate }, ['advertising_expense']) : [];
+    const estimates = canReadFinance ? await latestAdvertisingEstimates(tx, shopId, currency, fromDate, toDate, now) : [];
     const outcomes = await tx.$queryRaw<{ outcome: string; count: number }[]>`
         SELECT outcome, count(*)::int AS count FROM bot_inbound_tasks
         WHERE shop_id=${shopId}::uuid AND outcome IS NOT NULL
@@ -56,7 +73,14 @@ export async function marketingProjection(tx: Prisma.TransactionClient, shopId: 
         asOf: now, knownAttributedOrders: 0, unknownAttributionOrders: daily.reduce((sum, row) => sum + row.orders, 0),
         topQuestions: outcomes.some(row => row.outcome === 'knowledge') ? ['Câu hỏi tra cứu chính sách và tri thức đã duyệt'] : [],
         lostSaleReasons: outcomes.flatMap(({ outcome, count }) => Object.hasOwn(reasons, outcome) ? [{ reason: reasons[outcome as keyof typeof reasons], count }] : []),
-        estimatedSpend: null, actualSpend: null, period: window.period, trend: trendFor(daily, window),
+        estimatedSpend: estimates.length ? financeMoney(sumAmounts(estimates, row => row.total), currency) : null,
+        estimateCoverage: estimates.length ? {
+            lastRecordedAt: new Date(Math.max(...estimates.map(row => row.recordedAt.getTime()))).toISOString(),
+            daysWithEstimate: estimates.length, daysInPeriod: (window.end - window.start) / dayMs + 1,
+        } : undefined,
+        actualSpend: advertising.length ? financeMoney(sumAmounts(advertising, row => row.total), currency) : null,
+        period: window.period, trend: trendFor(daily, window,
+            new Map(advertising.map(row => [row.day, row.total])), new Map(estimates.map(row => [row.day, row.total])), currency),
         promotionResults: promotions.map(({ discount, netSales, ...row }) => ({ ...row, discount: financeMoney(discount, currency), netSales: financeMoney(netSales, currency) })),
     };
 }
@@ -66,8 +90,8 @@ export class MarketingService {
 
     get(headers: IncomingHttpHeaders, shopId: string, query: Record<string, unknown>) {
         return readAsSession(this.db, headers, async (tx, userId) => {
-            await requireShopAccess(tx, userId, shopId, 'reports.read');
-            return marketingProjection(tx, shopId, query);
+            const scope = await requireShopAccess(tx, userId, shopId, 'reports.read');
+            return marketingProjection(tx, shopId, query, scope.permissions.includes('finance.read'));
         });
     }
 }

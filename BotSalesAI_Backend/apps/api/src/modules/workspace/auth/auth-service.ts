@@ -7,6 +7,7 @@ import type { PrismaClient } from '../../../generated/prisma/client.js';
 import { serializable } from '../../../platform/database/transactions.js';
 import type { AuthConfig } from './config.js';
 import { validIdempotencyKey } from '../../../http/contract-source.js';
+import { validUuid } from '../../../http/query.js';
 import { acceptInvitations } from '../members/invitations.js';
 import { activeMembership, membershipDto, membershipFields, requireShopAccess } from '../policy/access.js';
 import { OidcClient } from './oidc.js';
@@ -18,6 +19,13 @@ import {
 
 const returnPaths = new Set(['/login', '/workspaces']);
 const stepUpBrowserHash = (browser: string, session: string) => tokenHash('step-up/browser/v1:' + browser + ':' + session);
+
+function loginReturnPath(returnTo: string): string {
+    if (returnPaths.has(returnTo)) return returnTo;
+    const path = /^\/s\/([a-f0-9-]{36})\/(?:notifications|orders\/([a-f0-9-]{36}))$/.exec(returnTo);
+    if (path && path[0] === returnTo && validUuid(path[1]!) && (!path[2] || validUuid(path[2]))) return returnTo;
+    return '/workspaces';
+}
 
 export class AuthService {
     private readonly oidcClient?: OidcClient;
@@ -87,7 +95,7 @@ export class AuthService {
                 data: {
                     ...key,
                     state: oidc.randomState(), nonce: oidc.randomNonce(), pkceVerifier: oidc.randomPKCECodeVerifier(),
-                    returnToHash, returnTo: returnPaths.has(returnTo) ? returnTo : '/workspaces',
+                    returnToHash, returnTo: loginReturnPath(returnTo),
                     expiresAt: new Date(now.getTime() + loginLifetime * 1000),
                 },
                 skipDuplicates: true,

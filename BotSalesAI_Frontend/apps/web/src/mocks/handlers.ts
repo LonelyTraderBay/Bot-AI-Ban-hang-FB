@@ -1,10 +1,16 @@
 import { http, HttpResponse } from 'msw';
 import { operations } from '@botsales/contracts';
+import type { Problem } from '@botsales/contracts';
 import { assertSchema } from '../shared/api/validation';
 import { handle, MockFailure, subscribeChanges, currentSession } from './service';
 import { now } from './database';
 const methods = { GET: http.get, POST: http.post, PUT: http.put, PATCH: http.patch, DELETE: http.delete };
-function failure(status: number, code: string, message: string, requestId: string) { return HttpResponse.json({ type: 'about:blank', title: 'Yêu cầu chưa hoàn tất', status, code, detail: message, requestId }, { status }); }
+function failure(status: number, code: string, message: string, requestId: string, errors?: Problem['errors']) {
+    return HttpResponse.json({
+        type: 'about:blank', title: 'Yêu cầu chưa hoàn tất', status, code, detail: message, requestId,
+        ...(errors ? { errors } : {}),
+    }, { status });
+}
 export const handlers = Object.entries(operations).filter(([id]) => id !== 'subscribeEvents').sort((a, b) => (a[1].path.match(/\{/g) || []).length - (b[1].path.match(/\{/g) || []).length).map(([op, spec]) => {
     const method = methods[spec.method as keyof typeof methods];
     return method(`/api/v2${spec.path.replace(/\{([^}]+)\}/g, ':$1')}`, async ({ request, params }) => {
@@ -62,7 +68,7 @@ export const handlers = Object.entries(operations).filter(([id]) => id !== 'subs
         }
         catch (error) {
             if (error instanceof MockFailure)
-                return failure(error.status, error.code, error.message, requestId);
+                return failure(error.status, error.code, error.message, requestId, error.errors);
             return failure(500, 'MOCK_CONTRACT_ERROR', error instanceof Error ? error.message : 'Lỗi mô phỏng.', requestId);
         }
     });

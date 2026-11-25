@@ -58,7 +58,7 @@ describe('FE021 route, contract, and frontend ownership map', () => {
     expect(reports).toContain("useCommand('createExport'");
     expect(reports).toContain('reportDateBoundary');
     expect(reports).toContain('m.lostSaleReasons');
-    expect(mock).toContain('marketingSummary(input)');
+    expect(mock).toContain("marketingSummary(input, now(), grantedPermissions(role).includes('finance.read'))");
     expect(marketingReadModel).toContain("input.query.get('fromDate')");
     expect(marketingReadModel).toContain("input.query.get('toDate')");
     expect(reports).not.toContain('không thể lọc chuỗi này theo kỳ ở frontend');

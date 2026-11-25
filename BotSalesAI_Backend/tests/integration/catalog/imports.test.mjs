@@ -35,8 +35,9 @@ before(async () => {
     const url = readDatabaseUrl(process.env);
     assertFixtureDatabase(url);
     const redis = new URL(process.env.REDIS_URL);
+    assert.equal(redis.protocol, 'redis:');
     assert.equal(redis.hostname, '127.0.0.1');
-    assert.equal(redis.port, '56379');
+    assert.ok(redis.port, 'Set the port of a dedicated loopback Redis fixture');
     const auth = readAuthConfig(process.env);
     assert.ok(auth);
     origin = auth.appOrigin;
@@ -89,11 +90,11 @@ function send(route, actor, body, key = randomUUID()) {
     });
 }
 
-function upload(bytes, name = 'products.csv', type = 'text/csv') {
+function upload(bytes, name = 'products.csv', type = 'text/csv', key) {
     const form = new globalThis.FormData();
     form.set('purpose', 'product_import');
     form.set('file', new Blob([bytes], { type }), name);
-    return send(path(shopA, 'uploads'), ownerA, form);
+    return send(path(shopA, 'uploads'), ownerA, form, key);
 }
 
 function startPreview(fileId, duplicateStrategy = 'reject', key) {
@@ -180,11 +181,28 @@ test('SC-017: uploads quarantine invalid spreadsheets and catalog changes invali
     const bad = await json(await upload('sku,name,price\nA,B,30', 'fake.xlsx', 'application/octet-stream'), 201, 'FileObjectResponse');
     assert.equal(bad.status, 'quarantined');
     assert.equal(bad.readUrl, null);
+    assert.equal(bad.rejectionReason, 'invalid_format');
     await json(await startPreview(bad.id), 404, 'Problem');
+    const key = randomUUID();
+    const rows = 'sku,name,price\n' + 'A,B,30\n'.repeat(1001);
+    const limited = await json(await upload(rows, 'limit.csv', 'text/csv', key), 201, 'FileObjectResponse');
+    assert.equal(limited.status, 'quarantined');
+    assert.equal(limited.readUrl, null);
+    assert.equal(limited.rejectionReason, 'spreadsheet_limit');
+    const get = actor => request(path(shopA, 'uploads/' + limited.id), actor);
+    assert.deepEqual(await json(await get(ownerA), 200, 'FileObjectResponse'), limited);
+    assert.deepEqual(await json(await upload(rows, 'limit.csv', 'text/csv', key), 201, 'FileObjectResponse'), limited);
+    await json(await get(ownerB), 404, 'Problem');
+    await json(await get(reader), 404, 'Problem');
+    await json(await startPreview(limited.id), 404, 'Problem');
+    assert.equal(await db.fileBlob.count({ where: { shopId: shopA.id, fileId: limited.id } }), 0);
+    const audit = await db.auditEntry.findMany({ where: { shopId: shopA.id, action: 'uploadFile', resourceId: limited.id } });
+    assert.deepEqual(audit.map(entry => entry.metadata.rejectionReason), ['spreadsheet_limit']);
     const oversized = Buffer.alloc(5 * 1024 * 1024 + 1, 'x');
     await json(await upload(oversized), 413, 'Problem');
     const sku = 'BE08-STALE-' + randomUUID();
     const file = await json(await upload('sku,name,price\n' + sku + ',Mẫu,10000\n'), 201, 'FileObjectResponse');
+    assert.equal(file.rejectionReason, undefined);
     const job = await json(await startPreview(file.id), 202, 'JobResponse');
     const preview = await getJob(job.id, 'awaiting_confirmation');
     await json(await send(path(shopA, 'categories'), ownerA, { name: 'BE08 ' + randomUUID(), parentId: null }), 201, 'CategoryResponse');

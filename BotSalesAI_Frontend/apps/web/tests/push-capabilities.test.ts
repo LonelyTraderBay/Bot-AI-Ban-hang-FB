@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { assertPushCapability, assertPushPermissionGranted } from '../src/modules/notifications/push-capabilities';
+import { assertPushCapability, assertPushPermissionGranted, describePushAvailability } from '../src/modules/notifications/push-capabilities';
 
 describe('Push registration guards', () => {
     it('rejects insecure or unsupported browser contexts before creating a subscription', () => {
@@ -13,5 +13,20 @@ describe('Push registration guards', () => {
         expect(() => assertPushPermissionGranted('granted')).not.toThrow();
         expect(() => assertPushPermissionGranted('denied')).toThrow(/Không đánh dấu thiết bị đang hoạt động/);
         expect(() => assertPushPermissionGranted('default')).toThrow(/Không đánh dấu thiết bị đang hoạt động/);
+    });
+
+    it('reports browser, build configuration and permission state before asking for notification access', () => {
+        const supported = { secureContext: true, serviceWorker: true, pushManager: true, notification: true };
+        expect(describePushAvailability({ ...supported, notification: false }, true, 'default')).toMatchObject({ available: false });
+        expect(describePushAvailability(supported, false, 'granted')).toMatchObject({ available: false });
+        expect(describePushAvailability(supported, true, 'denied')).toEqual({
+            available: false, message: 'Trình duyệt đã chặn thông báo. Mở quyền của trang để cấp lại.',
+        });
+        expect(describePushAvailability(supported, true, 'default')).toEqual({
+            available: true, message: 'Trình duyệt có thể xin quyền nhận thông báo.',
+        });
+        expect(describePushAvailability(supported, true, 'granted')).toEqual({
+            available: true, message: 'Trình duyệt đã cấp quyền thông báo.',
+        });
     });
 });

@@ -62,7 +62,9 @@ test('FE017.AC01 demo publishing uses the approved permission and lifecycle subs
     const evaluation = (await evaluationResponse.json()).data;
     expect(evaluation).toMatchObject({ status: 'passed', knowledgeRevisionId: initial.draftRevisionId, mockOnly: true });
 
-    await page.getByRole('dialog', { name: 'Chi tiết đánh giá' }).getByText('Đóng', { exact: true }).click();
+    const evaluationDetails = page.getByRole('dialog', { name: 'Chi tiết đánh giá' });
+    await evaluationDetails.getByRole('button', { name: 'Đóng', exact: true }).click();
+    await expect(evaluationDetails).toBeHidden();
     await page.getByRole('navigation', { name: 'Điều hướng chính' }).getByRole('link', { name: 'Kiến thức cửa hàng' }).click();
     await page.getByRole('link', { name: 'Chính sách đổi hàng' }).click();
     await expect(page.getByText('Chờ duyệt', { exact: true })).toBeVisible();
@@ -112,6 +114,15 @@ test('FE017.AC01 demo publishing uses the approved permission and lifecycle subs
     const restored = await page.evaluate(async () => (await (await fetch('/api/v2/shops/shop-demo/knowledge/k3')).json()).data);
     expect(restored).toMatchObject({ status: 'draft', publishedRevisionId: initial.draftRevisionId });
     expect(restored.draftRevisionId).not.toBe(restored.publishedRevisionId);
+    await page.getByRole('button', { name: 'Ngừng sử dụng', exact: true }).click();
+    const retireDialog = page.getByRole('dialog', { name: 'Ngừng sử dụng kiến thức' });
+    await retireDialog.getByRole('textbox').fill('Ngừng bản đang chạy và giữ lại bản nháp.');
+    const retireResponse = page.waitForResponse(response => response.request().method() === 'POST' && new URL(response.url()).pathname.endsWith('/knowledge/k3/retire'));
+    await retireDialog.getByRole('button', { name: 'Ngừng sử dụng nguồn', exact: true }).click();
+    expect((await retireResponse).status()).toBe(202);
+    await expect(page.getByRole('button', { name: 'Ngừng sử dụng', exact: true })).toBeDisabled();
+    const retired = await page.evaluate(async () => (await (await fetch('/api/v2/shops/shop-demo/knowledge/k3')).json()).data);
+    expect(retired).toMatchObject({ status: 'draft', publishedRevisionId: null, draftRevisionId: restored.draftRevisionId });
 });
 
 test('FE017.AC02 knowledge file upload sends canonical purpose and detail reads processing status', async ({ page }) => {
@@ -209,10 +220,11 @@ test('FE017.AC03 missing content, unsupported and oversized files keep creation 
 });
 
 test('FE017.AC04 feedback approval creates inert draft content and its first revision only', async ({ page }) => {
+    const original = 'Phản hồi tổng hợp có số thử 202-555-0100.';
     await gotoDemo(page, '/s/shop-demo/inbox/cv1');
     await page.getByRole('button', { name: /^Đánh giá tin nhắn/ }).first().click();
     const feedbackDialog = page.getByRole('dialog', { name: 'Đánh giá câu trả lời' });
-    await feedbackDialog.getByRole('textbox', { name: 'Nội dung đề xuất sửa' }).fill('Nên kiểm tra điều kiện đổi hàng trước khi tư vấn.');
+    await feedbackDialog.getByRole('textbox', { name: 'Nội dung đề xuất sửa' }).fill(original);
     const feedbackResponseWait = page.waitForResponse(response => response.request().method() === 'POST' && new URL(response.url()).pathname.endsWith('/feedback'));
     await feedbackDialog.getByRole('button', { name: 'Lưu phản hồi', exact: true }).click();
     const feedbackResponse = await feedbackResponseWait;
@@ -223,9 +235,12 @@ test('FE017.AC04 feedback approval creates inert draft content and its first rev
     await page.getByRole('navigation', { name: 'Điều hướng chính' }).getByRole('link', { name: 'Phản hồi cần duyệt' }).click();
     await page.getByRole('button', { name: 'Duyệt nội dung' }).click();
     const reviewDialog = page.getByRole('dialog', { name: 'Kiểm tra phản hồi' });
+    await expect(reviewDialog.getByText(original, { exact: true })).toBeVisible();
+    await expect(reviewDialog.getByRole('textbox', { name: 'Nội dung đã loại dữ liệu riêng tư' })).toHaveValue('');
+    await reviewDialog.getByRole('textbox', { name: 'Lý do' }).fill('Đã rà soát và loại thông tin riêng tư.');
+    await expect(reviewDialog.getByRole('button', { name: 'Lưu kết quả', exact: true })).toBeDisabled();
     const inertMarkup = '<img src=x onerror=alert(1)> nội dung đã duyệt';
     await reviewDialog.getByRole('textbox', { name: 'Nội dung đã loại dữ liệu riêng tư' }).fill(inertMarkup);
-    await reviewDialog.getByRole('textbox', { name: 'Lý do' }).fill('Đã rà soát và loại thông tin riêng tư.');
     const reviewResponseWait = page.waitForResponse(response => response.request().method() === 'POST' && new URL(response.url()).pathname.endsWith(`/feedback/${feedback.id}/review`));
     await reviewDialog.getByRole('button', { name: 'Lưu kết quả', exact: true }).click();
     const reviewResponse = await reviewResponseWait;

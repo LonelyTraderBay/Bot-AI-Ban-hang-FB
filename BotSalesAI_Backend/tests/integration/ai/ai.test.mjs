@@ -19,6 +19,7 @@ import { readAuthConfig, requireShopAccess } from '../../../apps/api/dist/module
 import { Database } from '../../../apps/api/dist/platform/database/client.js';
 import { runJob } from '../../../apps/api/dist/platform/jobs/index.js';
 import { fixtureShops } from '../../../apps/api/prisma/p0-fixture.mjs';
+import { fixtureWriter } from '../orders/fixtures.mjs';
 import { assertFixtureDatabase, fixtureSession } from '../workspace/session-fixture.mjs';
 
 const [shop, secondShop] = fixtureShops;
@@ -43,7 +44,7 @@ async function response(res, status, schema) {
     if (!schema) return value;
     const check = validate.compile(schemaFromContract(schema));
     assert.equal(check(value), true, JSON.stringify(check.errors));
-    return value.data;
+    return schema === 'Problem' ? value : value.data;
 }
 
 function request(path, schema, { actor = owner, shop = shopId, method = 'GET', body, status = 200, version, key = randomUUID() } = {}) {
@@ -57,6 +58,27 @@ function request(path, schema, { actor = owner, shop = shopId, method = 'GET', b
     }).then(res => response(res, status, schema));
 }
 const post = (path, body, schema, options = {}) => request(path, schema, { method: 'POST', body, ...options });
+const auditMetadataPath = (field, value) => ({ path: [field], equals: value });
+async function assertBotAuditContext(record, liveRevision, actorKind, result) {
+    const revision = await db.botRevision.findUniqueOrThrow({ where: { shopId_revision: { shopId, revision: liveRevision } },
+        include: { connection: true, evaluation: true } });
+    assert.equal(record.actorId, revision.approvedBy);
+    assert.equal(record.metadata.actorKind, actorKind, 'Audit identifies whether a person or agent initiated the action');
+    assert.equal(record.metadata.result, result);
+    assert.equal(record.metadata.policyVersion, revision.evaluation.policyVersion);
+    assert.equal(record.metadata.configRevision, revision.revision);
+    assert.equal(record.metadata.configHash, revision.evaluation.configHash);
+    assert.deepEqual(record.metadata.knowledgeRevisionIds, revision.knowledgeRevisionIds);
+    assert.equal(record.metadata.connectionId, revision.connectionId);
+    assert.equal(record.metadata.connectionVersion, revision.connection.version);
+    assert.equal(Number.isSafeInteger(record.metadata.resourceVersion), true);
+    if (actorKind === 'agent') {
+        assert.equal(record.metadata.agentKind, 'sales_admin');
+        const scope = await db.membership.findUniqueOrThrow({ where: { shopId_userId: { shopId, userId: record.actorId } } });
+        assert.equal(record.metadata.permissionVersion, scope.permissionVersion);
+    }
+}
+
 const patch = (path, body, schema, options = {}) => request(path, schema, { method: 'PATCH', body, ...options });
 
 async function settle(id, services) {
@@ -155,6 +177,13 @@ test('T069 R30: OpenAI model metadata is verified under the approved shop, proje
     assert.equal((await settle(uncertain.id, timedOut)).status, 'awaiting_confirmation');
     assert.equal(calls, 3);
 
+    const redirected = await queue();
+    const unapprovedRedirect = service(() => new globalThis.Response(null, { status: 302,
+        headers: { location: 'https://example.invalid/' } }));
+    assert.equal((await settle(redirected.id, unapprovedRedirect)).status, 'awaiting_confirmation');
+    assert.equal((await settle(redirected.id, unapprovedRedirect)).status, 'awaiting_confirmation');
+    assert.equal(calls, 4);
+
     const stale = await queue();
     const oldResult = service(async () => {
         const current = await request(path, 'AIConnectionResponse');
@@ -163,9 +192,11 @@ test('T069 R30: OpenAI model metadata is verified under the approved shop, proje
     });
     assert.equal((await settle(stale.id, oldResult)).status, 'failed');
     assert.equal((await request(path, 'AIConnectionResponse')).status, 'unconfigured');
-    assert.equal(calls, 4);
-    const evidence = await db.job.findMany({ where: { shopId, id: { in: [job.id, rejected.id, stopped.id, uncertain.id, stale.id] } } });
+    assert.equal(calls, 5);
+    const evidence = await db.job.findMany({ where: { shopId, id: { in: [job.id, rejected.id, stopped.id, uncertain.id, redirected.id, stale.id] } } });
     assert.doesNotMatch(JSON.stringify(evidence), /synthetic-probe-|proj_syntheticvalidation/);
+    console.log(JSON.stringify({ status: 'SC048_DESTINATION_AND_SECRET_GUARD', customEndpointHttp: 422,
+        redirectPolicy: 'error', redirectOutcome: 'awaiting_confirmation', foreignRequests: 0, maskedSecret: true }));
 });
 
 after(async () => {
@@ -297,10 +328,36 @@ test('SC-043 SC-044 SC-045 SC-046 checks sources, budget, async publication, res
     assert.equal(outdated.status, 'passed');
     assert.equal(outdated.totalCases, 5);
     assert.ok((await request(evaluatePath + '?status=passed&q=' + datasetVersion, 'EvaluationListResponse')).some(row => row.id === outdated.id));
+    const spent = await currentDraft(0);
+    const spentProof = await evaluate(spent.config.draftRevision);
+    const blockedBudget = { expectedVersion: spent.config.version, draftRevision: spent.config.draftRevision, evaluationRunId: spentProof.id,
+        reason: 'Kiểm cấu hình hết ngân sách sau các lượt dùng thử' };
+    assert.equal((await post(bot + '/publish', blockedBudget, 'Problem', { status: 409 })).code, 'BUDGET_EXCEEDED');
+    assert.equal((await request(bot, 'BotConfigResponse')).liveRevision, spent.config.liveRevision);
     const next = await currentDraft(20);
     await post(bot + '/publish', { expectedVersion: next.config.version, draftRevision: next.config.draftRevision, evaluationRunId: outdated.id,
         reason: 'Chặn bằng chứng khác phiên bản' }, 'Problem', { status: 409 });
     const proof = await evaluate(next.config.draftRevision);
+    const checkedInput = { expectedVersion: next.config.version, draftRevision: next.config.draftRevision, evaluationRunId: proof.id,
+        reason: 'Kiểm lại điều kiện tại API và worker' };
+    await post(bot + '/publish', checkedInput, 'Problem', { actor: viewer, status: 403 });
+    const evaluationKey = { shopId_id: { shopId, id: proof.id } };
+    await db.evaluation.update({ where: evaluationKey, data: { status: 'failed', criticalFailures: 1, passedCases: proof.passedCases - 1 } });
+    await post(bot + '/publish', checkedInput, 'Problem', { status: 409 });
+    await db.evaluation.update({ where: evaluationKey, data: { status: 'passed', criticalFailures: 0, passedCases: proof.passedCases } });
+    const queued = await post(bot + '/publish', checkedInput, 'CommandResponse', { status: 202 });
+    const queuedJob = await db.job.findUniqueOrThrow({ where: { shopId_commandId: { shopId, commandId: queued.id } } });
+    const usageKey = { shopId_accountingDate: { shopId, accountingDate: date } };
+    await db.botDailyUsage.update({ where: usageKey, data: { spent: next.config.dailyBudget.amount } });
+    try {
+        assert.equal((await settle(queuedJob.id)).status, 'failed');
+        assert.equal((await request('commands/' + queued.id, 'CommandResponse')).status, 'failed');
+        assert.equal((await request(bot, 'BotConfigResponse')).liveRevision, next.config.liveRevision);
+    } finally {
+        await db.botDailyUsage.update({ where: usageKey, data: { spent: usage.spent } });
+    }
+    console.log(JSON.stringify({ status: 'SC045_PUBLICATION_GATES_VERIFIED', exhaustedHttp: 409, noPermission: 403,
+        criticalFailureHttp: 409, budgetChangedBeforeWorker: 'failed', liveUnchanged: true }));
     const settled = await publish(next.config, proof);
     assert.equal(settled.status, 'succeeded');
     const live = await request(bot, 'BotConfigResponse');
@@ -309,11 +366,22 @@ test('SC-043 SC-044 SC-045 SC-046 checks sources, budget, async publication, res
     const revisions = await request('bot/revisions?status=active', 'BotRevisionListResponse');
     assert.deepEqual(revisions.map(row => row.revision), [live.liveRevision]);
     const previous = await request('bot/revisions/' + String(first.draftRevision), 'BotRevisionResponse');
+    const auditWhere = { shopId, action: 'botConfigPublished', resourceId: shopId, metadata: auditMetadataPath('evaluationRunId', proof.id) };
+    const recordedPublication = await db.auditEntry.findFirstOrThrow({ where: auditWhere });
     const restored = await post('bot/revisions/' + previous.id + '/restore', { expectedVersion: live.version, reason: 'Phục hồi vào bản nháp' },
         'BotRevisionResponse', { status: 201 });
     assert.equal(restored.revision, live.draftRevision + 1);
     assert.equal((await request(bot, 'BotConfigResponse')).liveRevision, live.liveRevision);
     await request('bot/revisions/' + previous.id, 'Problem', { actor: other, shop: secondShop.id, status: 404 });
+    await assertBotAuditContext(recordedPublication, live.liveRevision, 'user', 'published');
+    assert.equal(recordedPublication.metadata.resourceVersion, live.version);
+    assert.equal(recordedPublication.metadata.reason, 'Duyệt đúng dấu vết bộ ca tổng hợp');
+    assert.deepEqual(await db.auditEntry.findMany({ where: auditWhere }), [recordedPublication]);
+    const projection = await request('audit?q=' + encodeURIComponent(recordedPublication.requestId), 'AuditEventListResponse');
+    assert.ok(projection.some(row => row.id === recordedPublication.id && row.actorId === owner.userId));
+    assert.equal(projection.some(row => Object.hasOwn(row, 'metadata')), false);
+    console.log(JSON.stringify({ status: 'SC2_H06_PUBLICATION_CONTEXT', immutable: true, actorKind: 'user',
+        policyBound: true, configBound: true, knowledgeBound: true, resultBound: true, privateMetadataReturned: false }));
 });
 
 async function incoming(input) {
@@ -364,6 +432,15 @@ test('SC2-B02 SC2-B03 SC2-B04 SC2-H03 sends fixture reply, creates one shared dr
     assert.equal(sent[0].status, 'sent');
     assert.equal(sent[0].senderKind, 'bot');
     assert.ok(sent[0].sourceEvidence.some(row => row.type === 'order' && row.id === orders[0].id));
+    const live = await request(bot, 'BotConfigResponse');
+    const agentDrafts = await db.auditEntry.findMany({ where: { shopId, resourceId: orders[0].id, action: 'createOrder' } });
+    assert.equal(agentDrafts.length, 1);
+    await assertBotAuditContext(agentDrafts[0], live.liveRevision, 'agent', 'draft_created');
+    assert.equal(agentDrafts[0].metadata.resourceVersion, orders[0].version);
+    const agentMessage = await db.auditEntry.findFirstOrThrow({ where: { shopId, resourceId: sent[0].id, action: 'sendMessage' } });
+    await assertBotAuditContext(agentMessage, live.liveRevision, 'agent', 'queued');
+    console.log(JSON.stringify({ status: 'SC2_H06_AGENT_CONTEXT', mode: 'fixture', actorKind: 'agent',
+        draft: true, message: true, policyBound: true, configBound: true, knowledgeBound: true, permissionBound: true }));
 
     const task = await incoming(input('SKU ' + variant.sku, 1000));
     const membership = { shopId_userId: { shopId, userId: owner.userId } };
@@ -380,6 +457,154 @@ test('SC2-B02 SC2-B03 SC2-B04 SC2-H03 sends fixture reply, creates one shared dr
     assert.equal(await db.workItem.count({ where: { shopId, kind: 'customer_handoff', sourceId: conversation.id } }), 1);
     await dispatchMessengerMessages(db, config);
     assert.equal((await request(path + '/messages', 'MessageListResponse')).filter(message => message.direction === 'outbound').length, 1);
+});
+
+test('SC2-B06: signed after-sales requests bind tracking and one return case to the confirmed customer', async () => {
+    const admin = fixtureWriter();
+    let providerCalls = 0;
+    const transport = () => { providerCalls++; throw new Error('Fixture after-sales must stay local'); };
+    const process = () => processBotInbound(db, config, undefined, transport);
+    const dispatch = () => dispatchMessengerMessages(db, config, undefined, transport);
+    const channel = await db.channelConnection.findUniqueOrThrow({ where: { shopId_provider_pageId: {
+        shopId, provider: 'messenger', pageId: 'fixture-' + shopId,
+    } } });
+    const event = (thread, text) => ({ ...thread, type: 'message', pageId: channel.pageId, generation: channel.generation,
+        displayName: 'Khách tổng hợp sau bán', eventId: randomUUID(), messageId: randomUUID(), occurredAt: new Date().toISOString(), text });
+    const openThread = async () => {
+        const thread = { senderId: randomUUID(), conversationId: randomUUID() };
+        await incoming(event(thread, 'Chào cửa hàng'));
+        const row = await db.channelConversation.findUniqueOrThrow({ where: { shopId_channelId_externalId: {
+            shopId, channelId: channel.id, externalId: thread.conversationId,
+        } } });
+        return { thread, row, path: 'conversations/' + row.id };
+    };
+    const release = async context => {
+        const current = () => request(context.path, 'ConversationResponse');
+        const initial = await current();
+        if (initial.mode !== 'human') await post(context.path + '/takeover', { expectedVersion: initial.version, reason: 'Chuẩn bị hội thoại thử' },
+            'CommandResponse', { status: 202 });
+        await post(context.path + '/release', { expectedVersion: (await current()).version, reason: 'Mở bot cho ca sau bán' },
+            'CommandResponse', { status: 202 });
+    };
+    try {
+        const customer = await openThread();
+        const address = await post('customers/' + customer.row.customerId + '/addresses', { label: 'Fixture', recipient: 'Người nhận tổng hợp',
+            phone: '0900000333', line1: 'Địa chỉ thử', ward: null, district: null, province: 'Hà Nội', postalCode: null, countryCode: 'VN',
+        }, 'CustomerAddressResponse', { status: 201 });
+        const order = await post('orders', { customerId: customer.row.customerId, conversationId: customer.row.id,
+            warehouseId: shop.defaultWarehouseId, shippingAddressId: address.id, notes: '', paymentMethod: 'cod',
+            lines: [{ variantId: variant.id, quantity: 1 }],
+        }, 'OrderResponse', { status: 201 });
+        const quote = await post('orders/' + order.id + '/quote', undefined, 'OrderQuoteResponse');
+        const confirmedBy = await incoming(event(customer.thread, '[CONFIRM:' + quote.id + ':' + quote.quoteHash + ']'));
+        const verification = await post('orders/' + order.id + '/customer-confirmations', { quoteId: quote.id, quoteVersion: quote.orderVersion,
+            quoteHash: quote.quoteHash, customerIdentityId: customer.row.customerIdentityId, sourceMessageId: confirmedBy.data.messageId,
+        }, 'CustomerConfirmationResponse');
+        await post('orders/' + order.id + '/confirm', { expectedVersion: order.version, quoteId: quote.id, customerConfirmationId: verification.id },
+            'CommandResponse', { status: 202 });
+        const prep = await db.prepJob.findUniqueOrThrow({ where: { shopId_orderId: { shopId, orderId: order.id } }, include: { workItem: true } });
+        await post('work-items/' + prep.workItemId + '/claim', { expectedVersion: prep.workItem.version }, 'WorkItemResponse');
+        const picked = await post('prep-jobs/' + prep.id + '/pick', { expectedVersion: prep.version, orderLineId: order.lines[0].id,
+            scannedSku: variant.sku, pickedQuantity: 1, issueReason: null }, 'PrepJobResponse');
+        await post('prep-jobs/' + prep.id + '/pack', { expectedVersion: picked.version }, 'PrepJobResponse');
+        const date = localAccountingDate(new Date(), shop.timezone);
+        if (!await db.accountingPeriod.findFirst({ where: { shopId, startDate: { lte: new Date(date) }, endDate: { gte: new Date(date) } } })) {
+            await post('periods', { startDate: date, endDate: date, reason: 'Kỳ thử hành trình sau bán' }, 'AccountingPeriodResponse', { status: 201 });
+        }
+        const shipment = await post('shipments', { orderId: order.id, warehouseId: shop.defaultWarehouseId, carrierId: null,
+            orderLineIds: [order.lines[0].id] }, 'ShipmentResponse', { status: 201 });
+        await post('shipments/' + shipment.id + '/handover', { expectedVersion: shipment.version }, 'CommandResponse', { status: 202 });
+        await release(customer);
+
+        const lookup = await incoming(event(customer.thread, 'TRA ĐƠN ' + order.id));
+        await process();
+        await dispatch();
+        const outgoing = messageId => db.channelMessage.findUnique({ where: { shopId_conversationId_clientMessageId: {
+            shopId, conversationId: customer.row.id, clientMessageId: 'bot-' + messageId,
+        } }, include: { dispatch: true } });
+        const tracked = await outgoing(lookup.data.messageId);
+        assert.ok(tracked, 'Verified customer receives order tracking');
+        assert.equal(tracked.status, 'sent');
+        assert.match(tracked.text, /Vận đơn gần nhất đã bàn giao/);
+        assert.equal(tracked.dispatch.afterSalesRequestId, lookup.data.messageId);
+        assert.deepEqual(tracked.sourceEvidence, [{ type: 'order', id: order.id }, { type: 'shipment', id: shipment.id }]);
+        assert.ok(!tracked.text.includes(order.id) && !tracked.text.includes(address.phone));
+
+        const financeCounts = async () => [await db.financeEntry.count({ where: { shopId, orderId: order.id } }),
+            await db.orderReturn.count({ where: { shopId, orderId: order.id } })];
+        const before = await financeCounts();
+        const intakeEvent = event(customer.thread, 'YÊU CẦU TRẢ ' + order.id);
+        const intake = await incoming(intakeEvent);
+        assert.equal((await incoming(intakeEvent)).data.duplicate, true);
+        await Promise.all([process(), process()]);
+        await dispatch();
+        const acknowledgement = await outgoing(intake.data.messageId);
+        assert.equal(acknowledgement.status, 'sent');
+        assert.match(acknowledgement.text, /Nhân viên sẽ kiểm tra/);
+        assert.doesNotMatch(acknowledgement.text, /hoàn tiền|đã duyệt/i);
+        await incoming(event(customer.thread, 'YÊU CẦU TRẢ ' + order.id));
+        await process();
+        await dispatch();
+        const cases = await db.serviceCase.findMany({ where: { shopId, orderId: order.id } });
+        assert.equal(cases.length, 1);
+        assert.equal(cases[0].customerId, customer.row.customerId);
+        assert.equal(cases[0].kind, 'return_request');
+        assert.equal(cases[0].state, 'open');
+        assert.ok(cases[0].workItemId);
+        assert.equal((await request('service-cases/' + cases[0].id, 'ServiceCaseResponse')).orderId, order.id);
+        await request('service-cases/' + cases[0].id, 'Problem', { actor: other, shop: secondShop.id, status: 404 });
+        assert.deepEqual(await financeCounts(), before);
+
+        const stranger = await openThread();
+        await release(stranger);
+        const wrongCustomer = await incoming(event(stranger.thread, 'TRA ĐƠN ' + order.id));
+        await process();
+        assert.equal((await db.botInboundTask.findUniqueOrThrow({ where: { shopId_messageId: { shopId, messageId: wrongCustomer.data.messageId } } })).outcome,
+            'after_sales_handoff');
+        assert.equal(await db.channelMessage.count({ where: { shopId, conversationId: stranger.row.id, direction: 'outbound' } }), 0);
+
+        const verifyAgain = await incoming(event(customer.thread, 'TRA ĐƠN ' + order.id));
+        await process();
+        assert.equal((await outgoing(verifyAgain.data.messageId)).status, 'queued');
+        await admin.channelMessage.update({ where: { shopId_id: { shopId, id: verifyAgain.data.messageId } },
+            data: { text: 'Đã ẩn nội dung', redactedAt: new Date() } });
+        await dispatch();
+        assert.equal((await outgoing(verifyAgain.data.messageId)).status, 'failed');
+        assert.equal(providerCalls, 0);
+        console.log(JSON.stringify({ status: 'SC2_B06_VERIFIED_AFTER_SALES', tracking: true, caseCount: 1, duplicateMessage: true, repeatedIntake: true,
+            wrongCustomerReplies: 0, foreignCaseStatus: 404, redactedDispatchStatus: 'failed', paymentAndReturnsUnchanged: true, providerCalls }));
+    } finally {
+        await admin.$disconnect();
+    }
+});
+
+test('SC2-F08: approved feedback identifies the evaluated revision without returning correction text', async () => {
+    const message = await db.channelMessage.findFirstOrThrow({
+        where: { shopId, direction: 'outbound', senderKind: 'bot', status: 'sent', redactedAt: null },
+        select: { id: true, conversationId: true },
+    });
+    const original = 'Địa chỉ thử review@example.invalid cần được loại khỏi nguồn.';
+    const redactedCorrection = 'Đối chiếu tình trạng hàng với nhân viên phụ trách.';
+    const feedback = await post('feedback', { conversationId: message.conversationId, messageId: message.id,
+        rating: 'negative', correction: original }, 'FeedbackResponse', { status: 201 });
+    await post('feedback/' + feedback.id + '/review', { expectedVersion: feedback.version, decision: 'approve',
+        reason: 'Đã đọc và lược thông tin liên hệ tổng hợp', redactedCorrection }, 'FeedbackResponse');
+    const { id } = await db.knowledgeDocument.findUniqueOrThrow({ where: { shopId_feedbackId: { shopId, feedbackId: feedback.id } },
+        select: { id: true } });
+    const path = 'knowledge/' + id;
+    const draft = await request(path, 'KnowledgeResponse');
+    const indexed = await post(path + '/submit-review', { expectedVersion: draft.version, reason: 'Kiểm nguồn đã tiếp nhận phản hồi' },
+        'JobResponse', { status: 202 });
+    assert.equal((await settle(indexed.id)).status, 'succeeded');
+    const knowledge = await request(path, 'KnowledgeResponse');
+    const evaluation = await evaluate(1, knowledge.draftRevisionId);
+    assert.deepEqual([evaluation.status, evaluation.plannedCases, evaluation.totalCases, evaluation.passedCases], ['passed', 4, 4, 4]);
+    assert.equal(evaluation.knowledgeRevisionId, knowledge.draftRevisionId);
+    assert.equal(evaluation.humanCorrection, true);
+    assert.equal(evaluation.source, 'local_fixture');
+    const response = JSON.stringify(evaluation);
+    assert.ok(!response.includes(original) && !response.includes(redactedCorrection) && !response.includes(feedback.id));
+    console.log(JSON.stringify({ status: 'SC2_F08_CORRECTION_SOURCE', correctionReviewed: true, revisionBound: true, evaluated: 4, privateTextReturned: false }));
 });
 
 test('T069 R28: a pinned synthetic evaluation consumes its approval once and preserves incomplete outcomes', async () => {
@@ -431,6 +656,7 @@ test('T069 R28: a pinned synthetic evaluation consumes its approval once and pre
         const queue = () => post(evaluatePath, input, 'EvaluationResponse', { status: 202, key });
         const [queued, replay] = await Promise.all([queue(), queue()]);
         assert.equal(queued.id, replay.id);
+        assert.equal(queued.plannedCases, synthetic.cases.length + 5, 'Evaluation lists its registered sample count before work begins');
         await post(evaluatePath, input, 'Problem', { status: 409 });
         let calls = 0;
         const requestProvider = async (url, init) => {
@@ -456,6 +682,15 @@ test('T069 R28: a pinned synthetic evaluation consumes its approval once and pre
         assert.equal(calls, synthetic.cases.length * 2);
         const result = await request(evaluatePath + '/' + queued.id, 'EvaluationResponse');
         assert.deepEqual([result.status, result.passedCases, result.totalCases, result.configHash], ['passed', 13, 13, binding.configHash]);
+        assert.equal(result.plannedCases, result.totalCases);
+        assert.equal(result.source, 'approved_synthetic');
+        assert.equal(result.humanCorrection, null);
+        const measured = result.cases.filter(item => item.estimatedCostUsd !== undefined);
+        assert.equal(measured.length, synthetic.cases.length);
+        assert.ok(measured.every(item => item.estimatedCostUsd === '0.002128' && Number.isSafeInteger(item.latencyMs) && item.latencyMs >= 0));
+        assert.ok(result.cases.slice(measured.length).every(item => item.latencyMs === undefined && item.estimatedCostUsd === undefined));
+        assert.doesNotMatch(JSON.stringify(result.cases), /TEST-SKU|proj_syntheticvalidation|synthetic-evaluation-/);
+        await request(evaluatePath + '/' + result.id, 'Problem', { actor: other, shop: secondShop.id, status: 404 });
         const stored = await db.evaluation.findUniqueOrThrow({ where: { approvalRunId: approved.plan.approval.runId } });
         assert.equal(stored.fixture, false);
         const records = await db.auditEntry.findMany({ where: { shopId, requestId: queued.reportJobId } });
@@ -466,18 +701,31 @@ test('T069 R28: a pinned synthetic evaluation consumes its approval once and pre
             evaluationRunId: result.id, reason: 'Chưa có adapter tác nghiệp được duyệt' }, 'Problem', { status: 409 });
     });
 
-    for (const generation of [() => { throw new Error(secret); }, () => responseFor({ oversized: 'x'.repeat(66_000) })]) {
+    const interruptedResponses = [
+        { observed: 1, fail: () => { throw new Error(secret); } },
+        { observed: 0, fail: () => responseFor({ oversized: 'x'.repeat(66_000) }) },
+    ];
+    for (const { observed, fail } of interruptedResponses) {
         const interrupted = approveRun();
         await withApproval(interrupted, async () => {
             const queued = await post(evaluatePath, input, 'EvaluationResponse', { status: 202 });
             let calls = 0;
             const services = { db, openAi, approval: interrupted, request: async () => {
-                return ++calls === 1 ? responseFor({ object: 'response.input_tokens', input_tokens: 400 }) : generation();
+                if (++calls % 2) return responseFor({ object: 'response.input_tokens', input_tokens: 400 });
+                if (calls > observed * 2) return fail();
+                const differentAnswer = synthetic.cases.find(item => item.expected !== synthetic.cases[0].expected).expected;
+                return responseFor({ object: 'response', model, service_tier: 'default', status: 'completed',
+                    usage: { input_tokens: 400, output_tokens: 16, total_tokens: 416 },
+                    output: [{ type: 'message', role: 'assistant', content: [{ type: 'output_text',
+                        text: JSON.stringify({ decision: differentAnswer }) }] }] });
             } };
             assert.equal((await settle(queued.reportJobId, services)).status, 'awaiting_confirmation');
             assert.equal((await settle(queued.reportJobId, services)).status, 'awaiting_confirmation');
-            assert.equal(calls, 2);
-            assert.equal((await request(evaluatePath + '/' + queued.id, 'EvaluationResponse')).status, 'error');
+            assert.equal(calls, (observed + 1) * 2);
+            const result = await request(evaluatePath + '/' + queued.id, 'EvaluationResponse');
+            assert.deepEqual([result.status, result.totalCases, result.plannedCases], ['error', observed, synthetic.cases.length + 5]);
+            assert.equal(result.cases.length, observed);
+            assert.ok(result.cases.every(item => !item.passed && item.critical && item.estimatedCostUsd === '0.002128'));
             await post(evaluatePath, input, 'Problem', { status: 409 });
         });
     }
@@ -497,7 +745,7 @@ test('T069 R28: a pinned synthetic evaluation consumes its approval once and pre
     });
 });
 
-test('T072 Messenger: a scoped synthetic run creates one draft or hands off after an unknown result', async t => {
+test('SC-033 and T072 Messenger: discard a late result after takeover and handle a scoped synthetic run once', async t => {
     for (const flag of ['AI_FIXTURE_ADAPTER', 'MESSENGER_FIXTURE_ADAPTER']) {
         const previous = process.env[flag];
         delete process.env[flag];
@@ -505,15 +753,28 @@ test('T072 Messenger: a scoped synthetic run creates one draft or hands off afte
     }
     const json = data => new globalThis.Response(JSON.stringify(data));
     const { model, projectId, region } = providerGrant;
-    const output = decision => json({ object: 'response', model, service_tier: 'default', status: 'completed',
+    const output = (decision, items = [{ type: 'message', role: 'assistant', content: [{ type: 'output_text', text: JSON.stringify({ decision }) }] }]) => json({ object: 'response', model, service_tier: 'default', status: 'completed',
         usage: { input_tokens: 400, output_tokens: 16, total_tokens: 416 },
-        output: [{ type: 'message', role: 'assistant', content: [{ type: 'output_text', text: JSON.stringify({ decision }) }] }] });
+        output: items });
     const inputCount = () => json({ object: 'response.input_tokens', input_tokens: 400 });
     const secret = 'synthetic-runtime-' + randomUUID();
     const connection = await post(ai, { name: 'Kết nối kiểm luồng Messenger', providerId: 'openai', adapterId: 'openai', modelId: model,
         endpointUrl: null, credential: secret }, 'AIConnectionResponse', { status: 201 });
     const check = await post(ai + '/' + connection.id + '/test', undefined, 'JobResponse', { status: 202 });
     assert.equal((await settle(check.id, { db, openAi, request: async () => json({ id: model, object: 'model' }) })).status, 'succeeded');
+    const alternateSecret = 'synthetic-alternate-' + randomUUID();
+    const alternate = await post(ai, { name: 'Kết nối tổng hợp dự phòng ngoài phạm vi', providerId: 'openai', adapterId: 'openai',
+        modelId: model, endpointUrl: null, credential: alternateSecret }, 'AIConnectionResponse', { status: 201 });
+    const alternateCheck = await post(ai + '/' + alternate.id + '/test', undefined, 'JobResponse', { status: 202 });
+    assert.equal((await settle(alternateCheck.id, { db, openAi, request: async () => json({ id: model, object: 'model' }) })).status, 'succeeded');
+    assert.equal((await request(ai + '/' + alternate.id, 'AIConnectionResponse')).status, 'connected');
+    const botBefore = await request(bot, 'BotConfigResponse');
+    const playgroundRuns = () => db.playgroundRun.count({ where: { shopId } });
+    const beforeRuns = await playgroundRuns();
+    await post('bot/playground', { configRevision: botBefore.draftRevision, text: 'Yêu cầu tổng hợp không phê duyệt', customerContextId: null },
+        'Problem', { status: 422 });
+    assert.equal(await playgroundRuns(), beforeRuns);
+    console.log(JSON.stringify({ status: 'SC050_PLAYGROUND_PROVIDER_DISABLED', http: 422, persistedRuns: 0 }));
     const { sku, units } = stagingDraftIntent;
     const existingVariant = await db.variant.findFirst({ where: { shopId, sku } });
     const item = existingVariant ?? (await post('products', { name: sku, description: '', categoryId: null, status: 'active', imageFileIds: [],
@@ -534,7 +795,7 @@ test('T072 Messenger: a scoped synthetic run creates one draft or hands off afte
         return JSON.parse(result.stdout);
     };
     const dataset = stagingAiDataset();
-    for (const outcome of ['draft_proposal', 'provider_unknown', 'interrupted_after_claim']) {
+    for (const outcome of ['draft_proposal', 'provider_unknown', 'interrupted_after_claim', 'stale_staging_scope', 'provider_failed', 'stock_insufficient']) {
         const current = await request(bot, 'BotConfigResponse');
         const draft = await patch(bot, { connectionId: connection.id, instructions: 'Chỉ dùng dữ liệu thử Messenger ' + outcome,
             knowledgeRevisionIds: [], maxToolSteps: 2, dailyBudget: { amount: '10000', currency: shop.currency }, requireHumanOrderConfirmation: true,
@@ -601,6 +862,11 @@ test('T072 Messenger: a scoped synthetic run creates one draft or hands off afte
             };
             await receive(webhook('Tin khởi tạo', senderId));
             const conversationId = await releaseToBot(senderId);
+            const privateNote = 'private-fixture-' + randomUUID();
+            if (outcome === 'provider_unknown') {
+                const { customerId } = await conversation(senderId);
+                await db.customer.update({ where: { shopId_id: { shopId, id: customerId } }, data: { notes: privateNote } });
+            }
             if (outcome === 'draft_proposal') {
                 await receive(webhook('Tin khởi tạo khác', otherSender));
                 await releaseToBot(otherSender);
@@ -625,11 +891,19 @@ test('T072 Messenger: a scoped synthetic run creates one draft or hands off afte
             }
             const usage = await dailyUsage();
             const attempts = [];
+            const effects = async () => Promise.all([db.financeJournal.count({ where: { shopId } }), db.membership.count({ where: { shopId } }),
+                db.stockReservation.count({ where: { shopId } })]);
+            const beforeEffects = await effects();
+            let takeover;
             const transport = async (url, init) => {
                 const count = url.endsWith('/input_tokens');
                 attempts.push([url, init.headers['x-client-request-id']]);
                 assert.equal(init.headers.authorization, 'Bearer ' + secret);
-                assert.equal(JSON.parse(init.body).input, stagingDraftCase.input);
+                const payload = JSON.parse(init.body);
+                assert.equal(payload.input, stagingDraftCase.input);
+                assert.equal(payload.tools, undefined);
+                assert.ok(!init.body.includes(privateNote));
+                assert.ok(!init.headers.authorization.includes(alternateSecret));
                 assert.ok((await task()).externalStartedAt);
                 if (count) {
                     if (outcome === 'interrupted_after_claim') {
@@ -639,6 +913,16 @@ test('T072 Messenger: a scoped synthetic run creates one draft or hands off afte
                     return inputCount();
                 }
                 if (outcome === 'provider_unknown') throw new Error('Provider response lost');
+                if (outcome === 'provider_failed') return output(null, [{ type: 'function_call', name: 'fixture_unsupported_accounting', arguments: '{}' }]);
+                if (outcome === 'stale_staging_scope') {
+                    const before = await conversation(senderId);
+                    assert.equal(before.mode, 'bot');
+                    const adopted = await post('conversations/' + before.id + '/takeover', {
+                        expectedVersion: before.version, reason: 'Nhân viên tiếp quản khi phản hồi đang chờ',
+                    }, 'CommandResponse', { status: 202 });
+                    assert.equal(adopted.status, 'succeeded');
+                    takeover = { from: before.generation, to: before.generation + 1 };
+                }
                 return output('draft_proposal');
             };
             await Promise.all([processBotInbound(db, config, provider, transport), processBotInbound(db, config, provider, transport)]);
@@ -646,6 +930,14 @@ test('T072 Messenger: a scoped synthetic run creates one draft or hands off afte
             const completed = await task();
             assert.equal(completed.outcome, outcome === 'interrupted_after_claim' ? 'provider_unknown' : outcome);
             assert.ok(completed.finishedAt);
+            if (takeover) {
+                const assigned = await conversation(senderId);
+                assert.deepEqual([assigned.mode, assigned.generation, assigned.assignedUserId], ['human', takeover.to, owner.userId]);
+                assert.equal(await db.salesOrder.count({ where: { shopId, conversationId } }), 0);
+                assert.equal(await db.channelMessage.count({ where: { shopId, conversationId, direction: 'outbound' } }), 0);
+                console.log(JSON.stringify({ status: 'SC033_LATE_PROVIDER_RESULT_DISCARDED', ...takeover,
+                    outcome: completed.outcome, humanAssignee: true, drafts: 0, outbound: 0 }));
+            }
             const charged = await dailyUsage();
             assert.equal(charged.runs, (usage?.runs ?? 0) + 1);
             assert.equal(charged.spent.minus(usage?.spent ?? 0).toFixed(), runtime.reservedAmount);
@@ -665,6 +957,16 @@ test('T072 Messenger: a scoped synthetic run creates one draft or hands off afte
             const orders = await db.salesOrder.findMany({ where: { shopId, conversationId } });
             assert.equal(await db.channelMessage.count({ where: { shopId, conversationId, direction: 'outbound' } }), 0);
             assert.equal(await db.workItem.count({ where: { shopId, sourceId: { in: orders.map(order => order.id) } } }), 0);
+            assert.deepEqual(await effects(), beforeEffects);
+            if (outcome === 'provider_unknown') {
+                assert.deepEqual(orders, []);
+                console.log(JSON.stringify({ status: 'SC050_PRIMARY_FAILURE_NO_FALLBACK', primaryCalls: attempts.length,
+                    alternateConnection: 'connected', alternateRuntimeCalls: 0, privateNoteSent: false, handoffs: 1, drafts: 0, outbound: 0 }));
+            } else if (outcome === 'provider_failed' || outcome === 'stock_insufficient') {
+                assert.deepEqual(orders, []);
+                console.log(JSON.stringify({ status: outcome === 'provider_failed' ? 'SC043_NON_ALLOWLIST_RESULT_IGNORED' : 'SC044_STAGED_LIVE_STOCK_GUARD',
+                    outcome, drafts: 0, outbound: 0, businessCountsUnchanged: true, handoffs: 1 }));
+            }
             if (outcome === 'draft_proposal') {
                 assert.equal(orders.length, 1);
                 assert.deepEqual([orders[0].orderState, orders[0].reservationId, orders[0].total.toFixed()], ['draft', null, '24690']);
@@ -675,6 +977,15 @@ test('T072 Messenger: a scoped synthetic run creates one draft or hands off afte
                 const observed = await db.auditEntry.findFirstOrThrow({ where: { shopId, requestId: completed.messageId, action: 'observeStagingAi',
                     metadata: { path: ['phase'], equals: 'case_observed' } } });
                 assert.equal(observed.metadata.conservativeObservedUsd, '0.002128');
+                await assertBotAuditContext(observed, draft.draftRevision, 'agent', 'case_observed');
+                const agentDraft = await db.auditEntry.findFirstOrThrow({ where: { shopId, requestId: completed.messageId,
+                    resourceId: orders[0].id, action: 'createOrder' } });
+                await assertBotAuditContext(agentDraft, draft.draftRevision, 'agent', 'draft_created');
+                const acceptedRun = await db.auditEntry.findFirstOrThrow({ where: { shopId, requestId: completed.messageId,
+                    resourceId: completed.messageId, action: 'startStagingAi' } });
+                await assertBotAuditContext(acceptedRun, draft.draftRevision, 'agent', 'started');
+                console.log(JSON.stringify({ status: 'SC2_H06_AGENT_CONTEXT', mode: 'staging_transport_fixture', actorKind: 'agent',
+                    draft: true, start: true, observation: true, policyBound: true, configBound: true, knowledgeBound: true, permissionBound: true }));
                 const customer = await conversation(senderId);
                 const address = await post('customers/' + customer.customerId + '/addresses', { label: 'Địa chỉ thử', recipient: 'Khách tổng hợp',
                     phone: '0900000111', line1: 'Địa chỉ thử T072', ward: null, district: null, province: 'Hà Nội', postalCode: null, countryCode: 'VN',
@@ -682,6 +993,9 @@ test('T072 Messenger: a scoped synthetic run creates one draft or hands off afte
                 const path = 'orders/' + orders[0].id;
                 const ready = await patch(path, { shippingAddressId: address.id }, 'OrderResponse', { version: orders[0].version });
                 const quote = await post(path + '/quote', undefined, 'OrderQuoteResponse');
+                await post(path + '/confirm', { expectedVersion: ready.version, quoteId: quote.id, customerConfirmationId: randomUUID() },
+                    'Problem', { status: 409 });
+                assert.equal(await db.stockReservation.count({ where: { shopId, orderId: orders[0].id } }), 0);
                 timestamp = Date.now();
                 const confirmation = webhook('[CONFIRM:' + quote.id + ':' + quote.quoteHash + ']');
                 await receive(confirmation);
@@ -707,4 +1021,49 @@ test('T072 Messenger: a scoped synthetic run creates one draft or hands off afte
             await scoped.close();
         }
     }
+});
+
+test('SC-047 refuses tool workflows for the capability declared by the selected adapter model', async () => {
+    const adapters = await request(ai + '/catalog?q=mock', 'ProviderDescriptorListResponse');
+    const [adapter] = adapters;
+    const model = adapter.models.find(entry => entry.capabilities.toolCalling === 'unsupported');
+    assert.ok(model);
+    assert.equal(model.capabilities.text, 'supported');
+    const unsupported = await post(ai, {
+        name: 'Trợ lý công cụ thử nghiệm', providerId: adapter.providerId, adapterId: adapter.adapterId,
+        modelId: model.modelId, endpointUrl: null, credential: 'fixture-' + randomUUID(),
+    }, 'AIConnectionResponse', { status: 201 });
+    assert.equal(unsupported.capabilities.toolCalling, 'unsupported');
+    const path = ai + '/' + unsupported.id;
+    const check = await post(path + '/test', undefined, 'JobResponse', { status: 202 });
+    assert.equal((await settle(check.id)).status, 'succeeded');
+    const checked = await request(path, 'AIConnectionResponse');
+    assert.equal(checked.status, 'connected');
+    assert.equal(checked.capabilities.toolCalling, 'unsupported');
+    assert.ok(checked.capabilities.lastVerifiedAt);
+    await request(path, 'Problem', { actor: other, shop: secondShop.id, status: 404 });
+
+    const baseConfig = await request(bot, 'BotConfigResponse');
+    const textDraft = await patch(bot, {
+        connectionId: unsupported.id, maxToolSteps: 0, instructions: 'Cấu hình thử chỉ dùng văn bản.',
+        knowledgeRevisionIds: [], dailyBudget: { amount: '45000', currency: shop.currency }, requireHumanOrderConfirmation: true,
+    }, 'BotConfigResponse', { version: baseConfig.version });
+    const evaluation = await post(evaluatePath, {
+        configRevision: textDraft.draftRevision, datasetVersion, knowledgeRevisionId: null,
+    }, 'EvaluationResponse', { status: 202 });
+    const toolDraft = await patch(bot, { maxToolSteps: 2 }, 'BotConfigResponse', { version: textDraft.version });
+    await post(evaluatePath, { configRevision: toolDraft.draftRevision, datasetVersion, knowledgeRevisionId: null },
+        'Problem', { status: 409 });
+
+    const jobs = { shopId, sourceOperation: 'publishBotConfig' };
+    const before = await db.job.count({ where: jobs });
+    const failure = await post(bot + '/publish', {
+        expectedVersion: toolDraft.version, draftRevision: toolDraft.draftRevision, evaluationRunId: evaluation.id,
+        reason: 'Kiểm tương thích công cụ',
+    }, 'Problem', { status: 409 });
+    assert.equal(failure.code, 'AI_TOOL_CALLING_UNSUPPORTED');
+    assert.equal(await db.job.count({ where: jobs }), before);
+    const current = await request(bot, 'BotConfigResponse');
+    assert.equal(current.version, toolDraft.version);
+    assert.equal(current.liveRevision, baseConfig.liveRevision);
 });

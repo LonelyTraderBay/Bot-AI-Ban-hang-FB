@@ -140,12 +140,17 @@ test('SC-017: scanner gates upload bytes, outage leaves no new command and recov
     const key = randomUUID();
     const clean = (await json(await upload(cleanUpload, key), 201, 'FileObjectResponse')).data;
     assert.equal(clean.status, 'ready');
+    assert.equal(clean.rejectionReason, undefined);
     assert.equal(await (await fetch(root.replace(/\/api\/v2$/, '') + clean.readUrl, { headers: { cookie: ownerA.cookie } })).text(), cleanUpload);
-    const blocked = (await json(await upload(flaggedUpload), 201, 'FileObjectResponse')).data;
+    const blockedKey = randomUUID();
+    const blocked = (await json(await upload(flaggedUpload, blockedKey), 201, 'FileObjectResponse')).data;
     assert.equal(blocked.status, 'quarantined');
     assert.equal(blocked.readUrl, null);
+    assert.equal(blocked.rejectionReason, 'unsafe_file');
     assert.equal(await db.fileBlob.count({ where: { shopId: shopA.id, fileId: blocked.id } }), 0);
-    assert.equal((await db.auditEntry.findFirstOrThrow({ where: { shopId: shopA.id, action: 'uploadFile', resourceId: blocked.id } })).metadata.scan, 'blocked');
+    const scanAudit = await db.auditEntry.findFirstOrThrow({ where: { shopId: shopA.id, action: 'uploadFile', resourceId: blocked.id } });
+    assert.equal(scanAudit.metadata.scan, 'blocked');
+    assert.equal(scanAudit.metadata.rejectionReason, 'unsafe_file');
     assert.deepEqual(observed.scans, [cleanUpload, flaggedUpload]);
 
     const retryKey = randomUUID();
@@ -157,6 +162,7 @@ test('SC-017: scanner gates upload bytes, outage leaves no new command and recov
     await json(await upload(cleanUpload, retryKey), 503, 'Problem');
     assert.equal(await db.command.count({ where: { shopId: shopA.id, operationId: 'uploadFile', idempotencyKey: retryKey } }), 0);
     assert.equal((await json(await upload(cleanUpload, key), 201, 'FileObjectResponse')).data.id, clean.id);
+    assert.deepEqual((await json(await upload(flaggedUpload, blockedKey), 201, 'FileObjectResponse')).data, blocked);
     observed.mode = 'normal';
     assert.equal((await fetch(root + '/health/ready')).status, 200);
     assert.equal((await json(await upload(cleanUpload, retryKey), 201, 'FileObjectResponse')).data.status, 'ready');
@@ -179,6 +185,7 @@ test('SC-017: real local ClamAV daemon scans clean CSV and detects the harmless 
     const clean = (await json(await upload(cleanUpload), 201, 'FileObjectResponse')).data;
     const blocked = (await json(await upload(flaggedUpload), 201, 'FileObjectResponse')).data;
     assert.deepEqual([clean.status, blocked.status, blocked.readUrl], ['ready', 'quarantined', null]);
+    assert.equal(blocked.rejectionReason, 'unsafe_file');
     assert.equal(await db.fileBlob.count({ where: { shopId: shopA.id, fileId: blocked.id } }), 0);
 });
 
@@ -243,14 +250,41 @@ test('P0-08: catalog writes preserve decimal precision, stable paging and the co
     assert.equal(await db.auditEntry.count({ where: { shopId: shopA.id, resourceId: data.id, action: 'createProduct' } }), 1);
 });
 
-test('P0-09: viewer cannot write and concurrent SKU collisions never leave a second product', async () => {
+test('SC-013 and P0-09: SKU conflicts identify the field, survive write races and stay shop-scoped', async () => {
     const input = draft(shopA);
     await json(await write(shopA, reader, input), 403, 'Problem');
     await json(await write(shopB, ownerA, input), 404, 'Problem');
     await json(await write(shopA, ownerA, input, randomUUID(), { origin: 'https://invalid.example' }), 403, 'Problem');
+    const withinProduct = draft(shopA);
+    withinProduct.variants.push({ ...withinProduct.variants[0], sku: withinProduct.variants[0].sku.toLowerCase() });
+    const payloadConflict = await json(await write(shopA, ownerA, withinProduct), 409, 'Problem');
+    assert.deepEqual(payloadConflict.errors.map(({ path, code }) => ({ path, code })), [
+        { path: '/variants/1/sku', code: 'SKU_CONFLICT' },
+    ]);
+
     const replies = await Promise.all([write(shopA, ownerA, input), write(shopA, ownerA, input)]);
     assert.deepEqual(replies.map(reply => reply.status).sort(), [201, 409]);
-    await json(await write(shopA, ownerA, draft(shopA, input.variants[0].sku.toLowerCase())), 409, 'Problem');
+    const conflicts = [
+        await json(replies.find(reply => reply.status === 409), 409, 'Problem'),
+        await json(await write(shopA, ownerA, draft(shopA, input.variants[0].sku.toLowerCase())), 409, 'Problem'),
+    ];
+    const patchTarget = await json(await write(shopA, ownerA, draft(shopA)), 201, 'ProductResponse');
+    const variant = { ...input.variants[0], id: patchTarget.data.variants[0].id };
+    const patch = await request(path(shopA, 'products/' + patchTarget.data.id), ownerA, {
+        method: 'PATCH',
+        headers: { origin, 'content-type': 'application/json', 'idempotency-key': randomUUID(),
+            'x-csrf-token': ownerA.csrf, 'if-match': '"' + patchTarget.data.version + '"' },
+        body: JSON.stringify({ variants: [variant] }),
+    });
+    conflicts.push(await json(patch, 409, 'Problem'));
+    for (const conflict of conflicts) {
+        assert.equal(conflict.code, 'CONFLICT');
+        assert.deepEqual(conflict.errors.map(({ path, code }) => ({ path, code })), [
+            { path: '/variants/0/sku', code: 'SKU_CONFLICT' },
+        ]);
+    }
+    const unchanged = await json(await request(path(shopA, 'products/' + patchTarget.data.id), ownerA), 200, 'ProductResponse');
+    assert.deepEqual(unchanged.data, patchTarget.data);
     assert.equal(await db.product.count({ where: { shopId: shopA.id, name: input.name } }), 1);
     assert.equal(await db.variant.count({ where: { shopId: shopA.id, sku: input.variants[0].sku } }), 1);
 

@@ -2,8 +2,8 @@ import { MockFailure, all, find, first, insert, ensure, checkVersion, touch, com
 import type { Input, Row } from './database';
 import { hashValue } from './orders';
 import { resolveConversationAttachments } from './files';
-const capability = () => ({
-    text: 'supported', streaming: 'unsupported', vision: 'unsupported', structuredOutput: 'unknown', toolCalling: 'unsupported', embeddings: 'unsupported', usageReporting: 'unsupported', lastVerifiedAt: null
+const capability = (toolCalling: 'supported' | 'unsupported') => ({
+    text: 'supported', streaming: 'unsupported', vision: 'unsupported', structuredOutput: 'unknown', toolCalling, embeddings: 'unsupported', usageReporting: 'unsupported', lastVerifiedAt: null
 });
 
 function knowledgeContent(shopId: string, fields: Row, previous?: Row, requireReady = false) {
@@ -21,11 +21,16 @@ function knowledgeContent(shopId: string, fields: Row, previous?: Row, requireRe
         .map(([, value]) => str(value).trim()).join('\n');
     return { ...fields, template: parsed, content: product ? str(product.name) + '\n' + text : text };
 }
-export const providerCatalog = () => [{
-        providerId: 'mock', label: 'Nhà cung cấp mô phỏng — không AI thật', adapterId: 'mock', adapterVersion: '1.0', endpointEditable: false, models: [{
-                modelId: 'synthetic-model', label: 'Kịch bản cố định', capabilities: capability(), contextLimit: null, inputPricePerMillion: null, outputPricePerMillion: null, pricingAsOf: null
-            }]
-    }];
+const mockProvider = {
+    providerId: 'mock', label: 'Nhà cung cấp mô phỏng — không AI thật', adapterId: 'mock', adapterVersion: '1.0', endpointEditable: false,
+    models: [
+        { modelId: 'synthetic-model', label: 'Kịch bản cố định', capabilities: capability('supported'),
+            contextLimit: null, inputPricePerMillion: null, outputPricePerMillion: null, pricingAsOf: null },
+        { modelId: 'synthetic-text-only', label: 'Kịch bản văn bản', capabilities: capability('unsupported'),
+            contextLimit: null, inputPricePerMillion: null, outputPricePerMillion: null, pricingAsOf: null },
+    ],
+};
+export const providerCatalog = () => [mockProvider];
 export async function auxiliary(op: string, input: Input): Promise<Row | Row[] | undefined> {
     const { shopId, body } = input;
     switch (op) {
@@ -120,12 +125,14 @@ export async function auxiliary(op: string, input: Input): Promise<Row | Row[] |
             const f = find('feedback', input.id, shopId);
             checkVersion(f, input);
             ensure(f.status === 'pending', 'Phản hồi đã được duyệt.');
-            ensure(body.decision !== 'approve' || str(body.redactedCorrection).trim().length > 0, 'Cần nội dung đã loại dữ liệu riêng tư trước khi chấp nhận.', 422);
+            const correction = body.decision === 'approve' ? str(body.redactedCorrection).trim() : '';
+            ensure(body.decision !== 'approve' || correction.length > 0, 'Cần nội dung đã loại dữ liệu riêng tư trước khi chấp nhận.', 422);
             f.status = body.decision === 'approve' ? 'approved' : 'rejected';
             f.reviewReason = body.reason;
+            f.correction = correction;
             if (body.decision === 'approve') {
                 const k = insert('knowledge', 'Knowledge', shopId, {
-                    title: 'Đề xuất từ phản hồi', sourceKind: 'feedback', fileId: null, content: body.redactedCorrection, revision: 1, status: 'draft', contentHash: null, publishedAt: null, approvedBy: null, warnings: [], publishedRevisionId: null, draftRevisionId: null
+                    title: 'Đề xuất từ phản hồi', sourceKind: 'feedback', fileId: null, content: correction, revision: 1, status: 'draft', contentHash: null, publishedAt: null, approvedBy: null, warnings: [], publishedRevisionId: null, draftRevisionId: null
                 });
                 const revision = insert('revisions', 'KnowledgeRevision', shopId, { ...k, id: id('knowledge-revision'), documentId: k.id });
                 k.draftRevisionId = revision.id;
@@ -191,8 +198,14 @@ export async function auxiliary(op: string, input: Input): Promise<Row | Row[] |
         case 'retireKnowledge': {
             const k = find('knowledge', input.id, shopId);
             checkVersion(k, input);
-            ensure(k.status === 'published', 'Chỉ có thể ngừng một nguồn đang xuất bản.', 409);
-            k.status = 'retired';
+            ensure(k.publishedRevisionId, 'Chỉ có thể ngừng một nguồn đang xuất bản.', 409);
+            const published = find('revisions', str(k.publishedRevisionId), shopId);
+            published.status = 'retired';
+            published.publishedRevisionId = null;
+            touch(published);
+            if (k.draftRevisionId === k.publishedRevisionId) k.draftRevisionId = null;
+            k.publishedRevisionId = null;
+            if (!k.draftRevisionId) k.status = 'retired';
             touch(k);
             return command(shopId, op, { type: 'knowledge', id: k.id });
         }
@@ -243,12 +256,21 @@ export async function auxiliary(op: string, input: Input): Promise<Row | Row[] |
         case 'runPlayground': return {
             text: `[Mô phỏng, không gọi AI] Với câu hỏi “${str(body.text).slice(0, 120)}”, trợ lý sẽ tra sản phẩm và kiến thức đã duyệt. Giá và tồn cần lấy từ API nghiệp vụ; chưa gửi bất cứ tin nào cho khách.`, configRevision: body.configRevision, sources: [], warnings: ['Đây là kiểm tra giao diện, không đo chất lượng mô hình AI.'], latencyMs: 0, estimatedCost: null, inputTokens: null, outputTokens: null, externalMessageSent: false
         };
-        case 'createEvaluation': return insert('evaluations', 'Evaluation', shopId, { ...body, status: 'passed', totalCases: 1, passedCases: 1, criticalFailures: 0, reportJobId: null, mockOnly: true });
+        case 'createEvaluation': return insert('evaluations', 'Evaluation', shopId, {
+            ...body, status: 'passed', plannedCases: 1, totalCases: 1, passedCases: 1, criticalFailures: 0, reportJobId: null,
+            source: 'local_fixture', cases: [{ id: 'fixture_demo', passed: true, critical: false }], mockOnly: true,
+        });
         case 'publishBotConfig': {
             const bot = first('bots', shopId);
             checkVersion(bot, input);
+            const connection = all('aiConnections', shopId).find(item => item.id === bot.connectionId);
+            ensure(num(bot.maxToolSteps) === 0 || record(connection?.capabilities).toolCalling !== 'unsupported',
+                'Kết nối đang chọn không hỗ trợ gọi công cụ cho cấu hình này.', 409, 'AI_TOOL_CALLING_UNSUPPORTED');
             const e = find('evaluations', str(body.evaluationRunId), shopId);
-            ensure(e.status === 'passed' && e.configRevision === body.draftRevision && bot.draftRevision === body.draftRevision, 'Đánh giá không khớp bản nháp.');
+            ensure(e.status === 'passed' && num(e.criticalFailures) === 0 && num(e.totalCases) > 0 && e.passedCases === e.totalCases &&
+                e.configRevision === body.draftRevision && bot.draftRevision === body.draftRevision, 'Đánh giá không khớp bản nháp.');
+            const budget = record(bot.dailyBudget ?? {});
+            ensure(/^[1-9][0-9]*(?:\.[0-9]+)?$/.test(str(budget.amount)), 'Ngân sách mô phỏng không đủ cho một lượt chạy AI.', 409, 'BUDGET_EXCEEDED');
             bot.liveRevision = body.draftRevision;
             bot.publishedAt = now();
             bot.status = 'active';
@@ -265,17 +287,25 @@ export async function auxiliary(op: string, input: Input): Promise<Row | Row[] |
         case 'getBotRevisions':
         case 'listBotRevisions': return all('bots', shopId).map(b => ({ ...b, revision: b.draftRevision }));
         case 'createAIConnection': {
-            ensure(body.providerId === 'mock', 'Chế độ mô phỏng không nhận khóa của provider thật.', 422);
+            ensure(body.providerId === mockProvider.providerId && body.adapterId === mockProvider.adapterId,
+                'Chế độ mô phỏng không nhận khóa của provider thật.', 422);
+            const model = mockProvider.models.find(item => item.modelId === body.modelId);
+            ensure(model, 'Model không có trong danh mục của adapter.', 422);
             ensure(str(body.credential).startsWith('demo-'), 'Chỉ dùng chuỗi demo-…; không nhập khóa bí mật thật.', 422);
             const { credential, ...data } = body;
             void credential;
-            return insert('aiConnections', 'AIConnection', shopId, { ...data, hasCredential: false, keyLast4: null, status: 'unconfigured', capabilities: capability(), lastCheckedAt: null });
+            return insert('aiConnections', 'AIConnection', shopId, { ...data, hasCredential: false, keyLast4: null, status: 'unconfigured', capabilities: { ...model.capabilities }, lastCheckedAt: null });
         }
         case 'updateAIConnection': {
             const c = find('aiConnections', input.id, shopId);
             checkVersion(c, input);
             const { credential, ...data } = body;
             ensure(!credential || str(credential).startsWith('demo-'), 'Không nhập secret thật trong mock.', 422);
+            if (data.modelId !== undefined && data.modelId !== c.modelId) {
+                const model = mockProvider.models.find(item => item.modelId === data.modelId);
+                ensure(model, 'Model không có trong danh mục của adapter.', 422);
+                Object.assign(c, { capabilities: { ...model.capabilities }, status: 'unconfigured', lastCheckedAt: null });
+            }
             Object.assign(c, data);
             return touch(c);
         }

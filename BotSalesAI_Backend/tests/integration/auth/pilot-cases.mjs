@@ -152,7 +152,10 @@ async function verifyShop(page, db, shop, other, csrf, shared) {
     assert.ok(noteKey);
     assert.equal((await post(resource + '/notes', { data: input }, 201, noteKey)).id, note.id);
     assert.equal(await db.messageDispatch.count({ where: { shopId: shop.id, messageId: note.id } }), 0);
-    await page.getByText(input.text, { exact: true }).waitFor();
+    await dialog.waitFor({ state: 'hidden' });
+    const reviewed = page.getByTestId('inbox-message-bubble')
+        .filter({ has: page.getByText('Bản chép lời đã kiểm', { exact: true }) });
+    await reviewed.getByText(input.text, { exact: true }).waitFor();
     await verifyDevice(db, shop.id, get, post);
     return { name: shop.name, currency: shop.currency, signedEventReplay: true, workerDispatch: 'succeeded',
         fixtureNotification: 'accepted_by_provider', deviceOpened: false, deviceRevoked: true,

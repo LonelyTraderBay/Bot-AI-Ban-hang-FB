@@ -82,7 +82,8 @@ test('P0-06: concurrent R32 writes create one membership, audit entry, command a
     const replies = await Promise.all([makeInvite(['viewer', 'sales']), makeInvite(['sales', 'viewer'])]);
     const [receipt, repeat] = await Promise.all(replies.map(response => json(response, 201, 'MembershipResponse')));
     assert.deepEqual(repeat.data, receipt.data);
-    await json(await makeInvite(['sales']), 409, 'Problem');
+    const mismatch = await json(await makeInvite(['sales']), 409, 'Problem');
+    assert.equal(mismatch.code, 'IDEMPOTENCY_MISMATCH');
     assert.equal(await db.membership.count({ where: { shopId: shopA.id, user: { email } } }), 1);
     const rows = await db.command.findMany({ where: { shopId: shopA.id, actorId: ownerA.userId, idempotencyKey: key } });
     assert.equal(rows.length, 1);

@@ -244,17 +244,58 @@ Bằng chứng Cloud dùng checkout Windows trên `292d4bd4` với thay đổi c
 
 ### BE-WIN
 
-Hồ sơ PostgreSQL Windows đã kiểm hai shop trên ổ D và dùng cho fixture, sao lưu, phục hồi và quay lui. Redis, SeaweedFS, ClamAV và IdP thử tiếp tục chạy trực tiếp trên Windows. [Hướng dẫn Windows](infra/windows/README.md)
+**Hồ sơ vận hành cục bộ trên Windows** · 24/11/2026
+
+API, worker, PostgreSQL, hàng đợi, IdP thử, HTTPS, kho tệp và bộ quét chạy trực tiếp trên Windows. PostgreSQL và kho tệp dùng dữ liệu tại ổ D với endpoint loopback. Internet có thể hoạt động trong khi cài và chạy. AI, Messenger, Telegram/Web Push, vận chuyển và mua hàng dùng dữ liệu tổng hợp hoặc adapter mô phỏng trong pilot. Nghiệm thu nhà cung cấp thật thuộc BE-22–BE-24.
+
+#### Quyết định cơ sở dữ liệu
+
+| Lựa chọn | Kết quả đối chiếu | Trạng thái |
+|---|---|---|
+| PostgreSQL cài trực tiếp trên Windows | Bản thử dùng bộ nhị phân EDB PostgreSQL 18.7 Windows x64 và thư mục dữ liệu ở ổ D. [Bộ cài PostgreSQL cho Windows](https://www.postgresql.org/download/windows/) | **Đã chốt.** Đã kiểm hai shop, sao lưu và diễn tập khôi phục trên ổ D. |
+| Supabase Local | Phương án từng được khảo sát ở v1.92 cần môi trường container Linux khi chạy trên Windows. [Runtime Supabase](https://supabase.com/docs/guides/local-development/docker-and-native-runtimes) | Lưu kết quả khảo sát để tra lại. |
+
+Nguồn hiện tại dùng PostgreSQL 18.7 và Redis 8.0.5 qua Compose. Prisma nhận `MIGRATION_DATABASE_URL`, còn API/worker dùng `DATABASE_URL` với quyền chạy riêng. Khi kiểm đích mới, dùng một lịch sử migration Prisma và giữ cấu trúc giao dịch, audit, outbox và phân quyền theo shop. BE-WIN cần xác minh hàng đợi và các dịch vụ phụ thuộc độc lập với quyết định DB. [Compose P0](infra/p0/compose.yml) · [Hướng dẫn kết nối](README.md) · [Cấu hình Prisma](prisma.config.ts)
+
+#### Thứ tự và điều kiện chốt
+
+| Bước | Công việc | Tiêu chí nghiệm thu | Trạng thái |
+|---|---|---|---|
+| **1 · Chốt nền và nơi lưu** | Dùng PostgreSQL Windows và tách đường dẫn dữ liệu, backup, đầu ra thử. | Kiểm tra đường dẫn thực tế của tiến trình và artifact. | Đạt trên ổ D. |
+| **2 · Dựng cụm và kiểm quyền** | Dùng lại dữ liệu fixture đã xác minh, giữ role migrator/runtime và lịch sử migration. | Readiness, đăng nhập và truy cập chéo shop đúng hợp đồng. | Đã kiểm dữ liệu đặt trên `D:/BotSalesAI/data` và hai shop qua HTTPS. |
+| **3 · Sao lưu và kiểm phục hồi** | Tạo dump và bản sao object, phục hồi DB ở cụm thử và chạy đối chiếu. | Dump có checksum, DB đích khớp snapshot, object sao lưu đúng checksum nguồn. | Backup mới trên ổ D. DB khớp 46 nhóm, sao lưu 18 object của hai shop. |
+| **4 · Kiểm đầu ra mới** | Chạy kiểm backend, đóng gói và xác minh đường dẫn Playwright. | Các lệnh local ghi đúng ổ D. | BE `verify` 45/45, bộ kiểm output/partition FE 20/20. Báo cáo ma trận, gói BE và đường dẫn output của hai cấu hình Playwright đều ở ổ D. |
+
+Chỉ đánh dấu **Đã kiểm chứng** khi các bước áp dụng đạt trên cùng ứng viên Windows. Đầu việc này dùng lại ca và bộ so sánh BE-03, BE-10 và BE-22–BE-23. Mã, script và cấu hình riêng của hồ sơ Windows đặt trong `BotSalesAI_Backend/`.
 
 #### Hồ sơ lưu trữ trên ổ D
 
 | Phạm vi | Đường dẫn |
 |---|---|
-| PostgreSQL fixture và kho đối tượng | `D:/BotSalesAI/data/postgres-55770` và `D:/BotSalesAI/data/seaweed-source` |
-| Backup và bằng chứng local | `D:/BotSalesAI/backup` và `D:/BotSalesAI/artifacts` |
-| Hồ sơ quay lui | `D:/BotSalesAI/config/windows-pilot.env` |
+| PostgreSQL và kho đối tượng đang dùng | `D:/BotSalesAI/data/postgres-55770` và `D:/BotSalesAI/data/seaweed-source` |
+| Dump và tệp của hai shop | `D:/BotSalesAI/backup/windows-pilot-current` |
+| Matrix, gói BE, kết quả Playwright và bằng chứng Windows | `D:/BotSalesAI/artifacts`. Biến `BOTSALES_ARTIFACT_ROOT` đã đặt ở phạm vi tài khoản Windows. |
+| Hồ sơ pilot | `D:/BotSalesAI/config/windows-pilot.json` và tệp môi trường fixture cùng thư mục. |
 
-Kết quả trước khi chuyển Cloud gồm hai shop qua HTTPS, truy cập chéo trả 404, restore PostgreSQL Windows khớp 46 nhóm dữ liệu và sao lưu 18 object trên D. Bản thử hiện hành chọn hồ sơ ở BE-CLOUD.
+Bản sao dữ liệu PostgreSQL và SeaweedFS ban đầu khớp SHA-256 với nguồn đã dừng. Windows báo `data_directory=D:/BotSalesAI/data/postgres-55770` và 2 shop. Firefox đọc hai shop qua HTTPS và từ chối truy cập chéo (404). Cụm phục hồi độc lập trên D khớp 46 nhóm dữ liệu, backup kho có 18 object. Giữ bản trên C làm mốc quay lui. [Hướng dẫn Windows](infra/windows/README.md)
+
+Đầu ra mới của hai cấu hình Playwright và trình chạy CI cục bộ dùng thư mục `frontend` bên dưới artifact root. BE ghi ma trận và gói vào thư mục `backend`. Khi không cấu hình biến, đường dẫn test và artifact mặc định trong từng workspace được dùng cho CI. Ngưỡng đề xuất là cảnh báo khi D còn dưới 50 GiB trống và hoãn tạo gói, trace hoặc fixture mới khi dưới 25 GiB. Dọn dependency lặp theo hồ sơ [CLN-03/05](../PROJECT_AUDIT_CLEANUP_PLAN.md#5-dung-lượng-thực-đo-và-danh-sách-dọn-dự-kiến).
+
+Lô CLN-03 đầu đã dựng lại trên D và khớp 20.974 tệp dependency của cây trên C. Lệnh xóa bị cơ chế xét duyệt chặn trước khi chạy. Cây gốc còn nguyên, dung lượng thu hồi của lô là **0 byte**.
+
+#### Kết quả BE-WIN ngày 24/11/2026
+
+- Windows 11 Pro x64, Node 24.22.3 và npm 11.17.0. PostgreSQL 18.7 chạy bằng bộ nhị phân EDB, listener và thư mục dữ liệu trên Windows. Cụm nguồn dùng cổng 55770, đích độc lập dùng 55772. Bản thử dùng bản dựng cộng đồng Redis 8.10.3 x64 MSYS2 vì tải Memurai từ máy thử trả 403. SeaweedFS 4.54 và ClamAV 1.5.5 dùng bộ nhị phân Windows, với chữ ký quét tổng hợp. Hash gói lưu trong `bundle-sha256.json`. Redis cộng đồng dùng cho fixture, phạm vi giấy phép và lựa chọn cho vận hành thật thuộc BE-22. [EDB](https://www.enterprisedb.com/download-postgresql-binaries) · [Redis Windows](https://github.com/redis-windows/redis-windows/releases/tag/8.10.3) · [SeaweedFS](https://github.com/seaweedfs/seaweedfs/releases/tag/4.54) · [ClamAV](https://github.com/Cisco-Talos/clamav/releases/tag/clamav-1.5.5)
+- `verify` **45/45**. PostgreSQL **7/7**, quyền shop **9/9**, catalog và ClamAV **10/10**, kho tệp **4/4** trên cụm riêng, import **3/3**, SSE **4/4** và jobs **6/6**. Hai lượt seed trên cụm riêng giữ nguyên **2 shop, 3 membership và 2 kho**. Ca kho tệp ban đầu dùng chung DB với suite catalog nên lẫn tệp chờ. Lượt dùng cụm riêng đạt. Firefox hai shop VND/LAK đạt callback 302, tải lại phiên 200, logout 204 và phiên sau logout 401. Hội thoại và tệp truy cập chéo trả 404, ghi 0 yêu cầu web ngoài origin thử. Bộ chọn trình duyệt cho bản chép lời nay đợi hộp thoại đóng và kiểm trong tin nhắn nội bộ.
+- Dump 337 ms, restore 686 ms. Bộ so sánh khớp **47 nhóm**, không lệch toàn vẹn. Ca sửa số tồn trong giao dịch thử báo `ATTENTION` cho `stock_positions`. Sau rollback SQL, bộ so sánh lại khớp. Kho đích dùng thư mục Windows mới, phục hồi **14 object** đúng digest và qua probe ghi. Với Redis trống, mỗi shop phục hồi tồn, đơn, tệp đúng checksum và một job xuất. Tệp đúng shop trả 200, chéo shop trả 404. Mỗi job hoàn tất đúng một lần.
+- Quay lui sang PostgreSQL và kho nguồn đã diễn tập. Readiness trả 503 khi dừng PostgreSQL, trở lại 200 sau khi khởi động lại. Digest 14 object nguồn giữ nguyên. Ca quyền shop chọn lọc trên cụm quay lui đạt 1/1. Suite workspace đầy đủ đã đạt 9/9 trước khi thêm dữ liệu pilot. Khi chạy lại toàn suite trên DB đã qua pilot, 2 assertion về số lượng fixture lệch. Lượt quay lui dùng ca quyền đúng phạm vi. Đã xác minh 25 cổng của lượt thử không còn listener.
+- Bằng chứng dưới `%LOCALAPPDATA%/BotSalesAI/be-win-20261124/evidence/`, gồm `source-sha256.tsv` cho mã có thay đổi cục bộ trên nền `292d4bd4`, `verify-final.txt`, `test-pilot-browser-final.txt`, `database-restore.txt`, `database-negative.txt`, `objects-target.txt`, `recovery-verify-completed.txt`, `windows-listeners.json` và `shutdown.txt`. Dump và object tổng hợp được giữ trong `run/`. Lượt này chạy trực tiếp bằng tiến trình Windows. Phép thử âm xác nhận preloader chặn TCP của Node tới đích ngoài loopback, còn Firefox đo yêu cầu web. Phiên không có quyền quản trị để thiết lập chặn mạng cấp Windows, và chưa khởi động lại hệ điều hành. Hai kiểm này thuộc tiêu chí v1.91. [Hướng dẫn Windows](infra/windows/README.md)
+
+#### Hồ sơ tập dượt ngoại tuyến v1.91
+
+- Bộ chạy [offline-acceptance.ps1](infra/windows/offline-acceptance.ps1) đã đối chiếu **478 tệp** chuẩn bị trên máy. `BeforeRestart` cài từ cache, chạy hai shop qua Firefox, sao lưu rồi phục hồi PostgreSQL và kho tệp sang cụm riêng. `AfterRestart` kiểm lại checksum, đọc hai shop và hoàn tất hai export còn trong hàng đợi. Mỗi pha dừng dịch vụ thử trước khi ghi biên nhận.
+- Tập dượt cả hai pha đạt trên cùng lần khởi động. Bộ so sánh khớp **47 nhóm dữ liệu** và **11 object**. Cả hai export hoàn tất đúng một lần, tệp cùng shop trả 200 và chéo shop trả 404. Lượt chuẩn từ chối khi Wi-Fi còn kết nối. Ca đối chứng dùng biên nhận mô phỏng đúng thời điểm boot hiện tại và bị từ chối. Hồ sơ nằm ở `%LOCALAPPDATA%/BotSalesAI/be-win-20261124/os-rehearsal-final/`. Log hai ca chặn nằm ở `acceptance-launcher/`.
+- Giữ hồ sơ trên làm bằng chứng lịch sử cho PostgreSQL Windows. Yêu cầu ngắt Internet đã được gỡ ở v1.92. Kiểm đích mới theo bảng BE-WIN hiện hành.
 
 ## P0 Nền backend và luồng đầu tiên với frontend
 
@@ -573,6 +614,8 @@ Bằng chứng tại `test-results/backend/be08/`. Log `fresh-verify.txt` có SH
 
 #### Kết quả kiểm BE-09
 
+- R43 sửa lưu trữ kho còn đơn mua mở. Cổng dùng cùng khóa kho với bước tạo đơn mua. Kiểm manager tạo/sửa/lưu trữ, chặn 409 khi còn đơn và lưu trữ được sau hủy. Lịch sử đơn mua vẫn đọc được, hai lệnh cạnh tranh chỉ một thành công. Inventory 9/9, Procurement 5/5 và verify 45/45. [Hồ sơ R43](../PROJECT_AUDIT_CLEANUP_PLAN.md)
+
 | Phạm vi | Kết quả trên fixture |
 | --- | --- |
 | Tồn và sổ biến động | `listStockSnapshots` và `listStockMovements` áp dụng bộ lọc trước cursor. Tồn khả dụng bằng tồn có thể bán trừ lượng giữ. Hàng cách ly, đang giao và đang về theo dõi riêng. Giá vốn che theo `finance.read`. PostgreSQL chặn tồn âm, giữ vượt tồn và sửa lịch sử bằng role runtime. |
@@ -592,6 +635,8 @@ Bằng chứng tại `test-results/backend/be09/`. SHA-256 của `test-inventory
 - [x] Kiểm chứng R18–R19 qua `dev:live`. Tạo bằng chứng khách tổng hợp gắn với báo giá đã lưu, qua mô hình tin nhắn/định danh dùng lại ở BE-18 trên DB thử. Kiểm thiếu hoặc sai `sourceMessageId`, xác nhận không còn hiệu lực, tranh SKU cuối, retry khi timeout, phí dự kiến và danh sách ưu đãi rỗng hợp lệ. Kiểm `listPromotions` bằng fixture riêng có combo hiệu lực, hết hạn và khác shop. Chỉ bật áp dụng ưu đãi khi BE-14 đạt, kể cả với yêu cầu API có `promotionId` gửi trực tiếp. Chỉ mở xác nhận bằng tin thật khi nguồn tiếp nhận tương ứng đã được kiểm.
 
 #### Kết quả kiểm BE-11
+
+- R39 sửa cổng giao ngoài vùng cho shop đã cấu hình biểu phí. API trả 409 khi tạo báo giá và khi chốt báo giá cũ đã bị chính sách hiện hành loại. Đơn giữ nháp, không giữ tồn hoặc tạo việc. Biểu phí trống vẫn cho báo giá thủ công. Orders 18/18, verify 45/45 và Firefox HTTPS kiểm lại báo giá, bàn giao và hoàn. [Hồ sơ R39](../PROJECT_AUDIT_CLEANUP_PLAN.md)
 
 | Phạm vi | Kết quả trên fixture |
 | --- | --- |
@@ -695,6 +740,8 @@ Log tại `test-results/backend/be15/`. SHA-256 của `verify.txt` là `1d018775
 
 #### Kết quả kiểm BE-16
 
+- R40 đối chiếu báo giá cũ/mới, kho sổ biến động và nhận một phần. R45 nhận căn cứ min-max từ API. Hai lượt đánh giá đồng thời giữ đúng một khoản cho mỗi đề xuất và tổng 240 VND trong ngày. Thu hồi trước gửi chặn lệnh. Unknown giữ ngân sách tới khi có bằng chứng đối chiếu. Inventory 9/9, Procurement 4/4 và Operations 7/7. [Hồ sơ R40](../PROJECT_AUDIT_CLEANUP_PLAN.md)
+
 - `npm run test:procurement` đạt 3/3 ca tích hợp. So hợp đồng báo giá, quyền từng shop và trạng thái duyệt. Đối chiếu gợi ý với tồn khả dụng, hàng đang về và đề nghị mở. Cổng gửi fixture kiểm cả kết quả thành công lẫn chưa rõ, sau đó xác nhận bằng chứng từ nguồn. Ca nhận một phần đối chiếu hàng đạt, cách ly và công nợ cùng một lần ghi.
 - `npm run test:procurement:browser` đạt R44, R45, R46, R38 và R47 trên Firefox qua HTTPS với API/PostgreSQL/Redis. R45 đã tách payload tạo quy tắc theo `ReorderRuleCreate`. Sau khi nhận 2 món đạt, 1 món lỗi, còn 1 món đang về và giá vốn tồn bán được là 26,5 VND. Phiếu có đúng một bút toán công nợ.
 - `npm run verify` đạt 22/22 và đăng ký khớp 160 thao tác cùng 2 health handler. Migration `20261121002300_be16_procurement_approvals` nâng cấp được cơ sở fixture đang có dữ liệu và cơ sở kiểm từ trống. Hai cơ sở khớp Prisma schema. `npm run verify` ở Frontend đạt đủ các bước, gồm 280 unit test và kiểm fingerprint S17. Log `frontend-verify.txt` có SHA-256 `366a057736283b6cf348274168b5b3ecd86bbb0f47013fb60815d8c091317a31`.
@@ -710,6 +757,8 @@ Log tại `test-results/backend/be16/`. SHA-256 của `verify.txt` là `fcd3a28b
 - [x] Kiểm nhập trùng, retry dùng cùng khóa, phân bổ nhiều lần, COD sau phí, chênh lệch chứng từ, quyền từng shop và khóa kỳ. Trường hợp hai khoản thu độc lập 50.000 và 249.000 VND hiển thị 299.000 VND ở hàng chờ đối chiếu. Trường hợp 249.000 VND được áp dụng vào cùng công nợ cho số xác minh 249.000 VND và trạng thái đã xử lý. Kiểm thêm chứng từ hoàn 9.900 VND, phân công, phí COD 20.000 VND và số chi của sổ tiền.
 
 #### Kết quả kiểm BE-17
+
+- R41 kiểm bút toán, tiền nhận trước, COD và khóa kỳ. Finance 9/9 và BE verify 45/45. Tiền nhận trước 15.000,01 VND vào đúng tài khoản mà doanh thu không đổi. Xuất CSV không sửa bút toán nguồn. E04 còn ảnh chờ xác minh, E06 còn kỳ hạn và tranh chấp có trạng thái. T079 tiếp tục theo AUD-09. [Hồ sơ R41](../PROJECT_AUDIT_CLEANUP_PLAN.md)
 
 - `npm run test:finance` đạt 6/6. Một giao dịch được phân bổ 90.000 rồi 159.000 VND. Đổi phiên bản trả 412, gửi lại cùng khóa trả cùng command, và tổng phân bổ khớp 249.000 VND. Khi sao kê và phiếu ngân hàng đến theo hai thứ tự, cùng mã chứng từ liên kết đúng một khoản thu. Ca quyết toán COD hai lần nhận 229.000 VND vào ngân hàng, phí 20.000 VND và giảm công nợ 249.000 VND. Ca 299.000 VND tạo công việc chênh lệch để phân công.
 - Các báo cáo đối chiếu 80.000 VND lợi nhuận gộp, 30.000 VND lợi nhuận sau chi phí, tổng phát sinh Nợ/Có và phương trình cân đối quản trị. Thu chi ròng bỏ phần chuyển giữa các tài khoản tiền nội bộ. Khóa kỳ chặn chứng từ nháp và chênh lệch còn mở. Mở lại cần phê duyệt đúng kỳ, phiên bản, policy và thời hạn. Phê duyệt được dùng một lần.
@@ -744,6 +793,10 @@ Log tại `test-results/backend/be18/`. SHA-256 của `verify.txt` là `53ae1ebb
 
 #### Kết quả kiểm BE-19
 
+- R38 kiểm B01–B05 trong kiểm toán cục bộ. AI 9/9, Inbox 9/9 và Orders 18/18 trên các DB thử cô lập. Giá, tồn, ưu đãi và cổng địa chỉ/số người nhận đã được kiểm. Kịch bản theo ngành hiện có mẫu tri thức và cổng duyệt. F-52/F-53 theo dõi luồng hội thoại hỏi từng dữ kiện, chốt đơn có ủy quyền và phê duyệt ngoại lệ. Lệnh chốt hiện chạy qua phiên nhân viên, dùng bằng chứng xác nhận đúng khách và đúng phiên bản báo giá. [Hồ sơ R38](../PROJECT_AUDIT_CLEANUP_PLAN.md)
+
+- SC-047 kiểm đồng nhất khả năng do adapter công bố ở catalog và chi tiết kết nối. Cấu hình yêu cầu công cụ và chọn model thử chỉ hỗ trợ văn bản nhận 409 với mã `AI_TOOL_CALLING_UNSUPPORTED`. Bộ kiểm xác nhận API giữ phiên bản hiện hành và không tạo job xuất bản. Firefox HTTPS ở 390 và 1.440 px khóa nút R26. Ca model có hỗ trợ gửi lệnh, đối chiếu kết quả đánh giá 5/5 và phiên bản chạy. `test:ai` đạt 9/9 và `verify` đạt 45/45. [Hồ sơ kiểm SC-047](../PROJECT_AUDIT_CLEANUP_PLAN.md)
+
 - `npm run test:ai` đạt 3/3. Kết nối thử khóa sai, xoay khóa, chỉ trả bốn ký tự cuối và tra theo shop. Ba lượt dùng hợp lệ trừ đúng ba đơn vị thử, phát lại cùng khóa giữ nguyên kết quả và lượt tiếp theo trả trạng thái hết hạn mức. Đánh giá cấu hình đạt 5/5 và đánh giá nguồn đạt 4/4. Bằng chứng khác phiên bản bị chặn. Ca Inbox nhận trùng chỉ tạo một nháp 24.690 VND và một tin fixture, sau khi thu hồi quyền worker chuyển người xử lý và chỉ có một work item cho hội thoại.
 - `npm run test:ai:browser` đạt R30, R27, R28 và R26 trên Firefox HTTPS, PostgreSQL và Redis. Tạo kết nối có khóa ẩn, chạy job kiểm, lấy kết quả thử không gửi tin, theo dõi đánh giá 5/5, tra command xuất bản và đối chiếu bản chạy sau tải lại.
 - `npm run verify` đạt 22/22, 228 thao tác sản phẩm và 2 health handler. Migration `20261121002800_be19_ai_profiles_and_runtime` áp dụng trên database đang dùng và database đối chứng ban đầu trống, Prisma diff sạch ở cả hai. Hồi quy inbox 3/3, orders 11/11, events 4/4 và jobs 2/2.
@@ -759,6 +812,8 @@ Log tại `test-results/backend/be19/`. SHA-256 của `verify.txt` là `abc65027
 - [x] Kiểm phê duyệt hết hạn, tự duyệt và mức tiền bị thay, vai trò sai phạm vi, tạm dừng ủy quyền và dừng rồi mở lại shop trước khi thực hiện lệnh cũ, bản tin chạy đồng thời, worker mất dấu kiểm và ngoại lệ phát sinh từ luồng mua hàng tổng hợp.
 
 #### Kết quả kiểm BE-20
+
+- R42 kiểm vai trò, ngoại lệ, phê duyệt và ủy quyền. Operations 7/7, BE verify 45/45. Thiếu giờ hoặc người nhận chặn bản tin, hai lượt cùng kỳ giữ một kết quả. Backlog trễ hiện degraded khi có heartbeat mới và unknown khi dấu kiểm hết hạn. Sổ audit ghi phần tổng kết công việc và độ phủ provider của R52 còn mở. [Hồ sơ R42](../PROJECT_AUDIT_CLEANUP_PLAN.md)
 
 - `npm run test:operations` đạt 4/4. Đơn mua fixture 120 VND giữ ngân sách một lần. Tạm dừng trước gửi giải phóng khoản giữ. Lệnh chưa rõ giữ khoản cam kết tới lúc đối chiếu bằng chứng nhà cung cấp, sau đó chốt khoản giữ, cập nhật command và đóng công việc. Dừng rồi mở lại shop vẫn chặn tác vụ thế hệ cũ. Hạn mức thấp hơn giá trị đơn không tạo khoản giữ. Hai worker cùng chạy kỳ chỉ tạo một bản tin và một thông báo nội bộ. Worker có dấu kiểm cũ hiển thị chưa xác minh.
 - `npm run test:operations:browser` đạt R04, R37, R38, R45, R46, R51, R52, R53 và R63 trên Firefox HTTPS với PostgreSQL/Redis. R63 mở đúng nội dung đơn mua từ ngoại lệ. R45 lưu ủy quyền và ngân sách đã áp dụng. R53 hiển thị combo có tiền hàng 190 VND sau giảm 10 VND. Bằng chứng danh sách R45 cần tải thêm trang kho khi kho được chọn nằm ngoài trang đầu. Suite tạo dữ liệu và Firefox dùng cùng khóa ký của cổng AI thử.
@@ -1206,6 +1261,7 @@ Dùng chung fixture tổng hợp cho BE-11–BE-17. Giá và tổng nội bộ l
 | Mốc | Điều kiện hoàn thành | Bằng chứng tối thiểu |
 |---|---|---|
 | P0 · [BE-CLOUD](#be-cloud) | Dữ liệu hai shop trên Supabase Cloud khớp nguồn, quyền và luồng HTTPS đạt, backup từ Cloud phục hồi được trên Windows. | Dự án đích, biên bản đối chiếu và quyền DB, kết quả runtime, checksum dump, kiểm phục hồi và quay lui. |
+| P0 · [BE-WIN](#be-win) | Bản thử hai shop dùng cơ sở dữ liệu cục bộ trên máy và phục hồi được trên đích đã chốt. | Kết quả bốn bước BE-WIN trên cùng ứng viên, kèm địa chỉ DB cục bộ, nơi lưu dữ liệu và biên bản quay lui. |
 | P0 · BE-01–BE-07 | Baseline BE-01 có CI đúng commit. Kiểm ma trận BE-02 đạt. Từ checkout sạch, migrate và seed PostgreSQL, đăng nhập HTTPS → chọn shop → tạo SKU → mở chi tiết → đọc lại sau restart. Phiên hết hạn, quyền thiếu và scope khác shop cho phản hồi đúng. Mất phản hồi rồi reload vẫn tra được kết quả và DB chỉ có một sản phẩm. Ghi giới hạn realtime trong smoke. | Quyết định baseline, link CI, báo cáo ma trận, commit và hash hợp đồng, lockfile, migration/seed, log HTTP/DB và browser live, kết quả hai shop và số lần ghi. |
 | P1 · BE-08–BE-13 | BE-10 sẵn sàng trước import BE-08. Đạt luồng sản phẩm → tồn → báo giá → xác nhận bằng fixture tin nhắn trên PostgreSQL → giao/hoàn → nguồn ghi thu. Dữ liệu khớp giữa đơn, kho, công việc và chứng từ. SSE nối lại đúng ID và phạm vi. Quyền R41 và chính sách phân bổ được kiểm. | Ca SKU cuối, báo giá đổi, thiếu/sai bằng chứng, đối ứng kho, tranh nhận việc theo vai trò, hoàn nhiều phần, COD, restart worker, mất Redis, ngắt/nối SSE và hồi quy P0. |
 | P2 · BE-14–BE-21 | Ma trận route, chức năng, operation và quyền đã được kiểm trên backend local theo khả năng tương ứng. Luồng R62–R67 và các nghiệp vụ mua, tài chính, inbox, AI, privacy có ca thành công, từ chối và phục hồi. Tổng giá vốn chuyển kho và phần dư đối soát khớp nguồn. | Báo cáo ma trận, đối chiếu DB theo fixture phân bổ, kiểm tenant/role, kiểm realtime, bằng chứng adapter thử và danh sách khả năng còn giới hạn theo môi trường. |
@@ -1383,7 +1439,7 @@ Ghim baseline tại commit `e22bb99d6839df9943308556c94499c04e7b7f85`. Khi ngu�
 
 | Nguồn | Số mục | SHA-256 |
 |---|---:|---|
-| [openapi.json](../botsales-kit/contracts/openapi.json) | 259 thao tác / 381 schema | `9f59bd830241d011fb83a3ecb6af739a99fddf173c1e386304d9b351f75bdb53` |
+| [openapi.json](../botsales-kit/contracts/openapi.json) | 259 thao tác / 381 schema | `6cb1fee95276cad30441c4aba0abb29f52b0ab51cd5b2a666439eea87d2a7173` |
 | [operation-index.json](../botsales-kit/contracts/operation-index.json) | 259 thao tác | `369c3a08ec3ee76d55c594bc454c1636c08202f2c2a6fad81cf96755c9086909` |
 | [route-manifest.json](../botsales-kit/contracts/route-manifest.json) | 67 màn / 16 module | `600f9b92a74aa2c541cd6a1ac97fcfe7bd43246b7803d8444a80360ba1aedfd1` |
 | [feature-catalog.json](../botsales-kit/contracts/feature-catalog.json) | 64 tính năng | `0b3f6c8a1fa8739d7ecd53937d40bfe54559c4d8e274e27bb7c4542171b654b0` |

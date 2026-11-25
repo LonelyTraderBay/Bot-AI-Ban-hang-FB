@@ -51,6 +51,7 @@ export async function estimatedShipping(tx: Prisma.TransactionClient, shopId: st
     const rule = address?.province && address.countryCode ? rules.find(candidate => regionKey(candidate) === regionKey(address)) : undefined;
     return {
         policyVersion: version,
+        outsideConfiguredRegions: address !== null && rules.length > 0 && !rule,
         rate: rule ? {
             policyVersion: version, countryCode: rule.countryCode, province: rule.province,
             serviceName: rule.serviceName, fee: { amount: rule.amount, currency },

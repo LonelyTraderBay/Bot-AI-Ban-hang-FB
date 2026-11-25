@@ -43,7 +43,7 @@ export function CashflowPage() {
 export function EntriesPage() {
     const { shop } = useScope();
     const list = useApi('listFinanceEntries', { query: useListQuery('listFinanceEntries') });
-    const affected = ['listFinanceEntries', 'getFinanceEntry', 'listJournals', 'getJournal', 'listDebtItems', 'getLedger', 'getTrialBalance', 'getBalanceSheet', 'getCashflow', 'getProfitLoss', 'getDashboard', 'listPaymentReviews'] as const;
+    const affected = ['listFinanceEntries', 'getFinanceEntry', 'listJournals', 'getJournal', 'listDebtItems', 'getLedger', 'getTrialBalance', 'getBalanceSheet', 'getCashflow', 'getProfitLoss', 'getMarketingSummary', 'getDashboard', 'listPaymentReviews'] as const;
     const post = useCommand('postFinanceEntry', affected);
     const reverse = useCommand('reverseFinanceEntry', affected);
     const [entryId, setEntryId] = useState<string | null>(null);
@@ -88,7 +88,7 @@ export function ProfitLossPage() {
                 <PageSections>
                     <Panel title="Chi tiết kết quả kinh doanh" action={<ActionGroup><Status value={p.completeness} /></ActionGroup>} bodyMode="inset">
                         {[
-                            ['Doanh thu gộp', p.grossSales], ['Giảm giá', p.discounts], ['Hàng bán trả lại', p.salesReturns], ['Doanh thu thuần', p.netSales], ['Giá vốn', p.cogs], ['Thu phí giao', p.shippingIncome], ['Chi phí giao', p.shippingExpense], ['Phí nền tảng', p.platformFees], ['Phí thanh toán', p.paymentFees], ['Chi phí AI', p.aiExpense], ['Chi phí khác', p.otherOperatingExpenses],
+                            ['Doanh thu gộp', p.grossSales], ['Giảm giá', p.discounts], ['Hàng bán trả lại', p.salesReturns], ['Doanh thu thuần', p.netSales], ['Giá vốn', p.cogs], ['Thu phí giao', p.shippingIncome], ['Chi phí giao', p.shippingExpense], ['Phí nền tảng', p.platformFees], ['Phí thanh toán', p.paymentFees], ['Chi phí AI', p.aiExpense], ['Chi phí quảng cáo', p.advertisingExpense], ['Chi phí đóng gói', p.packagingExpense], ['Chi phí khác', p.otherOperatingExpenses],
                         ].map(([title, value]) => <DetailLine key={String(title)} label={String(title)}><Amount wrap value={typeof value === 'object' ? value : null} /></DetailLine>)}
                         <DetailLine label="Chính sách">{p.policyVersion}</DetailLine>
                         <DetailLine label="Dữ liệu tại">{dateTime(p.asOf, shop.timezone)}</DetailLine>

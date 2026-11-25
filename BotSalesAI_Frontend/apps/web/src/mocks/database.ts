@@ -1,5 +1,6 @@
 /** DEV/TEST ONLY. In-memory API simulator; never imported by a production entry. */
 import seed from './seed.json';
+import type { Problem } from '@botsales/contracts';
 import schemaCatalog from '../../../../packages/contracts/src/schemas.json';
 import permissionCatalog from '../../../../packages/contracts/src/permissions.json';
 export type Row = Record<string, unknown>;
@@ -15,7 +16,7 @@ export type Input = {
     permissions?: string[];
 };
 export class MockFailure extends Error {
-    constructor(public status: number, public code: string, message: string) { super(message); }
+    constructor(public status: number, public code: string, message: string, readonly errors?: Problem['errors']) { super(message); }
 }
 export const record = (value: unknown): Row => value && typeof value === 'object' && !Array.isArray(value) ? value as Row : {};
 export const str = (value: unknown): string => typeof value === 'string' ? value : '';

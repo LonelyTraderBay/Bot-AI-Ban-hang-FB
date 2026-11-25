@@ -1,0 +1,11 @@
+R18 - SC-055 shop scope disposal
+Built frontend with local PostgreSQL data and a dedicated Chromium context. Two shops, 50 switches, no document reload. Metrics reflect this synthetic fixture.
+Before
+{"status":"SC055_SWITCH_CHECKPOINT","switches":50,"documents":1,"nodes":2433,"jsEventListeners":393,"heapBytes":21975308,"streams":1,"intervals":0,"timeoutCount":274,"oldByKind":{"products":0,"messages":25},"oldQueries":0,"trackedResponses":110,"retainedOldScopeResponses":25,"historyClicks":8}
+{"status":"SC055_BROWSER_SCALE_OBSERVED","switches":50,"spaReloads":0,"historyClicks":8,"productReads":51,"messageReads":59,"maxProducts":20,"maxMessages":100,"largestPageBytes":35235,"switchP95Ms":1270,"productP95Ms":13,"messageP95Ms":16,"browserErrors":0,"failedResponses":0}
+After
+{"status":"SC055_SWITCH_CHECKPOINT","switches":50,"documents":1,"nodes":2433,"jsEventListeners":393,"heapBytes":19635964,"streams":1,"intervals":0,"timeoutCount":24,"oldByKind":{"products":0,"messages":0},"oldQueries":0,"trackedResponses":110,"retainedOldScopeResponses":0,"historyClicks":8}
+{"status":"SC055_BROWSER_SCALE_OBSERVED","switches":50,"spaReloads":0,"historyClicks":8,"productReads":51,"messageReads":59,"maxProducts":20,"maxMessages":100,"largestPageBytes":35235,"switchP95Ms":1283,"productP95Ms":16,"messageP95Ms":15,"browserErrors":0,"failedResponses":0}
+{"status":"SC055_VOLUME_SEEDED","currency":"VND","skuRows":50000,"messageRows":500000,"seconds":4.558}
+{"status":"SC055_VOLUME_SEEDED","currency":"LAK","skuRows":50000,"messageRows":500000,"seconds":5.178}
+  8 passed (1.2m)

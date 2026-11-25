@@ -30,6 +30,13 @@ type Cancel = Version & { reason: string };
 const resultType = 'purchase_order';
 export const purchaseFixtureEnabled = (auth?: AuthConfig) => process.env.PROCUREMENT_FIXTURE_ADAPTER === '1' && Boolean(auth && usesLocalOidcFixture(auth));
 
+async function settlePurchaseRecovery(tx: Prisma.TransactionClient, shopId: string, sourceId: string, state: 'completed' | 'cancelled') {
+    const work = await tx.workItem.findUnique({ where: { shopId_kind_sourceType_sourceId: {
+        shopId, kind: 'recovery', sourceType: resultType, sourceId,
+    } } });
+    if (work && work.state !== 'completed' && work.state !== 'cancelled') await setWorkState(tx, shopId, work.id, state);
+}
+
 export async function createPurchaseDraft(tx: Prisma.TransactionClient, shopId: string, input: Draft) {
     const { supplierId, warehouseId, suggestionId } = input;
     const supplier = await supplierInShop(tx, shopId, supplierId);
@@ -132,7 +139,10 @@ export async function dispatchPurchases(db: PrismaClient, auth?: AuthConfig) {
             await enqueueCommandUpdate(tx, { id: job.commandId, shopId: job.shopId });
             await recordAudit(tx, {
                 shopId: job.shopId, actorId: job.command.actorId, requestId: job.commandId, action: 'dispatchPurchaseFixture',
-                resourceType: resultType, resourceId: purchase.id, metadata: { version: changed.version, status },
+                resourceType: resultType, resourceId: purchase.id, metadata: {
+                    actorKind: 'system', version: changed.version, status,
+                    ...(reservation ? { origin: 'delegation', delegationId: reservation.delegationId, reservationId: reservation.id } : {}),
+                },
             });
         }, true);
     }
@@ -217,10 +227,8 @@ export class PurchaseService extends ProcurementAccess {
                 if (settled.count) await enqueueCommandUpdate(tx, { shopId, id: dispatch.commandId });
                 const reservation = await tx.purchaseDelegationReservation.findUnique({ where: { shopId_commandId: { shopId, commandId: dispatch.commandId } } });
                 if (reservation?.status === 'unknown') await recordReservationStatus(tx, reservation, 'consumed');
-                const source = { shopId, kind: 'recovery' as const, sourceType: 'purchase_order', sourceId: id };
-                const work = await tx.workItem.findUnique({ where: { shopId_kind_sourceType_sourceId: source } });
-                if (work && !['completed', 'cancelled'].includes(work.state)) await setWorkState(tx, shopId, work.id, 'completed');
             }
+            await settlePurchaseRecovery(tx, shopId, id, 'completed');
             return updatePurchase(tx, order, { status: 'confirmed', externalReference: reference, confirmationId: proof.id });
         }, async (tx, id, scope) => purchaseView(await purchaseInShop(tx, shopId, id), scope, purchaseFixtureEnabled(this.config)));
     }
@@ -232,6 +240,7 @@ export class PurchaseService extends ProcurementAccess {
             requireVersion(order.version, input.expectedVersion);
             if (!canCancelPurchase(order.status)) throw new ConflictException();
             if (order.approval && ['pending', 'approved'].includes(order.approval.status)) await updateApprovalState(tx, order.approval, { status: 'revoked' });
+            await settlePurchaseRecovery(tx, shopId, id, 'cancelled');
             return updatePurchase(tx, order, { status: 'cancelled' });
         }, async (_tx, _result, _scope, command) => commandDto(command, resultType));
     }

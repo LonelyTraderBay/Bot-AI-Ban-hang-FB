@@ -4,6 +4,7 @@ import { ExactDecimal } from '../../platform/money/index.js';
 import { pairedLines } from './entries.js';
 import { financeMoney, financeShop, localAccountingDate, systemAccounts, writeJournal } from './journal.js';
 import { allocationTotals } from './reconciliation-data.js';
+import { requireShipmentCost } from './shipment-cost.js';
 
 type Posting = {
     shopId: string; sourceId: string; at: Date; currency: string;
@@ -18,12 +19,13 @@ export async function bookBusinessPairs(tx: Prisma.TransactionClient, input: Pos
     if (currency !== input.currency) throw new ConflictException();
     const keys = [...new Set(changes.flatMap(pair => [pair.debit, pair.credit]))];
     const accounts = await systemAccounts(tx, input.shopId, ...keys);
-    await writeJournal(tx, input.shopId, {
+    const { journal } = await writeJournal(tx, input.shopId, {
         sourceType, sourceId: input.sourceId, sourceRevision: input.sourceRevision ?? 1, eventType,
         effectiveDate: localAccountingDate(input.at, timezone), reason: input.reason ?? changes[0].description,
         lines: changes.flatMap(pair => pairedLines(accounts[keys.indexOf(pair.debit)], accounts[keys.indexOf(pair.credit)],
             financeMoney(pair.amount, currency), pair.description)),
     }, true);
+    return journal;
 }
 
 export async function moneyOnOrder(tx: Prisma.TransactionClient, shopId: string, orderId: string) {
@@ -55,12 +57,13 @@ export function bookHandover(tx: Prisma.TransactionClient, input: Posting, cost:
     ]);
 }
 
-export async function bookDelivery(tx: Prisma.TransactionClient, input: Posting, order: SalesOrder, cost: Prisma.Decimal) {
+export async function bookDelivery(tx: Prisma.TransactionClient, input: Posting, order: SalesOrder) {
+    const cost = await requireShipmentCost(tx, input.shopId, input.sourceId);
     const { paid, refunded } = await moneyOnOrder(tx, input.shopId, order.id);
     const deposit = paid.minus(refunded);
     const balance = new ExactDecimal(order.total).minus(deposit);
     if (deposit.lt(0) || balance.lt(0) || (order.paymentMethod === 'prepay' && !balance.isZero())) throw new ConflictException();
-    await bookBusinessPairs(tx, input, 'shipment', 'delivery', [
+    return bookBusinessPairs(tx, input, 'shipment', 'delivery', [
         { debit: 'customer_deposit', credit: 'sales', amount: deposit, description: 'Ghi doanh thu từ tiền khách đã trả' },
         { debit: 'carrier_receivable', credit: 'sales', amount: balance, description: 'Ghi doanh thu và COD phải thu' },
         { debit: 'cost_of_goods', credit: 'inventory_transit', amount: cost, description: 'Chuyển hàng đã giao sang giá vốn' },

@@ -1,6 +1,7 @@
 import { ConflictException, ForbiddenException, NotFoundException, UnprocessableEntityException } from '@nestjs/common';
 import type { IncomingHttpHeaders } from 'node:http';
 import type { PaymentEvidenceKind, Prisma } from '../../generated/prisma/client.js';
+import { UnprocessableInput } from '../../http/contracts.js';
 import { validUuid } from '../../http/query.js';
 import { requireVersion } from '../../http/response.js';
 import { commandDto } from '../../platform/commands/index.js';
@@ -159,7 +160,13 @@ export class FinanceSettlement extends FinanceAccess {
             await lockOpenPeriod(tx, shopId, effectiveDate);
             const observed = unitCost ? parseMoney(unitCost, currency) : null;
             const unitValue = quantityDelta <= 0 ? null : observed ?? (stock.onHand > 0 ? proportionalAmount(stock.carryingValue, 1, stock.onHand) : null);
-            if (quantityDelta > 0 && unitValue === null) throw new UnprocessableEntityException();
+            if (quantityDelta > 0 && unitValue === null) {
+                throw new UnprocessableInput([{
+                    path: '/unitCost',
+                    code: 'UNIT_COST_REQUIRED',
+                    message: 'Cần giá vốn đơn vị khi tăng tồn từ vị trí đang trống. Nếu không thấy ô nhập, nhờ người có quyền nhập giá vốn.',
+                }]);
+            }
             const receivedValue = unitValue ? financeMoney(unitValue.mul(quantityDelta), currency).amount : undefined;
             const movement = await recordStockMovement(tx, {
                 shopId, warehouseId, variantId, actorId: scope.userId, kind: 'adjustment',

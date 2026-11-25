@@ -70,7 +70,8 @@ export class ProcurementAccess {
             const result = await apply(tx, scope, auth, command);
             await recordAudit(tx, {
                 shopId: input.shopId, actorId: scope.userId, action: input.operationId, requestId: input.requestId,
-                resourceType, resourceId: result.id, metadata: { version: result.version, ...(input.reason ? { reason: input.reason } : {}) },
+                resourceType, resourceId: result.id, metadata: { actorKind: 'user', permissionVersion: scope.permissionVersion,
+                    version: result.version, ...(input.reason ? { reason: input.reason } : {}) },
             });
             return { type: resourceType, id: result.id };
         }, async (tx, scope, result, command) => view(tx, result.id, scope, command));

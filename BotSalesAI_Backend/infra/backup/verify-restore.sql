@@ -18,6 +18,22 @@ WITH state AS (
         md5(coalesce(string_agg(md5(to_jsonb(c)::text), '' ORDER BY shop_id, id), '')) FROM public.customers c
     UNION ALL SELECT 'sales_orders', count(*),
         md5(coalesce(string_agg(md5(to_jsonb(o)::text), '' ORDER BY shop_id, id), '')) FROM public.sales_orders o
+    UNION ALL SELECT 'order_lines', count(*),
+        md5(coalesce(string_agg(md5(to_jsonb(l)::text), '' ORDER BY shop_id, id), '')) FROM public.order_lines l
+    UNION ALL SELECT 'shipments', count(*),
+        md5(coalesce(string_agg(md5(to_jsonb(s)::text), '' ORDER BY shop_id, id), '')) FROM public.shipments s
+    UNION ALL SELECT 'shipment_lines', count(*),
+        md5(coalesce(string_agg(md5(to_jsonb(l)::text), '' ORDER BY shop_id, shipment_id, order_line_id), '')) FROM public.shipment_lines l
+    UNION ALL SELECT 'work_items', count(*),
+        md5(coalesce(string_agg(md5(to_jsonb(w)::text), '' ORDER BY shop_id, id), '')) FROM public.work_items w
+    UNION ALL SELECT 'work_notification_schedules', count(*),
+        md5(coalesce(string_agg(md5(to_jsonb(n)::text), '' ORDER BY shop_id, work_item_id), '')) FROM public.work_notification_schedules n
+    UNION ALL SELECT 'service_cases', count(*),
+        md5(coalesce(string_agg(md5(to_jsonb(c)::text), '' ORDER BY shop_id, id), '')) FROM public.service_cases c
+    UNION ALL SELECT 'evaluations', count(*),
+        md5(coalesce(string_agg(md5(to_jsonb(e)::text), '' ORDER BY shop_id, id), '')) FROM public.evaluations e
+    UNION ALL SELECT 'advertising_estimates', count(*),
+        md5(coalesce(string_agg(md5(to_jsonb(e)::text), '' ORDER BY shop_id, id), '')) FROM public.advertising_estimates e
     UNION ALL SELECT 'audit_entries', count(*),
         md5(coalesce(string_agg(md5(to_jsonb(a)::text), '' ORDER BY shop_id, id), '')) FROM public.audit_entries a
     UNION ALL SELECT 'stock_positions', count(*),
@@ -48,7 +64,7 @@ WITH state AS (
         md5(coalesce(string_agg(checksum, '' ORDER BY migration_name), '')) FROM public._prisma_migrations
         WHERE finished_at IS NOT NULL AND rolled_back_at IS NULL
 )
-SELECT jsonb_build_object('format', 3,
+SELECT jsonb_build_object('format', 6,
     'databaseFingerprint', encode(sha256(convert_to(jsonb_build_array(current_database(), inet_server_addr(), inet_server_port(),
         pg_postmaster_start_time())::text, 'UTF8')), 'hex'),
     'observations', (SELECT jsonb_agg(to_jsonb(state) ORDER BY component) FROM state),

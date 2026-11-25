@@ -183,8 +183,14 @@ export async function verifyImportFlow(page, before) {
         await page.locator('input[type=file]').setInputFiles({
             name: 'invalid.xlsx', mimeType: xlsxType, buffer: Buffer.from('Invalid spreadsheet'),
         });
+        const blockedUpload = page.waitForResponse(response => response.url() === api + '/uploads' && response.request().method() === 'POST');
         await page.getByRole('button', { name: 'Kiểm tra trước khi nhập' }).click();
-        await page.getByRole('alert').filter({ hasText: 'Máy chủ chưa chấp nhận tệp này' }).waitFor();
+        const blocked = await blockedUpload;
+        assert.equal(blocked.status(), 201);
+        const { data: rejected } = await blocked.json();
+        assert.deepEqual([rejected.status, rejected.rejectionReason], ['quarantined', 'invalid_format']);
+        await page.getByRole('alert').filter({ hasText: 'Định dạng hoặc nội dung tệp không hợp lệ' }).waitFor();
+        assert.equal(page.url(), app + '/imports');
         const xlsx = readFileSync(new URL('./products-fixture.xlsx', import.meta.url));
         await page.locator('input[type=file]').setInputFiles({
             name: 'products.xlsx', mimeType: xlsxType, buffer: xlsx,

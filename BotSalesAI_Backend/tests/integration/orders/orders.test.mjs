@@ -158,9 +158,37 @@ test('SC2-C04: a versioned shipping policy matches shop and address and excludes
     await json(await request(route('orders/' + order.id, shopB), other), 404, 'Problem');
     await json(await send('orders', draft(client, variant, { promotionId: randomUUID() })), 422, 'Problem');
     const stale = await quoteEvidenceFixture(admin, offer, client.conversation);
-    await json(await send('shipping-policy', { rules: [{ ...rules[0], amount: '30000' }] }, { method: 'PUT', version: policy.version }),
+    const updatedRules = [{ ...rules[0], amount: '30000' }];
+    const changed = await json(await send('shipping-policy', { rules: updatedRules }, { method: 'PUT', version: policy.version }),
         200, 'ShippingPolicyResponse');
     await json(await send('orders/' + order.id + '/customer-confirmations', stale), 409, 'Problem');
+
+    const unservedAddress = await json(await send('customers/' + client.person.id + '/addresses', {
+        label: 'Ngoài vùng', recipient: 'Người nhận thử', phone: '0900000111', line1: 'Địa chỉ thử',
+        ward: null, district: null, province: 'Đà Nẵng', postalCode: null, countryCode: 'VN',
+    }), 201, 'CustomerAddressResponse');
+    const unserved = await json(await send('orders', draft(client, variant, { shippingAddressId: unservedAddress.id })), 201, 'OrderResponse');
+    const unservedPath = 'orders/' + unserved.id;
+    const blockedQuote = await json(await send(unservedPath + '/quote'), 409, 'Problem');
+    assert.equal(blockedQuote.code, 'SHIPPING_ZONE_UNAVAILABLE');
+    assert.equal(await db.orderQuote.count({ where: { shopId, orderId: unserved.id } }), 0);
+
+    const manualPolicy = await json(await send('shipping-policy', { rules: [] }, { method: 'PUT', version: changed.version }),
+        200, 'ShippingPolicyResponse');
+    const manual = await quote(unserved);
+    assert.equal(manual.shippingRate, null);
+    await fillStock(variant);
+    const validProof = await evidence(unserved, manual, client.conversation);
+    const restored = await json(await send('shipping-policy', { rules: updatedRules }, { method: 'PUT', version: manualPolicy.version }),
+        200, 'ShippingPolicyResponse');
+    assert.equal(restored.rules[0].province, 'Hà Nội');
+    const blockedConfirmation = await json(await confirm(unserved, manual, validProof), 409, 'Problem');
+    assert.equal(blockedConfirmation.code, 'SHIPPING_ZONE_UNAVAILABLE');
+    assert.equal((await json(await request(route(unservedPath)), 200, 'OrderResponse')).orderState, 'draft');
+    assert.equal(await db.stockReservation.count({ where: { shopId, orderId: unserved.id } }), 0);
+    assert.equal(await db.workItem.count({ where: { shopId, sourceType: 'order', sourceId: unserved.id } }), 0);
+    console.log(JSON.stringify({ status: 'SC2_C04_SHIPPING_ZONE', outsideQuote: blockedQuote.code, outsideConfirm: blockedConfirmation.code,
+        manualQuoteRate: manual.shippingRate, reservationRows: 0, preparationRows: 0 }));
 });
 
 test('SC-022 and SC-023: draft reads and edits respect tenant, version, exact price, and existing quote references', async () => {
@@ -180,6 +208,10 @@ test('SC-022 and SC-023: draft reads and edits respect tenant, version, exact pr
     assert.equal((await json(await send('orders', input, { key }), 201, 'OrderResponse')).id, initial.id);
     const offer = await quote(initial);
     const edit = { lines: [{ variantId: variant.id, quantity: 2 }] };
+    const mismatch = await json(await send('orders', { ...input, ...edit }, { key }), 409, 'Problem');
+    assert.equal(mismatch.code, 'IDEMPOTENCY_MISMATCH');
+    assert.match(mismatch.detail, /Khóa thao tác đã gắn với dữ liệu khác/);
+    assert.equal((await db.orderLine.findFirstOrThrow({ where: { shopId, orderId: initial.id } })).quantity, 1);
     await json(await send('orders/' + initial.id, edit, { method: 'PATCH' }), 428, 'Problem');
     const edited = await json(await send('orders/' + initial.id, edit, { method: 'PATCH', version: initial.version }), 200, 'OrderResponse');
     assert.equal(edited.total.amount, '18014398509481986.000000000000000002');
@@ -219,6 +251,10 @@ test('SC-024 and SC-025: evidence is bound to message and quote, final SKU is al
         200, 'CommandListResponse');
     assert.deepEqual(command.result, { type: 'order', id: order.id });
     assert.equal((await json(await confirm(order, offer, proof, { key }), 202, 'CommandResponse')).id, command.id);
+    const otherCandidate = candidates[1 - winner];
+    const mismatch = await json(await confirm(otherCandidate.order, otherCandidate.offer, otherCandidate.proof, { key }), 409, 'Problem');
+    assert.equal(mismatch.code, 'IDEMPOTENCY_MISMATCH');
+    assert.equal(await db.stockReservation.count({ where: { shopId, orderId: otherCandidate.order.id } }), 0);
     assert.equal(await db.stockReservation.count({ where: { shopId, orderId: order.id } }), 1);
     assert.equal(await db.stockMovement.count({ where: { shopId, variantId: variant.id, kind: 'reserve' } }), 1);
     assert.equal(await db.auditEntry.count({ where: { shopId, resourceId: order.id, action: 'confirmOrder' } }), 1);
@@ -243,22 +279,85 @@ test('SC-024 and SC-025: evidence is bound to message and quote, final SKU is al
     assert.equal(await db.stockMovement.count({ where: { shopId, variantId: variant.id, kind: 'release' } }), 1);
 });
 
-test('SC-024 and SC-026: price changes invalidate quote and expiry atomically cancels and releases held stock', async () => {
+test('SC2-A02 rejects preparation before payment or when a later stock line cannot be reserved', async () => {
+    const first = await product();
+    const second = await product();
+    const [stocked, empty] = [first.variants[0], second.variants[0]].sort((a, b) => a.id.localeCompare(b.id));
+    await fillStock(stocked, 1);
+    const client = await customer();
+    const draftWith = overrides => send('orders', draft(client, stocked, overrides)).then(reply => json(reply, 201, 'OrderResponse'));
+    const unreadied = async order => {
+        assert.equal(await db.stockReservation.count({ where: { shopId, orderId: order.id } }), 0);
+        assert.equal(await db.prepJob.count({ where: { shopId, orderId: order.id } }), 0);
+        assert.equal(await db.workItem.count({ where: { shopId, sourceType: 'order', sourceId: order.id, kind: 'prepare_order' } }), 0);
+        assert.equal(await db.appNotification.count({ where: { shopId, workItem: { sourceType: 'order', sourceId: order.id } } }), 0);
+    };
+    const reject = async order => {
+        const offer = await quote(order);
+        const proof = await evidence(order, offer, client.conversation);
+        await json(await confirm(order, offer, proof), 409, 'Problem');
+        await unreadied(order);
+        const unchanged = await json(await request(route('orders/' + order.id)), 200, 'OrderResponse');
+        assert.equal(unchanged.orderState, 'draft');
+    };
+    const unpaid = await draftWith({ paymentMethod: 'prepay' });
+    await unreadied(unpaid);
+    await reject(unpaid);
+    const stockShortage = await draftWith({ lines: [{ variantId: stocked.id, quantity: 1 }, { variantId: empty.id, quantity: 1 }] });
+    await reject(stockShortage);
+    assert.equal(await db.stockMovement.count({ where: { shopId, variantId: { in: [stocked.id, empty.id] }, kind: 'reserve' } }), 0);
+    console.log(JSON.stringify({ status: 'SC2_A02_PREPARATION_GATES', unpaid: 409, laterLineShortage: 409,
+        reservationMovementsPersisted: 0, prepJobsPersisted: 0, workItemsPersisted: 0, notificationsPersisted: 0 }));
+});
+
+test('SC-024 SC-026 SC2-B02 SC2-B03 SC2-F02: only a current verified quote can reserve stock, and expiry releases it once', async () => {
     const original = await product();
     const [variant] = original.variants;
     await fillStock(variant);
     const client = await customer();
+    const addressWithoutPhone = await json(await send('customers/' + client.person.id + '/addresses', {
+        label: 'Thiếu số người nhận', recipient: 'Người nhận thử', phone: null, line1: 'Địa chỉ thử',
+        ward: null, district: null, province: 'Hà Nội', postalCode: null, countryCode: 'VN',
+    }), 201, 'CustomerAddressResponse');
+    for (const shippingAddressId of [null, addressWithoutPhone.id]) {
+        const incomplete = await json(await send('orders', draft(client, variant, { shippingAddressId })), 201, 'OrderResponse');
+        const offer = await quote(incomplete);
+        const proof = await evidence(incomplete, offer, client.conversation);
+        await json(await confirm(incomplete, offer, proof), 409, 'Problem');
+        assert.equal((await json(await request(route('orders/' + incomplete.id)), 200, 'OrderResponse')).orderState, 'draft');
+        assert.equal(await db.stockReservation.count({ where: { shopId, orderId: incomplete.id } }), 0);
+        assert.equal(await db.workItem.count({ where: { shopId, sourceType: 'order', sourceId: incomplete.id } }), 0);
+    }
     const order = await json(await send('orders', draft(client, variant)), 201, 'OrderResponse');
     const stale = await quote(order);
     const priorEvidence = await evidence(order, stale, client.conversation);
     const { id, sku, options, name, active } = variant;
     await json(await send('products/' + original.id, { variants: [{ id, sku, options, name, active, price: { amount: '123.456', currency: 'VND' } }] },
         { method: 'PATCH', version: original.version }), 200, 'ProductResponse');
-    await json(await confirm(order, stale, priorEvidence), 409, 'Problem');
+    const repriced = await json(await confirm(order, stale, priorEvidence), 409, 'Problem');
+    assert.equal(repriced.code, 'PRICE_CHANGED');
+    assert.match(repriced.detail, /Lấy báo giá mới và xác nhận lại/);
+    assert.equal(await db.stockReservation.count({ where: { shopId, orderId: order.id } }), 0);
+    const expiring = await quote(order);
+    const expiringProof = await evidence(order, expiring, client.conversation);
+    const now = Date.now();
+    await admin.orderQuote.update({ where: { shopId_id: { shopId, id: expiring.id } },
+        data: { createdAt: new Date(now - 60000), expiresAt: new Date(now - 1000) } });
+    const expiredQuoteProblem = await json(await confirm(order, expiring, expiringProof), 409, 'Problem');
+    assert.equal(expiredQuoteProblem.code, 'QUOTE_EXPIRED');
+    assert.match(expiredQuoteProblem.detail, /Báo giá đã hết hạn/);
+    assert.equal(await db.stockReservation.count({ where: { shopId, orderId: order.id } }), 0);
     const revised = await quote(order);
+    await json(await confirm(order, revised, expiringProof), 409, 'Problem');
+    console.log(JSON.stringify({ status: 'SC2_B02_B03_QUOTE_GATES', missingAddress: 409, missingRecipientPhone: 409,
+        repriced: repriced.code, expired: expiredQuoteProblem.code, oldProofRejected: true, invalidPreparationRows: 0 }));
     const currentProof = await evidence(order, revised, client.conversation);
     await json(await confirm(order, revised, currentProof), 202, 'CommandResponse');
     const hold = await db.stockReservation.findFirstOrThrow({ where: { shopId, orderId: order.id } });
+    const prep = await db.prepJob.findUniqueOrThrow({ where: { shopId_orderId: { shopId, orderId: order.id } }, include: { workItem: true } });
+    const workRoute = route('work-items/' + prep.workItemId);
+    assert.equal(prep.workItem.state, 'queued');
+    assert.ok(prep.workItem.dueAt);
     const later = new Date(hold.expiresAt.getTime() + 1);
     await Promise.all([expireOrdersWithReservations(db, later), expireOrdersWithReservations(db, later)]);
     const expired = await json(await request(route('orders/' + order.id)), 200, 'OrderResponse');
@@ -266,6 +365,70 @@ test('SC-024 and SC-026: price changes invalidate quote and expiry atomically ca
     assert.equal(expired.fulfillmentState, 'unfulfilled');
     assert.equal(await db.auditEntry.count({ where: { shopId, action: 'expireOrderReservation', resourceId: order.id } }), 1);
     assert.equal(await db.stockMovement.count({ where: { shopId, sourceId: hold.id, kind: 'release' } }), 1);
+    const cancelled = await json(await request(workRoute), 200, 'WorkItemResponse');
+    assert.equal(cancelled.state, 'cancelled');
+    assert.equal(cancelled.version, prep.workItem.version + 1);
+    assert.deepEqual(cancelled.source, { type: 'order', id: order.id });
+    assert.deepEqual(cancelled.allowedActions, []);
+    assert.equal(await db.workItem.count({ where: { shopId, kind: 'prepare_order', sourceType: 'order', sourceId: order.id } }), 1);
+    assert.equal(await db.appNotification.count({ where: { shopId, workItemId: cancelled.id, recipientUserId: owner.userId } }), 1);
+    await json(await send('work-items/' + cancelled.id + '/claim', { expectedVersion: cancelled.version }), 409, 'Problem');
+    console.log(JSON.stringify({ status: 'SC2_F02_PREP_CANCELLATION', versionIncrement: 1, retainedWorkItems: 1,
+        retainedNotifications: 1, claimStatus: 409, releaseCount: 1 }));
+});
+
+test('SC2-F02: cancelling preparation also cancels its dependent notification recovery', async () => {
+    const previous = await json(await request(route('notification-policy')), 200, 'NotificationPolicyResponse');
+    const { version } = previous;
+    const policy = Object.fromEntries(Object.entries(previous).filter(([field]) =>
+        !['id', 'shopId', 'createdAt', 'updatedAt', 'version'].includes(field)));
+    const membership = { shopId_userId: { shopId, userId: viewer.userId } };
+    const { roles } = await admin.membership.findUniqueOrThrow({ where: membership, select: { roles: true } });
+    const updateRoles = roles => admin.membership.update({ where: membership, data: { roles, permissionVersion: { increment: 1 } } });
+    const updatePolicy = async input => json(await send('notification-policy', input, { method: 'PUT' }), 200, 'NotificationPolicyResponse');
+    let configured, restored;
+    await updateRoles(['manager']);
+    try {
+        configured = await updatePolicy({ ...policy, expectedVersion: version, enabled: true, quietHours: null,
+            primaryUserIds: [viewer.userId], fallbackUserIds: [], fallbackChannel: 'none', remindAfterMinutes: 1, maxReminders: 1,
+            ...(policy.eventPriorities ? { eventPriorities: { ...policy.eventPriorities, order: 'normal' } } : {}),
+        });
+        const first = await confirmedOrder(1);
+        const second = await confirmedOrder(1);
+        await updateRoles(roles);
+        restored = true;
+        const workKey = sourceId => ({ shopId_kind_sourceType_sourceId: { shopId, kind: 'recovery', sourceType: 'notification_schedule', sourceId } });
+        const scheduleKey = workItemId => ({ shopId_workItemId: { shopId, workItemId } });
+        const now = new Date();
+        await Promise.all([dispatchPreparationNotifications(db, auth, now), dispatchPreparationNotifications(db, auth, now)]);
+        const dependent = await db.workItem.findUniqueOrThrow({ where: workKey(first.prep.workItemId) });
+        const unrelated = await db.workItem.findUniqueOrThrow({ where: workKey(second.prep.workItemId) });
+        assert.equal(dependent.state, 'queued');
+        assert.deepEqual([dependent.sourceType, dependent.sourceId], ['notification_schedule', first.prep.workItemId]);
+
+        const current = await json(await request(route('orders/' + first.draftOrder.id)), 200, 'OrderResponse');
+        const path = 'orders/' + current.id + '/cancel';
+        const body = { expectedVersion: current.version, reason: 'Hủy đơn thử với việc nhắc phụ thuộc' };
+        const commandOptions = { key: randomUUID() };
+        const cancel = async () => json(await send(path, body, commandOptions), 202, 'CommandResponse');
+        assert.equal((await cancel()).id, (await cancel()).id);
+        const result = await db.workItem.findUniqueOrThrow({ where: workKey(first.prep.workItemId) });
+        assert.equal(result.state, 'cancelled', 'Cancelling preparation must cancel its dependent recovery');
+        assert.equal(result.id, dependent.id);
+        assert.equal(result.version, dependent.version + 1);
+        assert.deepEqual(await db.workItem.findUniqueOrThrow({ where: workKey(second.prep.workItemId) }), unrelated);
+        assert.equal((await db.workNotificationSchedule.findUniqueOrThrow({ where: scheduleKey(first.prep.workItemId) })).nextDueAt, null);
+        const currentWork = await json(await request(route('work-items/' + result.id)), 200, 'WorkItemResponse');
+        assert.deepEqual(currentWork.allowedActions, []);
+        await json(await request(route('work-items/' + result.id, shopB), other), 404, 'Problem');
+        await dispatchPreparationNotifications(db, auth, now);
+        assert.equal((await db.workItem.findUniqueOrThrow({ where: workKey(first.prep.workItemId) })).version, result.version);
+        console.log(JSON.stringify({ status: 'SC2_F02_NOTIFICATION_DEPENDENCY', sourceState: 'cancelled', dependentState: result.state,
+            sameTask: true, versionIncrement: 1, otherOrderUnchanged: true, scheduleCleared: true, foreignAccess: 404 }));
+    } finally {
+        if (!restored) await updateRoles(roles);
+        if (configured) await updatePolicy({ ...policy, expectedVersion: configured.version });
+    }
 });
 
 test('SC2-B05: promotion effective dates and tenant are filtered before the page boundary', async () => {
@@ -294,14 +457,16 @@ test('SC2-B05: promotion effective dates and tenant are filtered before the page
     assert.deepEqual(scoped.map(entry => entry.id), [outside.id]);
 });
 
-test('SC2-C01, SC2-C02, SC2-C03 and SC2-A02: order confirmation creates one task, current roles and assignment govern prep and its alert', async () => {
+test('SC2-C01 SC2-C02 SC2-C03 SC2-A02 SC2-F02: order confirmation creates one task and notification ack leaves work unchanged', async () => {
     const { variants: [variant] } = await product();
     await fillStock(variant);
     const client = await customer();
     const order = await json(await send('orders', draft(client, variant)), 201, 'OrderResponse');
     const offer = await quote(order);
     const proof = await evidence(order, offer, client.conversation);
-    await json(await confirm(order, offer, proof), 202, 'CommandResponse');
+    const confirmationKey = randomUUID();
+    const submission = await json(await confirm(order, offer, proof, { key: confirmationKey }), 202, 'CommandResponse');
+    assert.equal((await json(await confirm(order, offer, proof, { key: confirmationKey }), 202, 'CommandResponse')).id, submission.id);
     const confirmed = await json(await request(route('orders/' + order.id)), 200, 'OrderResponse');
     assert.ok(confirmed.prepTaskId);
     const prepRef = await db.prepJob.findUniqueOrThrow({ where: { shopId_orderId: { shopId, orderId: order.id } } });
@@ -321,7 +486,9 @@ test('SC2-C01, SC2-C02, SC2-C03 and SC2-A02: order confirmation creates one task
     const ack = () => send('notifications/' + notice.id + '/acknowledge', { expectedVersion: notice.version }, { key: ackKey });
     const acknowledged = await json(await ack(), 200, 'NotificationResponse');
     assert.ok(acknowledged.acknowledgedAt);
+    assert.equal(acknowledged.workItemId, work.id);
     assert.deepEqual((await json(await ack(), 200, 'NotificationResponse')), acknowledged);
+    assert.deepEqual(await json(await request(route('work-items/' + work.id)), 200, 'WorkItemResponse'), work);
     const member = { shopId_userId: { shopId, userId: viewer.userId } };
     const prior = await db.membership.findUniqueOrThrow({ where: member });
     try {
@@ -335,7 +502,20 @@ test('SC2-C01, SC2-C02, SC2-C03 and SC2-A02: order confirmation creates one task
         assert.deepEqual(requests.map(response => response.status).sort(), [200, 412]);
         const claimant = requests[0].status === 200 ? owner : viewer;
         const otherActor = claimant === owner ? viewer : owner;
-        await Promise.all(requests.map(response => response.body.cancel()));
+        const accepted = await json(requests.find(response => response.status === 200), 200, 'WorkItemResponse');
+        await json(requests.find(response => response.status === 412), 412, 'Problem');
+        const observed = await json(await request(route('work-items/' + work.id), otherActor), 200, 'WorkItemResponse');
+        assert.equal(observed.assigneeUserId, claimant.userId);
+        assert.equal(observed.version, work.version + 1);
+        assert.equal(observed.updatedAt, accepted.updatedAt);
+        assert.ok(Date.parse(observed.updatedAt) >= Date.parse(work.updatedAt));
+        assert.ok(!observed.allowedActions.includes('claim'));
+        const claimAudit = await db.auditEntry.findFirstOrThrow({ where: { shopId, action: 'claimWorkItem', resourceId: work.id } });
+        assert.equal(claimAudit.actorId, claimant.userId);
+        assert.equal(claimAudit.metadata.version, observed.version);
+        assert.ok(claimAudit.createdAt >= new Date(work.createdAt));
+        console.log(JSON.stringify({ status: 'SC2_A04_CLAIM_OBSERVATION', accepted: 200, stale: 412,
+            readByOther: true, winnerMatchesAudit: true, timestampMatchesResponse: true }));
         const prep = await json(await request(route('prep-jobs/' + prepRef.id)), 200, 'PrepJobResponse');
         assert.equal(prep.assigneeUserId, claimant.userId);
         assert.equal(prep.state, 'claimed');
@@ -355,6 +535,8 @@ test('SC2-C01, SC2-C02, SC2-C03 and SC2-A02: order confirmation creates one task
         assert.equal(await db.auditEntry.count({ where: { shopId, action: 'claimWorkItem', resourceId: work.id } }), 1);
         assert.equal(await db.prepJob.count({ where: { shopId, orderId: order.id } }), 1);
         assert.equal(await db.appNotification.count({ where: { shopId, workItemId: work.id, recipientUserId: owner.userId } }), 1);
+        console.log(JSON.stringify({ status: 'SC2_F02_PREP_ACK', sameCommandOnReplay: true, ackLinksWork: true, ackChangesWork: false,
+            observations: 1, concurrentClaimStatuses: [200, 412], crossShopStatus: 404 }));
     } finally {
         await db.membership.update({ where: member, data: { roles: prior.roles, permissionVersion: { increment: 1 } } });
     }
@@ -368,9 +550,9 @@ async function openPeriod() {
     else await json(await send('periods', { startDate: date, endDate: date, reason: 'Kỳ thử bàn giao và trả hàng' }), 201, 'AccountingPeriodResponse');
 }
 
-async function confirmedOrder(quantity) {
+async function confirmedOrder(quantity, receivedValue) {
     const { variants: [variant] } = await product();
-    await fillStock(variant, quantity);
+    await fillStock(variant, quantity, shopA.defaultWarehouseId, receivedValue);
     const client = await customer();
     const draftOrder = await json(await send('orders', draft(client, variant, { lines: [{ variantId: variant.id, quantity }] })),
         201, 'OrderResponse');
@@ -380,8 +562,8 @@ async function confirmedOrder(quantity) {
     return { draftOrder, prep, variant, offer };
 }
 
-async function packedOrder(quantity) {
-    const { draftOrder, prep, variant, offer } = await confirmedOrder(quantity);
+async function packedOrder(quantity, receivedValue) {
+    const { draftOrder, prep, variant, offer } = await confirmedOrder(quantity, receivedValue);
     await packOrder(draftOrder, prep);
     const order = await json(await request(route('orders/' + draftOrder.id)), 200, 'OrderResponse');
     return { order, variant, prep, offer };
@@ -416,7 +598,57 @@ async function observePayment(orderId, amount, kind) {
     } });
 }
 
-test('SC2-C05, SC2-C06, SC2-C07 and SC2-C08: handoff recovery, manual carrier evidence, subsequent returns and exact stock and finance', async t => {
+test('SC2-E02: weighted cost is frozen at handover and recognized only on evidenced delivery', async () => {
+    await openPeriod();
+    const { order, variant } = await packedOrder(3, '4.02');
+    await fillStock(variant, 3, order.warehouseId, '16');
+    const stock = () => db.stockPosition.findUniqueOrThrow({
+        where: { shopId_warehouseId_variantId: { shopId, warehouseId: order.warehouseId, variantId: variant.id } },
+    });
+    const assertStock = async (onHand, transit, value) => {
+        const row = await stock();
+        assert.deepEqual([row.onHand, row.transit, row.carryingValue.toFixed()], [onHand, transit, value]);
+    };
+    await assertStock(6, 0, '20.02');
+    const window = '?' + new URLSearchParams({ timezone: shopA.timezone,
+        from: new Date(Date.now() - 86400000).toISOString(), to: new Date(Date.now() + 86400000).toISOString() });
+    const report = () => request(route('finance/profit-loss' + window)).then(response => json(response, 200, 'ProfitLossResponse'));
+    const readOrder = () => request(route('orders/' + order.id)).then(response => json(response, 200, 'OrderResponse'));
+    const before = await report();
+    const shipment = await json(await send('shipments', { orderId: order.id, warehouseId: order.warehouseId, carrierId: null,
+        orderLineIds: order.lines.map(line => line.id) }), 201, 'ShipmentResponse');
+    const shipmentPath = 'shipments/' + shipment.id;
+    await json(await send(shipmentPath + '/handover', { expectedVersion: shipment.version }), 202, 'CommandResponse');
+    const handed = await json(await request(route(shipmentPath)), 200, 'ShipmentResponse');
+    const lines = () => db.shipmentLine.findMany({ where: { shopId, shipmentId: shipment.id } });
+    assert.deepEqual((await lines()).map(line => line.costValue.toFixed()), ['10.01']);
+    await assertStock(3, 3, '10.01');
+    const waiting = await report();
+    assert.deepEqual([waiting.netSales, waiting.cogs], [before.netSales, before.cogs]);
+    assert.equal((await readOrder()).recognitionPolicyVersion, null);
+
+    await fillStock(variant, 2, order.warehouseId, '50');
+    await assertStock(5, 3, '60.01');
+    const proof = await observeShipment(handed, 'delivered');
+    const key = randomUUID();
+    const delivered = await json(await send(shipmentPath + '/events', proof, { key }), 200, 'ShipmentResponse');
+    assert.deepEqual(await json(await send(shipmentPath + '/events', proof, { key }), 200, 'ShipmentResponse'), delivered);
+    await assertStock(5, 0, '60.01');
+    assert.deepEqual((await lines()).map(line => line.costValue.toFixed()), ['10.01']);
+    const after = await report();
+    assert.equal(new ExactDecimal(after.cogs.amount).minus(before.cogs.amount).toFixed(), '10.01');
+    assert.equal(new ExactDecimal(after.netSales.amount).minus(before.netSales.amount).toFixed(), order.total.amount);
+    const books = await db.financeJournal.findMany({ where: { shopId, sourceType: 'shipment', sourceId: shipment.id } });
+    assert.deepEqual(books.map(book => [book.eventType, book.policyVersion]).sort(), [['delivery', before.policyVersion], ['handover', before.policyVersion]]);
+    const recognized = await readOrder();
+    assert.equal(recognized.recognitionPolicyVersion, books.find(book => book.eventType === 'delivery').policyVersion,
+        'Delivered order identifies the policy recorded on its revenue journal');
+    console.log(JSON.stringify({ status: 'SC2_E02_WEIGHTED_SNAPSHOT', initialUnits: 6, initialValue: '20.02', issuedUnits: 3,
+        recordedCost: '10.01', laterReceipt: '50', remainingValue: '60.01', deliveryRevenueOnce: true, policyVersionPinned: true,
+        orderMatchesJournalPolicy: true }));
+});
+
+test('SC-031, SC2-C05, SC2-C06, SC2-C07 and SC2-C08: handoff recovery, manual carrier evidence, subsequent returns and exact stock and finance', async t => {
     await openPeriod();
     const { order, variant, prep, offer } = await packedOrder(3);
     const orderLineId = order.lines[0].id;
@@ -469,6 +701,8 @@ test('SC2-C05, SC2-C06, SC2-C07 and SC2-C08: handoff recovery, manual carrier ev
     await json(await handover(randomUUID()), 412, 'Problem');
     const inDispatch = await readShipment();
     assert.equal(inDispatch.state, 'handed_over');
+    await json(await send(shipmentPath + '/handover', { expectedVersion: inDispatch.version }), 409, 'Problem');
+    assert.deepEqual(await readShipment(), inDispatch);
     assert.equal((await readOrder()).fulfillmentState, 'dispatched');
     assert.equal((await stock()).onHand, 0);
     assert.equal((await stock()).reserved, 0);
@@ -504,8 +738,52 @@ test('SC2-C05, SC2-C06, SC2-C07 and SC2-C08: handoff recovery, manual carrier ev
     assert.equal(travelling.state, 'in_transit');
     const delivery = eventFor(travelling, 'delivered');
     const proof = eventRequest(delivery, await record(delivery));
-    const delivered = await json(await updateEvent(proof), 200, 'ShipmentResponse');
+    const orderKey = { shopId_id: { shopId, id: order.id } };
+    const { reservationId } = await db.salesOrder.findUniqueOrThrow({ where: orderKey });
+    assert.ok(reservationId);
+    const lineKey = { shopId_shipmentId_orderLineId: { shopId, shipmentId: shipment.id, orderLineId } };
+    const { costValue } = await db.shipmentLine.findUniqueOrThrow({ where: lineKey });
+    const journalQuery = { shopId, sourceType: 'shipment', sourceId: shipment.id, eventType: 'delivery' };
+    assert.equal(costValue.toFixed(), '10.01');
+    const deliveryKey = randomUUID();
+    await admin.salesOrder.update({ where: orderKey, data: { reservationId: null } });
+    try {
+        await json(await updateEvent(proof, deliveryKey), 409, 'Problem');
+    } finally {
+        await admin.salesOrder.update({ where: orderKey, data: { reservationId } });
+    }
+    await admin.shipmentLine.update({ where: lineKey, data: { costValue: '0' } });
+    try {
+        await json(await updateEvent(proof, deliveryKey), 409, 'Problem');
+        assert.deepEqual(await readShipment(), travelling);
+        assert.equal((await stock()).transit, 3);
+        assert.equal((await readOrder()).fulfillmentState, 'dispatched');
+        assert.equal(await db.financeJournal.count({ where: journalQuery }), 0);
+    } finally {
+        await admin.shipmentLine.update({ where: lineKey, data: { costValue } });
+    }
+    const delivered = await json(await updateEvent(proof, deliveryKey), 200, 'ShipmentResponse');
     assert.equal(delivered.state, 'delivered');
+    assert.equal(await db.financeJournal.count({ where: journalQuery }), 1);
+    const query = shop => '?' + new URLSearchParams({ timezone: shop.timezone,
+        from: new Date(Date.now() - 86400000).toISOString(), to: new Date(Date.now() + 86400000).toISOString() });
+    const report = (shop = shopA, actor = owner, status = 200) => request(route('finance/profit-loss' + query(shop), shop), actor)
+        .then(response => json(response, status, status === 200 ? 'ProfitLossResponse' : 'Problem'));
+    const complete = await report();
+    assert.ok(complete.cogs);
+    await admin.shipmentLine.update({ where: lineKey, data: { costValue: '0' } });
+    try {
+        const historical = await report();
+        assert.deepEqual([historical.cogs, historical.grossProfit, historical.operatingProfit], [null, null, null]);
+        assert.equal(historical.completeness, 'incomplete');
+        assert.deepEqual(historical.netSales, complete.netSales);
+        assert.ok(historical.warnings.some(warning => warning.includes('Chứng từ giá vốn')));
+        assert.equal((await report(shopB, other)).completeness, 'provisional');
+        await report(shopA, viewer, 403);
+    } finally {
+        await admin.shipmentLine.update({ where: lineKey, data: { costValue } });
+    }
+    assert.deepEqual((await report()).cogs, complete.cogs);
     assert.deepEqual(await json(await updateEvent(proof), 200, 'ShipmentResponse'), delivered);
     assert.equal(await record(first), firstId);
     const lateReview = eventFor(delivered, 'failed', new Date(first.occurredAt));
@@ -587,6 +865,28 @@ test('SC2-C05, SC2-C06, SC2-C07 and SC2-C08: handoff recovery, manual carrier ev
     assert.equal(books.find(book => book.eventType === 'delivery').lines.find(line => line.account.systemKey === 'carrier_receivable').debit.toFixed(), sold.total.amount);
     assert.equal(await db.auditEntry.count({ where: { shopId, action: 'handoverShipment', resourceId: shipment.id } }), 1);
     assert.equal(await db.outboxEvent.count({ where: { shopId, commandId: command.id } }), 1);
+});
+
+test('SC-031: a recorded zero-cost stock issue permits delivery without a missing-cost warning', async () => {
+    await openPeriod();
+    const { order } = await packedOrder(1, '0');
+    const shipment = await json(await send('shipments', {
+        orderId: order.id, warehouseId: order.warehouseId, carrierId: null, orderLineIds: order.lines.map(line => line.id),
+    }), 201, 'ShipmentResponse');
+    const resource = 'shipments/' + shipment.id;
+    await json(await send(resource + '/handover', { expectedVersion: shipment.version }), 202, 'CommandResponse');
+    const handed = await json(await request(route(resource)), 200, 'ShipmentResponse');
+    const delivered = await json(await send(resource + '/events', await observeShipment(handed, 'delivered')), 200, 'ShipmentResponse');
+    assert.equal(delivered.state, 'delivered');
+    const { reservationId } = await db.salesOrder.findUniqueOrThrow({ where: { shopId_id: { shopId, id: order.id } } });
+    const issue = await db.stockMovement.findFirstOrThrow({ where: { shopId, sourceType: 'stock_reservation', sourceId: reservationId, kind: 'fulfillment' } });
+    assert.deepEqual([issue.carryingDelta.toFixed(), issue.quantityDelta], ['0', -1]);
+    const query = new URLSearchParams({ timezone: shopA.timezone,
+        from: new Date(Date.now() - 86400000).toISOString(), to: new Date(Date.now() + 86400000).toISOString() });
+    const report = await json(await request(route('finance/profit-loss?' + query)), 200, 'ProfitLossResponse');
+    assert.ok(report.cogs);
+    assert.equal(report.completeness, 'provisional');
+    assert.ok(report.warnings.every(warning => !warning.includes('Chứng từ giá vốn')));
 });
 
 test('SC2-A01, SC2-A07 and SC2-A08: device tests use current permission and retain provider uncertainty without duplicate sends', async () => {
@@ -952,13 +1252,19 @@ test('T070 Telegram verifies private pairing, suppresses replay and sends exactl
         const pairingB = { shopId_id: { shopId: shopB.id, id: pairedB.pairingCode.slice(0, 36) } };
         assert.equal((await db.telegramPairing.findUniqueOrThrow({ where: pairingB })).usedAt, null);
         const memberB = { shopId_userId: { shopId: shopB.id, userId: other.userId } };
-        const roles = (await admin.membership.findUniqueOrThrow({ where: memberB })).roles;
+        const originalMembership = await admin.membership.findUniqueOrThrow({ where: memberB });
         await admin.membership.update({ where: memberB, data: { roles: ['viewer'], permissionVersion: { increment: 1 } } });
         try {
             await webhook(telegramStartUpdate(102, otherChat, pairedB.pairingCode));
             assert.equal((await db.telegramPairing.findUniqueOrThrow({ where: pairingB })).usedAt, null);
+            await admin.membership.update({ where: memberB, data: { roles: originalMembership.roles, status: 'revoked',
+                permissionVersion: { increment: 1 } } });
+            await webhook(telegramStartUpdate(105, otherChat, pairedB.pairingCode));
+            assert.equal((await db.telegramPairing.findUniqueOrThrow({ where: pairingB })).usedAt, null);
+            console.log(JSON.stringify({ status: 'SC2_A08_PAIRING_AUTHORITY', roleRemovalBlocked: true, membershipRevocationBlocked: true }));
         } finally {
-            await admin.membership.update({ where: memberB, data: { roles, permissionVersion: { increment: 1 } } });
+            const { roles, status } = originalMembership;
+            await admin.membership.update({ where: memberB, data: { roles, status, permissionVersion: { increment: 1 } } });
         }
         const expired = await admin.telegramPairing.update({ where: pairingB,
             data: { createdAt: new Date(Date.now() - 10_000), expiresAt: new Date(Date.now() - 1000) } });
@@ -1000,6 +1306,40 @@ test('T070 Telegram verifies private pairing, suppresses replay and sends exactl
         assert.equal(delivered.openedAt, null);
         assert.equal(delivered.acknowledgedAt, null);
         assert.equal(calls, 2);
+
+        const budgets = await json(await request(route('budget-policies') + '?limit=10'), 200, 'BudgetPolicyListResponse');
+        const alertBudget = budgets.find(entry => entry.kind === 'notification');
+        assert.ok(Number(alertBudget.consumed.amount) > 0);
+        const budgetKey = { shopId_id: { shopId, id: alertBudget.id } };
+        const priorBudget = await admin.budgetPolicy.findUniqueOrThrow({ where: budgetKey });
+        const requesterKey = { shopId_userId: { shopId, userId: viewer.userId } };
+        const requester = await admin.membership.findUniqueOrThrow({ where: requesterKey });
+        await admin.membership.update({ where: requesterKey, data: { roles: ['manager', 'accountant'], permissionVersion: { increment: 1 } } });
+        try {
+            const action = 'budget.change.daily';
+            const { amount, currency } = alertBudget.consumed;
+            const intentHash = createHash('sha256').update(JSON.stringify([action, shopId, alertBudget.id, alertBudget.version, amount, currency])).digest('hex');
+            const approval = await json(await send('approvals', { action, resource: { type: 'budget_policy', id: alertBudget.id },
+                resourceVersion: alertBudget.version, intentHash, reason: 'LIMIT ' + amount + ' ' + currency + '\nGiới hạn thông báo cho ca kiểm.',
+            }, { actor: viewer }), 201, 'ApprovalResponse');
+            const approved = await json(await send('approvals/' + approval.id + '/decision', {
+                expectedVersion: approval.version, intentHash, decision: 'approve', reason: 'Kiểm giới hạn qua phê duyệt độc lập.',
+            }), 200, 'ApprovalResponse');
+            const applied = await json(await send('budget-policies/' + alertBudget.id, {
+                expectedVersion: alertBudget.version, approvalId: approved.id, limitAmount: { amount, currency }, period: 'daily',
+            }, { method: 'PUT' }), 200, 'BudgetPolicyResponse');
+            assert.equal(applied.approvalId, approval.id);
+            const limited = await queue(providers);
+            assert.deepEqual((await limited.notices()).map(row => row.channel), ['in_app']);
+            await dispatchExternalNotifications(db, providers, limited.now, telegramSend);
+            assert.equal(calls, 2);
+            console.log(JSON.stringify({ status: 'SC2_A08_NOTIFICATION_CAP', budgetExhausted: true,
+                externalAttempts: 0, inAppAvailable: true, independentApproval: true }));
+        } finally {
+            const { limitAmount, period, approvalId } = priorBudget;
+            await admin.budgetPolicy.update({ where: budgetKey, data: { limitAmount, period, approvalId } });
+            await admin.membership.update({ where: requesterKey, data: { roles: requester.roles, permissionVersion: { increment: 1 } } });
+        }
 
         const push = pushReceiver();
         const pushDevice = await json(await send('devices', { ...push.subscription, deviceName: 'Ưu tiên Push' }), 201, 'DeviceSubscriptionResponse');

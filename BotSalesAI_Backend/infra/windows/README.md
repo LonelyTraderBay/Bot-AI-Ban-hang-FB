@@ -4,9 +4,9 @@ Dùng PowerShell 7 và thư mục thử riêng trên ổ Windows. Bản thử d�
 
 ## Phạm vi hướng dẫn
 
-PostgreSQL Windows theo [BE-WIN](../../BACKEND_PLAN.md#be-win) phục vụ kiểm fixture, diễn tập phục hồi và quay lui. Bản thử đang chọn hồ sơ Supabase Cloud theo [BE-CLOUD](../supabase/README.md). Redis, kho đối tượng và ClamAV vẫn chạy trên Windows. Hồ sơ trên máy đặt DB fixture và kho đối tượng ở `D:/BotSalesAI/data`, dump và bản sao tệp ở `D:/BotSalesAI/backup`.
+PostgreSQL Windows theo [BE-WIN](../../BACKEND_PLAN.md#be-win) phục vụ kiểm fixture, diễn tập phục hồi và quay lui. Bản thử đang chọn hồ sơ Supabase Cloud theo [BE-CLOUD](../supabase/README.md). Redis, kho đối tượng và ClamAV vẫn chạy trên Windows. Hồ sơ trên máy đặt DB fixture và kho đối tượng ở `D:/BotSalesAI/data`, dump và bản sao tệp ở `D:/BotSalesAI/backup`. Bộ chạy [offline-acceptance.ps1](offline-acceptance.ps1) thuộc hồ sơ tập dượt v1.91.
 
-Khi chạy pilot đã cấu hình trên máy này, dùng `$RunDirectory = 'D:/BotSalesAI/data'` và tệp cấu hình fixture `D:/BotSalesAI/config/windows-pilot.env`. Lệnh smoke qua HTTPS có thể nạp trực tiếp tệp đó.
+Đầu ra cục bộ dùng `BOTSALES_ARTIFACT_ROOT=D:/BotSalesAI/artifacts`. Mở phiên PowerShell mới để lấy biến ở phạm vi tài khoản. Trong cửa sổ đã mở, đặt `$env:BOTSALES_ARTIFACT_ROOT = 'D:/BotSalesAI/artifacts'` trước khi chạy kiểm. Khi chạy pilot đã cấu hình trên máy này, dùng `$RunDirectory = 'D:/BotSalesAI/data'` và tệp cấu hình fixture `D:/BotSalesAI/config/windows-pilot.env`. Lệnh smoke qua HTTPS có thể nạp trực tiếp tệp đó.
 
 ```powershell
 node --env-file=D:/BotSalesAI/config/windows-pilot.env tests/integration/auth/browser-smoke.mjs --pilot
@@ -37,6 +37,16 @@ Từ gốc `BotSalesAI_Backend`, cấp `BOTSALES_DB_ADMIN_PASSWORD`, `BOTSALES_D
 | Kho tệp | Chạy `weed.exe mini` với `-ip=127.0.0.1 -ip.bind=127.0.0.1`, `-dir` riêng, các cổng dịch vụ không trùng, `-s3.port=44370`, `-bucket=botsales-file-fixture` và `-s3.config` chứa thông tin xác thực fixture. Đặt `OBJECT_STORE_FIXTURE_ADAPTER=1` và các biến `FILE_OBJECT_STORE_*` tương ứng. |
 | Quét tệp | Chạy `clamd.exe --config-file=<tệp-config>` với `Foreground yes`, `TCPAddr 127.0.0.1`, `TCPSocket 56970` và `DatabaseDirectory` cục bộ. Đặt `FILE_SCAN_PORT=56970`. Bộ test `test:catalog` nhận `P0_CLAMD_PORT` để kiểm chữ ký tổng hợp và tệp sạch. |
 | API, worker, HTTPS và IdP | `npm run test:pilot:browser` khởi động và dừng các tiến trình thử, bao gồm FE `dev:live`, rồi ghi kết quả Firefox. Dùng `P0_LOCAL_PILOT=1` khi seed và đặt các biến HTTPS/OIDC từ cấu hình fixture. |
+
+Khi cần kiểm kết nối của pilot, có thể đặt preloader sau để giới hạn TCP của Node tới loopback. Bộ kiểm Firefox ghi yêu cầu web ngoài hai origin thử. Windows có thể giữ kết nối Internet.
+
+```powershell
+$loopback = [Uri]::new((Resolve-Path ./infra/windows/require-loopback.mjs).Path).AbsoluteUri
+$env:NODE_OPTIONS = "--import=$loopback"
+npm run verify
+npm run test:workspace
+npm run test:pilot:browser
+```
 
 ## Sao lưu, phục hồi và quay lui
 

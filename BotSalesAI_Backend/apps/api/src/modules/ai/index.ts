@@ -16,7 +16,7 @@ import { aiEvaluationHandler, type EvaluationInput } from './evaluation.js';
 
 export { botCommands } from './bot.js';
 export { aiConnectionCommands, aiConnectionReady } from './connections.js';
-export { activePublishedBot, liveBotSnapshot } from './bot-data.js';
+export { activePublishedBot, liveBotSnapshot, type BotAgentAuditContext } from './bot-data.js';
 export { budgetHandoff, proposeSalesDraft, reserveAiUsage, runFixtureTools } from './engine.js';
 export { aiFixtureEnabled } from './fixture-provider.js';
 export { readOpenAiConnectionConfig, type OpenAiConnectionConfig } from './openai-connections.js';

@@ -93,15 +93,16 @@ export async function processStagedBotInbound(db: PrismaClient, auth: AuthConfig
         }
         const ready = await eligible(tx, row, auth, provider);
         if (!ready) { await finish(tx, row, 'stale_staging_scope'); return null; }
-        const { bot, runtime } = ready;
+        const { bot, runtime, scope } = ready;
         if (!await reserveAiUsage(tx, bot.shop, bot.revision.dailyBudget, now, new ExactDecimal(runtime.runtime.reservedAmount))) {
             await finish(tx, row, 'budget_limit');
             return null;
         }
         await tx.botInboundTask.update({ where: taskWhere(row), data: { externalStartedAt: now } });
         await recordAudit(tx, { shopId: row.shopId, actorId: bot.actorId, requestId: row.messageId, action: 'startStagingAi', resourceType: 'message',
-            resourceId: row.messageId, metadata: { runId: row.providerRunId, capUsd: runtime.runtime.maxUsd, configRevision: bot.revision.revision,
-                currency: runtime.runtime.currency, reservedAmount: runtime.runtime.reservedAmount } });
+            resourceId: row.messageId, metadata: { ...bot.auditContext, permissionVersion: scope.permissionVersion,
+                runId: row.providerRunId, capUsd: runtime.runtime.maxUsd, currency: runtime.runtime.currency,
+                reservedAmount: runtime.runtime.reservedAmount, resourceVersion: row.message.version, result: 'started' } });
         return { runId: row.providerRunId, plan: runtime.plan, key: runtime.key };
     }, true);
     if (!prepared) return;
@@ -114,7 +115,9 @@ export async function processStagedBotInbound(db: PrismaClient, auth: AuthConfig
             const current = await eligible(tx, row, auth, provider);
             if (!current) throw new StagingAiError('STAGING_SCOPE_CHANGED');
             await recordAudit(tx, { shopId: row.shopId, actorId: current.bot.actorId, requestId: row.messageId,
-                action: 'observeStagingAi', resourceType: 'message', resourceId: row.messageId, metadata: { runId: prepared.runId, ...entry } });
+                action: 'observeStagingAi', resourceType: 'message', resourceId: row.messageId,
+                metadata: { runId: prepared.runId, ...entry, ...current.bot.auditContext, permissionVersion: current.scope.permissionVersion,
+                    resourceVersion: row.message.version, result: entry.phase } });
         }, true), request);
         if (result.passed) outcome = 'draft_proposal';
     } catch (error) {
@@ -133,7 +136,7 @@ export async function processStagedBotInbound(db: PrismaClient, auth: AuthConfig
         const result = await proposeSalesDraft(tx, bot.shop, bot.revision.maxToolSteps, scope.permissions, stagingDraftIntent);
         if (!result.draft) return finish(tx, row, result.code);
         await recordInboundDraft(tx, auth, { actorId: bot.actorId, messageId: row.messageId, conversation: row.message.conversation, warehouseId,
-            configHash: bot.context.contentHash, configRevision: bot.revision.revision, proposal: result.draft, providerRunId: prepared.runId });
+            auditContext: { ...bot.auditContext, permissionVersion: scope.permissionVersion }, proposal: result.draft, providerRunId: prepared.runId });
         return finish(tx, row, outcome);
     }, true);
 }

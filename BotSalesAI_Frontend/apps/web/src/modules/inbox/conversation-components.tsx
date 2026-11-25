@@ -404,12 +404,15 @@ export function ConversationContextPanel({ conversation, children }: {
     conversation: Conversation;
     children?: ReactNode;
 }) {
-    const { shop } = useScope();
+    const { shop, session } = useScope();
     const canReadCustomers = useCan('customers.read');
     const canCreateOrders = useCan('orders.write');
     const metadata = useApi('getInboxMetadata');
     const assign = useCommand('assignConversation', ['getConversation', 'listConversations']);
     const [assignee, setAssignee] = useState('');
+    const assignedName = conversation.assignedUserId === session.user.id
+        ? session.user.displayName
+        : metadata.data?.data.assignees.find(user => user.userId === conversation.assignedUserId)?.displayName;
 
     return (
         <Box
@@ -422,6 +425,9 @@ export function ConversationContextPanel({ conversation, children }: {
             <Panel title="Bối cảnh khách hàng">
                 <Box data-testid="inbox-context-content" sx={layoutSx.inbox.contextInset}>
                     <DetailLine label="Trạng thái"><Status value={conversation.status} /></DetailLine>
+                    {conversation.assignedUserId && (
+                        <DetailLine label="Người phụ trách">{assignedName || 'Chưa xác định tên nhân viên'}</DetailLine>
+                    )}
                     <DetailLine label="Kênh">
                         {metadata.data?.data.channels.find(channel => channel.id === conversation.channelId)?.displayName || conversation.channelId}
                     </DetailLine>

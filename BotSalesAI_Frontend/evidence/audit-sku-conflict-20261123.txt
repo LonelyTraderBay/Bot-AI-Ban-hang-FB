@@ -1,0 +1,13 @@
+SC-013 / F-17 · local source 292d4bd4 plus working tree changes
+Before: Playwright Chromium/Firefox, 4 failed, received 422 where 409 was expected.
+After: npm run test:e2e -- tests/fe010.spec.ts
+ok  2 [chromium] › tests/fe010.spec.ts:122:1 › SC-013 duplicate SKU marks only the conflicting create row and keeps the draft (1.7s)
+ok  3 [chromium] › tests/fe010.spec.ts:153:1 › SC-013 stored SKU conflict marks the edit field and accepts a corrected draft (1.7s)
+ok 13 [firefox] › tests/fe010.spec.ts:122:1 › SC-013 duplicate SKU marks only the conflicting create row and keeps the draft (1.9s)
+ok 14 [firefox] › tests/fe010.spec.ts:153:1 › SC-013 stored SKU conflict marks the edit field and accepts a corrected draft (1.8s)
+22 passed (Chromium and Firefox, production and demo build preparation completed).
+Live Firefox HTTPS: two-shop PostgreSQL and OIDC fixture.
+{"status":"SC013_LIVE_TWO_SHOP_VERIFIED","results":[{"shop":"A","width":1440,"create":409,"patch":409,"corrected":200,"focusedField":true,"accessibleDescription":true},{"shop":"B","width":390,"create":409,"patch":409,"corrected":200,"focusedField":true,"accessibleDescription":true}]}
+Coverage: live R10 and R11 in two shops at 1440 px and 390 px, service and shop labels are synthetic.
+Local evidence only. No hosted CI or screen reader claims.
+COMMAND_EXIT=0

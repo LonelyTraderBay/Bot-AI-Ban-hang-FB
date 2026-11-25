@@ -69,4 +69,62 @@ test('restore comparison pins evidence and catches changed provider state with u
     const scopeDrift = compare(changed, currentHash);
     assert.equal(scopeDrift.code, 2);
     assert.deepEqual(scopeDrift.report.mismatches, ['memberships']);
+
+    const withOrderLines = {
+        ...current, format: 4,
+        observations: [...current.observations, { component: 'order_lines', records: 2, snapshot: 'a'.repeat(32) }],
+    };
+    const orderLineBytes = JSON.stringify(withOrderLines);
+    const orderLineHash = createHash('sha256').update(orderLineBytes).digest('hex');
+    writeFileSync(sourceFile, orderLineBytes);
+    const restoredWithOrderLines = { ...withOrderLines, databaseFingerprint: target.databaseFingerprint };
+    const matchedOrderLines = compare(restoredWithOrderLines, orderLineHash);
+    assert.deepEqual([matchedOrderLines.code, matchedOrderLines.report.checkedComponents], [0, 31]);
+    assert.equal(compare(restored, orderLineHash).code, 1);
+    assert.equal(compare({ ...restoredWithOrderLines, observations: restored.observations }, orderLineHash).code, 1);
+    const changedOrderLines = structuredClone(restoredWithOrderLines);
+    changedOrderLines.observations.find(row => row.component === 'order_lines').snapshot = 'c'.repeat(32);
+    const orderLineDrift = compare(changedOrderLines, orderLineHash);
+    assert.deepEqual([orderLineDrift.code, orderLineDrift.report.mismatches], [2, ['order_lines']]);
+
+    const withShipments = {
+        ...withOrderLines, format: 5, observations: [
+            ...withOrderLines.observations,
+            { component: 'shipments', records: 2, snapshot: 'a'.repeat(32) },
+            { component: 'shipment_lines', records: 3, snapshot: 'b'.repeat(32) },
+        ],
+    };
+    const shipmentBytes = JSON.stringify(withShipments);
+    const shipmentHash = createHash('sha256').update(shipmentBytes).digest('hex');
+    writeFileSync(sourceFile, shipmentBytes);
+    const restoredShipments = { ...withShipments, databaseFingerprint: target.databaseFingerprint };
+    const matchedShipments = compare(restoredShipments, shipmentHash);
+    assert.deepEqual([matchedShipments.code, matchedShipments.report.checkedComponents], [0, 33]);
+    assert.equal(compare(restoredWithOrderLines, shipmentHash).code, 1);
+    const changedShipments = structuredClone(restoredShipments);
+    changedShipments.observations.find(row => row.component === 'shipment_lines').snapshot = 'd'.repeat(32);
+    const shipmentDrift = compare(changedShipments, shipmentHash);
+    assert.deepEqual([shipmentDrift.code, shipmentDrift.report.mismatches], [2, ['shipment_lines']]);
+    assert.equal(compare({ ...restoredShipments, observations: restoredShipments.observations.slice(0, -1) }, shipmentHash).code, 1);
+
+    const operations = ['work_items', 'work_notification_schedules', 'service_cases', 'evaluations', 'advertising_estimates'];
+    const withOperations = { ...withShipments, format: 6, observations: [
+        ...withShipments.observations,
+        ...operations.map(component => ({ component, records: 2, snapshot: 'a'.repeat(32) })),
+    ] };
+    const operationBytes = JSON.stringify(withOperations);
+    const operationHash = createHash('sha256').update(operationBytes).digest('hex');
+    writeFileSync(sourceFile, operationBytes);
+    const restoredOperations = { ...withOperations, databaseFingerprint: target.databaseFingerprint };
+    const matchedOperations = compare(restoredOperations, operationHash);
+    assert.deepEqual([matchedOperations.code, matchedOperations.report.checkedComponents], [0, 38]);
+    assert.equal(compare(restoredShipments, operationHash).code, 1);
+    for (const component of operations) {
+        const changed = structuredClone(restoredOperations);
+        changed.observations.find(row => row.component === component).snapshot = 'f'.repeat(32);
+        const drift = compare(changed, operationHash);
+        assert.deepEqual([drift.code, drift.report.mismatches], [2, [component]]);
+        const missing = restoredOperations.observations.filter(row => row.component !== component);
+        assert.equal(compare({ ...restoredOperations, observations: missing }, operationHash).code, 1);
+    }
 });

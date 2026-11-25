@@ -9,7 +9,7 @@ import type { ResourceRef } from '../../platform/commands/index.js';
 import { scheduleJob, type JobHandler } from '../../platform/jobs/index.js';
 import { jobDetails, jobDto } from '../../platform/jobs/view.js';
 import { readAsSession, requireShopAccess, writeShopCommand, type AuthConfig, type ShopScope } from '../workspace/index.js';
-import { aiFixtureEnabled, credentialFingerprint, fixtureCapabilities, fixtureCredentialValid, fixtureProvider, sealCredential } from './fixture-provider.js';
+import { aiFixtureEnabled, credentialFingerprint, fixtureCredentialValid, fixtureProvider, sealCredential } from './fixture-provider.js';
 import { isOpenAiConnection, openAiCapabilities, openAiDescriptor, openAiGrant, openAiTarget, readOpenAiCredential, sealOpenAiCredential,
     validOpenAiCredential, type OpenAiConnectionConfig } from './openai-connections.js';
 import { OpenAiError, requestOpenAi } from './openai-transport.js';
@@ -23,9 +23,14 @@ export const aiConnectionCommands = (['createAIConnection', 'updateAIConnection'
 export const aiKey = (shopId: string, id: string) => ({ shopId_id: { shopId, id } });
 type ConnectionTarget = Pick<AiConnection, 'providerId' | 'adapterId' | 'modelId' | 'endpointUrl'>;
 
+function fixtureModel(target: ConnectionTarget) {
+    if (target.providerId !== fixtureProvider.providerId || target.adapterId !== fixtureProvider.adapterId || target.endpointUrl !== null)
+        return undefined;
+    return fixtureProvider.models.find(model => model.modelId === target.modelId);
+}
+
 function fixtureTarget(target: ConnectionTarget, auth?: AuthConfig) {
-    return aiFixtureEnabled(auth) && target.providerId === fixtureProvider.providerId && target.adapterId === fixtureProvider.adapterId &&
-        target.modelId === fixtureProvider.models[0].modelId && target.endpointUrl === null;
+    return aiFixtureEnabled(auth) && Boolean(fixtureModel(target));
 }
 
 function sanitizedText(value: string) {
@@ -47,10 +52,15 @@ export function aiConnectionReady(connection: AiConnection | null, config: AuthC
         fixtureCredentialValid(config, connection.shopId, connection.id, connection.credentialCiphertext));
 }
 
+export function connectionCapabilities(connection: AiConnection) {
+    const model = fixtureModel(connection);
+    return model ? { ...model.capabilities, lastVerifiedAt: connection.status === 'connected' ? connection.lastCheckedAt : null } : openAiCapabilities;
+}
+
 function connectionView(connection: AiConnection) {
     const { id, shopId, version, createdAt, updatedAt, name, providerId, adapterId, modelId, endpointUrl, status, lastCheckedAt, keyLast4 } = connection;
     return { id, shopId, version, createdAt, updatedAt, name, providerId, adapterId, modelId, endpointUrl, status, lastCheckedAt, keyLast4,
-        hasCredential: Boolean(connection.credentialCiphertext), capabilities: isOpenAiConnection(connection) ? openAiCapabilities : fixtureCapabilities(status === 'connected' ? lastCheckedAt : null) };
+        hasCredential: Boolean(connection.credentialCiphertext), capabilities: connectionCapabilities(connection) };
 }
 
 export class AiConnections {

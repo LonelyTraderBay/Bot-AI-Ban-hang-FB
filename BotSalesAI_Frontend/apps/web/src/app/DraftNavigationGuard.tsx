@@ -9,13 +9,14 @@ export function DraftNavigationGuard({logoutPending=false,onCancelLogout,onDisca
  logoutPending?:boolean;onCancelLogout?:()=>void;onDiscardLogout?:()=>Promise<void>;
 }){
  const titleId=useId();
+ const descriptionId=`${titleId}-description`;
  const blocker=useBlocker(({currentLocation,nextLocation})=>currentLocation.pathname!==nextLocation.pathname&&!consumeFormSubmissionNavigation()&&hasUnsavedFormDraft());
  useEffect(()=>observeFormSubmissions(),[]);
  useEffect(()=>{const prevent=(event:BeforeUnloadEvent)=>{if(hasUnsavedFormDraft()){event.preventDefault();event.returnValue='';}};window.addEventListener('beforeunload',prevent);return()=>window.removeEventListener('beforeunload',prevent);},[]);
  const keep=()=>{onCancelLogout?.();blocker.reset?.();};
- return <Dialog open={blocker.state==='blocked'||logoutPending} onClose={keep} aria-labelledby={titleId} slotProps={{paper:{sx:layoutSx.dialog.viewportMargin}}}>
+ return <Dialog open={blocker.state==='blocked'||logoutPending} onClose={keep} aria-labelledby={titleId} aria-describedby={descriptionId} slotProps={{paper:{sx:layoutSx.dialog.viewportMargin}}}>
   <DialogTitle id={titleId} sx={layoutSx.dialog.inset}>Rời màn hình chưa lưu?</DialogTitle>
-  <DialogContent sx={layoutSx.dialog.inset}><DialogContentText>{logoutPending?'Đăng xuất sẽ xóa bản nháp đang có thay đổi.':'Bản nháp đang có thay đổi. Tiếp tục chỉnh sửa hoặc rời màn hình mà không lưu.'}</DialogContentText></DialogContent>
+  <DialogContent tabIndex={0} role="region" aria-labelledby={titleId} sx={layoutSx.dialog.inset}><DialogContentText id={descriptionId}>{logoutPending?'Đăng xuất sẽ xóa bản nháp đang có thay đổi.':'Bản nháp đang có thay đổi. Tiếp tục chỉnh sửa hoặc rời màn hình mà không lưu.'}</DialogContentText></DialogContent>
   <DialogActions disableSpacing sx={[layoutSx.dialog.actionsInset,layoutSx.dialog.actionsGap]}><Button autoFocus onClick={keep}>Tiếp tục chỉnh sửa</Button><Button variant="contained" color="warning" onClick={()=>logoutPending?void onDiscardLogout?.():blocker.proceed?.()}>Rời màn hình</Button></DialogActions>
  </Dialog>;
 }

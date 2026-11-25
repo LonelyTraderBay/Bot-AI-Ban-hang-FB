@@ -2,6 +2,7 @@ import { ConflictException, NotFoundException, UnprocessableEntityException } fr
 import type { IncomingHttpHeaders } from 'node:http';
 import { Prisma, type PrismaClient } from '../../generated/prisma/client.js';
 import { ProductStatus } from '../../generated/prisma/enums.js';
+import { FieldConflict } from '../../http/contracts.js';
 import { listQuery, paging, validUuid } from '../../http/query.js';
 import { requireIfMatch, requireVersion } from '../../http/response.js';
 import { recordAudit } from '../../platform/audit/index.js';
@@ -59,6 +60,14 @@ async function productInShop(tx: Prisma.TransactionClient, shopId: string, produ
 
 export const skuKey = (value: string) => value.trim().normalize('NFC').toLowerCase();
 
+function duplicateSku(position: number) {
+    return new FieldConflict([{
+        path: `/variants/${position}/sku`,
+        code: 'SKU_CONFLICT',
+        message: 'Mã SKU đã tồn tại trong cửa hàng.',
+    }]);
+}
+
 export async function sellableVariantBySku(tx: Prisma.TransactionClient, shopId: string, sku: string) {
     const candidate = await tx.variant.findUnique({ where: { shopId_skuKey: { shopId, skuKey: skuKey(sku) } }, select: { id: true } });
     return candidate ? (await sellableVariants(tx, shopId, [candidate.id]))[0] : undefined;
@@ -80,7 +89,7 @@ export async function writeProduct(tx: Prisma.TransactionClient, scope: ProductS
     }
     await requireActiveCategory(tx, shopId, body.categoryId);
 
-    const keys = new Set<string>();
+    const positionsBySku = new Map<string, number>();
     const configurations = new Set<string>();
     const existing = new Map(current?.variants.map(variant => [variant.id, variant]));
     const kept = new Set<string>();
@@ -92,8 +101,8 @@ export async function writeProduct(tx: Prisma.TransactionClient, scope: ProductS
             !/[1-9]/.test(variant.price.amount) ||
             [variant.sku, variant.name, ...optionNames, ...Object.values(variant.options)].some(invalidText) ||
             (optionNames.length > 0 && configurations.has(configuration))) throw new UnprocessableEntityException();
-        if (keys.has(key)) throw new ConflictException();
-        keys.add(key);
+        if (positionsBySku.has(key)) throw duplicateSku(position);
+        positionsBySku.set(key, position);
         if (variant.id) kept.add(variant.id);
         if (optionNames.length > 0) configurations.add(configuration);
         return {
@@ -101,9 +110,11 @@ export async function writeProduct(tx: Prisma.TransactionClient, scope: ProductS
             options: variant.options, priceAmount: variant.price.amount, priceCurrency: currency, active: variant.active,
         };
     });
-    if (await tx.variant.findFirst({ where: { shopId, skuKey: { in: [...keys] }, id: { notIn: [...kept] } }, select: { id: true } })) {
-        throw new ConflictException();
-    }
+    const collision = await tx.variant.findFirst({
+        where: { shopId, skuKey: { in: [...positionsBySku.keys()] }, id: { notIn: [...kept] } }, select: { skuKey: true },
+    });
+    const conflictingPosition = collision ? positionsBySku.get(collision.skuKey) : undefined;
+    if (conflictingPosition !== undefined) throw duplicateSku(conflictingPosition);
     const data = { name: body.name.trim(), description: body.description, categoryId: body.categoryId, status: body.status };
     const product = current
         ? await tx.product.update({ where: { shopId_id: { shopId, id: current.id } }, data: { ...data, version: { increment: 1 } } })

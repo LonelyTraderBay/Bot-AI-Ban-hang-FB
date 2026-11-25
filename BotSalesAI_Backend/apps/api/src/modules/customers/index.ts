@@ -4,7 +4,7 @@ import type { AuthConfig } from '../workspace/index.js';
 import { AddressController, CustomersController, ServiceCaseController } from './customers-controller.js';
 import { CustomersService } from './customers-service.js';
 
-export { customerCommands } from './customers-service.js';
+export { createServiceCaseRecord, customerCommands } from './customers-service.js';
 export { addressView, customerForChannelIdentity, customerInShop, customerView, snapshotAddress, addressSnapshotView, type AddressInput } from './customer-data.js';
 
 @Module({})

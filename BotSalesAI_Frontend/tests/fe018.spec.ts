@@ -197,6 +197,55 @@ test('FE018.AC01/04 draft saves use the contract version and keep human order co
     expect(await readApi<{ instructions: string; draftRevision: number }>(page, '/api/v2/shops/shop-demo/bot/config')).toMatchObject({ instructions, draftRevision: 2 });
 });
 
+test('SC-047 requires tool support only when the draft uses tools', async ({ page }, info) => {
+    const width = info.project.name === 'firefox' ? 390 : 1440;
+    await page.setViewportSize({ width, height: 900 });
+    await gotoDemo(page, '/s/shop-demo/integrations/ai');
+    await page.getByRole('button', { name: 'Thêm kết nối AI', exact: true }).click();
+    const create = page.getByRole('dialog', { name: 'Kết nối AI mới' });
+    await create.getByRole('textbox', { name: 'Tên kết nối', exact: true }).fill('SC-047 Trợ lý công cụ');
+    await create.getByRole('combobox', { name: 'Provider đã có adapter' }).click();
+    await page.getByRole('option', { name: /Nhà cung cấp mô phỏng/ }).click();
+    await create.getByRole('textbox', { name: 'Model ID được adapter hỗ trợ' }).fill('synthetic-text-only');
+    await create.getByLabel('Khóa API').fill('demo-tool-capability-fixture');
+    const created = page.waitForResponse(response => response.request().method() === 'POST' && new URL(response.url()).pathname.endsWith('/integrations/ai'));
+    await create.getByRole('button', { name: 'Lưu cấu hình' }).click();
+    const reply = await created;
+    expect(reply.status()).toBe(201);
+    const connection = (await reply.json()).data;
+    expect(connection.capabilities.toolCalling).toBe('unsupported');
+    await expect(create).toBeHidden();
+    if (width === 390) await page.getByRole('button', { name: 'Mở menu', exact: true }).click();
+    await page.getByRole('navigation',{ name: 'Điều hướng chính' }).getByRole('link',{ name: 'Cấu hình Admin', exact: true }).click();
+    await page.getByRole('button', { name: 'Sửa bản nháp', exact: true }).click();
+    const draft = page.getByRole('dialog', { name: 'Cấu hình bản nháp' });
+    await draft.getByRole('combobox', { name: /^Kết nối AI/ }).click();
+    await page.getByRole('option', { name: /SC-047 Trợ lý công cụ/ }).click();
+    await draft.getByRole('textbox', { name: 'Chỉ dẫn tư vấn đã duyệt' }).fill('Cấu hình thử với hai bước công cụ.');
+    await draft.getByLabel('Ngân sách ngày (VND)', { exact: true }).fill('45000');
+    await draft.getByRole('spinbutton', { name: 'Số bước công cụ tối đa' }).fill('2');
+    const saved = page.waitForResponse(response => response.request().method() === 'PATCH' && new URL(response.url()).pathname.endsWith('/bot/config'));
+    await draft.getByRole('button', { name: 'Lưu nháp', exact: true }).click();
+    const updated = await saved;
+    expect(updated.status()).toBe(200);
+    expect((await updated.json()).data).toMatchObject({ connectionId: connection.id, maxToolSteps: 2 });
+    await expect(draft).toBeHidden();
+    const action = page.getByRole('button', { name: 'Duyệt & xuất bản', exact: true });
+    await action.scrollIntoViewIfNeeded();
+    await expect(action).toBeDisabled();
+    await expect(page.getByRole('status').filter({ hasText: 'Kết nối đang chọn không hỗ trợ gọi công cụ cho cấu hình này.' })).toBeVisible();
+    await expect(page.getByRole('dialog', { name: 'Xuất bản cấu hình đã đánh giá' })).toBeHidden();
+    await page.getByRole('button', { name: 'Sửa bản nháp', exact: true }).click();
+    await draft.getByRole('spinbutton', { name: 'Số bước công cụ tối đa' }).fill('0');
+    const textUpdate = page.waitForResponse(response => response.request().method() === 'PATCH' && new URL(response.url()).pathname.endsWith('/bot/config'));
+    await draft.getByRole('button', { name: 'Lưu nháp', exact: true }).click();
+    const textResponse = await textUpdate;
+    expect(textResponse.status()).toBe(200);
+    expect((await textResponse.json()).data).toMatchObject({ connectionId: connection.id, maxToolSteps: 0 });
+    await expect(action).toBeEnabled();
+    await expect(page.getByText('Kết nối đang chọn không hỗ trợ gọi công cụ cho cấu hình này.', { exact: true })).toHaveCount(0);
+});
+
 test('FE018.AC03 evaluation is synthetic, revision-bound, and cannot publish a stale draft', async ({ page }) => {
     await gotoDemo(page, '/s/shop-demo/bot');
     const evaluationId = await createEvaluation(page);
@@ -252,6 +301,11 @@ test('FE018.AC01/04 successful publish is tied to the tested revision and pause 
 });
 
 test('FE018.AC03 playground sends no external message and preserves unknown cost and token values', async ({ page }) => {
+    const network: Array<{ origin: string; method: string; path: string }> = [];
+    page.on('request', request => {
+        const url = new URL(request.url());
+        if (url.protocol === 'https:' || url.protocol === 'http:') network.push({ origin: url.origin, method: request.method(), path: url.pathname });
+    });
     await gotoDemo(page, '/s/shop-demo/bot/playground');
     const prompt = 'Khách mẫu hỏi sản phẩm có phù hợp không?';
     await page.getByLabel('Nội dung khách hỏi').fill(prompt);
@@ -268,9 +322,20 @@ test('FE018.AC03 playground sends no external message and preserves unknown cost
     expect(result.warnings).toContain('Đây là kiểm tra giao diện, không đo chất lượng mô hình AI.');
     await expect(page.getByText('[Mô phỏng, không gọi AI]', { exact: false })).toBeVisible();
     await expect(page.getByText('Gửi ra ngoài', { exact: true }).locator('..')).toContainText('Không');
+    await expect(page.getByText('Chi phí ước tính', { exact: true }).locator('..')).toContainText('Chưa có dữ liệu');
     await expect(page.getByRole('alert').filter({ hasText: 'không đo chất lượng mô hình AI' })).toBeVisible();
     await page.setViewportSize({ width: 375, height: 812 });
     expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(await page.evaluate(() => document.documentElement.clientWidth) + 1);
+    await page.getByLabel('Nội dung khách hỏi').fill('NHÁP SKU-MAU 2');
+    const intentResponse = page.waitForResponse(response => response.request().method() === 'POST' && new URL(response.url()).pathname.endsWith('/bot/playground'));
+    await page.getByRole('button', { name: 'Chạy thử' }).click();
+    const intent = await intentResponse;
+    expect(intent.status()).toBe(200);
+    expect((await intent.json()).data).toMatchObject({ estimatedCost: null, externalMessageSent: false });
+    await expect(page.getByText('[Mô phỏng, không gọi AI]', { exact: false })).toContainText('NHÁP SKU-MAU 2');
+    expect(network.filter(entry => entry.origin !== new URL(demoUrl).origin)).toEqual([]);
+    expect(network.filter(entry => entry.path.startsWith('/api/') && !['GET', 'HEAD', 'OPTIONS'].includes(entry.method))
+        .map(entry => entry.path)).toEqual(['/api/v2/shops/shop-demo/bot/playground', '/api/v2/shops/shop-demo/bot/playground']);
 });
 
 test('FE018.S03 synthetic budget and tool denials retain the prompt and never show a generated answer', async ({ page }) => {

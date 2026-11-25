@@ -203,6 +203,8 @@ enum FinanceClassification {
   platform_fee
   payment_fee
   ai_expense
+  advertising_expense
+  packaging_expense
   operating_expense
   capital
   loan_principal
@@ -495,6 +497,16 @@ enum FileStatus {
   @@map("file_status")
 }
 
+enum FileRejectionReason {
+  invalid_format
+  unsupported_content
+  spreadsheet_limit
+  unsafe_file
+  validation_failed
+
+  @@map("file_rejection_reason")
+}
+
 enum FileStorageState {
   pending
   stored
@@ -577,6 +589,7 @@ model Shop {
   periods            AccountingPeriod[]
   openingBalances    OpeningBalance[]
   financeEntries     FinanceEntry[]
+  advertisingEstimates AdvertisingEstimate[]
   codSettlements     CodSettlement[]
   workItems          WorkItem[]
   notificationPolicy NotificationPolicy?
@@ -1576,7 +1589,8 @@ model ChannelMessage {
   conversation   ChannelConversation @relation(fields: [shopId, conversationId], references: [shopId, id], onDelete: Restrict, onUpdate: NoAction)
   evidence       OrderCustomerConfirmation?
   attachments    ChannelAttachment[]
-  dispatch       MessageDispatch?
+  dispatch       MessageDispatch?   @relation("OutgoingDispatch")
+  afterSalesDispatches MessageDispatch[] @relation("AfterSalesRequest")
   botTask        BotInboundTask?
   feedback       ConversationFeedback[]
 
@@ -1640,15 +1654,18 @@ model MessageDispatch {
   conversationGeneration  Int            @map("conversation_generation")
   channelGeneration       Int            @map("channel_generation")
   botGeneration           Int?           @map("bot_generation")
+  afterSalesRequestId     String?        @map("after_sales_request_id") @db.Uuid
   startedAt               DateTime?      @map("started_at") @db.Timestamptz(3)
   finishedAt              DateTime?      @map("finished_at") @db.Timestamptz(3)
   createdAt               DateTime       @default(now()) @map("created_at") @db.Timestamptz(3)
   command                 Command        @relation(fields: [shopId, commandId], references: [shopId, id], onDelete: Restrict, onUpdate: NoAction)
-  message                 ChannelMessage @relation(fields: [shopId, messageId], references: [shopId, id], onDelete: Restrict, onUpdate: NoAction)
+  message                 ChannelMessage @relation("OutgoingDispatch", fields: [shopId, messageId], references: [shopId, id], onDelete: Restrict, onUpdate: NoAction)
+  afterSalesRequest       ChannelMessage? @relation("AfterSalesRequest", fields: [shopId, afterSalesRequestId], references: [shopId, id], onDelete: Restrict, onUpdate: NoAction)
 
   @@id([shopId, messageId])
   @@unique([shopId, commandId])
   @@index([finishedAt, createdAt])
+  @@index([shopId, afterSalesRequestId])
   @@map("message_dispatches")
 }
 
@@ -1989,6 +2006,26 @@ model FinanceJournalLine {
   @@unique([shopId, journalId, position])
   @@index([shopId, accountId, journalId])
   @@map("finance_journal_lines")
+}
+
+model AdvertisingEstimate {
+  shopId          String     @map("shop_id") @db.Uuid
+  id              String     @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  accountingDate  DateTime   @map("accounting_date") @db.Date
+  revision        Int
+  amount          Decimal    @db.Decimal(78, 18)
+  currency        String     @db.VarChar(3)
+  reviewerId      String     @map("reviewer_id") @db.Uuid
+  attestationHash String     @map("attestation_hash") @db.VarChar(64)
+  documentSha256  String     @map("document_sha256") @db.VarChar(64)
+  recordedAt      DateTime   @default(now()) @map("recorded_at") @db.Timestamptz(3)
+  shop            Shop       @relation(fields: [shopId], references: [id], onDelete: Restrict, onUpdate: NoAction)
+  reviewer        Membership @relation(fields: [shopId, reviewerId], references: [shopId, userId], onDelete: Restrict, onUpdate: NoAction)
+
+  @@id([shopId, id])
+  @@unique([shopId, accountingDate, revision])
+  @@unique([shopId, attestationHash])
+  @@map("advertising_estimates")
 }
 
 model FinanceEntry {
@@ -2386,6 +2423,7 @@ model Evaluation {
   policyVersion       String           @map("policy_version") @db.VarChar(100)
   fixture             Boolean          @default(false)
   status              EvaluationStatus @default(queued)
+  plannedCases        Int?             @map("planned_cases")
   totalCases          Int              @default(0) @map("total_cases")
   passedCases         Int              @default(0) @map("passed_cases")
   criticalFailures    Int              @default(0) @map("critical_failures")
@@ -2962,6 +3000,7 @@ model Membership {
   authoredFeedback ConversationFeedback[] @relation("FeedbackAuthor")
   reviewedFeedback ConversationFeedback[] @relation("FeedbackReviewer")
   closedPeriods      AccountingPeriod[]
+  reviewedAdvertisingEstimates AdvertisingEstimate[]
   assignedWorkItems  WorkItem[]
   notifications      AppNotification[]
   notificationDevices NotificationDevice[]
@@ -2989,6 +3028,7 @@ model FileObject {
   purpose    FilePurpose
   resourceId String?      @map("resource_id") @db.Uuid
   status     FileStatus
+  rejectionReason FileRejectionReason? @map("rejection_reason")
   expiresAt  DateTime?    @map("expires_at") @db.Timestamptz(3)
   createdAt  DateTime     @default(now()) @map("created_at") @db.Timestamptz(3)
   uploader   Membership   @relation(fields: [shopId, uploaderId], references: [shopId, userId], onDelete: Restrict, onUpdate: NoAction)

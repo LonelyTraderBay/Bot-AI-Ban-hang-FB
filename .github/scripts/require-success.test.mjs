@@ -209,6 +209,10 @@ test('both workflows wire always-running gates to every producer and keep read-o
     assert.match(builtDemo, /node scripts\/run-ci-built-demo\.mjs/);
     assert.doesNotMatch(browserJobs, /verify_built_demo|run-ci-built-demo/);
     assert.match(browserJobs, /actions\/download-artifact@[a-f0-9]{40}/);
+    const download = browserJobs.match(/- name: Download only this run's build[\s\S]*?(?=\r?\n      - name:)/)?.[0];
+    assert.ok(download, 'Native E2E selects the exact current-run artifact through GitHub REST');
+    assert.match(download, /github-token: \$\{\{ github\.token \}\}/);
+    assert.match(download, /run-id: \$\{\{ github\.run_id \}\}/);
     assert.match(browserJobs, /frontend-build-\$\{\{ github.run_id \}\}-\$\{\{ github.run_attempt \}\}-\$\{\{ github.sha \}\}/);
     assert.match(browserJobs, /BOTSALES_E2E_WORKERS: '3'/);
     assert.match(browserJobs, /kind: 'browser-runner-capacity'/);

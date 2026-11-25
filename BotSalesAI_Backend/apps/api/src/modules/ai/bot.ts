@@ -1,19 +1,21 @@
 import { ConflictException, UnprocessableEntityException } from '@nestjs/common';
 import type { IncomingHttpHeaders } from 'node:http';
 import { BotStatus, EvaluationStatus, type Command, type Prisma, type PrismaClient } from '../../generated/prisma/client.js';
+import { DomainConflict } from '../../http/contracts.js';
 import { listQuery, paging, validUuid } from '../../http/query.js';
 import { requireIfMatch, requireVersion } from '../../http/response.js';
 import { recordAudit } from '../../platform/audit/index.js';
 import { commandDto, type ResourceRef } from '../../platform/commands/index.js';
 import { scheduleJob, type JobHandler } from '../../platform/jobs/index.js';
+import { ExactDecimal } from '../../platform/money/index.js';
 import { enqueueResourceUpdate } from '../../platform/outbox/index.js';
 import { salesAutomationState } from '../operations/index.js';
 import { readAsSession, requireShopAccess, writeShopCommand, type AuthConfig, type ShopScope } from '../workspace/index.js';
 import { approvedRuntimeBot, type ApprovedEvaluationConfig } from './approved-evaluation.js';
-import { appendBotRevision, botRevisionAt, botRevisionInShop, botRevisionView, botShop, botState, botView, currentBotRevision, draftFields, initializeBot,
+import { appendBotRevision, botAuditContext, botRevisionAt, botRevisionInShop, botRevisionView, botShop, botState, botView, currentBotRevision, draftFields, initializeBot,
     type ConfigDraft } from './bot-data.js';
 import { aiKey } from './connections.js';
-import { budgetHandoff, playgroundResult, reserveAiUsage, runFixtureTools } from './engine.js';
+import { budgetHandoff, hasAiBudget, playgroundResult, reserveAiUsage, runFixtureTools } from './engine.js';
 import { datasetVersion, evaluationDetails, evaluationInShop, evaluationSnapshot, evaluationView, unavailableEvaluationJobStates,
     type EvaluationInput } from './evaluation.js';
 import { aiFixtureEnabled } from './fixture-provider.js';
@@ -56,11 +58,15 @@ async function publicationEvidence(tx: Prisma.TransactionClient, shopId: string,
     requireVersion(profile.version, input.expectedVersion);
     if (profile.draftRevision !== input.draftRevision) throw new ConflictException();
     const evaluation = await evaluationInShop(tx, shopId, input.evaluationRunId);
+    const budgetConflict = () => new DomainConflict('BUDGET_EXCEEDED', 'Ngân sách hiệu lực không đủ cho một lượt chạy AI. Kiểm tra giới hạn và mức đã dùng trong ngày.');
     if (!evaluation.fixture) {
         const revision = await botRevisionAt(tx, shopId, input.draftRevision);
-        if (!revision || revision.publishedAt || !await approvedRuntimeBot(tx, await botShop(tx, shopId), revision, evaluation, provider)) {
+        const shop = await botShop(tx, shopId);
+        const approved = revision && !revision.publishedAt ? await approvedRuntimeBot(tx, shop, revision, evaluation, provider) : null;
+        if (!revision || !approved) {
             throw new ConflictException('Cần phê duyệt chạy thử Messenger và đánh giá đúng bản nháp.');
         }
+        if (!await hasAiBudget(tx, shop, revision.dailyBudget, new Date(), new ExactDecimal(approved.runtime.reservedAmount))) throw budgetConflict();
         return { profile, revision, evaluation };
     }
     const { shop, revision, context } = await currentBotRevision(tx, shopId, input.draftRevision, config);
@@ -69,6 +75,7 @@ async function publicationEvidence(tx: Prisma.TransactionClient, shopId: string,
         evaluation.configRevision !== revision.revision || evaluation.configHash !== context.contentHash || evaluation.policyVersion !== shop.policyVersion) {
         throw new ConflictException('Cần đánh giá đạt của cấu hình và chính sách hiện tại.');
     }
+    if (!await hasAiBudget(tx, shop, revision.dailyBudget, new Date())) throw budgetConflict();
     return { profile, revision, evaluation };
 }
 
@@ -201,7 +208,11 @@ export class BotService {
             if (!evaluation.fixture) await requireShopAccess(tx, scope.userId, shopId, 'orders.write');
             const job = await scheduleJob(tx, { shopId, actorId: scope.userId, commandId: command.id,
                 sourceOperation: 'publishBotConfig', kind: 'evaluation', input: { ...input, reason, requestId } });
-            await audit(tx, scope, requestId, 'publishBotConfig', job.id, { revision: revision.revision, evaluationRunId: input.evaluationRunId, reason });
+            await audit(tx, scope, requestId, 'publishBotConfig', job.id, {
+                ...botAuditContext(evaluation.policyVersion, revision, evaluation.configHash),
+                revision: revision.revision, evaluationRunId: input.evaluationRunId, reason,
+                actorKind: 'user', permissionVersion: scope.permissionVersion, result: 'accepted',
+            });
             return job.id;
         }, (_tx, _result, command) => Promise.resolve(commandDto(command, 'job')), true);
     }
@@ -259,7 +270,11 @@ export function publishBotHandler(config?: AuthConfig, provider?: ApprovedEvalua
             publishedAt, version: { increment: 1 }, generation: { increment: 1 } } });
         await enqueueResourceUpdate(tx, 'bot.config.updated', { shopId, id: shopId, version: profile.version + 1 });
         await recordAudit(tx, { shopId, actorId: job.actorId, requestId: input.requestId, action: 'botConfigPublished', resourceType: 'bot_config',
-            resourceId: shopId, metadata: { revision: revision.revision, evaluationRunId: evaluation.id, reason: input.reason } });
+            resourceId: shopId, metadata: {
+                ...botAuditContext(evaluation.policyVersion, revision, evaluation.configHash), actorKind: 'user',
+                revision: revision.revision, evaluationRunId: evaluation.id, reason: input.reason,
+                resourceVersion: profile.version + 1, result: 'published',
+            } });
         return { status: 'succeeded', completed: 1, total: 1, errorCount: 0, result: { type: 'bot_config', id: shopId } };
     };
 }

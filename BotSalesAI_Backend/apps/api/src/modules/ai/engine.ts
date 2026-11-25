@@ -15,6 +15,15 @@ const fixtureCost = new ExactDecimal(1);
 const inputSize = 10000;
 const safeReply = (code: string, text: string): ToolResult => ({ code, text, sources: [] });
 
+export async function hasAiBudget(tx: Prisma.TransactionClient, shop: BotShop, configured: Prisma.Decimal | null,
+    now: Date, reserve = fixtureCost) {
+    const limit = await applicableAiBudget(tx, shop.id, shop.currency, configured);
+    if (!reserve.gt(0) || !limit?.gte(reserve)) return false;
+    const date = accountingDate(localAccountingDate(now, shop.timezone));
+    const usage = await tx.botDailyUsage.findUnique({ where: { shopId_accountingDate: { shopId: shop.id, accountingDate: date } } });
+    return !usage || (usage.currency === shop.currency && usage.runs < 2147483647 && usage.spent.plus(reserve).lte(limit));
+}
+
 export async function reserveAiUsage(tx: Prisma.TransactionClient, shop: BotShop, budget: Prisma.Decimal | null, now: Date, reserve = fixtureCost) {
     budget = await applicableAiBudget(tx, shop.id, shop.currency, budget);
     if (!reserve.gt(0) || !budget?.gte(reserve)) return false;

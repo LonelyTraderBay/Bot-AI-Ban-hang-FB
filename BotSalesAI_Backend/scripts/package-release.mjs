@@ -1,18 +1,19 @@
 import { createHash } from 'node:crypto';
 import { spawnSync } from 'node:child_process';
 import { cpSync, existsSync, mkdirSync, mkdtempSync, readFileSync, readdirSync, writeFileSync } from 'node:fs';
-import { dirname, join, relative, resolve, sep } from 'node:path';
+import { basename, dirname, join, relative, resolve, sep } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { backendArtifacts } from './artifact-paths.mjs';
 
 const repository = fileURLToPath(new URL('../..', import.meta.url));
 const workspace = 'BotSalesAI_Backend';
-const out = join(repository, workspace, 'test-results', 'backend', 'releases');
+const out = join(backendArtifacts(join(repository, workspace)), 'releases');
 const sha = file => createHash('sha256').update(readFileSync(file)).digest('hex');
 const relativePath = (from, to) => relative(from, to).split(sep).join('/');
 const installedDirectories = new Set(['node_modules', 'apps/api/node_modules', 'apps/worker/node_modules'].map(path => workspace + '/' + path));
 
-function command(executable, args) {
-    const result = spawnSync(executable, args, { cwd: repository, encoding: 'utf8', windowsHide: true });
+function command(executable, args, cwd = repository) {
+    const result = spawnSync(executable, args, { cwd, encoding: 'utf8', windowsHide: true });
     if (result.error || result.status !== 0) throw new Error(executable + ' did not complete successfully');
     return result.stdout.trim();
 }
@@ -39,6 +40,7 @@ const include = new Map([
         'scripts/probe-target.mjs', 'scripts/staging-data-config.mjs', 'scripts/check-staging-data.mjs', 'scripts/evaluate-staging-ai.mjs',
         'scripts/check-object-storage.mjs',
         'scripts/record-reviewed-evidence.mjs', 'scripts/record-procurement-evidence.mjs', 'scripts/record-shipment-evidence.mjs',
+        'scripts/record-advertising-estimate-evidence.mjs',
     ].map(file => [workspace + '/' + file, workspace + '/' + file]),
     ...['openapi.json', 'operation-index.json', 'permission-catalog.json'].map(file => ['botsales-kit/contracts/' + file, 'botsales-kit/contracts/' + file]),
     ['botsales-kit/fixtures/statement-formats.json', 'botsales-kit/fixtures/statement-formats.json'],
@@ -84,7 +86,7 @@ function build() {
     writeFileSync(join(root, 'release-manifest.json'), JSON.stringify(manifest, null, 2) + '\n', { flag: 'wx' });
     const report = verify(root);
     const archive = root + '.tgz';
-    command('tar', ['-czf', relativePath(repository, archive), '-C', relativePath(repository, root), '.']);
+    command('tar', ['-czf', basename(archive), '-C', basename(root), '.'], out);
     const sha256 = sha(archive);
     writeFileSync(archive + '.sha256', sha256 + '  ' + archive.split(sep).at(-1) + '\n', { flag: 'wx' });
     return { ...report, status: 'PACKAGED', archive, sha256, migrations };

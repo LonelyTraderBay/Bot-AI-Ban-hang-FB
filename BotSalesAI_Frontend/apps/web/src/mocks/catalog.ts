@@ -1,7 +1,9 @@
-import { all, find, insert, ensure, checkVersion, touch, command, str, num, rows, record, id, now, stockFor, move, variant, units, zero, money } from './database';
+import { all, find, insert, ensure, checkVersion, touch, command, str, num, rows, record, id, now, stockFor, move, variant, units, zero, money, MockFailure } from './database';
 import type { Input, Row } from './database';
 import { activeWarehouse } from './masters';
 import { carryingValue, setStockValue, postBusinessJournal } from './accounting';
+const skuKey = (value: unknown) => str(value).trim().normalize('NFC').toLowerCase();
+
 export function catalog(op: string, input: Input): Row | undefined {
     const { shopId, body } = input;
     switch (op) {
@@ -12,9 +14,15 @@ export function catalog(op: string, input: Input): Row | undefined {
                 checkVersion(existing, input);
             const variants = rows(body.variants ?? existing?.variants);
             ensure(variants.length > 0, 'Cần ít nhất một biến thể.', 422);
-            ensure(new Set(variants.map(v => str(v.sku).toLowerCase())).size === variants.length, 'Mã SKU trong sản phẩm bị trùng.', 422);
-            for (const v of variants) {
-                ensure(!all('products', shopId).some(p => p.id !== existing?.id && rows(p.variants).some(other => str(other.sku).toLowerCase() === str(v.sku).toLowerCase())), 'Mã SKU đã tồn tại.', 422, 'SKU_EXISTS');
+            const taken = new Set(all('products', shopId).filter(product => product.id !== existing?.id)
+                .flatMap(product => rows(product.variants).map(other => skuKey(other.sku))));
+            for (const [position, v] of variants.entries()) {
+                const key = skuKey(v.sku);
+                if (taken.has(key)) {
+                    const message = 'Mã SKU đã tồn tại trong cửa hàng.';
+                    throw new MockFailure(409, 'CONFLICT', message, [{ path: `/variants/${position}/sku`, code: 'SKU_CONFLICT', message }]);
+                }
+                taken.add(key);
                 ensure(units(v.price) >= 0n, 'Giá bán phải không âm.', 422);
                 const previous = rows(existing?.variants).find(item => item.id === v.id);
                 Object.assign(v, {

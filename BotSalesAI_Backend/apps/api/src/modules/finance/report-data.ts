@@ -1,7 +1,10 @@
 import { UnprocessableEntityException } from '@nestjs/common';
-import { Prisma, type AccountGroup } from '../../generated/prisma/client.js';
+import { Prisma, type AccountGroup, type FinanceClassification } from '../../generated/prisma/client.js';
 import { ExactDecimal } from '../../platform/money/index.js';
 import { financeMoney, localAccountingDate } from './journal.js';
+
+export const reportExportSnapshotNotice =
+    'Dữ liệu trong CSV được chụp khi hệ thống xử lý yêu cầu xuất. Hệ thống chưa hỗ trợ xuất theo mốc xem báo cáo.';
 
 export function reportWindow(query: { from?: string; to?: string; timezone?: string }, timezone: string) {
     const { from, to } = query;
@@ -39,6 +42,21 @@ export function accountTotals(tx: Prisma.TransactionClient, range: JournalRange,
                coalesce(t.opening, 0) AS opening, coalesce(t.debit, 0) AS debit, coalesce(t.credit, 0) AS credit
         FROM finance_accounts a LEFT JOIN totals t ON t.account_id=a.id
         WHERE a.shop_id=${shopId}::uuid ORDER BY a.code, a.id
+    `);
+}
+
+export function classifiedExpenses(tx: Prisma.TransactionClient, range: JournalRange, categories: readonly FinanceClassification[]) {
+    const { shopId, currency, firstDay, lastDay } = range;
+    return tx.$queryRaw<{ category: FinanceClassification; day: string; total: Prisma.Decimal }[]>(Prisma.sql`
+        SELECT coalesce(e.classification, origin.classification)::text AS category, j.effective_date::text AS day,
+               sum(l.debit-l.credit) AS total
+        FROM finance_journals j JOIN finance_journal_lines l ON l.shop_id=j.shop_id AND l.journal_id=j.id
+        JOIN finance_accounts a ON a.shop_id=l.shop_id AND a.id=l.account_id
+        LEFT JOIN finance_entries e ON e.shop_id=j.shop_id AND e.journal_id=j.id
+        LEFT JOIN finance_entries origin ON origin.shop_id=j.shop_id AND origin.journal_id=j.reversal_of
+        WHERE ${journalScope(shopId, currency)} AND j.effective_date BETWEEN ${firstDay}::date AND ${lastDay}::date
+          AND a.system_key='operating_expense' AND coalesce(e.classification, origin.classification)::text IN (${Prisma.join(categories)})
+        GROUP BY 1,2
     `);
 }
 

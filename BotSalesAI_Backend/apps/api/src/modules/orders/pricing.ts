@@ -68,7 +68,7 @@ export async function priceOrder(tx: Prisma.TransactionClient, shopId: string, d
     }
     const promotion = applied?.snapshot ?? null;
     const total = lines.reduce((sum, line) => sum.plus(line.lineTotal), new ExactDecimal(0));
-    const { policyVersion, rate } = await estimatedShipping(tx, shopId, address?.data as AddressInput | null ?? null, currency);
+    const { policyVersion, rate, outsideConfiguredRegions } = await estimatedShipping(tx, shopId, address?.data as AddressInput | null ?? null, currency);
     const publicLines = lines.map(line => lineView(line, currency));
     const terms = {
         customerId: draft.customerId, conversationId: draft.conversationId, warehouseId: draft.warehouseId, paymentMethod: draft.paymentMethod,
@@ -78,7 +78,7 @@ export async function priceOrder(tx: Prisma.TransactionClient, shopId: string, d
         ...(promotion ? { promotion } : {}),
     };
     const termsHash = createHash('sha256').update(JSON.stringify(terms)).digest('hex');
-    return { lines, publicLines, termsHash, customer, address, rate, currency, total, promotion };
+    return { lines, publicLines, termsHash, customer, address, rate, outsideConfiguredRegions, currency, total, promotion };
 }
 
 export async function quoteWarnings(tx: Prisma.TransactionClient, shopId: string, warehouseId: string, lines: PricedLine[]) {
