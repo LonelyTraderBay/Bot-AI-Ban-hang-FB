@@ -113,7 +113,7 @@ export function OrderDetailPage({ simulateCustomerConfirmation }: {
                 const r = await quoteOp.execute({ path: { orderId }, version: order.version });
                 synchronizeApiTime(r.meta.asOf);
                 setQuote(r.data);
-                setConfirmation(null);
+                setConfirmation(r.data.customerConfirmation ?? null);
                 setError(null);
                 setHash(typeof r.data.quoteHash === 'string' ? r.data.quoteHash : '');
             }

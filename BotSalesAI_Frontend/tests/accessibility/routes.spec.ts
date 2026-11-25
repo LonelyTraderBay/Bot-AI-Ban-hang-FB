@@ -67,6 +67,9 @@ test.describe('all canonical routes pass whole-page WCAG 2.1 A/AA axe checks in 
                     if (route.id === 'R31') {
                         await expect(page).toHaveURL(url => url.searchParams.has('reportType') && url.hash === '#main-content');
                         await expect(main, 'R31 keeps keyboard focus after the report loads its default filters').toBeFocused();
+                    } else if (route.id === 'R53') {
+                        await expect(page).toHaveURL(url => url.searchParams.has('fromDate') && url.hash === '#main-content');
+                        await expect(main, 'R53 keeps keyboard focus after marketing defaults load').toBeFocused();
                     }
                     const auditRoute = async (state: 'loading' | 'loaded') => {
                         const audit = await new AxeBuilder({ page })

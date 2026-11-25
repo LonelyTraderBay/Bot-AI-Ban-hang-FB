@@ -1,7 +1,7 @@
 import { Body, ConflictException, Controller, ForbiddenException, Get, HttpCode, NotFoundException, Param, Post, Query, Req, Res,
     UnprocessableEntityException } from '@nestjs/common';
 import type { IncomingHttpHeaders, IncomingMessage, ServerResponse } from 'node:http';
-import { Prisma, type PrismaClient } from '../../generated/prisma/client.js';
+import { Prisma, type PreparationState, type PrismaClient } from '../../generated/prisma/client.js';
 import { validator } from '../../http/contract-source.js';
 import { schemaFromContract, SchemaPipe } from '../../http/contracts.js';
 import { ContractOperation } from '../../http/operations.js';
@@ -9,11 +9,13 @@ import { idPipe, listQuery, paging, validUuid } from '../../http/query.js';
 import { envelope, noStore, requireVersion, versionedEnvelope } from '../../http/response.js';
 import { recordAudit } from '../../platform/audit/index.js';
 import { enqueueResourceUpdate } from '../../platform/outbox/index.js';
+import { approvedPreparationImages } from '../knowledge/index.js';
 import { cancelPreparationReminders, notifyPreparation } from '../notifications/index.js';
 import { createWorkItem, setWorkState } from '../operations/index.js';
 import { readAsSession, requireShopAccess, writeShopCommand, type AuthConfig, type ShopScope } from '../workspace/index.js';
 
-type PickInput = { expectedVersion: number; orderLineId: string; scannedSku: string; pickedQuantity: number; issueReason: string | null };
+type PickInput = { expectedVersion: number; orderLineId: string; scannedSku: string; pickedQuantity: number;
+    issueReason: string | null; issueEvidenceFileId?: string | null };
 const pickBody = new SchemaPipe(validator.compile(schemaFromContract('PickLineRequest')));
 const versionBody = new SchemaPipe(validator.compile(schemaFromContract('VersionRequest')));
 export const preparationCommands = ['pickPrepLine', 'packPrepJob'].map(operationId => ({ operationId, resourceType: 'prep_job' }));
@@ -21,12 +23,20 @@ const key = (shopId: string, id: string) => ({ shopId_id: { shopId, id } });
 
 export async function provisionPreparation(tx: Prisma.TransactionClient, order: {
     shopId: string; id: string;
-}, lines: { id: string; sku: string; quantity: number }[], recipientUserId: string, dueAt: Date) {
+}, lines: { id: string; variantId: string; sku: string; quantity: number }[], recipientUserId: string, dueAt: Date) {
     const { id: orderId, shopId } = order;
     const task = await createWorkItem(tx, { shopId, kind: 'prepare_order', sourceType: 'order', sourceId: orderId, dueAt });
     const prep = await tx.prepJob.create({ data: { shopId, orderId, workItemId: task.id } });
+    const variants = await tx.variant.findMany({ where: { shopId, id: { in: lines.map(line => line.variantId) } },
+        select: { id: true, productId: true } });
+    const products = new Map(variants.map(variant => [variant.id, variant.productId]));
+    const images = await approvedPreparationImages(tx, shopId, variants.map(variant => variant.productId));
     await tx.preparationLine.createMany({
-        data: lines.map(line => ({ shopId, prepJobId: prep.id, orderLineId: line.id, sku: line.sku, requiredQuantity: line.quantity })),
+        data: lines.map(line => {
+            const image = images.get(products.get(line.variantId) ?? '');
+            return { shopId, prepJobId: prep.id, orderLineId: line.id, sku: line.sku, requiredQuantity: line.quantity,
+                productImageFileId: image?.fileId, productImageRevisionId: image?.knowledgeRevisionId };
+        }),
     });
     await notifyPreparation(tx, task, recipientUserId);
     return prep;
@@ -42,7 +52,7 @@ export async function cancelPreparation(tx: Prisma.TransactionClient, shopId: st
 }
 
 const prepDetails = {
-    lines: { orderBy: { orderLine: { position: 'asc' } } }, workItem: { select: { assigneeUserId: true, state: true } },
+    lines: { orderBy: { orderLine: { position: 'asc' } } }, workItem: { select: { assigneeUserId: true, state: true, dueAt: true } },
     order: { select: { orderState: true, fulfillmentState: true, reservation: { select: { status: true, expiresAt: true } } } },
 } satisfies Prisma.PrepJobInclude;
 type Prep = Prisma.PrepJobGetPayload<{ include: typeof prepDetails }>;
@@ -54,15 +64,26 @@ async function preparationInShop(tx: Prisma.TransactionClient, shopId: string, i
     return prep;
 }
 
-function preparationView(prep: Prep) {
+function preparationView(prep: Prep, asOf = new Date()) {
+    const { dueAt, state: workState } = prep.workItem;
+    const elapsed = dueAt ? asOf.getTime() - dueAt.getTime() : 0;
     return {
         id: prep.id, shopId: prep.shopId, version: prep.version, createdAt: prep.createdAt, updatedAt: prep.updatedAt,
         orderId: prep.orderId, workItemId: prep.workItemId, assigneeUserId: prep.workItem.assigneeUserId,
         state: prep.state === 'queued' && prep.workItem.state === 'claimed' ? 'claimed' : prep.state,
-        lines: prep.lines.map(({ orderLineId, sku, requiredQuantity, pickedQuantity, hasIssue }) => ({
-            orderLineId, sku, requiredQuantity, pickedQuantity, hasIssue,
+        dueAt, overdueMinutes: elapsed > 0 && !['completed', 'cancelled'].includes(workState) ? Math.ceil(elapsed / 60_000) : null,
+        lines: prep.lines.map(({ orderLineId, sku, requiredQuantity, pickedQuantity, hasIssue, productImageFileId, productImageRevisionId, issueEvidenceFileId }) => ({
+            orderLineId, sku, requiredQuantity, pickedQuantity, hasIssue, issueEvidenceFileId,
+            productImageSnapshot: productImageFileId && productImageRevisionId
+                ? { fileId: productImageFileId, knowledgeRevisionId: productImageRevisionId } : null,
         })),
     };
+}
+
+function preparationState(state: PreparationState | undefined): Prisma.PrepJobWhereInput {
+    if (state === 'queued') return { state, workItem: { state: { not: 'claimed' } } };
+    if (state === 'claimed') return { OR: [{ state }, { state: 'queued', workItem: { state } }] };
+    return { state };
 }
 
 function verifyPreparedWork(prep: Prep, actorId: string, expectedVersion: number) {
@@ -78,11 +99,16 @@ export class PreparationService {
     list(headers: IncomingHttpHeaders, shopId: string, raw: Record<string, unknown>) {
         return readAsSession(this.db, headers, async (tx, userId) => {
             const scope = await requireShopAccess(tx, userId, shopId, 'fulfillment.read');
-            const page = paging(listQuery(raw, 'page'), ['prep', shopId, userId, String(scope.permissionVersion)]);
+            const query = listQuery(raw, 'prepJobs');
+            const state = query.state as PreparationState | undefined;
+            const assigneeUserId = query.assignee === 'me' ? userId : query.assignee === 'unassigned' ? null : undefined;
+            const page = paging(query, ['prep', shopId, userId, String(scope.permissionVersion), state ?? '', query.assignee ?? '']);
+            const asOf = new Date();
             const result = page.result(await tx.prepJob.findMany({
-                where: { shopId, ...page.after }, orderBy: page.orderBy, take: page.limit + 1, include: prepDetails,
+                where: { shopId, AND: [preparationState(state), { workItem: { assigneeUserId } }, page.after ?? {}] },
+                orderBy: page.orderBy, take: page.limit + 1, include: prepDetails,
             }));
-            return { ...result, data: result.data.map(preparationView) };
+            return { ...result, data: result.data.map(prep => preparationView(prep, asOf)) };
         });
     }
 
@@ -95,15 +121,24 @@ export class PreparationService {
 
     pick(headers: IncomingHttpHeaders, shopId: string, id: string, input: PickInput, requestId: string) {
         const issue = input.issueReason?.trim() ?? null;
-        if (issue !== null && (issue.length < 3 || issue.includes(String.fromCharCode(0)))) throw new UnprocessableEntityException();
+        const evidenceId = input.issueEvidenceFileId;
+        if ((issue !== null && (issue.length < 3 || issue.includes(String.fromCharCode(0)))) ||
+            (evidenceId && (issue === null || !validUuid(evidenceId)))) throw new UnprocessableEntityException();
         return this.change(headers, shopId, id, 'pickPrepLine', input, requestId, async (tx, scope, current) => {
             verifyPreparedWork(current, scope.userId, input.expectedVersion);
             const line = current.lines.find(row => row.orderLineId === input.orderLineId);
             if (!line || line.sku !== input.scannedSku.trim() || !Number.isInteger(input.pickedQuantity) ||
                 input.pickedQuantity > line.requiredQuantity || input.pickedQuantity < 0) throw new UnprocessableEntityException();
+            if (evidenceId) {
+                const evidence = await tx.fileObject.findFirst({ where: { shopId, id: evidenceId, resourceId: id,
+                    purpose: 'preparation_issue_image', status: 'ready', uploaderId: scope.userId },
+                    select: { preparationIssueEvidence: { select: { orderLineId: true } } } });
+                if (!evidence || evidence.preparationIssueEvidence.some(link => link.orderLineId !== line.orderLineId))
+                    throw new UnprocessableEntityException();
+            }
             await tx.preparationLine.update({
                 where: { shopId_prepJobId_orderLineId: { shopId, prepJobId: id, orderLineId: line.orderLineId } },
-                data: { pickedQuantity: input.pickedQuantity, hasIssue: issue !== null },
+                data: { pickedQuantity: input.pickedQuantity, hasIssue: issue !== null, ...(evidenceId ? { issueEvidenceFileId: evidenceId } : {}) },
             });
             const unresolved = issue !== null || current.lines.some(row => row.orderLineId !== line.orderLineId && row.hasIssue);
             await setWorkState(tx, shopId, current.workItemId, unresolved ? 'blocked' : 'working',

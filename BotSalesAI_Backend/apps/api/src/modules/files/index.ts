@@ -1,5 +1,5 @@
 import {
-    Body, ConflictException, Controller, Get, Module, NotFoundException, Param, Post, Query, Req, Res,
+    Body, ConflictException, Controller, ForbiddenException, Get, Module, NotFoundException, Param, Post, Query, Req, Res,
     ServiceUnavailableException, UnprocessableEntityException, UploadedFile, UseInterceptors, type DynamicModule,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
@@ -31,7 +31,8 @@ const uploadInput = new SchemaPipe(validator.compile(schemaFromContract('FileUpl
 const permissionByPurpose: Readonly<Record<FilePurpose, string>> = {
     product_image: 'catalog.write', product_import: 'catalog.import', knowledge_source: 'knowledge.write',
     bank_statement: 'finance.reconcile', cod_statement: 'finance.reconcile', conversation_media: 'conversations.reply',
-    report_export: 'reports.export', privacy_export: 'privacy.manage',
+    report_export: 'reports.export', privacy_export: 'privacy.manage', preparation_issue_image: 'fulfillment.write',
+    payment_evidence_image: 'finance.reconcile',
 };
 export const fileCommand = { operationId: 'uploadFile', resourceType: 'file', scopePermissions: permissionByPurpose };
 const rasterMime = new Map([['jpeg', 'image/jpeg'], ['png', 'image/png'], ['webp', 'image/webp']]);
@@ -137,7 +138,7 @@ async function inspect(file: UploadPart, name: string, purpose: FilePurpose): Pr
         if (purpose === 'conversation_media' && file.mimetype === 'audio/wav') {
             return extname(name).toLowerCase() === '.wav' && pcmWave(file.buffer) ? { bytes: file.buffer, mimeType: file.mimetype } : 'invalid_format';
         }
-        if (purpose === 'product_image' || purpose === 'conversation_media') {
+        if (['product_image', 'conversation_media', 'preparation_issue_image', 'payment_evidence_image'].includes(purpose)) {
             if (!Array.from(rasterMime.values()).includes(file.mimetype)) return 'invalid_format';
             const image = sharp(file.buffer, { limitInputPixels: 8_000_000, failOn: 'warning' });
             const { format, pages } = await image.metadata();
@@ -214,8 +215,11 @@ class FilesService {
         if (input.resourceId && (!validUuid(input.resourceId) || ['product_import', 'knowledge_source'].includes(input.purpose))) {
             throw new UnprocessableEntityException();
         }
-        if (input.purpose === 'conversation_media' && !input.resourceId) throw new UnprocessableEntityException();
+        const isIssueEvidence = input.purpose === 'preparation_issue_image';
+        const isTransferEvidence = input.purpose === 'payment_evidence_image';
+        if ((input.purpose === 'conversation_media' || isIssueEvidence || isTransferEvidence) && !input.resourceId) throw new UnprocessableEntityException();
         const name = file.originalname.replace(/[\x00-\x1f\x7f/\\]/g, '_').trim().slice(0, 255) || 'upload';
+        const storedName = isIssueEvidence ? 'anh-chung-cu-kiem-hang' : isTransferEvidence ? 'anh-cho-doi-chieu' : name;
         const digest = createHash('sha256').update(file.buffer).digest('hex');
         const scan = this.scanner ? await this.scanner.scan(file.buffer)
             : usesLocalOidcFixture(this.config) ? 'fixture' : 'unavailable';
@@ -225,7 +229,7 @@ class FilesService {
         const { operationId } = fileCommand;
         return writeShopCommand(this.db, this.config, {
             headers, shopId, permission, operationId,
-            payload: { purpose: input.purpose, resourceId: input.resourceId ?? null, name, mimeType: file.mimetype, digest },
+            payload: { purpose: input.purpose, resourceId: input.resourceId ?? null, name: storedName, mimeType: file.mimetype, digest },
         }, async (tx, scope, config) => {
             if (input.purpose === 'product_image' && input.resourceId && !await tx.product.findFirst({
                 where: { shopId, id: input.resourceId, status: { not: 'archived' } }, select: { id: true },
@@ -239,12 +243,28 @@ class FilesService {
                     (conversation.assignedUserId !== null && conversation.assignedUserId !== scope.userId) ||
                     file.buffer.length > limits.maxFileSizeBytes || !limits.allowedMimeTypes.includes(file.mimetype)) throw new UnprocessableEntityException();
             }
+            if (isIssueEvidence) {
+                const prep = await tx.prepJob.findUnique({ where: fileKey(shopId, input.resourceId!),
+                    select: { state: true, workItem: { select: { assigneeUserId: true } },
+                        order: { select: { orderState: true, reservation: { select: { expiresAt: true, status: true } } } } } });
+                if (!prep) throw new NotFoundException();
+                if (prep.workItem.assigneeUserId !== scope.userId) throw new ForbiddenException();
+                if (!['queued', 'claimed', 'picking'].includes(prep.state) || prep.order.orderState !== 'confirmed' ||
+                    prep.order.reservation?.status !== 'active' || prep.order.reservation.expiresAt <= new Date()) throw new ConflictException();
+            }
+            if (isTransferEvidence) {
+                const order = await tx.salesOrder.findUnique({ where: fileKey(shopId, input.resourceId!),
+                    select: { orderState: true, paymentMethod: true, customer: { select: { privacyErasedAt: true } } } });
+                if (!order) throw new NotFoundException();
+                if (order.customer.privacyErasedAt || order.orderState === 'cancelled' ||
+                    (order.orderState === 'draft' && order.paymentMethod !== 'prepay')) throw new ConflictException();
+            }
             // The ledger resolves existing intents before applying a new upload.
             if (scan === 'unavailable') throw new ServiceUnavailableException();
             const bytes = inspected?.bytes;
             const stored = await tx.fileObject.create({
                 data: {
-                    shopId, uploaderId: scope.userId, name, mimeType: inspected?.mimeType ?? 'application/octet-stream',
+                    shopId, uploaderId: scope.userId, name: storedName, mimeType: inspected?.mimeType ?? 'application/octet-stream',
                     sizeBytes: bytes?.length ?? file.buffer.length, sha256: bytes ? createHash('sha256').update(bytes).digest('hex') : digest,
                     purpose: input.purpose, resourceId: input.resourceId, status: bytes ? 'ready' : 'quarantined', rejectionReason,
                 },
@@ -258,7 +278,8 @@ class FilesService {
             return { type: 'file', id: stored.id, scope: input.purpose };
         }, async (tx, scope, result) => {
             if (result.type !== 'file') throw new ConflictException();
-            return fileView(await tx.fileObject.findUniqueOrThrow({ where: fileKey(shopId, result.id) }), this.config, scope.userId);
+            const stored = await tx.fileObject.findUniqueOrThrow({ where: fileKey(shopId, result.id) });
+            return fileView(stored, isIssueEvidence || isTransferEvidence ? undefined : this.config, scope.userId);
         });
     }
 
@@ -269,6 +290,7 @@ class FilesService {
             if (!file) throw new NotFoundException();
             const generated = file.purpose === 'report_export' || file.purpose === 'privacy_export';
             const permittedOwner = generated ? await generatedFileAccessible(tx, file, scope) :
+                !['preparation_issue_image', 'payment_evidence_image'].includes(file.purpose) &&
                 file.uploaderId === userId && scope.permissions.includes(permissionByPurpose[file.purpose]);
             const attachedImage = file.purpose === 'product_image' && scope.permissions.includes('catalog.read')
                 && await tx.productImage.findFirst({ where: { shopId, fileId }, select: { fileId: true } });
@@ -277,7 +299,21 @@ class FilesService {
                     select: { fileId: true } });
             const attachedKnowledge = file.purpose === 'knowledge_source' && scope.permissions.includes('knowledge.read')
                 && await tx.knowledgeRevision.findFirst({ where: { shopId, fileId }, select: { id: true } });
-            if (!permittedOwner && !attachedImage && !attachedMessage && !attachedKnowledge) throw new NotFoundException();
+            const preparationImage = file.purpose === 'product_image' && scope.permissions.includes('fulfillment.read')
+                && await tx.preparationLine.findFirst({ where: { shopId, productImageFileId: fileId }, select: { orderLineId: true } });
+            const approvedKnowledgeImage = file.purpose === 'product_image' && scope.permissions.includes('knowledge.read')
+                && await tx.knowledgeRevision.findFirst({ where: { shopId, publishedAt: { not: null },
+                    template: { path: ['imageFileId'], equals: fileId } }, select: { id: true } });
+            const issueEvidence = file.purpose === 'preparation_issue_image' && file.resourceId && scope.permissions.includes('fulfillment.read')
+                && await tx.preparationLine.findFirst({ where: { shopId, prepJobId: file.resourceId, issueEvidenceFileId: fileId },
+                    select: { orderLineId: true } });
+            const transferEvidence = file.purpose === 'payment_evidence_image' && file.status === 'ready' && file.resourceId &&
+                scope.permissions.includes('finance.read') && scope.permissions.includes('finance.reconcile') &&
+                await tx.salesOrder.findFirst({ where: { shopId, id: file.resourceId, customer: { privacyErasedAt: null } }, select: { id: true } });
+            if (!permittedOwner && !attachedImage && !attachedMessage && !attachedKnowledge && !preparationImage &&
+                !approvedKnowledgeImage && !issueEvidence && !transferEvidence) {
+                throw new NotFoundException();
+            }
             const view = fileView(file, this.config, userId);
             if (content === undefined) return { view };
             if (!canReadReady(file, this.config, userId, content)) throw new NotFoundException();
@@ -314,7 +350,7 @@ class FilesController {
             return;
         }
         response.setHeader('Content-Type', view.mimeType);
-        response.setHeader('Content-Disposition', view.purpose === 'product_image' ? 'inline' : 'attachment');
+        response.setHeader('Content-Disposition', ['product_image', 'preparation_issue_image', 'payment_evidence_image'].includes(view.purpose ?? '') ? 'inline' : 'attachment');
         response.setHeader('Content-Length', bytes.length);
         response.end(bytes);
     }

@@ -45,18 +45,43 @@ export function accountTotals(tx: Prisma.TransactionClient, range: JournalRange,
     `);
 }
 
-export function classifiedExpenses(tx: Prisma.TransactionClient, range: JournalRange, categories: readonly FinanceClassification[]) {
+function expenseLines(range: JournalRange, categories: readonly FinanceClassification[]) {
     const { shopId, currency, firstDay, lastDay } = range;
-    return tx.$queryRaw<{ category: FinanceClassification; day: string; total: Prisma.Decimal }[]>(Prisma.sql`
-        SELECT coalesce(e.classification, origin.classification)::text AS category, j.effective_date::text AS day,
-               sum(l.debit-l.credit) AS total
+    return Prisma.sql`
+        SELECT coalesce(e.classification, origin.classification)::text AS category, j.effective_date AS day,
+               j.id AS journal_id, coalesce(origin.id, e.id) AS entry_id,
+               coalesce(origin.source_id, e.source_id) AS source_id, l.debit-l.credit AS net
         FROM finance_journals j JOIN finance_journal_lines l ON l.shop_id=j.shop_id AND l.journal_id=j.id
         JOIN finance_accounts a ON a.shop_id=l.shop_id AND a.id=l.account_id
         LEFT JOIN finance_entries e ON e.shop_id=j.shop_id AND e.journal_id=j.id
         LEFT JOIN finance_entries origin ON origin.shop_id=j.shop_id AND origin.journal_id=j.reversal_of
         WHERE ${journalScope(shopId, currency)} AND j.effective_date BETWEEN ${firstDay}::date AND ${lastDay}::date
           AND a.system_key='operating_expense' AND coalesce(e.classification, origin.classification)::text IN (${Prisma.join(categories)})
-        GROUP BY 1,2
+    `;
+}
+
+export function classifiedExpenses(tx: Prisma.TransactionClient, range: JournalRange, categories: readonly FinanceClassification[]) {
+    return tx.$queryRaw<{ category: FinanceClassification; day: string; total: Prisma.Decimal }[]>(Prisma.sql`
+        SELECT category, day::text, sum(net) AS total FROM (${expenseLines(range, categories)}) expenses GROUP BY category, day
+    `);
+}
+
+export function advertisingEvidence(tx: Prisma.TransactionClient, range: JournalRange, asOf: Date) {
+    return tx.$queryRaw<{ channel: string | null; campaignId: string | null; journalId: string; sourceId: string; total: Prisma.Decimal }[]>(Prisma.sql`
+        WITH categorized AS (
+            SELECT x.*, e.channel, e.campaign_id
+            FROM (${expenseLines(range, ['advertising_expense'])}) x
+            LEFT JOIN LATERAL (
+                SELECT channel, campaign_id FROM marketing_evidence
+                WHERE shop_id=${range.shopId}::uuid AND entry_id=x.entry_id AND recorded_at <= ${asOf}
+                ORDER BY revision DESC LIMIT 1
+            ) e ON true
+            WHERE x.source_id IS NOT NULL
+        )
+        SELECT channel, campaign_id AS "campaignId", sum(net) AS total,
+               (array_agg(journal_id ORDER BY day DESC, journal_id))[1] AS "journalId",
+               (array_agg(source_id ORDER BY day DESC, journal_id))[1] AS "sourceId"
+        FROM categorized GROUP BY channel, campaign_id ORDER BY channel, campaign_id
     `);
 }
 

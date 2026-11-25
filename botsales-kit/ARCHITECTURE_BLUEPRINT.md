@@ -1359,12 +1359,13 @@ Thiếu/hỏng/sai biến thể tạo issue; chỉ đóng gói đủ dòng và �
 Quét sai SKU/nhập vượt lượng chặn pack; snapshot không dùng ảnh hiện tại sai phiên bản.
 Có issue chưa giải quyết thì không ready; ảnh chứng cứ không công khai PII.
 
-**API đọc:** listPrepJobs, getPrepJob
+**API đọc:** listPrepJobs, getPrepJob, getFile
 
 | Hành động | operationId | Quyền |
 |---|---|---|
 | pickPrepLine | `pickPrepLine` | `fulfillment.write` |
 | packPrepJob | `packPrepJob` | `fulfillment.write` |
+| Tải ảnh chứng cứ kiểm hàng | `uploadFile` | `fulfillment.write` |
 
 **States:** loading, empty, error, forbidden, stale_or_offline, success, command_unknown, capability_unavailable
 
@@ -1606,6 +1607,7 @@ Backdated post vào locked period bị chặn; export không thay dữ liệu ng
 | closeAccountingPeriod | `closeAccountingPeriod` | `finance.close` |
 | reopenAccountingPeriod | `reopenAccountingPeriod` | `finance.close` |
 | Tạo kỳ kế toán | `createAccountingPeriod` | `finance.close` |
+| Cập nhật hạn và tranh chấp | `updateDebtTerms` | `finance.reconcile` |
 
 **States:** loading, empty, error, forbidden, stale_or_offline, success, command_unknown, capability_unavailable
 
@@ -1627,7 +1629,7 @@ Token/channel budgets and procurement budgets separate; approved fallback provid
 Stop cannot unsend accepted message; UI shows accepted/unknown boundary honestly.
 No silent PII transfer to unapproved model; exhausted budget moves to safe handoff.
 
-**API đọc:** listAgentRoles, listBudgetPolicies
+**API đọc:** listAgentRoles, listBudgetPolicies, getBotConfig
 
 | Hành động | operationId | Quyền |
 |---|---|---|
@@ -1950,16 +1952,17 @@ Không tự merge cùng tên/số bị che; scope mismatch denied.
 
 **Mục đích:** Tập trung khoản cần xác minh hoặc cần hoàn.
 
-**Nội dung:** Số dự kiến, đã xác minh và còn lại, đến hạn, người phụ trách, đơn/phiếu trả, giao dịch, bút toán.
+**Nội dung:** Số dự kiến, đã xác minh và còn lại, đến hạn, người phụ trách, đơn/phiếu trả, giao dịch, bút toán. Cho phép lưu và xem ảnh chuyển khoản chờ đối chiếu theo đơn.
 
 **Hành vi:** Bộ lọc theo dữ liệu cửa hàng. Ghi nhận nghiệp vụ qua đơn, đổi trả và đối soát hiện có.
 
 **Trường hợp cần xử lý:** COD đang giữ và dữ liệu chưa đủ có trạng thái riêng. Số dư nghĩa vụ được đối chiếu từ nguồn ghi sổ.
 
-**API đọc:** listPaymentReviews
+**API đọc:** listPaymentReviews, getFile
 
 | Hành động | operationId | Quyền |
 |---|---|---|
+| Tải ảnh chờ đối chiếu | `uploadFile` | `finance.reconcile` |
 
 **States:** loading, empty, error, forbidden, stale_or_offline, success, command_unknown, capability_unavailable
 

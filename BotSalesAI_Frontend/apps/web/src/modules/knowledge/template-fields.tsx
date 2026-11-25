@@ -37,17 +37,25 @@ export function KnowledgeTemplateFields({ value, onChange }: {
     </FormFields>;
 
     const productRows = products.data?.data ?? [];
+    const imageIds = productRows.find(row => row.id === value.productId)?.imageFileIds ?? [];
     return <FormFields>
         <ErrorNotice error={products.error} />
         {canReadProducts ? <>
             <TextField select label="Sản phẩm nguồn" value={value.productId}
-                onChange={event => onChange({ ...value, productId: event.target.value })}>
+                onChange={event => onChange({ ...value, productId: event.target.value, imageFileId: undefined })}>
                 <MenuItem value="">Chọn sản phẩm</MenuItem>
                 {value.productId && !productRows.some(row => row.id === value.productId) && <MenuItem value={value.productId}>{value.productId}</MenuItem>}
                 {productRows.map(row => <MenuItem key={row.id} value={row.id}>{row.name}</MenuItem>)}
             </TextField>
             <LookupLoadMore label="sản phẩm nguồn" loadedCount={products.loadedCount} hasMore={products.hasMore}
                 busy={products.isLoadingMore} onLoadMore={products.loadMore} />
+            {value.productId && <TextField select label="Ảnh nguồn" value={value.imageFileId ?? ''}
+                onChange={event => onChange({ ...value, imageFileId: event.target.value || undefined })}>
+                <MenuItem value="">Không chọn ảnh</MenuItem>
+                {value.imageFileId && !imageIds.includes(value.imageFileId) &&
+                    <MenuItem value={value.imageFileId}>Ảnh đã chọn ở phiên bản này</MenuItem>}
+                {imageIds.map((id, index) => <MenuItem key={id} value={id}>Ảnh {index + 1} trong danh mục</MenuItem>)}
+            </TextField>}
             {value.productId && <RouteLink to={`/s/${shop.id}/products/${encodeURIComponent(value.productId)}`}>Xem ảnh và thông tin sản phẩm nguồn</RouteLink>}
         </> : <Alert severity="info">Cần quyền đọc sản phẩm để chọn nguồn.</Alert>}
         {(Object.keys(productLabels) as (keyof typeof productLabels)[]).map(key =>

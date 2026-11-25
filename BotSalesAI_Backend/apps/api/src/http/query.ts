@@ -52,12 +52,16 @@ const workQueryPipe = listPipe([listParameters[0], listParameters[1], listParame
     ...openapi.paths['/shops/{shopId}/work-items'].get.parameters.filter((param: { name?: string }) =>
         param.name && ['kind', 'state', 'assignee', 'exception', 'due'].includes(param.name)),
 ]);
+const prepQueryPipe = listPipe([...listParameters.slice(0, 2),
+    ...openapi.paths['/shops/{shopId}/prep-jobs'].get.parameters.filter((param: { name?: string }) =>
+        param.name === 'state' || param.name === 'assignee'),
+]);
 const listPipes = {
     general: queryPipe, listCommands: commandQueryPipe, listJobs: commandQueryPipe, listProducts: productQueryPipe,
     inventory: inventoryQueryPipe, orders: ordersQueryPipe, promotions: promotionsQueryPipe, conversations: conversationQueryPipe,
     stocktakes: stocktakeQueryPipe, transfers: transferQueryPipe,
     page: pageQueryPipe, ledger: ledgerQueryPipe, report: reportQueryPipe, marketing: marketingQueryPipe, work: workQueryPipe,
-    paymentReviews: paymentReviewQueryPipe,
+    paymentReviews: paymentReviewQueryPipe, prepJobs: prepQueryPipe,
 };
 export const idPipe = new SchemaPipe(validator.compile(schemaFromContract('Id')));
 export const validUuid = (id: string) => /^[a-f0-9]{8}(?:-[a-f0-9]{4}){3}-[a-f0-9]{12}$/i.test(id);

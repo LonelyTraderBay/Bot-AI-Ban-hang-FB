@@ -368,18 +368,33 @@ test('FE018.S03 synthetic budget and tool denials retain the prompt and never sh
     await expect(page.getByText('Chạy câu hỏi để xem câu trả lời, nguồn và cảnh báo. Không có điểm chất lượng tự tạo.')).toBeVisible();
 });
 
-test('FE027.H03 budget and provider failover preview refuses silent provider switching on exhaustion', async ({ page }) => {
+test('FE027.H03 R51 renders the provider policy returned by the API', async ({ page }) => {
     const writes: string[] = [];
     page.on('request', request => {
         if (request.method() !== 'GET' && new URL(request.url()).pathname.startsWith('/api/v2/')) writes.push(request.method());
     });
+    const policy = page.waitForResponse(response => response.request().method() === 'GET' && new URL(response.url()).pathname.endsWith('/bot/config'));
     await gotoDemo(page, '/s/shop-demo/bot/team');
+    expect((await (await policy).json()).data.providerPolicy).toEqual({ failover: 'disabled', channelTokenBudget: null });
     const preview = page.getByTestId('provider-failover-preview');
-    await expect(preview).toContainText('Chi phí trong phòng thử là ước tính mô phỏng');
-    await expect(preview).toContainText('Provider dự phòng');
-    await expect(preview).toContainText('Chưa có trạng thái failover được xác minh');
-    await expect(preview).toContainText('không âm thầm đổi provider');
+    await expect(preview).toContainText('Chính sách nhà cung cấp trong chế độ demo dùng dữ liệu mô phỏng');
+    await expect(preview).toContainText('Tắt chuyển tự động');
+    await expect(preview).toContainText('Chưa có hạn mức cho luồng đang chạy');
+    await expect(preview).toContainText('Chuyển hội thoại sang nhân viên xử lý');
     expect(writes).toEqual([]);
+});
+
+test('SC2-H02 R51 opens the scoped command history without resending a command', async ({ page }) => {
+    await gotoDemo(page, '/s/shop-demo/bot/team');
+    const completed = page.getByRole('link', { name: 'Lệnh đã hoàn tất', exact: true });
+    await expect(completed).toHaveAttribute('href', '/s/shop-demo/operations/exceptions?view=commands&status=succeeded');
+    await page.getByRole('link', { name: 'Lệnh chưa rõ kết quả', exact: true }).click();
+    await expect(page).toHaveURL(/\/operations\/exceptions\?view=commands&status=unknown$/);
+    const row = page.getByRole('table', { name: 'Hàng đợi thao tác' }).getByRole('row').filter({ hasText: 'seed-command-10079' });
+    await row.getByRole('button', { name: 'Chi tiết thao tác' }).click();
+    const detail = page.getByRole('dialog', { name: 'Chi tiết trạng thái thao tác' });
+    await expect(detail.getByText('Chưa rõ kết quả', { exact: true })).toBeVisible();
+    await expect(detail.getByRole('button', { name: /gửi lại/i })).toHaveCount(0);
 });
 
 test('FE018.AC02 role kill switch is versioned, preserves API tools, and does not pause the whole bot', async ({ page }) => {

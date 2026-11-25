@@ -81,11 +81,12 @@ async function assertBotAuditContext(record, liveRevision, actorKind, result) {
 
 const patch = (path, body, schema, options = {}) => request(path, schema, { method: 'PATCH', body, ...options });
 
-async function settle(id, services) {
-    const job = await db.job.findUniqueOrThrow({ where: { shopId_id: { shopId, id } } });
+async function settle(id, services, options = {}) {
+    const scope = options.shop ?? shopId;
+    const job = await db.job.findUniqueOrThrow({ where: { shopId_id: { shopId: scope, id } } });
     const handler = aiJobHandlers(config, services).get(job.sourceOperation) ?? knowledgeIndexHandler(db);
-    await runJob(db, { shopId, id, sourceOperation: job.sourceOperation }, handler, authorize);
-    return request('jobs/' + id, 'JobResponse');
+    await runJob(db, { shopId: scope, id, sourceOperation: job.sourceOperation }, handler, authorize);
+    return request('jobs/' + id, 'JobResponse', options);
 }
 
 before(async () => {
@@ -342,6 +343,14 @@ test('SC-043 SC-044 SC-045 SC-046 checks sources, budget, async publication, res
         reason: 'Kiểm lại điều kiện tại API và worker' };
     await post(bot + '/publish', checkedInput, 'Problem', { actor: viewer, status: 403 });
     const evaluationKey = { shopId_id: { shopId, id: proof.id } };
+    await db.evaluation.update({ where: evaluationKey, data: { fixture: false } });
+    try {
+        const missingCountry = await post(bot + '/publish', checkedInput, 'Problem', { status: 409 });
+        assert.equal(missingCountry.code, 'BUSINESS_COUNTRY_REQUIRED');
+        assert.equal((await request(bot, 'BotConfigResponse')).liveRevision, next.config.liveRevision);
+    } finally {
+        await db.evaluation.update({ where: evaluationKey, data: { fixture: true } });
+    }
     await db.evaluation.update({ where: evaluationKey, data: { status: 'failed', criticalFailures: 1, passedCases: proof.passedCases - 1 } });
     await post(bot + '/publish', checkedInput, 'Problem', { status: 409 });
     await db.evaluation.update({ where: evaluationKey, data: { status: 'passed', criticalFailures: 0, passedCases: proof.passedCases } });
@@ -578,6 +587,285 @@ test('SC2-B06: signed after-sales requests bind tracking and one return case to 
     }
 });
 
+test('SC2-B01 uses one published script across a two-step Messenger consultation and hands off without a policy', async () => {
+    assert.ok(connection);
+    const channel = await db.channelConnection.findUniqueOrThrow({ where: { shopId_provider_pageId: {
+        shopId, provider: 'messenger', pageId: 'fixture-' + shopId,
+    } } });
+    function newConversation() {
+        const conversationId = randomUUID(), senderId = randomUUID();
+        let time = Date.now() - 3000;
+        return text => ({ type: 'message', pageId: channel.pageId, generation: channel.generation,
+            conversationId, senderId, displayName: 'Khách thử tư vấn', eventId: randomUUID(), messageId: randomUUID(),
+            occurredAt: new Date(++time).toISOString(), text });
+    }
+    async function giveToBot(input) {
+        await incoming(input);
+        const where = { shopId_channelId_externalId: { shopId, channelId: channel.id, externalId: input.conversationId } };
+        let conversation = await db.channelConversation.findUniqueOrThrow({ where });
+        const path = 'conversations/' + conversation.id;
+        if (conversation.mode !== 'human') {
+            await post(path + '/takeover', { expectedVersion: conversation.version, reason: 'Chuẩn bị kịch bản kiểm' }, 'CommandResponse', { status: 202 });
+            conversation = await db.channelConversation.findUniqueOrThrow({ where });
+        }
+        await post(path + '/release', { expectedVersion: conversation.version, reason: 'Dùng kịch bản bán đã duyệt' }, 'CommandResponse', { status: 202 });
+        return { where, path };
+    }
+    const process = async input => {
+        const result = await incoming(input);
+        await Promise.all([processBotInbound(db, config), processBotInbound(db, config)]);
+        await dispatchMessengerMessages(db, config);
+        return db.botInboundTask.findUniqueOrThrow({ where: { shopId_messageId: { shopId, messageId: result.data.messageId } } });
+    };
+    const noPolicy = newConversation();
+    const manual = await giveToBot(noPolicy('Bắt đầu hỏi'));
+    const handoff = await process(noPolicy('GIAO HÀNG'));
+    assert.equal(handoff.outcome, 'consultation_policy_missing');
+    assert.equal((await db.channelConversation.findUniqueOrThrow({ where: manual.where })).mode, 'human');
+    assert.ok((await request(manual.path + '/messages', 'MessageListResponse')).every(row => row.direction === 'inbound'));
+
+    const template = { kind: 'sales_script', industry: 'Đồ gia dụng mẫu', persona: 'Tư vấn viên đồ gia dụng',
+        needs: 'Bạn muốn dùng sản phẩm ở đâu?', requiredFacts: 'Bạn cho biết mẫu hàng và kích cỡ cần dùng.',
+        shippingPolicy: 'Nhân viên xác nhận lịch giao khi xem địa chỉ.', returnPolicy: 'Giữ phiếu mua để nhân viên kiểm tra.',
+        boundaries: 'Không đọc ghi chú nội bộ cho khách.' };
+    const document = await post('knowledge', { title: 'Kịch bản tư vấn R46', sourceKind: 'manual', fileId: null, content: null, template },
+        'KnowledgeResponse', { status: 201 });
+    const path = 'knowledge/' + document.id;
+    const job = await post(path + '/submit-review', { expectedVersion: document.version, reason: 'Thẩm định nội dung tổng hợp' }, 'JobResponse', { status: 202 });
+    assert.equal((await settle(job.id)).status, 'succeeded');
+    const indexed = await request(path, 'KnowledgeResponse');
+    const draft = await request(bot, 'BotConfigResponse');
+    const proof = await evaluate(draft.draftRevision, indexed.draftRevisionId);
+    assert.equal((await post(path + '/publish', { expectedVersion: indexed.version, revisionId: indexed.draftRevisionId,
+        evaluationRunId: proof.id, reason: 'Kịch bản tổng hợp đã kiểm' }, 'CommandResponse', { status: 202 })).status, 'succeeded');
+    const live = await patch(bot, { knowledgeRevisionIds: [indexed.draftRevisionId], dailyBudget: { amount: '10000', currency: shop.currency } },
+        'BotConfigResponse', { version: draft.version });
+    assert.equal((await publish(live, await evaluate(live.draftRevision))).status, 'succeeded');
+    const pendingEdit = await post(path + '/revisions', { title: 'Chưa duyệt', sourceKind: 'manual', fileId: null, content: null,
+        template: { ...template, shippingPolicy: 'CHÍNH SÁCH NHÁP KHÔNG DÙNG', needs: 'CÂU HỎI NHÁP KHÔNG DÙNG' } },
+        'KnowledgeResponse', { status: 201 });
+    assert.equal(pendingEdit.publishedRevisionId, indexed.draftRevisionId);
+
+    const talk = newConversation();
+    const active = await giveToBot(talk('Bắt đầu thử'));
+    assert.equal((await process(talk('TƯ VẤN'))).outcome, 'consultation_needs');
+    const facts = talk('NHU CẦU dùng trong nhà');
+    assert.equal((await process(facts)).outcome, 'consultation_facts');
+    assert.equal((await incoming(facts)).data.duplicate, true);
+    await processBotInbound(db, config);
+    assert.equal((await process(talk('GIAO HÀNG'))).outcome, 'consultation_policy');
+    assert.equal((await process(talk('ĐỔI TRẢ'))).outcome, 'consultation_policy');
+    const sent = (await request(active.path + '/messages', 'MessageListResponse')).filter(row => row.direction === 'outbound');
+    assert.equal(sent.length, 4);
+    assert.ok(sent.some(row => row.text.includes(template.persona) && row.text.includes(template.needs)));
+    for (const text of [template.requiredFacts, template.shippingPolicy, template.returnPolicy]) assert.ok(sent.some(row => row.text === text));
+    for (const row of sent) {
+        assert.equal(row.senderKind, 'bot');
+        assert.equal(row.status, 'sent');
+        assert.deepEqual(row.sourceEvidence, [{ type: 'knowledge_revision', id: indexed.draftRevisionId }]);
+        assert.doesNotMatch(row.text, /NHÁP KHÔNG DÙNG|ghi chú nội bộ|dùng trong nhà/);
+    }
+    assert.equal(await db.salesOrder.count({ where: { shopId, conversationId: sent[0].conversationId } }), 0);
+    await request(active.path + '/messages', 'Problem', { actor: other, shop: secondShop.id, status: 404 });
+    const pending = await request(path, 'KnowledgeResponse');
+    const nextJob = await post(path + '/submit-review', { expectedVersion: pending.version, reason: 'Thẩm định điều khoản thay thế' },
+        'JobResponse', { status: 202 });
+    assert.equal((await settle(nextJob.id)).status, 'succeeded');
+    const nextSource = await request(path, 'KnowledgeResponse');
+    const activeBot = await request(bot, 'BotConfigResponse');
+    const nextProof = await evaluate(activeBot.draftRevision, nextSource.draftRevisionId);
+    assert.equal((await post(path + '/publish', { expectedVersion: nextSource.version, revisionId: nextSource.draftRevisionId,
+        evaluationRunId: nextProof.id, reason: 'Đã duyệt điều khoản thay thế tổng hợp' }, 'CommandResponse', { status: 202 })).status, 'succeeded');
+    const afterReplacement = () => db.channelMessage.findMany({
+        where: { shopId, id: { in: sent.map(row => row.id) } },
+        select: { id: true, status: true, text: true, sourceEvidence: true }, orderBy: { id: 'asc' },
+    });
+    const expectedPromises = sent.map(({ id, status, text, sourceEvidence }) => ({ id, status, text, sourceEvidence })).sort((a, b) => a.id.localeCompare(b.id));
+    assert.deepEqual(await afterReplacement(), expectedPromises);
+    const priorSource = await request(path + '/revisions/' + indexed.draftRevisionId, 'KnowledgeRevisionResponse');
+    assert.equal(priorSource.status, 'retired');
+    assert.ok(priorSource.content.includes(template.shippingPolicy));
+    const stale = newConversation();
+    await giveToBot(stale('Hỏi sau khi điều khoản cũ được thay'));
+    assert.equal((await process(stale('GIAO HÀNG'))).outcome, 'stale_configuration');
+    assert.deepEqual(await afterReplacement(), expectedPromises);
+
+    // Re-evaluate the replacement for later fixture conversations.
+    const nextBot = await patch(bot, { knowledgeRevisionIds: [nextSource.draftRevisionId] },
+        'BotConfigResponse', { version: activeBot.version });
+    assert.equal((await publish(nextBot, await evaluate(nextBot.draftRevision))).status, 'succeeded');
+    console.log(JSON.stringify({ status: 'SC2_G03_PROMISE_HISTORY', unchangedMessages: sent.length, sourceStatus: priorSource.status, staleBotHandoff: true }));
+    console.log(JSON.stringify({ status: 'SC2_B01_GUIDED_FIXTURE', messages: sent.length, activeRevisionOnly: true,
+        missingPolicyHandoff: true, duplicate: 'ignored', crossShop: 404 }));
+});
+
+test('SC2-B03 records scoped delivery details and evidence only for the exact delivered current quote', async t => {
+    const second = { actor: other, shop: secondShop.id };
+    const item = await post('products', { name: 'Sản phẩm LAK thử báo giá', description: '', categoryId: null, status: 'active', imageFileIds: [],
+        variants: [{ sku: 'R47-' + randomUUID().slice(0, 8), name: 'Biến thể thử', active: true, options: {},
+            price: { amount: '22000', currency: secondShop.currency } }] }, 'ProductResponse', { ...second, status: 201 });
+    const [peerVariant] = item.variants;
+    await db.$transaction(tx => recordStockMovement(tx, { shopId: secondShop.id, actorId: other.userId,
+        warehouseId: secondShop.defaultWarehouseId, variantId: peerVariant.id, kind: 'receipt',
+        source: { type: 'fixture_receipt', id: randomUUID() }, reason: 'Tồn thử báo giá', delta: { onHand: 8 }, receivedValue: '160' }));
+    const peerConnection = await post(ai, { name: 'AI tổng hợp tại LAK', providerId: 'mock', adapterId: 'mock',
+        modelId: 'synthetic-model', credential: 'fixture-' + randomUUID(), endpointUrl: null }, 'AIConnectionResponse', { ...second, status: 201 });
+    const check = await post(ai + '/' + peerConnection.id + '/test', undefined, 'JobResponse', { ...second, status: 202 });
+    assert.equal((await settle(check.id, undefined, second)).status, 'succeeded');
+    const peerBot = await request(bot, 'BotConfigResponse', second);
+    const peerDraft = await patch(bot, { connectionId: peerConnection.id, instructions: 'Dùng sản phẩm và giá tổng hợp.',
+        knowledgeRevisionIds: [], maxToolSteps: 2, dailyBudget: { amount: '10000', currency: secondShop.currency },
+        requireHumanOrderConfirmation: true }, 'BotConfigResponse', { ...second, version: peerBot.version });
+    const run = await post(evaluatePath, { configRevision: peerDraft.draftRevision, datasetVersion, knowledgeRevisionId: null }, 'EvaluationResponse', { ...second, status: 202 });
+    assert.equal((await settle(run.reportJobId, undefined, second)).status, 'succeeded');
+    const receipt = await post(bot + '/publish', { expectedVersion: peerDraft.version, draftRevision: peerDraft.draftRevision,
+        evaluationRunId: run.id, reason: 'Duyệt tập tổng hợp để kiểm shop LAK' }, 'CommandResponse', { ...second, status: 202 });
+    const job = await db.job.findUniqueOrThrow({ where: { shopId_commandId: { shopId: secondShop.id, commandId: receipt.id } } });
+    assert.equal((await settle(job.id, undefined, second)).status, 'succeeded');
+    const connect = await post('integrations/channels/connect', { channelKind: 'facebook_messenger',
+        returnPath: '/s/' + secondShop.id + '/integrations/channels' }, 'ConnectStartResponse', second);
+    const target = new URL(connect.authorizationUrl);
+    const authorized = await fetch(base.replace('/api/v2', '') + target.pathname + target.search,
+        { redirect: 'manual', headers: { cookie: other.cookie } });
+    assert.equal(authorized.status, 302);
+    const shops = [
+        { tenant: shop, actor: owner, item: variant, peer: second, expected: '24690 VND', deliveryRegion: 'VN | Hà Nội' },
+        { tenant: secondShop, actor: other, item: peerVariant, peer: { shop: shopId, actor: owner }, expected: '44000 LAK', deliveryRegion: 'LA | Vientiane' },
+    ];
+    for (const { tenant, actor, item, peer, expected, deliveryRegion } of shops) await t.test(tenant.currency, async () => {
+        const { id: shopId } = tenant;
+        const options = { shop: shopId, actor };
+        const channel = await db.channelConnection.findUniqueOrThrow({ where: { shopId_provider_pageId: {
+            shopId, provider: 'messenger', pageId: 'fixture-' + shopId,
+        } } });
+        const transport = () => { throw new Error('Checkout fixture must stay local'); };
+        async function openThread() {
+            const thread = { type: 'message', pageId: channel.pageId, generation: channel.generation,
+                conversationId: randomUUID(), senderId: randomUUID(), displayName: 'Khách thử báo giá' };
+            const event = text => ({ ...thread, text, eventId: randomUUID(), messageId: randomUUID(), occurredAt: new Date().toISOString() });
+            await incoming(event('Mở hội thoại mẫu'));
+            const where = { shopId_channelId_externalId: { shopId, channelId: channel.id, externalId: thread.conversationId } };
+            let row = await db.channelConversation.findUniqueOrThrow({ where });
+            const path = 'conversations/' + row.id;
+            if (row.mode !== 'human') {
+                await post(path + '/takeover', { expectedVersion: row.version, reason: 'Chuẩn bị hội thoại báo giá' }, 'CommandResponse', { ...options, status: 202 });
+                row = await db.channelConversation.findUniqueOrThrow({ where });
+            }
+            await post(path + '/release', { expectedVersion: row.version, reason: 'Dùng bot theo cấu hình đã duyệt' }, 'CommandResponse', { ...options, status: 202 });
+            const send = async input => {
+                const inbound = typeof input === 'string' ? event(input) : input;
+                const result = await incoming(inbound);
+                await processBotInbound(db, config, undefined, transport);
+                await dispatchMessengerMessages(db, config, undefined, transport);
+                const task = await db.botInboundTask.findUniqueOrThrow({ where: { shopId_messageId: { shopId, messageId: result.data.messageId } } });
+                const reply = await db.channelMessage.findFirst({ where: { shopId, conversationId: row.id, clientMessageId: 'bot-' + result.data.messageId } });
+                return { task, reply, messageId: result.data.messageId };
+            };
+            return { row, path, event, send };
+        }
+        const detail = 'GIAO ĐƠN | ' + deliveryRegion + ' | Địa chỉ tổng hợp | Người nhận mẫu | 0900000999 | TRẢ TRƯỚC';
+        async function draft(thread) {
+            const first = await thread.send('NHÁP ' + item.sku + ' 2');
+            assert.equal(first.task.outcome, 'draft_proposal');
+            assert.equal(first.reply.status, 'sent');
+            const drafts = await db.salesOrder.findMany({ where: { shopId, conversationId: thread.row.id } });
+            assert.equal(drafts.length, 1);
+            return drafts[0];
+        }
+        const thread = await openThread();
+        const original = await draft(thread);
+        const incomplete = await thread.send(detail.replace('0900000999', ''));
+        assert.equal(incomplete.task.outcome, 'checkout_details_required');
+        assert.equal(await db.customerAddress.count({ where: { shopId, customerId: thread.row.customerId } }), 0);
+
+        const details = thread.event(detail);
+        const quoteReply = await thread.send(details);
+        assert.equal(quoteReply.task.outcome, 'checkout_quote');
+        assert.equal(quoteReply.reply.status, 'sent');
+        assert.ok(quoteReply.reply.text.includes(expected));
+        assert.match(quoteReply.reply.text, /trả trước/i);
+        assert.doesNotMatch(quoteReply.reply.text, /0900000999|Địa chỉ tổng hợp|Người nhận mẫu/);
+        assert.equal((await incoming(details)).data.duplicate, true);
+        await processBotInbound(db, config, undefined, transport);
+
+        const key = { shopId_id: { shopId, id: original.id } };
+        const order = await db.salesOrder.findUniqueOrThrow({ where: key });
+        assert.equal(order.version, original.version + 1);
+        assert.equal(order.paymentMethod, 'prepay');
+        assert.equal(order.orderState, 'draft');
+        const address = await db.customerAddress.findUniqueOrThrow({ where: { shopId_customerId_id: { shopId, customerId: thread.row.customerId, id: order.shippingAddressId } } });
+        assert.equal(address.customerId, thread.row.customerId);
+        assert.equal(address.phone, '0900000999');
+        assert.equal(address.line1, 'Địa chỉ tổng hợp');
+        assert.equal(await db.customerAddress.count({ where: { shopId, customerId: thread.row.customerId } }), 1);
+        const [quote] = await db.orderQuote.findMany({ where: { shopId, orderId: order.id } });
+        assert.equal(quote.orderVersion, order.version);
+        const token = '[CONFIRM:' + quote.id + ':' + quote.quoteHash + ']';
+        assert.ok(quoteReply.reply.text.includes(token));
+
+        const stranger = await openThread();
+        const wrong = await stranger.send(token);
+        assert.equal(wrong.task.outcome, 'checkout_confirmation_unavailable');
+        assert.equal(await db.orderCustomerConfirmation.count({ where: { shopId, quoteId: quote.id } }), 0);
+
+        const confirmation = thread.event(token);
+        const accepted = await thread.send(confirmation);
+        assert.equal(accepted.task.outcome, 'checkout_evidence');
+        assert.equal((await incoming(confirmation)).data.duplicate, true);
+        await processBotInbound(db, config, undefined, transport);
+        const records = await db.orderCustomerConfirmation.findMany({ where: { shopId, quoteId: quote.id } });
+        assert.equal(records.length, 1);
+        assert.equal(records[0].sourceMessageId, accepted.messageId);
+        assert.equal(records[0].customerIdentityId, thread.row.customerIdentityId);
+        const observed = await db.salesOrder.findUniqueOrThrow({ where: key });
+        assert.equal(observed.reservationId, null);
+        assert.equal(observed.orderState, 'draft');
+        assert.equal(await db.prepJob.count({ where: { shopId, orderId: order.id } }), 0);
+        await request('orders/' + order.id, 'Problem', { ...peer, status: 404 });
+        await request(thread.path + '/messages', 'Problem', { ...peer, status: 404 });
+
+        const resumed = await post('orders/' + order.id + '/quote', undefined, 'OrderQuoteResponse', options);
+        assert.equal(resumed.id, quote.id);
+        assert.equal(resumed.customerConfirmation.id, records[0].id);
+        const manualConfirm = (id, body, key = randomUUID(), status = 202) =>
+            post('orders/' + id + '/confirm', body, status === 202 ? 'CommandResponse' : 'Problem', { ...options, key, status });
+        await manualConfirm(order.id, { expectedVersion: order.version, quoteId: quote.id, customerConfirmationId: records[0].id },
+            randomUUID(), 409);
+
+        const cod = await openThread();
+        const codOrder = await draft(cod);
+        const codReply = await cod.send(detail.replace('TRẢ TRƯỚC', 'COD'));
+        assert.equal(codReply.task.outcome, 'checkout_quote');
+        const codToken = codReply.reply.text.split('\n').at(-1);
+        assert.equal((await cod.send(codToken)).task.outcome, 'checkout_evidence');
+        const staffQuote = await post('orders/' + codOrder.id + '/quote', undefined, 'OrderQuoteResponse', options);
+        const body = { expectedVersion: staffQuote.orderVersion, quoteId: staffQuote.id, customerConfirmationId: staffQuote.customerConfirmation.id };
+        const commandKey = randomUUID();
+        const result = await manualConfirm(codOrder.id, body, commandKey);
+        assert.equal(result.status, 'succeeded');
+        assert.equal((await manualConfirm(codOrder.id, body, commandKey)).id, result.id);
+        assert.equal(await db.prepJob.count({ where: { shopId, orderId: codOrder.id } }), 1);
+
+        const botConfig = await request(bot, 'BotConfigResponse', options);
+        assert.equal(botConfig.requireHumanOrderConfirmation, true);
+        await patch(bot, { requireHumanOrderConfirmation: false }, 'Problem', { ...options, version: botConfig.version, status: 400 });
+
+        const stale = await openThread();
+        const staleOrder = await draft(stale);
+        const staleQuoteReply = await stale.send(detail);
+        assert.equal(staleQuoteReply.task.outcome, 'checkout_quote');
+        const beforeChange = await request('orders/' + staleOrder.id, 'OrderResponse', options);
+        const modified = await patch('orders/' + staleOrder.id, { lines: [{ variantId: item.id, quantity: 1 }] },
+            'OrderResponse', { ...options, version: beforeChange.version });
+        assert.equal(modified.version, beforeChange.version + 1);
+        const staleToken = staleQuoteReply.reply.text.match(/\[CONFIRM:[^\]]+\]/u)[0];
+        assert.equal((await stale.send(staleToken)).task.outcome, 'checkout_confirmation_unavailable');
+        assert.equal(await db.orderCustomerConfirmation.count({ where: { shopId, quote: { orderId: staleOrder.id } } }), 0);
+        console.log(JSON.stringify({ status: 'SC2_B03_CHECKOUT_FIXTURE', currency: tenant.currency, orderVersionBound: true, duplicateAddressCount: 1,
+            evidenceCount: 1, staleEvidence: false, foreignShop: 404, reserved: false, piiEcho: false }));
+    });
+});
+
 test('SC2-F08: approved feedback identifies the evaluated revision without returning correction text', async () => {
     const message = await db.channelMessage.findFirstOrThrow({
         where: { shopId, direction: 'outbound', senderKind: 'bot', status: 'sent', redactedAt: null },
@@ -795,7 +1083,17 @@ test('SC-033 and T072 Messenger: discard a late result after takeover and handle
         return JSON.parse(result.stdout);
     };
     const dataset = stagingAiDataset();
-    for (const outcome of ['draft_proposal', 'provider_unknown', 'interrupted_after_claim', 'stale_staging_scope', 'provider_failed', 'stock_insufficient']) {
+    const configuredShop = await fetch(base + '/shops/' + shopId, { headers: { cookie: owner.cookie } });
+    const { version } = await response(configuredShop, 200, 'ShopResponse');
+    const editedShop = await fetch(base + '/shops/' + shopId, {
+        method: 'PATCH', body: JSON.stringify({ businessCountry: 'VN' }),
+        headers: { cookie: owner.cookie, origin: config.appOrigin, 'x-csrf-token': owner.csrf, 'idempotency-key': randomUUID(),
+            'content-type': 'application/json', 'if-match': '"' + version + '"' },
+    });
+    assert.equal((await response(editedShop, 200, 'ShopResponse')).businessCountry, 'VN');
+    const numericId = () => '1' + BigInt('0x' + randomBytes(8).toString('hex')).toString();
+    const channelBudgetPage = numericId();
+    for (const outcome of ['draft_proposal', 'channel_token_limit', 'provider_unknown', 'interrupted_after_claim', 'stale_staging_scope', 'provider_failed', 'stock_insufficient']) {
         const current = await request(bot, 'BotConfigResponse');
         const draft = await patch(bot, { connectionId: connection.id, instructions: 'Chỉ dùng dữ liệu thử Messenger ' + outcome,
             knowledgeRevisionIds: [], maxToolSteps: 2, dailyBudget: { amount: '10000', currency: shop.currency }, requireHumanOrderConfirmation: true,
@@ -803,12 +1101,14 @@ test('SC-033 and T072 Messenger: discard a late result after takeover and handle
         const proof = await db.$transaction(tx => describeAiEvaluationDraft(tx, shopId, openAi));
         const { datasetVersion, configRevision, configHash, policyVersion } = proof;
         assert.deepEqual([proof.datasetVersion, proof.projectId, proof.region, proof.model], [approvedDatasetVersion, projectId, region, model]);
-        const numericId = () => '1' + BigInt('0x' + randomBytes(8).toString('hex')).toString();
-        const pageId = numericId(), senderId = numericId(), otherSender = numericId();
+        const sharedChannel = outcome === 'draft_proposal' || outcome === 'channel_token_limit';
+        const pageId = sharedChannel ? channelBudgetPage : numericId();
+        const senderId = numericId(), otherSender = numericId();
         const metaSecret = randomUUID();
         const meta = readMetaInboundConfig({ META_MESSENGER_APP_SECRET: metaSecret, META_MESSENGER_VERIFY_TOKEN: randomUUID(),
             META_MESSENGER_PAGES: JSON.stringify([{ pageId, shopId, senderIds: [senderId, otherSender] }]) });
-        const runtime = { runId: randomUUID(), pageId, senderId, maxUsd: '0.003584', currency: shop.currency, reservedAmount: '5' };
+        const runtime = { runId: randomUUID(), pageId, senderId, maxUsd: '0.003584', currency: shop.currency, reservedAmount: '5',
+            ...(sharedChannel ? { maxDailyChannelTokens: 1152 } : {}) };
         const releaseManifestSha256 = 'b'.repeat(64);
         const run = { runId: randomUUID(), provider: 'openai', projectId, region, model, datasetSha256: dataset.datasetSha256,
             releaseManifestSha256, expiresAt: new Date(Date.now() + 120_000).toISOString(), pricingAsOf: '2026-01-01',
@@ -817,6 +1117,7 @@ test('SC-033 and T072 Messenger: discard a late result after takeover and handle
         const approve = bytes => parseAiEvaluationApproval(bytes, createHash('sha256').update(bytes).digest('hex'), releaseManifestSha256);
         assert.throws(() => approve(approvalBytes({ ...runtime, runId: run.runId })), /Invalid staging AI evaluation approval/);
         assert.throws(() => approve(approvalBytes({ ...runtime, maxUsd: '0.003583' })), /Invalid staging AI evaluation approval/);
+        assert.throws(() => approve(approvalBytes({ ...runtime, maxDailyChannelTokens: 1.5 })), /Invalid staging AI evaluation approval/);
         const approval = approve(approvalBytes(runtime));
         const provider = { openAi, approval, meta };
         const scoped = await createApp({ database: new Database(readDatabaseUrl(process.env)), auth: config, openAi, meta, aiEvaluationApproval: approval, quiet: true });
@@ -838,6 +1139,10 @@ test('SC-033 and T072 Messenger: discard a late result after takeover and handle
             const job = await db.job.findUniqueOrThrow({ where: { shopId_commandId: { shopId, commandId: publish.id } } });
             assert.equal((await settle(job.id, settleServices)).status, 'succeeded');
             assert.equal((await request('dashboard', 'DashboardResponse')).botStatus, 'active');
+            const expectedPolicy = { failover: 'disabled', channelTokenBudget: { channel: 'facebook_messenger', dailyLimit: 1152 } };
+            assert.deepEqual((await request(bot, 'BotConfigResponse')).providerPolicy, expectedPolicy);
+            assert.deepEqual((await request(bot, 'BotConfigResponse', { actor: other, shop: secondShop.id })).providerPolicy,
+                { failover: 'disabled', channelTokenBudget: null });
 
             let timestamp = Date.now() - 10_000;
             const webhook = (text, sender = senderId) => JSON.stringify({ object: 'page', entry: [{ id: pageId, messaging: [{
@@ -882,6 +1187,25 @@ test('SC-033 and T072 Messenger: discard a late result after takeover and handle
             const task = () => db.botInboundTask.findUniqueOrThrow({ where: { providerRunId: runtime.runId } });
             const pending = await task();
             assert.equal(pending.externalStartedAt, null);
+            if (outcome === 'channel_token_limit') {
+                const beforeUsage = await dailyUsage();
+                const otherUsage = await db.botDailyUsage.findMany({ where: { shopId: secondShop.id } });
+                const transport = () => assert.fail('A channel over its token limit contacted the provider');
+                await Promise.all([processBotInbound(db, config, provider, transport), processBotInbound(db, config, provider, transport)]);
+                const exhausted = await task();
+                assert.equal(exhausted.outcome, outcome);
+                assert.equal(exhausted.externalStartedAt, null);
+                assert.equal(exhausted.reservedTokens, null);
+                assert.equal((await conversation(senderId)).mode, 'human');
+                assert.equal(await db.workItem.count({ where: { shopId, kind: 'customer_handoff', sourceId: conversationId } }), 1);
+                assert.equal(await db.salesOrder.count({ where: { shopId, conversationId } }), 0);
+                assert.equal(await db.channelMessage.count({ where: { shopId, conversationId, direction: 'outbound' } }), 0);
+                assert.deepEqual(await dailyUsage(), beforeUsage);
+                assert.deepEqual(await db.botDailyUsage.findMany({ where: { shopId: secondShop.id } }), otherUsage);
+                console.log(JSON.stringify({ status: 'SC2_H03_CHANNEL_TOKEN_LIMIT', dailyLimit: 1152,
+                    providerCalls: 0, outbound: 0, handoffs: 1, charged: false, peerUnchanged: true }));
+                continue;
+            }
             const before = outcome === 'provider_unknown' ? observeQueue() : undefined;
             if (before) {
                 assert.ok(before.issues.includes('EXTERNAL_DISPATCH_LAG'));
@@ -930,6 +1254,7 @@ test('SC-033 and T072 Messenger: discard a late result after takeover and handle
             const completed = await task();
             assert.equal(completed.outcome, outcome === 'interrupted_after_claim' ? 'provider_unknown' : outcome);
             assert.ok(completed.finishedAt);
+            assert.equal(completed.reservedTokens, 1152);
             if (takeover) {
                 const assigned = await conversation(senderId);
                 assert.deepEqual([assigned.mode, assigned.generation, assigned.assignedUserId], ['human', takeover.to, owner.userId]);

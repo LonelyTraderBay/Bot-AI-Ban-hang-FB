@@ -195,7 +195,7 @@ test('FE020.AC02/03 work-item actions follow allowedActions and operations healt
     await expect(page.getByText('Bản tin mẫu', { exact: false })).toBeVisible();
     await expect(page.getByText('Đây là dữ liệu mô phỏng.', { exact: false })).toBeVisible();
     await expect(page.getByText('digest-01 · phiên bản 1', { exact: true })).toBeVisible();
-    await expect(page.getByText('Không có mục công việc được tham chiếu', { exact: true })).toBeVisible();
+    await expect(page.getByText('1 công việc đã hoàn tất', { exact: true })).toBeVisible();
     await expect(page.getByText(/Chưa có API tạo\/sửa lịch bản tin/)).toBeVisible();
     await expect(page.getByText('Chưa kiểm tra thực tế', { exact: true }).first()).toBeVisible();
     await expect(page.getByRole('button', { name: /Tạo lịch bản tin|Lưu lịch bản tin/ })).toHaveCount(0);
@@ -332,6 +332,28 @@ test('FE020.F06/H01 digest and dependency health panels show synthetic history w
     expect(writes).toEqual([]);
 });
 
+test('FE020.F06/F07 links historical source work and shows the runbook on both operations routes', async ({ page }) => {
+    await page.setViewportSize({ width: 390, height: 844 });
+    await gotoDemo(page, '/s/shop-demo/operations/digests');
+    await expect(page.getByRole('heading', { name: 'Bản tin điều hành' })).toBeVisible();
+    if (process.env.BOTSALES_OPERATIONS_BASELINE_DIR) {
+        await expect(page.getByText('Meta', { exact: true })).toBeVisible();
+        await page.screenshot({ path: process.env.BOTSALES_OPERATIONS_BASELINE_DIR + '/' + test.info().project.name + '-r52-before.png', fullPage: true });
+    }
+    await page.getByText('1 công việc đã hoàn tất', { exact: true }).click();
+    await page.getByRole('link', { name: 'seed-workitem-10009' }).click();
+    await expect(page).toHaveURL(/\/operations\?q=seed-workitem-10009$/);
+    await expect(page.getByRole('table', { name: 'Công việc vận hành' }).getByRole('row')).toHaveCount(2);
+    const checks = page.getByRole('region', { name: 'Trạng thái phụ thuộc' });
+    await expect(checks.getByText('Meta', { exact: true })).toBeVisible();
+    await checks.getByRole('link', { name: 'Hướng dẫn xử lý Meta' }).click();
+    await expect(page).toHaveURL(/\/operations\/digests#runbook-messenger$/);
+    await expect(page.getByRole('heading', { name: 'Messenger' })).toBeInViewport();
+    expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(390);
+    await gotoDemo(page, '/s/shop-second/operations/digests');
+    await expect(page.getByText('b-digest-01 · phiên bản 1', { exact: true })).toBeVisible();
+    await expect(page.getByText('Không có mục công việc được tham chiếu', { exact: true })).toBeVisible();
+});
 test('FE027.H08 restore and release readiness stay unknown without a verified rehearsal or deployment gate', async ({ page }) => {
     const readinessCalls: string[] = [];
     const writes: string[] = [];

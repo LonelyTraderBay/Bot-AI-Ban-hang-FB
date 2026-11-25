@@ -485,6 +485,8 @@ enum FilePurpose {
   conversation_media
   report_export
   privacy_export
+  preparation_issue_image
+  payment_evidence_image
 
   @@map("file_purpose")
 }
@@ -553,6 +555,7 @@ model Shop {
   id                 String        @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   name               String        @db.VarChar(160)
   currency           String        @db.VarChar(3)
+  businessCountry    String?       @map("business_country") @db.VarChar(2)
   timezone           String
   locale             String
   version            Int           @default(1)
@@ -1705,6 +1708,7 @@ model SalesOrder {
   moneyEntries           FinanceEntry[]
   settlementAllocations  SettlementAllocation[]
   codSettlementOrder     CodSettlementOrder?
+  marketingEvidence      MarketingEvidence[]
   preparation            PrepJob?
   shipments              Shipment[]
   promotion              Promotion?               @relation(fields: [shopId, promotionId], references: [shopId, id], onDelete: Restrict, onUpdate: NoAction)
@@ -2001,11 +2005,52 @@ model FinanceJournalLine {
   journal     FinanceJournal @relation(fields: [shopId, journalId], references: [shopId, id], onDelete: Restrict, onUpdate: NoAction)
   account     FinanceAccount @relation(fields: [shopId, accountId], references: [shopId, id], onDelete: Restrict, onUpdate: NoAction)
   settlementAllocations SettlementAllocation[]
+  debtTerms DebtTerms?
 
   @@id([shopId, id])
   @@unique([shopId, journalId, position])
   @@index([shopId, accountId, journalId])
   @@map("finance_journal_lines")
+}
+
+model DebtTerms {
+  shopId       String             @map("shop_id") @db.Uuid
+  debtLineId   String             @map("debt_line_id") @db.Uuid
+  dueDate      DateTime?          @map("due_date") @db.Date
+  disputeHold  Boolean            @default(false) @map("dispute_hold")
+  version      Int                @default(1)
+  updatedAt    DateTime           @updatedAt @map("updated_at") @db.Timestamptz(3)
+  debtLine     FinanceJournalLine @relation(fields: [shopId, debtLineId], references: [shopId, id], onDelete: Restrict, onUpdate: NoAction)
+
+  @@id([shopId, debtLineId])
+  @@map("debt_terms")
+}
+
+model MarketingEvidence {
+  shopId          String      @map("shop_id") @db.Uuid
+  id              String      @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  orderId         String?     @map("order_id") @db.Uuid
+  entryId         String?     @map("entry_id") @db.Uuid
+  revision        Int
+  accountingDate  DateTime    @map("accounting_date") @db.Date
+  channel         String      @db.VarChar(50)
+  campaignId      String      @map("campaign_id") @db.VarChar(100)
+  confidence      String      @db.VarChar(10)
+  sourceId        String      @map("source_id") @db.VarChar(160)
+  reviewerId      String      @map("reviewer_id") @db.Uuid
+  attestationHash String      @map("attestation_hash") @db.VarChar(64)
+  documentSha256  String      @map("document_sha256") @db.VarChar(64)
+  recordedAt      DateTime    @default(now()) @map("recorded_at") @db.Timestamptz(3)
+  order           SalesOrder? @relation(fields: [shopId, orderId], references: [shopId, id], onDelete: Restrict, onUpdate: NoAction)
+  entry           FinanceEntry? @relation(fields: [shopId, entryId], references: [shopId, id], onDelete: Restrict, onUpdate: NoAction)
+  reviewer        Membership  @relation(fields: [shopId, reviewerId], references: [shopId, userId], onDelete: Restrict, onUpdate: NoAction)
+
+  @@id([shopId, id])
+  @@unique([shopId, orderId, revision])
+  @@unique([shopId, entryId, revision])
+  @@unique([shopId, sourceId])
+  @@unique([shopId, attestationHash])
+  @@map("marketing_evidence")
 }
 
 model AdvertisingEstimate {
@@ -2055,6 +2100,7 @@ model FinanceEntry {
   original         FinanceEntry?         @relation("FinanceReversal", fields: [shopId, reversalOf], references: [shopId, id], onDelete: Restrict, onUpdate: NoAction)
   reverse          FinanceEntry?         @relation("FinanceReversal")
   collectionApplications CollectionApplication[]
+  marketingEvidence MarketingEvidence[]
 
   @@id([shopId, id])
   @@unique([shopId, journalId])
@@ -2383,6 +2429,9 @@ model KnowledgeRevision {
   fileId            String?        @map("file_id") @db.Uuid
   content           String?
   template          Json?
+  policyKey         String?        @map("policy_key") @db.VarChar(100)
+  validFrom         DateTime?      @map("valid_from") @db.Date
+  validUntil        DateTime?      @map("valid_until") @db.Date
   indexedText       String?        @map("indexed_text")
   status            KnowledgeStatus @default(draft)
   contentHash       String?        @map("content_hash") @db.VarChar(64)
@@ -2403,12 +2452,15 @@ model KnowledgeRevision {
   evaluations       Evaluation[]   @relation("EvaluatedKnowledge")
   approver          Membership?    @relation("KnowledgeApprover", fields: [shopId, approvedBy], references: [shopId, userId], onDelete: Restrict, onUpdate: NoAction)
 
+  preparationImages PreparationLine[]
+
   @@id([shopId, id])
   @@unique([shopId, documentId, id])
   @@unique([shopId, documentId, revision])
   @@unique([shopId, indexJobId])
   @@unique([shopId, evaluationId])
   @@index([shopId, documentId, createdAt, id])
+  @@index([shopId, policyKey, status], map: "knowledge_revisions_shop_policy_status_idx")
   @@map("knowledge_revisions")
 }
 
@@ -2585,6 +2637,7 @@ model BotInboundTask {
   botGeneration           Int            @map("bot_generation")
   providerRunId           String?        @unique @map("provider_run_id") @db.Uuid
   externalStartedAt       DateTime?      @map("external_started_at") @db.Timestamptz(3)
+  reservedTokens          Int?           @map("reserved_tokens")
   outcome                 String?        @db.VarChar(64)
   finishedAt              DateTime?      @map("finished_at") @db.Timestamptz(3)
   createdAt               DateTime       @default(now()) @map("created_at") @db.Timestamptz(3)
@@ -2592,6 +2645,7 @@ model BotInboundTask {
 
   @@id([shopId, messageId])
   @@index([finishedAt, createdAt])
+  @@index([shopId, externalStartedAt])
   @@map("bot_inbound_tasks")
 }
 
@@ -2772,6 +2826,7 @@ model OwnerDigest {
   periodEnd   DateTime @map("period_end") @db.Timestamptz(3)
   status      String   @db.VarChar(20)
   workItemIds String[] @default([]) @map("work_item_ids") @db.Uuid
+  workSummary Json?    @map("work_summary")
   text        String
   createdAt   DateTime @default(now()) @map("created_at") @db.Timestamptz(3)
   updatedAt   DateTime @updatedAt @map("updated_at") @db.Timestamptz(3)
@@ -2810,6 +2865,7 @@ model WorkItem {
   preparation    PrepJob?
   notifications  AppNotification[]
   notificationSchedule WorkNotificationSchedule?
+  lifecycle      WorkItemLifecycle[]
 
   @@id([shopId, id])
   @@unique([shopId, kind, sourceType, sourceId])
@@ -2818,6 +2874,18 @@ model WorkItem {
   @@map("work_items")
 }
 
+model WorkItemLifecycle {
+  eventId    BigInt        @id @default(autoincrement()) @map("event_id")
+  shopId     String        @map("shop_id") @db.Uuid
+  workItemId String        @map("work_item_id") @db.Uuid
+  state      WorkItemState
+  occurredAt DateTime      @map("occurred_at") @db.Timestamptz(6)
+  baseline   Boolean       @default(false)
+  workItem   WorkItem      @relation(fields: [shopId, workItemId], references: [shopId, id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@index([shopId, workItemId, occurredAt(sort: Desc), eventId(sort: Desc)], map: "work_item_lifecycle_lookup_idx")
+  @@map("work_item_lifecycle")
+}
 model PrepJob {
   shopId      String           @map("shop_id") @db.Uuid
   id          String           @default(dbgenerated("gen_random_uuid()")) @db.Uuid
@@ -2849,7 +2917,18 @@ model PreparationLine {
   prepJob        PrepJob     @relation(fields: [shopId, prepJobId], references: [shopId, id], onDelete: Restrict, onUpdate: NoAction)
   orderLine      OrderLine   @relation(fields: [shopId, orderLineId], references: [shopId, id], onDelete: Restrict, onUpdate: NoAction)
 
+  issueEvidenceFileId String? @map("issue_evidence_file_id") @db.Uuid
+  issueEvidenceFile FileObject? @relation("PreparationIssueEvidence", fields: [shopId, issueEvidenceFileId], references: [shopId, id], onDelete: Restrict, onUpdate: NoAction)
+
+  productImageFileId String? @map("product_image_file_id") @db.Uuid
+  productImageRevisionId String? @map("product_image_revision_id") @db.Uuid
+  productImageFile FileObject? @relation(fields: [shopId, productImageFileId], references: [shopId, id], onDelete: Restrict, onUpdate: NoAction)
+  productImageRevision KnowledgeRevision? @relation(fields: [shopId, productImageRevisionId], references: [shopId, id], onDelete: Restrict, onUpdate: NoAction)
+
   @@id([shopId, prepJobId, orderLineId])
+  @@unique([shopId, issueEvidenceFileId])
+  @@index([shopId, productImageFileId])
+  @@index([shopId, productImageRevisionId])
   @@map("prep_lines")
 }
 
@@ -3001,6 +3080,7 @@ model Membership {
   reviewedFeedback ConversationFeedback[] @relation("FeedbackReviewer")
   closedPeriods      AccountingPeriod[]
   reviewedAdvertisingEstimates AdvertisingEstimate[]
+  reviewedMarketingEvidence    MarketingEvidence[]
   assignedWorkItems  WorkItem[]
   notifications      AppNotification[]
   notificationDevices NotificationDevice[]
@@ -3038,9 +3118,12 @@ model FileObject {
   statementBatches StatementBatch[]
   channelAttachments ChannelAttachment[]
   knowledgeRevisions KnowledgeRevision[]
+  preparationImages PreparationLine[]
+  preparationIssueEvidence PreparationLine[] @relation("PreparationIssueEvidence")
 
   @@id([shopId, id])
   @@index([shopId, uploaderId, purpose])
+  @@index([shopId, purpose, resourceId, status])
   @@map("file_objects")
 }
 

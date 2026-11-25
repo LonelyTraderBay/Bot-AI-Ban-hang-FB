@@ -18,14 +18,18 @@ const invalidApproval = () => new Error('Invalid staging AI evaluation approval 
 
 function runtimeApproval(source: unknown, plan: ReturnType<typeof stagingAiPlan>) {
     const value = jsonObject(source);
-    if (!value || Object.keys(value).length !== 6) throw invalidApproval();
+    if (!value || Object.keys(value).length !== (Object.hasOwn(value, 'maxDailyChannelTokens') ? 7 : 6)) throw invalidApproval();
     const { runId, pageId, senderId, maxUsd, currency, reservedAmount } = value;
+    const reservedTokens = plan.approval.maxInputTokens * 2 + plan.approval.maxOutputTokens;
+    const maxDailyChannelTokens = Object.hasOwn(value, 'maxDailyChannelTokens') ? value.maxDailyChannelTokens : reservedTokens;
     if (typeof runId !== 'string' || !validUuid(runId) || runId.toLowerCase() === plan.approval.runId ||
         typeof pageId !== 'string' || !metaNumericId.test(pageId) || typeof senderId !== 'string' || !metaNumericId.test(senderId) ||
         pageId === senderId || !approvedUsd(maxUsd) || typeof currency !== 'string' || !/^[A-Z]{3}$/.test(currency) ||
         typeof reservedAmount !== 'string' || !/^(?:0|[1-9][0-9]{0,17})(?:\.[0-9]{1,18})?$/.test(reservedAmount) ||
-        !new ExactDecimal(reservedAmount).gt(0) || stagingDraftMaxUsd(plan).gt(maxUsd)) throw invalidApproval();
-    return { runId: runId.toLowerCase(), pageId, senderId, maxUsd, currency, reservedAmount };
+        !new ExactDecimal(reservedAmount).gt(0) || stagingDraftMaxUsd(plan).gt(maxUsd) ||
+        typeof maxDailyChannelTokens !== 'number' || !Number.isSafeInteger(maxDailyChannelTokens) ||
+        maxDailyChannelTokens < 1 || maxDailyChannelTokens > 2147483647) throw invalidApproval();
+    return { runId: runId.toLowerCase(), pageId, senderId, maxUsd, currency, reservedAmount, reservedTokens, maxDailyChannelTokens };
 }
 
 export function parseAiEvaluationApproval(bytes: Buffer, approvedHash: string | undefined, releaseManifestHash: string | undefined) {
@@ -104,7 +108,7 @@ export async function approvedRuntimeBot(tx: Prisma.TransactionClient, shop: Bot
     const approval = config?.approval;
     const runtime = approval?.runtime;
     const page = runtime && config?.meta?.pages.get(runtime.pageId);
-    if (!approval || !runtime || approval.shopId !== shop.id || approval.plan.expires <= Date.now() || runtime.currency !== shop.currency ||
+    if (!shop.businessCountry || !approval || !runtime || approval.shopId !== shop.id || approval.plan.expires <= Date.now() || runtime.currency !== shop.currency ||
         page?.shopId !== shop.id || !page.senderIds.has(runtime.senderId) ||
         approval.configRevision !== revision.revision || approval.policyVersion !== shop.policyVersion || revision.maxToolSteps < 2 ||
         evaluation.fixture || evaluation.knowledgeRevisionId || evaluation.datasetVersion !== approvedDatasetVersion ||

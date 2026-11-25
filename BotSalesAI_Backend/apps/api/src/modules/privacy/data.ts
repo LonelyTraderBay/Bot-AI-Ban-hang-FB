@@ -84,6 +84,9 @@ export async function eraseSubject(tx: Prisma.TransactionClient, shopId: string,
     await redactMessages(tx, shopId, messages.map(message => message.id), now);
     await tx.fileObject.updateMany({ where: { shopId, purpose: 'conversation_media', resourceId: { in: conversations.map(row => row.id) } },
         data: { status: 'rejected', expiresAt: now } });
+    const orders = await tx.salesOrder.findMany({ where: key, select: { id: true } });
+    await tx.fileObject.updateMany({ where: { shopId, purpose: 'payment_evidence_image', resourceId: { in: orders.map(row => row.id) } },
+        data: { status: 'rejected', expiresAt: now } });
     const exports = await tx.privacyRequest.findMany({ where: { ...key, kind: 'export', jobId: { not: null } }, select: { jobId: true } });
     const jobIds = exports.flatMap(row => row.jobId ? [row.jobId] : []);
     await tx.fileObject.updateMany({ where: { shopId, purpose: 'privacy_export', resourceId: { in: jobIds } }, data: { status: 'rejected', expiresAt: now } });

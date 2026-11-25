@@ -166,6 +166,37 @@ test('FE021 marketing filters preserve API-side aggregates, URL context and miss
     await expect(page).toHaveURL(/fromDate=2026-09-18.*toDate=2026-09-24.*bucket=week/);
 });
 
+test('R53 shows evidence links and keeps estimated attribution distinct without a write', async ({ page }) => {
+    const writes: string[] = [];
+    page.on('request', request => {
+        if (new URL(request.url()).pathname.includes('/api/v2/') && !['GET', 'HEAD', 'OPTIONS'].includes(request.method())) writes.push(request.url());
+    });
+    for (const width of [390, 1440]) {
+        await page.setViewportSize({ width, height: 900 });
+        await gotoDemo(page, '/s/shop-demo/reports/marketing?fromDate=2026-09-29&toDate=2026-09-29&bucket=day');
+        await expect(page.getByText(/0\/1 đơn có nguồn xác định · 1 đơn quy gán ước tính · 0 đơn chưa rõ nguồn/)).toBeVisible();
+        const stock = page.getByRole('table', { name: 'Nhu cầu và tồn khả dụng' });
+        await expect(stock.getByRole('cell', { name: 'AO-002', exact: true })).toBeVisible();
+        await expect(stock.getByRole('link', { name: 'Xem tồn SKU' })).toHaveAttribute('href', '/s/shop-demo/inventory?variantId=v-p2');
+        await expect(stock.getByRole('link', { name: 'Đơn mẫu' })).toHaveAttribute('href', /^\/s\/shop-demo\/orders\/DH-DEMO-/);
+        await expect(page.getByRole('link', { name: 'Hướng dẫn chọn kích cỡ' })).toHaveAttribute('href', '/s/shop-demo/knowledge/k2');
+        await expect(page.getByText(/Gợi ý nội dung cho câu hỏi lặp lại/)).toBeVisible();
+        await expect(page.getByRole('link', { name: 'Hội thoại mẫu' })).toHaveAttribute('href', '/s/shop-demo/inbox/cv1');
+        const campaign = page.getByRole('table', { name: 'Hiệu quả chiến dịch' });
+        await expect(campaign.getByText('messenger · mau-thang-9')).toBeVisible();
+        await expect(campaign.getByText('ho-so-quy-gan-mau-01')).toBeVisible();
+        await expect(campaign.getByRole('link', { name: 'Bút toán mẫu' })).toHaveCount(0);
+        expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(width);
+        await test.info().attach(`r53-marketing-evidence-${width}`, { body: await page.screenshot({ fullPage: true }), contentType: 'image/png' });
+        await stock.getByRole('link', { name: 'Xem tồn SKU' }).click();
+        await expect(page).toHaveURL(/\/inventory\?variantId=v-p2$/);
+    }
+    await gotoDemo(page, '/s/shop-second/reports/marketing?fromDate=2026-09-29&toDate=2026-09-29&bucket=day');
+    await expect(page.getByText('Kỳ này chưa có hồ sơ chiến dịch được duyệt.')).toBeVisible();
+    await expect(page.getByRole('link', { name: 'Hội thoại mẫu' })).toHaveCount(0);
+    expect(writes).toEqual([]);
+});
+
 for (const heldPeriod of ['default', 'canonical'] as const) {
     test(`FE021 marketing filters preserve edits while the ${heldPeriod} period response is pending`, async ({ page }) => {
         await page.addInitScript(period => {

@@ -16,6 +16,26 @@ async function gotoDemo(page: import('@playwright/test').Page, route: string) {
     await page.goto(new URL(route, demoUrl).toString());
 }
 
+test('SC2-C01 R41 filters preparation by stage and assignee and shows the work item deadline', async ({ page }) => {
+    await page.setViewportSize({ width: 390, height: 844 });
+    await gotoDemo(page, '/s/shop-demo/fulfillment?state=handed_over&assignee=me');
+    const table = page.getByRole('table', { name: 'Công việc chuẩn bị đơn' });
+    await expect(table.getByRole('columnheader', { name: 'Hạn chuẩn bị' })).toBeVisible();
+    await expect(table.getByRole('link', { name: 'Mã đơn: DH-DEMO-PAID-01' })).toBeVisible();
+    const result = page.waitForResponse(response => {
+        const url = new URL(response.url());
+        return url.pathname.endsWith('/prep-jobs') && url.searchParams.get('state') === 'handed_over' &&
+            url.searchParams.get('assignee') === 'unassigned';
+    });
+    await page.getByRole('combobox', { name: 'Người nhận việc' }).click();
+    await page.getByRole('option', { name: 'Chưa nhận', exact: true }).click();
+    const response = await result;
+    expect(response.status()).toBe(200);
+    expect((await response.json()).data).toEqual([]);
+    await expect(table.getByRole('link', { name: 'Mã đơn: DH-DEMO-PAID-01' })).toHaveCount(0);
+    expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBe(390);
+});
+
 async function expectDialogWithinViewport(page: import('@playwright/test').Page, dialog: import('@playwright/test').Locator, width: number, height: number) {
     await expect(dialog).toBeVisible();
     const bounds = await dialog.boundingBox();

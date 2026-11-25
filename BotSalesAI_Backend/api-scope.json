@@ -1,264 +1,2369 @@
 {
   "milestone": "BE-21",
   "operations": [
-    { "id": "getCsrfToken", "cases": [{ "id": "P0-03", "file": "tests/integration/auth/auth.test.mjs" }] },
-    { "id": "beginLogin", "cases": [{ "id": "P0-03", "file": "tests/integration/auth/auth.test.mjs" }] },
-    { "id": "completeLogin", "cases": [{ "id": "P0-03", "file": "tests/integration/auth/auth.test.mjs" }, { "id": "P0-04", "file": "tests/integration/auth/auth.test.mjs" }] },
-    { "id": "getSession", "cases": [{ "id": "P0-04", "file": "tests/integration/auth/auth.test.mjs" }] },
-    { "id": "logout", "cases": [{ "id": "P0-04", "file": "tests/integration/auth/auth.test.mjs" }] },
-    { "id": "listShops", "cases": [{ "id": "P0-05", "file": "tests/integration/workspace/shops.test.mjs" }] },
-    { "id": "getShop", "cases": [{ "id": "P0-05", "file": "tests/integration/workspace/shops.test.mjs" }] },
-    { "id": "listMembers", "cases": [{ "id": "P0-05", "file": "tests/integration/workspace/shops.test.mjs" }] },
-    { "id": "getMember", "cases": [{ "id": "P0-05", "file": "tests/integration/workspace/shops.test.mjs" }] },
-    { "id": "inviteMember", "cases": [{ "id": "P0-05", "file": "tests/integration/auth/auth.test.mjs" }] },
-    { "id": "updateMemberRoles", "cases": [{ "id": "P0-05", "file": "tests/integration/workspace/shops.test.mjs" }] },
-    { "id": "revokeMembership", "cases": [{ "id": "P0-05", "file": "tests/integration/workspace/shops.test.mjs" }] },
-    { "id": "listCommands", "cases": [{ "id": "P0-07", "file": "tests/integration/workspace/shops.test.mjs" }] },
-    { "id": "getCommand", "cases": [{ "id": "P0-07", "file": "tests/integration/workspace/shops.test.mjs" }] },
-    { "id": "listAuditEvents", "cases": [{ "id": "P0-06", "file": "tests/integration/workspace/shops.test.mjs" }] },
-    { "id": "getDashboard", "cases": [{ "id": "P0-08", "file": "tests/integration/catalog/catalog.test.mjs" }] },
-    { "id": "listCategories", "cases": [{ "id": "P0-08", "file": "tests/integration/catalog/catalog.test.mjs" }] },
-    { "id": "listProducts", "cases": [{ "id": "P0-08", "file": "tests/integration/catalog/catalog.test.mjs" }, { "id": "P0-09", "file": "tests/integration/catalog/catalog.test.mjs" }] },
-    { "id": "getProduct", "cases": [{ "id": "P0-08", "file": "tests/integration/catalog/catalog.test.mjs" }] },
-    { "id": "createProduct", "cases": [{ "id": "P0-08", "file": "tests/integration/catalog/catalog.test.mjs" }, { "id": "P0-09", "file": "tests/integration/catalog/catalog.test.mjs" }] },
-    { "id": "subscribeEvents", "cases": [{ "id": "SC2-H05", "file": "tests/integration/workers/events.test.mjs" }] },
-    { "id": "listJobs", "cases": [{ "id": "SC2-H01", "file": "tests/integration/workers/jobs.test.mjs" }] },
-    { "id": "getJob", "cases": [{ "id": "SC2-H01", "file": "tests/integration/workers/jobs.test.mjs" }] },
-    { "id": "createCategory", "cases": [{ "id": "SC-018", "file": "tests/integration/catalog/catalog.test.mjs" }] },
-    { "id": "getCategory", "cases": [{ "id": "SC-018", "file": "tests/integration/catalog/catalog.test.mjs" }] },
-    { "id": "updateCategory", "cases": [{ "id": "SC-018", "file": "tests/integration/catalog/catalog.test.mjs" }] },
-    { "id": "archiveCategory", "cases": [{ "id": "SC-018", "file": "tests/integration/catalog/catalog.test.mjs" }] },
-    { "id": "updateProduct", "cases": [{ "id": "SC-014", "file": "tests/integration/catalog/catalog.test.mjs" }] },
-    { "id": "archiveProduct", "cases": [{ "id": "SC-012", "file": "tests/integration/catalog/catalog.test.mjs" }] },
-    { "id": "uploadFile", "cases": [{ "id": "SC-017", "file": "tests/integration/catalog/catalog.test.mjs" }, { "id": "SC-017", "file": "tests/integration/catalog/imports.test.mjs" }] },
-    { "id": "getFile", "cases": [{ "id": "SC-017", "file": "tests/integration/catalog/catalog.test.mjs" }] },
-    { "id": "createProductImport", "cases": [{ "id": "SC-016", "file": "tests/integration/catalog/imports.test.mjs" }] },
-    { "id": "commitProductImport", "cases": [{ "id": "SC-016", "file": "tests/integration/catalog/imports.test.mjs" }] },
-    { "id": "listCustomers", "cases": [{ "id": "SC2-G04", "file": "tests/integration/customers/customers.test.mjs" }] },
-    { "id": "getCustomer", "cases": [{ "id": "SC2-G04", "file": "tests/integration/customers/customers.test.mjs" }] },
-    { "id": "createCustomer", "cases": [{ "id": "SC2-G04", "file": "tests/integration/customers/customers.test.mjs" }] },
-    { "id": "updateCustomer", "cases": [{ "id": "SC2-G04", "file": "tests/integration/customers/customers.test.mjs" }] },
-    { "id": "listCustomerAddresses", "cases": [{ "id": "SC2-C05-ADDRESS", "file": "tests/integration/customers/customers.test.mjs" }] },
-    { "id": "getCustomerAddress", "cases": [{ "id": "SC2-C05-ADDRESS", "file": "tests/integration/customers/customers.test.mjs" }] },
-    { "id": "createCustomerAddress", "cases": [{ "id": "SC2-C05-ADDRESS", "file": "tests/integration/customers/customers.test.mjs" }] },
-    { "id": "updateCustomerAddress", "cases": [{ "id": "SC2-C05-ADDRESS", "file": "tests/integration/customers/customers.test.mjs" }] },
-    { "id": "archiveCustomerAddress", "cases": [{ "id": "SC2-C05-ADDRESS", "file": "tests/integration/customers/customers.test.mjs" }] },
-    { "id": "listServiceCases", "cases": [{ "id": "SC2-G04", "file": "tests/integration/customers/customers.test.mjs" }] },
-    { "id": "getServiceCase", "cases": [{ "id": "SC2-G04", "file": "tests/integration/customers/customers.test.mjs" }] },
-    { "id": "createServiceCase", "cases": [{ "id": "SC2-G04", "file": "tests/integration/customers/customers.test.mjs" }] },
-    { "id": "setServiceCaseStatus", "cases": [{ "id": "SC2-G04", "file": "tests/integration/customers/customers.test.mjs" }] },
-    { "id": "listStockSnapshots", "cases": [{ "id": "SC2-D01", "file": "tests/integration/inventory/inventory.test.mjs" }] },
-    { "id": "listStockMovements", "cases": [{ "id": "SC-021", "file": "tests/integration/inventory/inventory.test.mjs" }] },
-    { "id": "listWarehouses", "cases": [{ "id": "SC2-C05-WAREHOUSE", "file": "tests/integration/inventory/inventory.test.mjs" }] },
-    { "id": "getWarehouse", "cases": [{ "id": "SC2-C05-WAREHOUSE", "file": "tests/integration/inventory/inventory.test.mjs" }] },
-    { "id": "createWarehouse", "cases": [{ "id": "SC2-C05-WAREHOUSE", "file": "tests/integration/inventory/inventory.test.mjs" }] },
-    { "id": "updateWarehouse", "cases": [{ "id": "SC2-C05-WAREHOUSE", "file": "tests/integration/inventory/inventory.test.mjs" }] },
-    { "id": "archiveWarehouse", "cases": [{ "id": "SC2-C05-WAREHOUSE", "file": "tests/integration/inventory/inventory.test.mjs" }] },
-    { "id": "getShippingPolicy", "cases": [{ "id": "SC2-C04", "file": "tests/integration/orders/orders.test.mjs" }] },
-    { "id": "updateShippingPolicy", "cases": [{ "id": "SC2-C04", "file": "tests/integration/orders/orders.test.mjs" }] },
-    { "id": "listPromotions", "cases": [{ "id": "SC2-B05", "file": "tests/integration/orders/orders.test.mjs" }] },
-    { "id": "listConversations", "cases": [{ "id": "SC2-G04", "file": "tests/integration/orders/orders.test.mjs" }, { "id": "SC-033", "file": "tests/integration/inbox/inbox.test.mjs" }] },
-    { "id": "listOrders", "cases": [{ "id": "SC-022", "file": "tests/integration/orders/orders.test.mjs" }] },
-    { "id": "getOrder", "cases": [{ "id": "SC-024", "file": "tests/integration/orders/orders.test.mjs" }] },
-    { "id": "createOrder", "cases": [{ "id": "SC-022", "file": "tests/integration/orders/orders.test.mjs" }] },
-    { "id": "updateOrderDraft", "cases": [{ "id": "SC-023", "file": "tests/integration/orders/orders.test.mjs" }] },
-    { "id": "quoteOrder", "cases": [{ "id": "SC-023", "file": "tests/integration/orders/orders.test.mjs" }] },
-    { "id": "recordCustomerConfirmation", "cases": [{ "id": "SC-024", "file": "tests/integration/orders/orders.test.mjs" }] },
-    { "id": "confirmOrder", "cases": [{ "id": "SC-024", "file": "tests/integration/orders/orders.test.mjs" }] },
-    { "id": "cancelOrder", "cases": [{ "id": "SC-026", "file": "tests/integration/orders/orders.test.mjs" }] },
-    { "id": "listAccounts", "cases": [{ "id": "SC2-C05-ACCOUNT", "file": "tests/integration/finance/finance.test.mjs" }] },
-    { "id": "getAccount", "cases": [{ "id": "SC2-C05-ACCOUNT", "file": "tests/integration/finance/finance.test.mjs" }] },
-    { "id": "createAccount", "cases": [{ "id": "SC2-C05-ACCOUNT", "file": "tests/integration/finance/finance.test.mjs" }] },
-    { "id": "updateAccount", "cases": [{ "id": "SC2-C05-ACCOUNT", "file": "tests/integration/finance/finance.test.mjs" }] },
-    { "id": "archiveAccount", "cases": [{ "id": "SC2-C05-ACCOUNT", "file": "tests/integration/finance/finance.test.mjs" }] },
-    { "id": "listAccountingPeriods", "cases": [{ "id": "SC2-E01", "file": "tests/integration/finance/finance.test.mjs" }] },
-    { "id": "getAccountingPeriod", "cases": [{ "id": "SC2-E01", "file": "tests/integration/finance/finance.test.mjs" }] },
-    { "id": "createAccountingPeriod", "cases": [{ "id": "SC2-E01", "file": "tests/integration/finance/finance.test.mjs" }] },
-    { "id": "listJournals", "cases": [{ "id": "SC2-E01", "file": "tests/integration/finance/finance.test.mjs" }] },
-    { "id": "getJournal", "cases": [{ "id": "SC2-E01", "file": "tests/integration/finance/finance.test.mjs" }] },
-    { "id": "createJournal", "cases": [{ "id": "SC2-E01", "file": "tests/integration/finance/finance.test.mjs" }] },
-    { "id": "postJournal", "cases": [{ "id": "SC2-E01", "file": "tests/integration/finance/finance.test.mjs" }] },
-    { "id": "reverseJournal", "cases": [{ "id": "SC2-E01", "file": "tests/integration/finance/finance.test.mjs" }] },
-    { "id": "getLedger", "cases": [{ "id": "SC2-E01", "file": "tests/integration/finance/finance.test.mjs" }] },
-    { "id": "listOpeningBalances", "cases": [{ "id": "SC2-E01", "file": "tests/integration/finance/finance.test.mjs" }] },
-    { "id": "getOpeningBalance", "cases": [{ "id": "SC2-E01", "file": "tests/integration/finance/finance.test.mjs" }] },
-    { "id": "createOpeningBalance", "cases": [{ "id": "SC2-E01", "file": "tests/integration/finance/finance.test.mjs" }] },
-    { "id": "updateOpeningBalance", "cases": [{ "id": "SC2-E01", "file": "tests/integration/finance/finance.test.mjs" }] },
-    { "id": "postOpeningBalance", "cases": [{ "id": "SC2-E01", "file": "tests/integration/finance/finance.test.mjs" }] },
-    { "id": "listFinanceEntries", "cases": [{ "id": "SC2-E01", "file": "tests/integration/finance/finance.test.mjs" }] },
-    { "id": "getFinanceEntry", "cases": [{ "id": "SC2-E01", "file": "tests/integration/finance/finance.test.mjs" }] },
-    { "id": "createFinanceEntry", "cases": [{ "id": "SC2-E01", "file": "tests/integration/finance/finance.test.mjs" }] },
-    { "id": "updateFinanceEntry", "cases": [{ "id": "SC2-E01", "file": "tests/integration/finance/finance.test.mjs" }] },
-    { "id": "postFinanceEntry", "cases": [{ "id": "SC2-E01", "file": "tests/integration/finance/finance.test.mjs" }] },
-    { "id": "reverseFinanceEntry", "cases": [{ "id": "SC2-E01", "file": "tests/integration/finance/finance.test.mjs" }] },
-    { "id": "payOrder", "cases": [{ "id": "SC2-E05", "file": "tests/integration/finance/finance.test.mjs" }] },
-    { "id": "refundOrder", "cases": [{ "id": "SC2-E05", "file": "tests/integration/finance/finance.test.mjs" }] },
-    { "id": "createInventoryAdjustment", "cases": [{ "id": "SC-020", "file": "tests/integration/finance/finance.test.mjs" }] },
-    { "id": "listWorkItems", "cases": [{ "id": "SC2-C01", "file": "tests/integration/orders/orders.test.mjs" }] },
-    { "id": "getWorkItem", "cases": [{ "id": "SC2-C01", "file": "tests/integration/orders/orders.test.mjs" }] },
-    { "id": "claimWorkItem", "cases": [{ "id": "SC2-C01", "file": "tests/integration/orders/orders.test.mjs" }] },
-    { "id": "listPrepJobs", "cases": [{ "id": "SC2-C01", "file": "tests/integration/orders/orders.test.mjs" }] },
-    { "id": "getPrepJob", "cases": [{ "id": "SC2-C01", "file": "tests/integration/orders/orders.test.mjs" }] },
-    { "id": "pickPrepLine", "cases": [{ "id": "SC2-C02", "file": "tests/integration/orders/orders.test.mjs" }] },
-    { "id": "packPrepJob", "cases": [{ "id": "SC2-C03", "file": "tests/integration/orders/orders.test.mjs" }] },
-    { "id": "listNotifications", "cases": [{ "id": "SC2-A02", "file": "tests/integration/orders/orders.test.mjs" }] },
-    { "id": "getNotification", "cases": [{ "id": "SC2-A02", "file": "tests/integration/orders/orders.test.mjs" }] },
-    { "id": "acknowledgeNotification", "cases": [{ "id": "SC2-A02", "file": "tests/integration/orders/orders.test.mjs" }] },
-    { "id": "listShipments", "cases": [{ "id": "SC2-C05", "file": "tests/integration/orders/orders.test.mjs" }] },
-    { "id": "getShipment", "cases": [{ "id": "SC2-C05", "file": "tests/integration/orders/orders.test.mjs" }] },
-    { "id": "createShipment", "cases": [{ "id": "SC2-C05", "file": "tests/integration/orders/orders.test.mjs" }] },
-    { "id": "handoverShipment", "cases": [{ "id": "SC2-C05", "file": "tests/integration/orders/orders.test.mjs" }] },
-    { "id": "recordShipmentEvent", "cases": [{ "id": "SC2-C06", "file": "tests/integration/orders/orders.test.mjs" }] },
-    { "id": "listReturnCases", "cases": [{ "id": "SC2-C07", "file": "tests/integration/orders/orders.test.mjs" }] },
-    { "id": "getReturnCase", "cases": [{ "id": "SC2-C07", "file": "tests/integration/orders/orders.test.mjs" }] },
-    { "id": "createReturnCase", "cases": [{ "id": "SC2-C07", "file": "tests/integration/orders/orders.test.mjs" }] },
-    { "id": "inspectReturn", "cases": [{ "id": "SC2-C07", "file": "tests/integration/orders/orders.test.mjs" }] },
-    { "id": "listDevices", "cases": [{ "id": "SC2-A01", "file": "tests/integration/orders/orders.test.mjs" }] },
-    { "id": "getDevice", "cases": [{ "id": "SC2-A01", "file": "tests/integration/orders/orders.test.mjs" }] },
-    { "id": "createDevice", "cases": [{ "id": "SC2-A01", "file": "tests/integration/orders/orders.test.mjs" }] },
-    { "id": "testDevice", "cases": [{ "id": "SC2-A07", "file": "tests/integration/orders/orders.test.mjs" }] },
-    { "id": "revokeDevice", "cases": [{ "id": "SC2-A08", "file": "tests/integration/orders/orders.test.mjs" }] },
-    { "id": "getNotificationPolicy", "cases": [{ "id": "SC2-A05", "file": "tests/integration/orders/orders.test.mjs" }] },
-    { "id": "updateNotificationPolicy", "cases": [{ "id": "SC2-A06", "file": "tests/integration/orders/orders.test.mjs" }] },
-    { "id": "beginTelegramPairing", "cases": [{ "id": "SC2-A08", "file": "tests/integration/orders/orders.test.mjs" }] },
-    { "id": "createPromotion", "cases": [{ "id": "SC2-B05", "file": "tests/integration/orders/orders.test.mjs" }] },
-    { "id": "updatePromotion", "cases": [{ "id": "SC2-B05", "file": "tests/integration/orders/orders.test.mjs" }] },
-    { "id": "decidePromotion", "cases": [{ "id": "SC2-B05", "file": "tests/integration/orders/orders.test.mjs" }] },
-    { "id": "listStocktakes", "cases": [{ "id": "SC2-D01", "file": "tests/integration/inventory/inventory.test.mjs" }] },
-    { "id": "createStocktake", "cases": [{ "id": "SC2-D01", "file": "tests/integration/inventory/inventory.test.mjs" }] },
-    { "id": "updateStocktake", "cases": [{ "id": "SC2-D01", "file": "tests/integration/inventory/inventory.test.mjs" }] },
-    { "id": "postStocktake", "cases": [{ "id": "SC2-D01", "file": "tests/integration/inventory/inventory.test.mjs" }] },
-    { "id": "listStockTransfers", "cases": [{ "id": "SC2-D01", "file": "tests/integration/inventory/inventory.test.mjs" }] },
-    { "id": "createStockTransfer", "cases": [{ "id": "SC2-D01", "file": "tests/integration/inventory/inventory.test.mjs" }] },
-    { "id": "updateStockTransfer", "cases": [{ "id": "SC2-D01", "file": "tests/integration/inventory/inventory.test.mjs" }] },
-    { "id": "listSuppliers", "cases": [{ "id": "SC2-D02", "file": "tests/integration/procurement/procurement.test.mjs" }] },
-    { "id": "getSupplier", "cases": [{ "id": "SC2-D02", "file": "tests/integration/procurement/procurement.test.mjs" }] },
-    { "id": "createSupplier", "cases": [{ "id": "SC2-D02", "file": "tests/integration/procurement/procurement.test.mjs" }] },
-    { "id": "updateSupplier", "cases": [{ "id": "SC2-D02", "file": "tests/integration/procurement/procurement.test.mjs" }] },
-    { "id": "setSupplierStatus", "cases": [{ "id": "SC2-D02", "file": "tests/integration/procurement/procurement.test.mjs" }] },
-    { "id": "listSupplierOffers", "cases": [{ "id": "SC2-D02", "file": "tests/integration/procurement/procurement.test.mjs" }] },
-    { "id": "getSupplierOffer", "cases": [{ "id": "SC2-D02", "file": "tests/integration/procurement/procurement.test.mjs" }] },
-    { "id": "createSupplierOffer", "cases": [{ "id": "SC2-D02", "file": "tests/integration/procurement/procurement.test.mjs" }] },
-    { "id": "listReorderRules", "cases": [{ "id": "SC2-D03", "file": "tests/integration/procurement/procurement.test.mjs" }] },
-    { "id": "getReorderRule", "cases": [{ "id": "SC2-D03", "file": "tests/integration/procurement/procurement.test.mjs" }] },
-    { "id": "createReorderRule", "cases": [{ "id": "SC2-D03", "file": "tests/integration/procurement/procurement.test.mjs" }] },
-    { "id": "updateReorderRule", "cases": [{ "id": "SC2-D03", "file": "tests/integration/procurement/procurement.test.mjs" }] },
-    { "id": "listPurchaseSuggestions", "cases": [{ "id": "SC2-D03", "file": "tests/integration/procurement/procurement.test.mjs" }] },
-    { "id": "getPurchaseSuggestion", "cases": [{ "id": "SC2-D03", "file": "tests/integration/procurement/procurement.test.mjs" }] },
-    { "id": "evaluateReorder", "cases": [{ "id": "SC2-D03", "file": "tests/integration/procurement/procurement.test.mjs" }] },
-    { "id": "listPurchaseOrders", "cases": [{ "id": "SC2-D05", "file": "tests/integration/procurement/procurement.test.mjs" }] },
-    { "id": "getPurchaseOrder", "cases": [{ "id": "SC2-D05", "file": "tests/integration/procurement/procurement.test.mjs" }] },
-    { "id": "createPurchaseOrder", "cases": [{ "id": "SC2-D05", "file": "tests/integration/procurement/procurement.test.mjs" }] },
-    { "id": "requestPurchaseApproval", "cases": [{ "id": "SC2-D05", "file": "tests/integration/procurement/procurement.test.mjs" }] },
-    { "id": "sendPurchaseOrder", "cases": [{ "id": "SC2-D05", "file": "tests/integration/procurement/procurement.test.mjs" }] },
-    { "id": "confirmPurchaseOrder", "cases": [{ "id": "SC2-D05", "file": "tests/integration/procurement/procurement.test.mjs" }] },
-    { "id": "cancelPurchaseOrder", "cases": [{ "id": "SC2-D05", "file": "tests/integration/procurement/procurement.test.mjs" }] },
-    { "id": "listGoodsReceipts", "cases": [{ "id": "SC2-D08", "file": "tests/integration/procurement/procurement.test.mjs" }] },
-    { "id": "getGoodsReceipt", "cases": [{ "id": "SC2-D08", "file": "tests/integration/procurement/procurement.test.mjs" }] },
-    { "id": "createGoodsReceipt", "cases": [{ "id": "SC2-D08", "file": "tests/integration/procurement/procurement.test.mjs" }] },
-    { "id": "postGoodsReceipt", "cases": [{ "id": "SC2-D08", "file": "tests/integration/procurement/procurement.test.mjs" }] },
-    { "id": "listApprovals", "cases": [{ "id": "SC2-F04", "file": "tests/integration/procurement/procurement.test.mjs" }] },
-    { "id": "getApproval", "cases": [{ "id": "SC2-F04", "file": "tests/integration/procurement/procurement.test.mjs" }] },
-    { "id": "createApproval", "cases": [{ "id": "SC2-F04", "file": "tests/integration/procurement/procurement.test.mjs" }] },
-    { "id": "decideApproval", "cases": [{ "id": "SC2-F04", "file": "tests/integration/procurement/procurement.test.mjs" }] },
-    { "id": "getCashflow", "cases": [{ "id": "SC2-C06-FINANCE", "file": "tests/integration/finance/finance.test.mjs" }] },
-    { "id": "getProfitLoss", "cases": [{ "id": "SC2-C06-FINANCE", "file": "tests/integration/finance/finance.test.mjs" }] },
-    { "id": "getTrialBalance", "cases": [{ "id": "SC2-C06-FINANCE", "file": "tests/integration/finance/finance.test.mjs" }] },
-    { "id": "getBalanceSheet", "cases": [{ "id": "SC2-C06-FINANCE", "file": "tests/integration/finance/finance.test.mjs" }] },
-    { "id": "getReportSummary", "cases": [{ "id": "SC2-C06-FINANCE", "file": "tests/integration/finance/finance.test.mjs" }] },
-    { "id": "closeAccountingPeriod", "cases": [{ "id": "SC2-E07", "file": "tests/integration/finance/finance.test.mjs" }] },
-    { "id": "reopenAccountingPeriod", "cases": [{ "id": "SC2-E07", "file": "tests/integration/finance/finance.test.mjs" }] },
-    { "id": "listBankTransactions", "cases": [{ "id": "SC2-E04", "file": "tests/integration/finance/finance.test.mjs" }] },
-    { "id": "getBankTransaction", "cases": [{ "id": "SC2-E04", "file": "tests/integration/finance/finance.test.mjs" }] },
-    { "id": "listReconciliationCases", "cases": [{ "id": "SC2-E04", "file": "tests/integration/finance/finance.test.mjs" }] },
-    { "id": "getReconciliationCase", "cases": [{ "id": "SC2-E04", "file": "tests/integration/finance/finance.test.mjs" }] },
-    { "id": "listCODSettlements", "cases": [{ "id": "SC2-E05", "file": "tests/integration/finance/finance.test.mjs" }] },
-    { "id": "getCODSettlement", "cases": [{ "id": "SC2-E05", "file": "tests/integration/finance/finance.test.mjs" }] },
-    { "id": "listDebtItems", "cases": [{ "id": "SC2-E06", "file": "tests/integration/finance/finance.test.mjs" }] },
-    { "id": "getDebtItem", "cases": [{ "id": "SC2-E06", "file": "tests/integration/finance/finance.test.mjs" }] },
-    { "id": "matchSettlement", "cases": [{ "id": "SC2-E04", "file": "tests/integration/finance/finance.test.mjs" }] },
-    { "id": "matchCODSettlement", "cases": [{ "id": "SC2-E05", "file": "tests/integration/finance/finance.test.mjs" }] },
-    { "id": "importBankStatement", "cases": [{ "id": "SC2-E04", "file": "tests/integration/finance/finance.test.mjs" }] },
-    { "id": "importCODStatement", "cases": [{ "id": "SC2-E05", "file": "tests/integration/finance/finance.test.mjs" }] },
-    { "id": "listStatementFormats", "cases": [{ "id": "SC2-E04", "file": "tests/integration/finance/finance.test.mjs" }] },
-    { "id": "previewStatementImport", "cases": [{ "id": "SC2-E04", "file": "tests/integration/finance/finance.test.mjs" }] },
-    { "id": "listPaymentReviews", "cases": [{ "id": "SC2-E05", "file": "tests/integration/finance/finance.test.mjs" }] },
-    { "id": "getConversation", "cases": [{ "id": "SC-033", "file": "tests/integration/inbox/inbox.test.mjs" }] },
-    { "id": "listMessages", "cases": [{ "id": "SC-033", "file": "tests/integration/inbox/inbox.test.mjs" }] },
-    { "id": "getInboxMetadata", "cases": [{ "id": "SC-033", "file": "tests/integration/inbox/inbox.test.mjs" }] },
-    { "id": "sendMessage", "cases": [{ "id": "SC-034", "file": "tests/integration/inbox/inbox.test.mjs" }] },
-    { "id": "addInternalNote", "cases": [{ "id": "SC-035", "file": "tests/integration/inbox/inbox.test.mjs" }] },
-    { "id": "takeoverConversation", "cases": [{ "id": "SC-036", "file": "tests/integration/inbox/inbox.test.mjs" }] },
-    { "id": "releaseConversation", "cases": [{ "id": "SC-036", "file": "tests/integration/inbox/inbox.test.mjs" }] },
-    { "id": "assignConversation", "cases": [{ "id": "SC-037", "file": "tests/integration/inbox/inbox.test.mjs" }] },
-    { "id": "resolveConversation", "cases": [{ "id": "SC-037", "file": "tests/integration/inbox/inbox.test.mjs" }] },
-    { "id": "listChannels", "cases": [{ "id": "SC-047", "file": "tests/integration/inbox/inbox.test.mjs" }] },
-    { "id": "getChannel", "cases": [{ "id": "SC-047", "file": "tests/integration/inbox/inbox.test.mjs" }] },
-    { "id": "beginChannelConnect", "cases": [{ "id": "SC-048", "file": "tests/integration/inbox/inbox.test.mjs" }] },
-    { "id": "reconnectChannel", "cases": [{ "id": "SC-049", "file": "tests/integration/inbox/inbox.test.mjs" }] },
-    { "id": "disconnectChannel", "cases": [{ "id": "SC-049", "file": "tests/integration/inbox/inbox.test.mjs" }] },
-    { "id": "checkChannelHealth", "cases": [{ "id": "SC-050", "file": "tests/integration/inbox/inbox.test.mjs" }] },
-    { "id": "listKnowledge", "cases": [{ "id": "SC-039", "file": "tests/integration/inbox/inbox.test.mjs" }] },
-    { "id": "createKnowledge", "cases": [{ "id": "SC-039", "file": "tests/integration/inbox/inbox.test.mjs" }] },
-    { "id": "getKnowledge", "cases": [{ "id": "SC-039", "file": "tests/integration/inbox/inbox.test.mjs" }] },
-    { "id": "updateKnowledge", "cases": [{ "id": "SC-039", "file": "tests/integration/inbox/inbox.test.mjs" }] },
-    { "id": "listKnowledgeRevisions", "cases": [{ "id": "SC-040", "file": "tests/integration/inbox/inbox.test.mjs" }] },
-    { "id": "getKnowledgeRevision", "cases": [{ "id": "SC-040", "file": "tests/integration/inbox/inbox.test.mjs" }] },
-    { "id": "createKnowledgeRevision", "cases": [{ "id": "SC-040", "file": "tests/integration/inbox/inbox.test.mjs" }] },
-    { "id": "restoreKnowledgeRevision", "cases": [{ "id": "SC-040", "file": "tests/integration/inbox/inbox.test.mjs" }] },
-    { "id": "submitKnowledgeReview", "cases": [{ "id": "SC-040", "file": "tests/integration/inbox/inbox.test.mjs" }] },
-    { "id": "publishKnowledge", "cases": [{ "id": "SC-041", "file": "tests/integration/inbox/inbox.test.mjs" }] },
-    { "id": "retireKnowledge", "cases": [{ "id": "SC-041", "file": "tests/integration/inbox/inbox.test.mjs" }] },
-    { "id": "listFeedback", "cases": [{ "id": "SC-042", "file": "tests/integration/inbox/inbox.test.mjs" }] },
-    { "id": "createFeedback", "cases": [{ "id": "SC-042", "file": "tests/integration/inbox/inbox.test.mjs" }] },
-    { "id": "reviewFeedback", "cases": [{ "id": "SC-042", "file": "tests/integration/inbox/inbox.test.mjs" }] },
-    { "id": "getBotConfig", "cases": [{ "id": "SC-043", "file": "tests/integration/ai/ai.test.mjs" }] },
-    { "id": "updateBotDraft", "cases": [{ "id": "SC-043", "file": "tests/integration/ai/ai.test.mjs" }] },
-    { "id": "listBotRevisions", "cases": [{ "id": "SC-043", "file": "tests/integration/ai/ai.test.mjs" }] },
-    { "id": "getBotRevision", "cases": [{ "id": "SC-043", "file": "tests/integration/ai/ai.test.mjs" }] },
-    { "id": "runPlayground", "cases": [{ "id": "SC-044", "file": "tests/integration/ai/ai.test.mjs" }] },
-    { "id": "listEvaluations", "cases": [{ "id": "SC-045", "file": "tests/integration/ai/ai.test.mjs" }] },
-    { "id": "createEvaluation", "cases": [{ "id": "SC-045", "file": "tests/integration/ai/ai.test.mjs" }] },
-    { "id": "getEvaluation", "cases": [{ "id": "SC-045", "file": "tests/integration/ai/ai.test.mjs" }] },
-    { "id": "publishBotConfig", "cases": [{ "id": "SC-046", "file": "tests/integration/ai/ai.test.mjs" }] },
-    { "id": "restoreBotRevision", "cases": [{ "id": "SC-046", "file": "tests/integration/ai/ai.test.mjs" }] },
-    { "id": "getProviderCatalog", "cases": [{ "id": "SC-047", "file": "tests/integration/ai/ai.test.mjs" }] },
-    { "id": "listAIConnections", "cases": [{ "id": "SC-047", "file": "tests/integration/ai/ai.test.mjs" }] },
-    { "id": "getAIConnection", "cases": [{ "id": "SC-047", "file": "tests/integration/ai/ai.test.mjs" }] },
-    { "id": "createAIConnection", "cases": [{ "id": "SC-048", "file": "tests/integration/ai/ai.test.mjs" }] },
-    { "id": "updateAIConnection", "cases": [{ "id": "SC-049", "file": "tests/integration/ai/ai.test.mjs" }] },
-    { "id": "deleteAIConnection", "cases": [{ "id": "SC-049", "file": "tests/integration/ai/ai.test.mjs" }] },
-    { "id": "testAIConnection", "cases": [{ "id": "SC-050", "file": "tests/integration/ai/ai.test.mjs" }] },
-    { "id": "listAgentRoles", "cases": [{ "id": "SC2-F01", "file": "tests/integration/operations/operations.test.mjs" }] },
-    { "id": "getAgentRole", "cases": [{ "id": "SC2-F01", "file": "tests/integration/operations/operations.test.mjs" }] },
-    { "id": "updateAgentRole", "cases": [{ "id": "SC2-F01", "file": "tests/integration/operations/operations.test.mjs" }] },
-    { "id": "updateWorkItem", "cases": [{ "id": "SC2-F02", "file": "tests/integration/operations/operations.test.mjs" }] },
-    { "id": "listBudgetPolicies", "cases": [{ "id": "SC2-F05", "file": "tests/integration/operations/operations.test.mjs" }] },
-    { "id": "getBudgetPolicy", "cases": [{ "id": "SC2-F05", "file": "tests/integration/operations/operations.test.mjs" }] },
-    { "id": "updateBudgetPolicy", "cases": [{ "id": "SC2-F05", "file": "tests/integration/operations/operations.test.mjs" }] },
-    { "id": "listPurchaseDelegations", "cases": [{ "id": "SC2-F05", "file": "tests/integration/operations/operations.test.mjs" }] },
-    { "id": "createPurchaseDelegation", "cases": [{ "id": "SC2-F05", "file": "tests/integration/operations/operations.test.mjs" }] },
-    { "id": "updatePurchaseDelegation", "cases": [{ "id": "SC2-F05", "file": "tests/integration/operations/operations.test.mjs" }] },
-    { "id": "listPurchaseDelegationReservations", "cases": [{ "id": "SC2-F05", "file": "tests/integration/operations/operations.test.mjs" }] },
-    { "id": "listDigests", "cases": [{ "id": "SC2-F06", "file": "tests/integration/operations/operations.test.mjs" }] },
-    { "id": "getDigest", "cases": [{ "id": "SC2-F06", "file": "tests/integration/operations/operations.test.mjs" }] },
-    { "id": "getOperationsSummary", "cases": [{ "id": "SC2-F07", "file": "tests/integration/operations/operations.test.mjs" }] },
-    { "id": "getMarketingSummary", "cases": [{ "id": "SC2-G07", "file": "tests/integration/operations/operations.test.mjs" }] },
-    { "id": "controlAutomation", "cases": [{ "id": "SC2-H02", "file": "tests/integration/operations/operations.test.mjs" }] },
-    { "id": "pauseBot", "cases": [{ "id": "SC2-H02", "file": "tests/integration/operations/operations.test.mjs" }] },
-    { "id": "createShop", "cases": [{ "id": "SC2-G01", "file": "tests/integration/privacy/privacy.test.mjs" }] },
-    { "id": "updateShop", "cases": [{ "id": "SC2-G01", "file": "tests/integration/privacy/privacy.test.mjs" }] },
-    { "id": "createExport", "cases": [{ "id": "SC2-G07", "file": "tests/integration/privacy/privacy.test.mjs" }] },
-    { "id": "stepUp", "cases": [{ "id": "SC2-G05", "file": "tests/integration/privacy/privacy.test.mjs" }, { "id": "SC2-G05", "file": "tests/integration/auth/auth.test.mjs" }] },
-    { "id": "getPrivacyPolicy", "cases": [{ "id": "SC2-G05", "file": "tests/integration/privacy/privacy.test.mjs" }] },
-    { "id": "updatePrivacyPolicy", "cases": [{ "id": "SC2-G05", "file": "tests/integration/privacy/privacy.test.mjs" }] },
-    { "id": "listPrivacyRequests", "cases": [{ "id": "SC2-G05", "file": "tests/integration/privacy/privacy.test.mjs" }] },
-    { "id": "createPrivacyRequest", "cases": [{ "id": "SC2-G05", "file": "tests/integration/privacy/privacy.test.mjs" }] },
-    { "id": "approvePrivacyRequest", "cases": [{ "id": "SC2-G05", "file": "tests/integration/privacy/privacy.test.mjs" }] },
-    { "id": "listCustomerConsents", "cases": [{ "id": "SC2-C07-CONSENT", "file": "tests/integration/privacy/privacy.test.mjs" }] },
-    { "id": "listCustomerConsentChallenges", "cases": [{ "id": "SC2-C07-CONSENT", "file": "tests/integration/privacy/privacy.test.mjs" }] },
-    { "id": "createCustomerConsentChallenge", "cases": [{ "id": "SC2-C07-CONSENT", "file": "tests/integration/privacy/privacy.test.mjs" }] },
-    { "id": "exchangeConsentChallenge", "cases": [{ "id": "SC2-C07-CONSENT", "file": "tests/integration/privacy/privacy.test.mjs" }] },
-    { "id": "confirmConsentChallenge", "cases": [{ "id": "SC2-C07-CONSENT", "file": "tests/integration/privacy/privacy.test.mjs" }] }
+    {
+      "id": "getCsrfToken",
+      "cases": [
+        {
+          "id": "P0-03",
+          "file": "tests/integration/auth/auth.test.mjs"
+        }
+      ]
+    },
+    {
+      "id": "beginLogin",
+      "cases": [
+        {
+          "id": "P0-03",
+          "file": "tests/integration/auth/auth.test.mjs"
+        }
+      ]
+    },
+    {
+      "id": "completeLogin",
+      "cases": [
+        {
+          "id": "P0-03",
+          "file": "tests/integration/auth/auth.test.mjs"
+        },
+        {
+          "id": "P0-04",
+          "file": "tests/integration/auth/auth.test.mjs"
+        }
+      ]
+    },
+    {
+      "id": "getSession",
+      "cases": [
+        {
+          "id": "P0-04",
+          "file": "tests/integration/auth/auth.test.mjs"
+        }
+      ]
+    },
+    {
+      "id": "logout",
+      "cases": [
+        {
+          "id": "P0-04",
+          "file": "tests/integration/auth/auth.test.mjs"
+        }
+      ]
+    },
+    {
+      "id": "listShops",
+      "cases": [
+        {
+          "id": "P0-05",
+          "file": "tests/integration/workspace/shops.test.mjs"
+        }
+      ]
+    },
+    {
+      "id": "getShop",
+      "cases": [
+        {
+          "id": "P0-05",
+          "file": "tests/integration/workspace/shops.test.mjs"
+        }
+      ]
+    },
+    {
+      "id": "listMembers",
+      "cases": [
+        {
+          "id": "P0-05",
+          "file": "tests/integration/workspace/shops.test.mjs"
+        }
+      ]
+    },
+    {
+      "id": "getMember",
+      "cases": [
+        {
+          "id": "P0-05",
+          "file": "tests/integration/workspace/shops.test.mjs"
+        }
+      ]
+    },
+    {
+      "id": "inviteMember",
+      "cases": [
+        {
+          "id": "P0-05",
+          "file": "tests/integration/auth/auth.test.mjs"
+        }
+      ]
+    },
+    {
+      "id": "updateMemberRoles",
+      "cases": [
+        {
+          "id": "P0-05",
+          "file": "tests/integration/workspace/shops.test.mjs"
+        }
+      ]
+    },
+    {
+      "id": "revokeMembership",
+      "cases": [
+        {
+          "id": "P0-05",
+          "file": "tests/integration/workspace/shops.test.mjs"
+        }
+      ]
+    },
+    {
+      "id": "listCommands",
+      "cases": [
+        {
+          "id": "P0-07",
+          "file": "tests/integration/workspace/shops.test.mjs"
+        }
+      ]
+    },
+    {
+      "id": "getCommand",
+      "cases": [
+        {
+          "id": "P0-07",
+          "file": "tests/integration/workspace/shops.test.mjs"
+        }
+      ]
+    },
+    {
+      "id": "listAuditEvents",
+      "cases": [
+        {
+          "id": "P0-06",
+          "file": "tests/integration/workspace/shops.test.mjs"
+        }
+      ]
+    },
+    {
+      "id": "getDashboard",
+      "cases": [
+        {
+          "id": "P0-08",
+          "file": "tests/integration/catalog/catalog.test.mjs"
+        }
+      ]
+    },
+    {
+      "id": "listCategories",
+      "cases": [
+        {
+          "id": "P0-08",
+          "file": "tests/integration/catalog/catalog.test.mjs"
+        }
+      ]
+    },
+    {
+      "id": "listProducts",
+      "cases": [
+        {
+          "id": "P0-08",
+          "file": "tests/integration/catalog/catalog.test.mjs"
+        },
+        {
+          "id": "P0-09",
+          "file": "tests/integration/catalog/catalog.test.mjs"
+        }
+      ]
+    },
+    {
+      "id": "getProduct",
+      "cases": [
+        {
+          "id": "P0-08",
+          "file": "tests/integration/catalog/catalog.test.mjs"
+        }
+      ]
+    },
+    {
+      "id": "createProduct",
+      "cases": [
+        {
+          "id": "P0-08",
+          "file": "tests/integration/catalog/catalog.test.mjs"
+        },
+        {
+          "id": "P0-09",
+          "file": "tests/integration/catalog/catalog.test.mjs"
+        }
+      ]
+    },
+    {
+      "id": "subscribeEvents",
+      "cases": [
+        {
+          "id": "SC2-H05",
+          "file": "tests/integration/workers/events.test.mjs"
+        }
+      ]
+    },
+    {
+      "id": "listJobs",
+      "cases": [
+        {
+          "id": "SC2-H01",
+          "file": "tests/integration/workers/jobs.test.mjs"
+        }
+      ]
+    },
+    {
+      "id": "getJob",
+      "cases": [
+        {
+          "id": "SC2-H01",
+          "file": "tests/integration/workers/jobs.test.mjs"
+        }
+      ]
+    },
+    {
+      "id": "createCategory",
+      "cases": [
+        {
+          "id": "SC-018",
+          "file": "tests/integration/catalog/catalog.test.mjs"
+        }
+      ]
+    },
+    {
+      "id": "getCategory",
+      "cases": [
+        {
+          "id": "SC-018",
+          "file": "tests/integration/catalog/catalog.test.mjs"
+        }
+      ]
+    },
+    {
+      "id": "updateCategory",
+      "cases": [
+        {
+          "id": "SC-018",
+          "file": "tests/integration/catalog/catalog.test.mjs"
+        }
+      ]
+    },
+    {
+      "id": "archiveCategory",
+      "cases": [
+        {
+          "id": "SC-018",
+          "file": "tests/integration/catalog/catalog.test.mjs"
+        }
+      ]
+    },
+    {
+      "id": "updateProduct",
+      "cases": [
+        {
+          "id": "SC-014",
+          "file": "tests/integration/catalog/catalog.test.mjs"
+        }
+      ]
+    },
+    {
+      "id": "archiveProduct",
+      "cases": [
+        {
+          "id": "SC-012",
+          "file": "tests/integration/catalog/catalog.test.mjs"
+        }
+      ]
+    },
+    {
+      "id": "uploadFile",
+      "cases": [
+        {
+          "id": "SC-017",
+          "file": "tests/integration/catalog/catalog.test.mjs"
+        },
+        {
+          "id": "SC-017",
+          "file": "tests/integration/catalog/imports.test.mjs"
+        }
+      ]
+    },
+    {
+      "id": "getFile",
+      "cases": [
+        {
+          "id": "SC-017",
+          "file": "tests/integration/catalog/catalog.test.mjs"
+        }
+      ]
+    },
+    {
+      "id": "createProductImport",
+      "cases": [
+        {
+          "id": "SC-016",
+          "file": "tests/integration/catalog/imports.test.mjs"
+        }
+      ]
+    },
+    {
+      "id": "commitProductImport",
+      "cases": [
+        {
+          "id": "SC-016",
+          "file": "tests/integration/catalog/imports.test.mjs"
+        }
+      ]
+    },
+    {
+      "id": "listCustomers",
+      "cases": [
+        {
+          "id": "SC2-G04",
+          "file": "tests/integration/customers/customers.test.mjs"
+        }
+      ]
+    },
+    {
+      "id": "getCustomer",
+      "cases": [
+        {
+          "id": "SC2-G04",
+          "file": "tests/integration/customers/customers.test.mjs"
+        }
+      ]
+    },
+    {
+      "id": "createCustomer",
+      "cases": [
+        {
+          "id": "SC2-G04",
+          "file": "tests/integration/customers/customers.test.mjs"
+        }
+      ]
+    },
+    {
+      "id": "updateCustomer",
+      "cases": [
+        {
+          "id": "SC2-G04",
+          "file": "tests/integration/customers/customers.test.mjs"
+        }
+      ]
+    },
+    {
+      "id": "listCustomerAddresses",
+      "cases": [
+        {
+          "id": "SC2-C05-ADDRESS",
+          "file": "tests/integration/customers/customers.test.mjs"
+        }
+      ]
+    },
+    {
+      "id": "getCustomerAddress",
+      "cases": [
+        {
+          "id": "SC2-C05-ADDRESS",
+          "file": "tests/integration/customers/customers.test.mjs"
+        }
+      ]
+    },
+    {
+      "id": "createCustomerAddress",
+      "cases": [
+        {
+          "id": "SC2-C05-ADDRESS",
+          "file": "tests/integration/customers/customers.test.mjs"
+        }
+      ]
+    },
+    {
+      "id": "updateCustomerAddress",
+      "cases": [
+        {
+          "id": "SC2-C05-ADDRESS",
+          "file": "tests/integration/customers/customers.test.mjs"
+        }
+      ]
+    },
+    {
+      "id": "archiveCustomerAddress",
+      "cases": [
+        {
+          "id": "SC2-C05-ADDRESS",
+          "file": "tests/integration/customers/customers.test.mjs"
+        }
+      ]
+    },
+    {
+      "id": "listServiceCases",
+      "cases": [
+        {
+          "id": "SC2-G04",
+          "file": "tests/integration/customers/customers.test.mjs"
+        }
+      ]
+    },
+    {
+      "id": "getServiceCase",
+      "cases": [
+        {
+          "id": "SC2-G04",
+          "file": "tests/integration/customers/customers.test.mjs"
+        }
+      ]
+    },
+    {
+      "id": "createServiceCase",
+      "cases": [
+        {
+          "id": "SC2-G04",
+          "file": "tests/integration/customers/customers.test.mjs"
+        }
+      ]
+    },
+    {
+      "id": "setServiceCaseStatus",
+      "cases": [
+        {
+          "id": "SC2-G04",
+          "file": "tests/integration/customers/customers.test.mjs"
+        }
+      ]
+    },
+    {
+      "id": "listStockSnapshots",
+      "cases": [
+        {
+          "id": "SC2-D01",
+          "file": "tests/integration/inventory/inventory.test.mjs"
+        }
+      ]
+    },
+    {
+      "id": "listStockMovements",
+      "cases": [
+        {
+          "id": "SC-021",
+          "file": "tests/integration/inventory/inventory.test.mjs"
+        }
+      ]
+    },
+    {
+      "id": "listWarehouses",
+      "cases": [
+        {
+          "id": "SC2-C05-WAREHOUSE",
+          "file": "tests/integration/inventory/inventory.test.mjs"
+        }
+      ]
+    },
+    {
+      "id": "getWarehouse",
+      "cases": [
+        {
+          "id": "SC2-C05-WAREHOUSE",
+          "file": "tests/integration/inventory/inventory.test.mjs"
+        }
+      ]
+    },
+    {
+      "id": "createWarehouse",
+      "cases": [
+        {
+          "id": "SC2-C05-WAREHOUSE",
+          "file": "tests/integration/inventory/inventory.test.mjs"
+        }
+      ]
+    },
+    {
+      "id": "updateWarehouse",
+      "cases": [
+        {
+          "id": "SC2-C05-WAREHOUSE",
+          "file": "tests/integration/inventory/inventory.test.mjs"
+        }
+      ]
+    },
+    {
+      "id": "archiveWarehouse",
+      "cases": [
+        {
+          "id": "SC2-C05-WAREHOUSE",
+          "file": "tests/integration/inventory/inventory.test.mjs"
+        }
+      ]
+    },
+    {
+      "id": "getShippingPolicy",
+      "cases": [
+        {
+          "id": "SC2-C04",
+          "file": "tests/integration/orders/orders.test.mjs"
+        }
+      ]
+    },
+    {
+      "id": "updateShippingPolicy",
+      "cases": [
+        {
+          "id": "SC2-C04",
+          "file": "tests/integration/orders/orders.test.mjs"
+        }
+      ]
+    },
+    {
+      "id": "listPromotions",
+      "cases": [
+        {
+          "id": "SC2-B05",
+          "file": "tests/integration/orders/orders.test.mjs"
+        }
+      ]
+    },
+    {
+      "id": "listConversations",
+      "cases": [
+        {
+          "id": "SC2-G04",
+          "file": "tests/integration/orders/orders.test.mjs"
+        },
+        {
+          "id": "SC-033",
+          "file": "tests/integration/inbox/inbox.test.mjs"
+        }
+      ]
+    },
+    {
+      "id": "listOrders",
+      "cases": [
+        {
+          "id": "SC-022",
+          "file": "tests/integration/orders/orders.test.mjs"
+        }
+      ]
+    },
+    {
+      "id": "getOrder",
+      "cases": [
+        {
+          "id": "SC-024",
+          "file": "tests/integration/orders/orders.test.mjs"
+        }
+      ]
+    },
+    {
+      "id": "createOrder",
+      "cases": [
+        {
+          "id": "SC-022",
+          "file": "tests/integration/orders/orders.test.mjs"
+        }
+      ]
+    },
+    {
+      "id": "updateOrderDraft",
+      "cases": [
+        {
+          "id": "SC-023",
+          "file": "tests/integration/orders/orders.test.mjs"
+        }
+      ]
+    },
+    {
+      "id": "quoteOrder",
+      "cases": [
+        {
+          "id": "SC-023",
+          "file": "tests/integration/orders/orders.test.mjs"
+        }
+      ]
+    },
+    {
+      "id": "recordCustomerConfirmation",
+      "cases": [
+        {
+          "id": "SC-024",
+          "file": "tests/integration/orders/orders.test.mjs"
+        }
+      ]
+    },
+    {
+      "id": "confirmOrder",
+      "cases": [
+        {
+          "id": "SC-024",
+          "file": "tests/integration/orders/orders.test.mjs"
+        }
+      ]
+    },
+    {
+      "id": "cancelOrder",
+      "cases": [
+        {
+          "id": "SC-026",
+          "file": "tests/integration/orders/orders.test.mjs"
+        }
+      ]
+    },
+    {
+      "id": "listAccounts",
+      "cases": [
+        {
+          "id": "SC2-C05-ACCOUNT",
+          "file": "tests/integration/finance/finance.test.mjs"
+        }
+      ]
+    },
+    {
+      "id": "getAccount",
+      "cases": [
+        {
+          "id": "SC2-C05-ACCOUNT",
+          "file": "tests/integration/finance/finance.test.mjs"
+        }
+      ]
+    },
+    {
+      "id": "createAccount",
+      "cases": [
+        {
+          "id": "SC2-C05-ACCOUNT",
+          "file": "tests/integration/finance/finance.test.mjs"
+        }
+      ]
+    },
+    {
+      "id": "updateAccount",
+      "cases": [
+        {
+          "id": "SC2-C05-ACCOUNT",
+          "file": "tests/integration/finance/finance.test.mjs"
+        }
+      ]
+    },
+    {
+      "id": "archiveAccount",
+      "cases": [
+        {
+          "id": "SC2-C05-ACCOUNT",
+          "file": "tests/integration/finance/finance.test.mjs"
+        }
+      ]
+    },
+    {
+      "id": "listAccountingPeriods",
+      "cases": [
+        {
+          "id": "SC2-E01",
+          "file": "tests/integration/finance/finance.test.mjs"
+        }
+      ]
+    },
+    {
+      "id": "getAccountingPeriod",
+      "cases": [
+        {
+          "id": "SC2-E01",
+          "file": "tests/integration/finance/finance.test.mjs"
+        }
+      ]
+    },
+    {
+      "id": "createAccountingPeriod",
+      "cases": [
+        {
+          "id": "SC2-E01",
+          "file": "tests/integration/finance/finance.test.mjs"
+        }
+      ]
+    },
+    {
+      "id": "listJournals",
+      "cases": [
+        {
+          "id": "SC2-E01",
+          "file": "tests/integration/finance/finance.test.mjs"
+        }
+      ]
+    },
+    {
+      "id": "getJournal",
+      "cases": [
+        {
+          "id": "SC2-E01",
+          "file": "tests/integration/finance/finance.test.mjs"
+        }
+      ]
+    },
+    {
+      "id": "createJournal",
+      "cases": [
+        {
+          "id": "SC2-E01",
+          "file": "tests/integration/finance/finance.test.mjs"
+        }
+      ]
+    },
+    {
+      "id": "postJournal",
+      "cases": [
+        {
+          "id": "SC2-E01",
+          "file": "tests/integration/finance/finance.test.mjs"
+        }
+      ]
+    },
+    {
+      "id": "reverseJournal",
+      "cases": [
+        {
+          "id": "SC2-E01",
+          "file": "tests/integration/finance/finance.test.mjs"
+        }
+      ]
+    },
+    {
+      "id": "getLedger",
+      "cases": [
+        {
+          "id": "SC2-E01",
+          "file": "tests/integration/finance/finance.test.mjs"
+        }
+      ]
+    },
+    {
+      "id": "listOpeningBalances",
+      "cases": [
+        {
+          "id": "SC2-E01",
+          "file": "tests/integration/finance/finance.test.mjs"
+        }
+      ]
+    },
+    {
+      "id": "getOpeningBalance",
+      "cases": [
+        {
+          "id": "SC2-E01",
+          "file": "tests/integration/finance/finance.test.mjs"
+        }
+      ]
+    },
+    {
+      "id": "createOpeningBalance",
+      "cases": [
+        {
+          "id": "SC2-E01",
+          "file": "tests/integration/finance/finance.test.mjs"
+        }
+      ]
+    },
+    {
+      "id": "updateOpeningBalance",
+      "cases": [
+        {
+          "id": "SC2-E01",
+          "file": "tests/integration/finance/finance.test.mjs"
+        }
+      ]
+    },
+    {
+      "id": "postOpeningBalance",
+      "cases": [
+        {
+          "id": "SC2-E01",
+          "file": "tests/integration/finance/finance.test.mjs"
+        }
+      ]
+    },
+    {
+      "id": "listFinanceEntries",
+      "cases": [
+        {
+          "id": "SC2-E01",
+          "file": "tests/integration/finance/finance.test.mjs"
+        }
+      ]
+    },
+    {
+      "id": "getFinanceEntry",
+      "cases": [
+        {
+          "id": "SC2-E01",
+          "file": "tests/integration/finance/finance.test.mjs"
+        }
+      ]
+    },
+    {
+      "id": "createFinanceEntry",
+      "cases": [
+        {
+          "id": "SC2-E01",
+          "file": "tests/integration/finance/finance.test.mjs"
+        }
+      ]
+    },
+    {
+      "id": "updateFinanceEntry",
+      "cases": [
+        {
+          "id": "SC2-E01",
+          "file": "tests/integration/finance/finance.test.mjs"
+        }
+      ]
+    },
+    {
+      "id": "postFinanceEntry",
+      "cases": [
+        {
+          "id": "SC2-E01",
+          "file": "tests/integration/finance/finance.test.mjs"
+        }
+      ]
+    },
+    {
+      "id": "reverseFinanceEntry",
+      "cases": [
+        {
+          "id": "SC2-E01",
+          "file": "tests/integration/finance/finance.test.mjs"
+        }
+      ]
+    },
+    {
+      "id": "payOrder",
+      "cases": [
+        {
+          "id": "SC2-E05",
+          "file": "tests/integration/finance/finance.test.mjs"
+        }
+      ]
+    },
+    {
+      "id": "refundOrder",
+      "cases": [
+        {
+          "id": "SC2-E05",
+          "file": "tests/integration/finance/finance.test.mjs"
+        }
+      ]
+    },
+    {
+      "id": "createInventoryAdjustment",
+      "cases": [
+        {
+          "id": "SC-020",
+          "file": "tests/integration/finance/finance.test.mjs"
+        }
+      ]
+    },
+    {
+      "id": "listWorkItems",
+      "cases": [
+        {
+          "id": "SC2-C01",
+          "file": "tests/integration/orders/orders.test.mjs"
+        }
+      ]
+    },
+    {
+      "id": "getWorkItem",
+      "cases": [
+        {
+          "id": "SC2-C01",
+          "file": "tests/integration/orders/orders.test.mjs"
+        }
+      ]
+    },
+    {
+      "id": "claimWorkItem",
+      "cases": [
+        {
+          "id": "SC2-C01",
+          "file": "tests/integration/orders/orders.test.mjs"
+        }
+      ]
+    },
+    {
+      "id": "listPrepJobs",
+      "cases": [
+        {
+          "id": "SC2-C01",
+          "file": "tests/integration/orders/orders.test.mjs"
+        }
+      ]
+    },
+    {
+      "id": "getPrepJob",
+      "cases": [
+        {
+          "id": "SC2-C01",
+          "file": "tests/integration/orders/orders.test.mjs"
+        }
+      ]
+    },
+    {
+      "id": "pickPrepLine",
+      "cases": [
+        {
+          "id": "SC2-C02",
+          "file": "tests/integration/orders/orders.test.mjs"
+        }
+      ]
+    },
+    {
+      "id": "packPrepJob",
+      "cases": [
+        {
+          "id": "SC2-C03",
+          "file": "tests/integration/orders/orders.test.mjs"
+        }
+      ]
+    },
+    {
+      "id": "listNotifications",
+      "cases": [
+        {
+          "id": "SC2-A02",
+          "file": "tests/integration/orders/orders.test.mjs"
+        }
+      ]
+    },
+    {
+      "id": "getNotification",
+      "cases": [
+        {
+          "id": "SC2-A02",
+          "file": "tests/integration/orders/orders.test.mjs"
+        }
+      ]
+    },
+    {
+      "id": "acknowledgeNotification",
+      "cases": [
+        {
+          "id": "SC2-A02",
+          "file": "tests/integration/orders/orders.test.mjs"
+        }
+      ]
+    },
+    {
+      "id": "listShipments",
+      "cases": [
+        {
+          "id": "SC2-C05",
+          "file": "tests/integration/orders/orders.test.mjs"
+        }
+      ]
+    },
+    {
+      "id": "getShipment",
+      "cases": [
+        {
+          "id": "SC2-C05",
+          "file": "tests/integration/orders/orders.test.mjs"
+        }
+      ]
+    },
+    {
+      "id": "createShipment",
+      "cases": [
+        {
+          "id": "SC2-C05",
+          "file": "tests/integration/orders/orders.test.mjs"
+        }
+      ]
+    },
+    {
+      "id": "handoverShipment",
+      "cases": [
+        {
+          "id": "SC2-C05",
+          "file": "tests/integration/orders/orders.test.mjs"
+        }
+      ]
+    },
+    {
+      "id": "recordShipmentEvent",
+      "cases": [
+        {
+          "id": "SC2-C06",
+          "file": "tests/integration/orders/orders.test.mjs"
+        }
+      ]
+    },
+    {
+      "id": "listReturnCases",
+      "cases": [
+        {
+          "id": "SC2-C07",
+          "file": "tests/integration/orders/orders.test.mjs"
+        }
+      ]
+    },
+    {
+      "id": "getReturnCase",
+      "cases": [
+        {
+          "id": "SC2-C07",
+          "file": "tests/integration/orders/orders.test.mjs"
+        }
+      ]
+    },
+    {
+      "id": "createReturnCase",
+      "cases": [
+        {
+          "id": "SC2-C07",
+          "file": "tests/integration/orders/orders.test.mjs"
+        }
+      ]
+    },
+    {
+      "id": "inspectReturn",
+      "cases": [
+        {
+          "id": "SC2-C07",
+          "file": "tests/integration/orders/orders.test.mjs"
+        }
+      ]
+    },
+    {
+      "id": "listDevices",
+      "cases": [
+        {
+          "id": "SC2-A01",
+          "file": "tests/integration/orders/orders.test.mjs"
+        }
+      ]
+    },
+    {
+      "id": "getDevice",
+      "cases": [
+        {
+          "id": "SC2-A01",
+          "file": "tests/integration/orders/orders.test.mjs"
+        }
+      ]
+    },
+    {
+      "id": "createDevice",
+      "cases": [
+        {
+          "id": "SC2-A01",
+          "file": "tests/integration/orders/orders.test.mjs"
+        }
+      ]
+    },
+    {
+      "id": "testDevice",
+      "cases": [
+        {
+          "id": "SC2-A07",
+          "file": "tests/integration/orders/orders.test.mjs"
+        }
+      ]
+    },
+    {
+      "id": "revokeDevice",
+      "cases": [
+        {
+          "id": "SC2-A08",
+          "file": "tests/integration/orders/orders.test.mjs"
+        }
+      ]
+    },
+    {
+      "id": "getNotificationPolicy",
+      "cases": [
+        {
+          "id": "SC2-A05",
+          "file": "tests/integration/orders/orders.test.mjs"
+        }
+      ]
+    },
+    {
+      "id": "updateNotificationPolicy",
+      "cases": [
+        {
+          "id": "SC2-A06",
+          "file": "tests/integration/orders/orders.test.mjs"
+        }
+      ]
+    },
+    {
+      "id": "beginTelegramPairing",
+      "cases": [
+        {
+          "id": "SC2-A08",
+          "file": "tests/integration/orders/orders.test.mjs"
+        }
+      ]
+    },
+    {
+      "id": "createPromotion",
+      "cases": [
+        {
+          "id": "SC2-B05",
+          "file": "tests/integration/orders/orders.test.mjs"
+        }
+      ]
+    },
+    {
+      "id": "updatePromotion",
+      "cases": [
+        {
+          "id": "SC2-B05",
+          "file": "tests/integration/orders/orders.test.mjs"
+        }
+      ]
+    },
+    {
+      "id": "decidePromotion",
+      "cases": [
+        {
+          "id": "SC2-B05",
+          "file": "tests/integration/orders/orders.test.mjs"
+        }
+      ]
+    },
+    {
+      "id": "listStocktakes",
+      "cases": [
+        {
+          "id": "SC2-D01",
+          "file": "tests/integration/inventory/inventory.test.mjs"
+        }
+      ]
+    },
+    {
+      "id": "createStocktake",
+      "cases": [
+        {
+          "id": "SC2-D01",
+          "file": "tests/integration/inventory/inventory.test.mjs"
+        }
+      ]
+    },
+    {
+      "id": "updateStocktake",
+      "cases": [
+        {
+          "id": "SC2-D01",
+          "file": "tests/integration/inventory/inventory.test.mjs"
+        }
+      ]
+    },
+    {
+      "id": "postStocktake",
+      "cases": [
+        {
+          "id": "SC2-D01",
+          "file": "tests/integration/inventory/inventory.test.mjs"
+        }
+      ]
+    },
+    {
+      "id": "listStockTransfers",
+      "cases": [
+        {
+          "id": "SC2-D01",
+          "file": "tests/integration/inventory/inventory.test.mjs"
+        }
+      ]
+    },
+    {
+      "id": "createStockTransfer",
+      "cases": [
+        {
+          "id": "SC2-D01",
+          "file": "tests/integration/inventory/inventory.test.mjs"
+        }
+      ]
+    },
+    {
+      "id": "updateStockTransfer",
+      "cases": [
+        {
+          "id": "SC2-D01",
+          "file": "tests/integration/inventory/inventory.test.mjs"
+        }
+      ]
+    },
+    {
+      "id": "listSuppliers",
+      "cases": [
+        {
+          "id": "SC2-D02",
+          "file": "tests/integration/procurement/procurement.test.mjs"
+        }
+      ]
+    },
+    {
+      "id": "getSupplier",
+      "cases": [
+        {
+          "id": "SC2-D02",
+          "file": "tests/integration/procurement/procurement.test.mjs"
+        }
+      ]
+    },
+    {
+      "id": "createSupplier",
+      "cases": [
+        {
+          "id": "SC2-D02",
+          "file": "tests/integration/procurement/procurement.test.mjs"
+        }
+      ]
+    },
+    {
+      "id": "updateSupplier",
+      "cases": [
+        {
+          "id": "SC2-D02",
+          "file": "tests/integration/procurement/procurement.test.mjs"
+        }
+      ]
+    },
+    {
+      "id": "setSupplierStatus",
+      "cases": [
+        {
+          "id": "SC2-D02",
+          "file": "tests/integration/procurement/procurement.test.mjs"
+        }
+      ]
+    },
+    {
+      "id": "listSupplierOffers",
+      "cases": [
+        {
+          "id": "SC2-D02",
+          "file": "tests/integration/procurement/procurement.test.mjs"
+        }
+      ]
+    },
+    {
+      "id": "getSupplierOffer",
+      "cases": [
+        {
+          "id": "SC2-D02",
+          "file": "tests/integration/procurement/procurement.test.mjs"
+        }
+      ]
+    },
+    {
+      "id": "createSupplierOffer",
+      "cases": [
+        {
+          "id": "SC2-D02",
+          "file": "tests/integration/procurement/procurement.test.mjs"
+        }
+      ]
+    },
+    {
+      "id": "listReorderRules",
+      "cases": [
+        {
+          "id": "SC2-D03",
+          "file": "tests/integration/procurement/procurement.test.mjs"
+        }
+      ]
+    },
+    {
+      "id": "getReorderRule",
+      "cases": [
+        {
+          "id": "SC2-D03",
+          "file": "tests/integration/procurement/procurement.test.mjs"
+        }
+      ]
+    },
+    {
+      "id": "createReorderRule",
+      "cases": [
+        {
+          "id": "SC2-D03",
+          "file": "tests/integration/procurement/procurement.test.mjs"
+        }
+      ]
+    },
+    {
+      "id": "updateReorderRule",
+      "cases": [
+        {
+          "id": "SC2-D03",
+          "file": "tests/integration/procurement/procurement.test.mjs"
+        }
+      ]
+    },
+    {
+      "id": "listPurchaseSuggestions",
+      "cases": [
+        {
+          "id": "SC2-D03",
+          "file": "tests/integration/procurement/procurement.test.mjs"
+        }
+      ]
+    },
+    {
+      "id": "getPurchaseSuggestion",
+      "cases": [
+        {
+          "id": "SC2-D03",
+          "file": "tests/integration/procurement/procurement.test.mjs"
+        }
+      ]
+    },
+    {
+      "id": "evaluateReorder",
+      "cases": [
+        {
+          "id": "SC2-D03",
+          "file": "tests/integration/procurement/procurement.test.mjs"
+        }
+      ]
+    },
+    {
+      "id": "listPurchaseOrders",
+      "cases": [
+        {
+          "id": "SC2-D05",
+          "file": "tests/integration/procurement/procurement.test.mjs"
+        }
+      ]
+    },
+    {
+      "id": "getPurchaseOrder",
+      "cases": [
+        {
+          "id": "SC2-D05",
+          "file": "tests/integration/procurement/procurement.test.mjs"
+        }
+      ]
+    },
+    {
+      "id": "createPurchaseOrder",
+      "cases": [
+        {
+          "id": "SC2-D05",
+          "file": "tests/integration/procurement/procurement.test.mjs"
+        }
+      ]
+    },
+    {
+      "id": "requestPurchaseApproval",
+      "cases": [
+        {
+          "id": "SC2-D05",
+          "file": "tests/integration/procurement/procurement.test.mjs"
+        }
+      ]
+    },
+    {
+      "id": "sendPurchaseOrder",
+      "cases": [
+        {
+          "id": "SC2-D05",
+          "file": "tests/integration/procurement/procurement.test.mjs"
+        }
+      ]
+    },
+    {
+      "id": "confirmPurchaseOrder",
+      "cases": [
+        {
+          "id": "SC2-D05",
+          "file": "tests/integration/procurement/procurement.test.mjs"
+        }
+      ]
+    },
+    {
+      "id": "cancelPurchaseOrder",
+      "cases": [
+        {
+          "id": "SC2-D05",
+          "file": "tests/integration/procurement/procurement.test.mjs"
+        }
+      ]
+    },
+    {
+      "id": "listGoodsReceipts",
+      "cases": [
+        {
+          "id": "SC2-D08",
+          "file": "tests/integration/procurement/procurement.test.mjs"
+        }
+      ]
+    },
+    {
+      "id": "getGoodsReceipt",
+      "cases": [
+        {
+          "id": "SC2-D08",
+          "file": "tests/integration/procurement/procurement.test.mjs"
+        }
+      ]
+    },
+    {
+      "id": "createGoodsReceipt",
+      "cases": [
+        {
+          "id": "SC2-D08",
+          "file": "tests/integration/procurement/procurement.test.mjs"
+        }
+      ]
+    },
+    {
+      "id": "postGoodsReceipt",
+      "cases": [
+        {
+          "id": "SC2-D08",
+          "file": "tests/integration/procurement/procurement.test.mjs"
+        }
+      ]
+    },
+    {
+      "id": "listApprovals",
+      "cases": [
+        {
+          "id": "SC2-F04",
+          "file": "tests/integration/procurement/procurement.test.mjs"
+        }
+      ]
+    },
+    {
+      "id": "getApproval",
+      "cases": [
+        {
+          "id": "SC2-F04",
+          "file": "tests/integration/procurement/procurement.test.mjs"
+        }
+      ]
+    },
+    {
+      "id": "createApproval",
+      "cases": [
+        {
+          "id": "SC2-F04",
+          "file": "tests/integration/procurement/procurement.test.mjs"
+        }
+      ]
+    },
+    {
+      "id": "decideApproval",
+      "cases": [
+        {
+          "id": "SC2-F04",
+          "file": "tests/integration/procurement/procurement.test.mjs"
+        }
+      ]
+    },
+    {
+      "id": "getCashflow",
+      "cases": [
+        {
+          "id": "SC2-C06-FINANCE",
+          "file": "tests/integration/finance/finance.test.mjs"
+        }
+      ]
+    },
+    {
+      "id": "getProfitLoss",
+      "cases": [
+        {
+          "id": "SC2-C06-FINANCE",
+          "file": "tests/integration/finance/finance.test.mjs"
+        }
+      ]
+    },
+    {
+      "id": "getTrialBalance",
+      "cases": [
+        {
+          "id": "SC2-C06-FINANCE",
+          "file": "tests/integration/finance/finance.test.mjs"
+        }
+      ]
+    },
+    {
+      "id": "getBalanceSheet",
+      "cases": [
+        {
+          "id": "SC2-C06-FINANCE",
+          "file": "tests/integration/finance/finance.test.mjs"
+        }
+      ]
+    },
+    {
+      "id": "getReportSummary",
+      "cases": [
+        {
+          "id": "SC2-C06-FINANCE",
+          "file": "tests/integration/finance/finance.test.mjs"
+        }
+      ]
+    },
+    {
+      "id": "closeAccountingPeriod",
+      "cases": [
+        {
+          "id": "SC2-E07",
+          "file": "tests/integration/finance/finance.test.mjs"
+        }
+      ]
+    },
+    {
+      "id": "reopenAccountingPeriod",
+      "cases": [
+        {
+          "id": "SC2-E07",
+          "file": "tests/integration/finance/finance.test.mjs"
+        }
+      ]
+    },
+    {
+      "id": "listBankTransactions",
+      "cases": [
+        {
+          "id": "SC2-E04",
+          "file": "tests/integration/finance/finance.test.mjs"
+        }
+      ]
+    },
+    {
+      "id": "getBankTransaction",
+      "cases": [
+        {
+          "id": "SC2-E04",
+          "file": "tests/integration/finance/finance.test.mjs"
+        }
+      ]
+    },
+    {
+      "id": "listReconciliationCases",
+      "cases": [
+        {
+          "id": "SC2-E04",
+          "file": "tests/integration/finance/finance.test.mjs"
+        }
+      ]
+    },
+    {
+      "id": "getReconciliationCase",
+      "cases": [
+        {
+          "id": "SC2-E04",
+          "file": "tests/integration/finance/finance.test.mjs"
+        }
+      ]
+    },
+    {
+      "id": "listCODSettlements",
+      "cases": [
+        {
+          "id": "SC2-E05",
+          "file": "tests/integration/finance/finance.test.mjs"
+        }
+      ]
+    },
+    {
+      "id": "getCODSettlement",
+      "cases": [
+        {
+          "id": "SC2-E05",
+          "file": "tests/integration/finance/finance.test.mjs"
+        }
+      ]
+    },
+    {
+      "id": "listDebtItems",
+      "cases": [
+        {
+          "id": "SC2-E06",
+          "file": "tests/integration/finance/finance.test.mjs"
+        }
+      ]
+    },
+    {
+      "id": "getDebtItem",
+      "cases": [
+        {
+          "id": "SC2-E06",
+          "file": "tests/integration/finance/finance.test.mjs"
+        }
+      ]
+    },
+    {
+      "id": "updateDebtTerms",
+      "cases": [
+        {
+          "id": "SC2-E06",
+          "file": "tests/integration/finance/finance.test.mjs"
+        }
+      ]
+    },
+    {
+      "id": "matchSettlement",
+      "cases": [
+        {
+          "id": "SC2-E04",
+          "file": "tests/integration/finance/finance.test.mjs"
+        }
+      ]
+    },
+    {
+      "id": "matchCODSettlement",
+      "cases": [
+        {
+          "id": "SC2-E05",
+          "file": "tests/integration/finance/finance.test.mjs"
+        }
+      ]
+    },
+    {
+      "id": "importBankStatement",
+      "cases": [
+        {
+          "id": "SC2-E04",
+          "file": "tests/integration/finance/finance.test.mjs"
+        }
+      ]
+    },
+    {
+      "id": "importCODStatement",
+      "cases": [
+        {
+          "id": "SC2-E05",
+          "file": "tests/integration/finance/finance.test.mjs"
+        }
+      ]
+    },
+    {
+      "id": "listStatementFormats",
+      "cases": [
+        {
+          "id": "SC2-E04",
+          "file": "tests/integration/finance/finance.test.mjs"
+        }
+      ]
+    },
+    {
+      "id": "previewStatementImport",
+      "cases": [
+        {
+          "id": "SC2-E04",
+          "file": "tests/integration/finance/finance.test.mjs"
+        }
+      ]
+    },
+    {
+      "id": "listPaymentReviews",
+      "cases": [
+        {
+          "id": "SC2-E05",
+          "file": "tests/integration/finance/finance.test.mjs"
+        }
+      ]
+    },
+    {
+      "id": "getConversation",
+      "cases": [
+        {
+          "id": "SC-033",
+          "file": "tests/integration/inbox/inbox.test.mjs"
+        }
+      ]
+    },
+    {
+      "id": "listMessages",
+      "cases": [
+        {
+          "id": "SC-033",
+          "file": "tests/integration/inbox/inbox.test.mjs"
+        }
+      ]
+    },
+    {
+      "id": "getInboxMetadata",
+      "cases": [
+        {
+          "id": "SC-033",
+          "file": "tests/integration/inbox/inbox.test.mjs"
+        }
+      ]
+    },
+    {
+      "id": "sendMessage",
+      "cases": [
+        {
+          "id": "SC-034",
+          "file": "tests/integration/inbox/inbox.test.mjs"
+        }
+      ]
+    },
+    {
+      "id": "addInternalNote",
+      "cases": [
+        {
+          "id": "SC-035",
+          "file": "tests/integration/inbox/inbox.test.mjs"
+        }
+      ]
+    },
+    {
+      "id": "takeoverConversation",
+      "cases": [
+        {
+          "id": "SC-036",
+          "file": "tests/integration/inbox/inbox.test.mjs"
+        }
+      ]
+    },
+    {
+      "id": "releaseConversation",
+      "cases": [
+        {
+          "id": "SC-036",
+          "file": "tests/integration/inbox/inbox.test.mjs"
+        }
+      ]
+    },
+    {
+      "id": "assignConversation",
+      "cases": [
+        {
+          "id": "SC-037",
+          "file": "tests/integration/inbox/inbox.test.mjs"
+        }
+      ]
+    },
+    {
+      "id": "resolveConversation",
+      "cases": [
+        {
+          "id": "SC-037",
+          "file": "tests/integration/inbox/inbox.test.mjs"
+        }
+      ]
+    },
+    {
+      "id": "listChannels",
+      "cases": [
+        {
+          "id": "SC-047",
+          "file": "tests/integration/inbox/inbox.test.mjs"
+        }
+      ]
+    },
+    {
+      "id": "getChannel",
+      "cases": [
+        {
+          "id": "SC-047",
+          "file": "tests/integration/inbox/inbox.test.mjs"
+        }
+      ]
+    },
+    {
+      "id": "beginChannelConnect",
+      "cases": [
+        {
+          "id": "SC-048",
+          "file": "tests/integration/inbox/inbox.test.mjs"
+        }
+      ]
+    },
+    {
+      "id": "reconnectChannel",
+      "cases": [
+        {
+          "id": "SC-049",
+          "file": "tests/integration/inbox/inbox.test.mjs"
+        }
+      ]
+    },
+    {
+      "id": "disconnectChannel",
+      "cases": [
+        {
+          "id": "SC-049",
+          "file": "tests/integration/inbox/inbox.test.mjs"
+        }
+      ]
+    },
+    {
+      "id": "checkChannelHealth",
+      "cases": [
+        {
+          "id": "SC-050",
+          "file": "tests/integration/inbox/inbox.test.mjs"
+        }
+      ]
+    },
+    {
+      "id": "listKnowledge",
+      "cases": [
+        {
+          "id": "SC-039",
+          "file": "tests/integration/inbox/inbox.test.mjs"
+        }
+      ]
+    },
+    {
+      "id": "createKnowledge",
+      "cases": [
+        {
+          "id": "SC-039",
+          "file": "tests/integration/inbox/inbox.test.mjs"
+        }
+      ]
+    },
+    {
+      "id": "getKnowledge",
+      "cases": [
+        {
+          "id": "SC-039",
+          "file": "tests/integration/inbox/inbox.test.mjs"
+        }
+      ]
+    },
+    {
+      "id": "updateKnowledge",
+      "cases": [
+        {
+          "id": "SC-039",
+          "file": "tests/integration/inbox/inbox.test.mjs"
+        }
+      ]
+    },
+    {
+      "id": "listKnowledgeRevisions",
+      "cases": [
+        {
+          "id": "SC-040",
+          "file": "tests/integration/inbox/inbox.test.mjs"
+        }
+      ]
+    },
+    {
+      "id": "getKnowledgeRevision",
+      "cases": [
+        {
+          "id": "SC-040",
+          "file": "tests/integration/inbox/inbox.test.mjs"
+        }
+      ]
+    },
+    {
+      "id": "createKnowledgeRevision",
+      "cases": [
+        {
+          "id": "SC-040",
+          "file": "tests/integration/inbox/inbox.test.mjs"
+        }
+      ]
+    },
+    {
+      "id": "restoreKnowledgeRevision",
+      "cases": [
+        {
+          "id": "SC-040",
+          "file": "tests/integration/inbox/inbox.test.mjs"
+        }
+      ]
+    },
+    {
+      "id": "submitKnowledgeReview",
+      "cases": [
+        {
+          "id": "SC-040",
+          "file": "tests/integration/inbox/inbox.test.mjs"
+        }
+      ]
+    },
+    {
+      "id": "publishKnowledge",
+      "cases": [
+        {
+          "id": "SC-041",
+          "file": "tests/integration/inbox/inbox.test.mjs"
+        }
+      ]
+    },
+    {
+      "id": "retireKnowledge",
+      "cases": [
+        {
+          "id": "SC-041",
+          "file": "tests/integration/inbox/inbox.test.mjs"
+        }
+      ]
+    },
+    {
+      "id": "listFeedback",
+      "cases": [
+        {
+          "id": "SC-042",
+          "file": "tests/integration/inbox/inbox.test.mjs"
+        }
+      ]
+    },
+    {
+      "id": "createFeedback",
+      "cases": [
+        {
+          "id": "SC-042",
+          "file": "tests/integration/inbox/inbox.test.mjs"
+        }
+      ]
+    },
+    {
+      "id": "reviewFeedback",
+      "cases": [
+        {
+          "id": "SC-042",
+          "file": "tests/integration/inbox/inbox.test.mjs"
+        }
+      ]
+    },
+    {
+      "id": "getBotConfig",
+      "cases": [
+        {
+          "id": "SC-043",
+          "file": "tests/integration/ai/ai.test.mjs"
+        }
+      ]
+    },
+    {
+      "id": "updateBotDraft",
+      "cases": [
+        {
+          "id": "SC-043",
+          "file": "tests/integration/ai/ai.test.mjs"
+        }
+      ]
+    },
+    {
+      "id": "listBotRevisions",
+      "cases": [
+        {
+          "id": "SC-043",
+          "file": "tests/integration/ai/ai.test.mjs"
+        }
+      ]
+    },
+    {
+      "id": "getBotRevision",
+      "cases": [
+        {
+          "id": "SC-043",
+          "file": "tests/integration/ai/ai.test.mjs"
+        }
+      ]
+    },
+    {
+      "id": "runPlayground",
+      "cases": [
+        {
+          "id": "SC-044",
+          "file": "tests/integration/ai/ai.test.mjs"
+        }
+      ]
+    },
+    {
+      "id": "listEvaluations",
+      "cases": [
+        {
+          "id": "SC-045",
+          "file": "tests/integration/ai/ai.test.mjs"
+        }
+      ]
+    },
+    {
+      "id": "createEvaluation",
+      "cases": [
+        {
+          "id": "SC-045",
+          "file": "tests/integration/ai/ai.test.mjs"
+        }
+      ]
+    },
+    {
+      "id": "getEvaluation",
+      "cases": [
+        {
+          "id": "SC-045",
+          "file": "tests/integration/ai/ai.test.mjs"
+        }
+      ]
+    },
+    {
+      "id": "publishBotConfig",
+      "cases": [
+        {
+          "id": "SC-046",
+          "file": "tests/integration/ai/ai.test.mjs"
+        }
+      ]
+    },
+    {
+      "id": "restoreBotRevision",
+      "cases": [
+        {
+          "id": "SC-046",
+          "file": "tests/integration/ai/ai.test.mjs"
+        }
+      ]
+    },
+    {
+      "id": "getProviderCatalog",
+      "cases": [
+        {
+          "id": "SC-047",
+          "file": "tests/integration/ai/ai.test.mjs"
+        }
+      ]
+    },
+    {
+      "id": "listAIConnections",
+      "cases": [
+        {
+          "id": "SC-047",
+          "file": "tests/integration/ai/ai.test.mjs"
+        }
+      ]
+    },
+    {
+      "id": "getAIConnection",
+      "cases": [
+        {
+          "id": "SC-047",
+          "file": "tests/integration/ai/ai.test.mjs"
+        }
+      ]
+    },
+    {
+      "id": "createAIConnection",
+      "cases": [
+        {
+          "id": "SC-048",
+          "file": "tests/integration/ai/ai.test.mjs"
+        }
+      ]
+    },
+    {
+      "id": "updateAIConnection",
+      "cases": [
+        {
+          "id": "SC-049",
+          "file": "tests/integration/ai/ai.test.mjs"
+        }
+      ]
+    },
+    {
+      "id": "deleteAIConnection",
+      "cases": [
+        {
+          "id": "SC-049",
+          "file": "tests/integration/ai/ai.test.mjs"
+        }
+      ]
+    },
+    {
+      "id": "testAIConnection",
+      "cases": [
+        {
+          "id": "SC-050",
+          "file": "tests/integration/ai/ai.test.mjs"
+        }
+      ]
+    },
+    {
+      "id": "listAgentRoles",
+      "cases": [
+        {
+          "id": "SC2-F01",
+          "file": "tests/integration/operations/operations.test.mjs"
+        }
+      ]
+    },
+    {
+      "id": "getAgentRole",
+      "cases": [
+        {
+          "id": "SC2-F01",
+          "file": "tests/integration/operations/operations.test.mjs"
+        }
+      ]
+    },
+    {
+      "id": "updateAgentRole",
+      "cases": [
+        {
+          "id": "SC2-F01",
+          "file": "tests/integration/operations/operations.test.mjs"
+        }
+      ]
+    },
+    {
+      "id": "updateWorkItem",
+      "cases": [
+        {
+          "id": "SC2-F02",
+          "file": "tests/integration/operations/operations.test.mjs"
+        }
+      ]
+    },
+    {
+      "id": "listBudgetPolicies",
+      "cases": [
+        {
+          "id": "SC2-F05",
+          "file": "tests/integration/operations/operations.test.mjs"
+        }
+      ]
+    },
+    {
+      "id": "getBudgetPolicy",
+      "cases": [
+        {
+          "id": "SC2-F05",
+          "file": "tests/integration/operations/operations.test.mjs"
+        }
+      ]
+    },
+    {
+      "id": "updateBudgetPolicy",
+      "cases": [
+        {
+          "id": "SC2-F05",
+          "file": "tests/integration/operations/operations.test.mjs"
+        }
+      ]
+    },
+    {
+      "id": "listPurchaseDelegations",
+      "cases": [
+        {
+          "id": "SC2-F05",
+          "file": "tests/integration/operations/operations.test.mjs"
+        }
+      ]
+    },
+    {
+      "id": "createPurchaseDelegation",
+      "cases": [
+        {
+          "id": "SC2-F05",
+          "file": "tests/integration/operations/operations.test.mjs"
+        }
+      ]
+    },
+    {
+      "id": "updatePurchaseDelegation",
+      "cases": [
+        {
+          "id": "SC2-F05",
+          "file": "tests/integration/operations/operations.test.mjs"
+        }
+      ]
+    },
+    {
+      "id": "listPurchaseDelegationReservations",
+      "cases": [
+        {
+          "id": "SC2-F05",
+          "file": "tests/integration/operations/operations.test.mjs"
+        }
+      ]
+    },
+    {
+      "id": "listDigests",
+      "cases": [
+        {
+          "id": "SC2-F06",
+          "file": "tests/integration/operations/operations.test.mjs"
+        }
+      ]
+    },
+    {
+      "id": "getDigest",
+      "cases": [
+        {
+          "id": "SC2-F06",
+          "file": "tests/integration/operations/operations.test.mjs"
+        }
+      ]
+    },
+    {
+      "id": "getOperationsSummary",
+      "cases": [
+        {
+          "id": "SC2-F07",
+          "file": "tests/integration/operations/operations.test.mjs"
+        }
+      ]
+    },
+    {
+      "id": "getMarketingSummary",
+      "cases": [
+        {
+          "id": "SC2-G07",
+          "file": "tests/integration/operations/operations.test.mjs"
+        }
+      ]
+    },
+    {
+      "id": "controlAutomation",
+      "cases": [
+        {
+          "id": "SC2-H02",
+          "file": "tests/integration/operations/operations.test.mjs"
+        }
+      ]
+    },
+    {
+      "id": "pauseBot",
+      "cases": [
+        {
+          "id": "SC2-H02",
+          "file": "tests/integration/operations/operations.test.mjs"
+        }
+      ]
+    },
+    {
+      "id": "createShop",
+      "cases": [
+        {
+          "id": "SC2-G01",
+          "file": "tests/integration/privacy/privacy.test.mjs"
+        }
+      ]
+    },
+    {
+      "id": "updateShop",
+      "cases": [
+        {
+          "id": "SC2-G01",
+          "file": "tests/integration/privacy/privacy.test.mjs"
+        }
+      ]
+    },
+    {
+      "id": "createExport",
+      "cases": [
+        {
+          "id": "SC2-G07",
+          "file": "tests/integration/privacy/privacy.test.mjs"
+        }
+      ]
+    },
+    {
+      "id": "stepUp",
+      "cases": [
+        {
+          "id": "SC2-G05",
+          "file": "tests/integration/privacy/privacy.test.mjs"
+        },
+        {
+          "id": "SC2-G05",
+          "file": "tests/integration/auth/auth.test.mjs"
+        }
+      ]
+    },
+    {
+      "id": "getPrivacyPolicy",
+      "cases": [
+        {
+          "id": "SC2-G05",
+          "file": "tests/integration/privacy/privacy.test.mjs"
+        }
+      ]
+    },
+    {
+      "id": "updatePrivacyPolicy",
+      "cases": [
+        {
+          "id": "SC2-G05",
+          "file": "tests/integration/privacy/privacy.test.mjs"
+        }
+      ]
+    },
+    {
+      "id": "listPrivacyRequests",
+      "cases": [
+        {
+          "id": "SC2-G05",
+          "file": "tests/integration/privacy/privacy.test.mjs"
+        }
+      ]
+    },
+    {
+      "id": "createPrivacyRequest",
+      "cases": [
+        {
+          "id": "SC2-G05",
+          "file": "tests/integration/privacy/privacy.test.mjs"
+        }
+      ]
+    },
+    {
+      "id": "approvePrivacyRequest",
+      "cases": [
+        {
+          "id": "SC2-G05",
+          "file": "tests/integration/privacy/privacy.test.mjs"
+        }
+      ]
+    },
+    {
+      "id": "listCustomerConsents",
+      "cases": [
+        {
+          "id": "SC2-C07-CONSENT",
+          "file": "tests/integration/privacy/privacy.test.mjs"
+        }
+      ]
+    },
+    {
+      "id": "listCustomerConsentChallenges",
+      "cases": [
+        {
+          "id": "SC2-C07-CONSENT",
+          "file": "tests/integration/privacy/privacy.test.mjs"
+        }
+      ]
+    },
+    {
+      "id": "createCustomerConsentChallenge",
+      "cases": [
+        {
+          "id": "SC2-C07-CONSENT",
+          "file": "tests/integration/privacy/privacy.test.mjs"
+        }
+      ]
+    },
+    {
+      "id": "exchangeConsentChallenge",
+      "cases": [
+        {
+          "id": "SC2-C07-CONSENT",
+          "file": "tests/integration/privacy/privacy.test.mjs"
+        }
+      ]
+    },
+    {
+      "id": "confirmConsentChallenge",
+      "cases": [
+        {
+          "id": "SC2-C07-CONSENT",
+          "file": "tests/integration/privacy/privacy.test.mjs"
+        }
+      ]
+    }
   ]
 }

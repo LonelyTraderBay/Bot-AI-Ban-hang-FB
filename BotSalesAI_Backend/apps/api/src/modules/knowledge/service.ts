@@ -12,7 +12,8 @@ import { enqueueResourceUpdate } from '../../platform/outbox/index.js';
 import { extractKnowledgeText, fileContents, readReadyFileBytes } from '../files/index.js';
 import { readAsSession, requireShopAccess, usesLocalOidcFixture, writeShopCommand, type AuthConfig, type ShopScope } from '../workspace/index.js';
 import { currentStatus, documentDetails, documentInShop, documentView, initializeDocument, knowledgeKey, knowledgeText,
-    revisionInDocument, revisionView, sourceInShop, type Document, type KnowledgeWrite } from './data.js';
+    revisionInDocument, revisionView, sourceInShop, type Document, type KnowledgeDraft, type KnowledgeWrite } from './data.js';
+import { policyView, requirePublishableWindow, type PolicyWindow } from './policy.js';
 import { readKnowledgeTemplate, requireTemplateReady } from './templates.js';
 
 export type VersionReason = { expectedVersion: number; reason: string };
@@ -36,7 +37,7 @@ function listChecks(raw: Record<string, unknown>) {
     return query;
 }
 
-async function appendRevision(tx: Prisma.TransactionClient, document: Document, data: KnowledgeWrite, replace = false) {
+async function appendRevision(tx: Prisma.TransactionClient, document: Document, data: KnowledgeDraft, replace = false) {
     if (document.draft) {
         if (!replace || currentStatus(document.draft) === 'processing') throw new ConflictException();
         await tx.knowledgeRevision.update({ where: knowledgeKey(document.shopId, document.draft.id),
@@ -113,6 +114,9 @@ export class KnowledgeService {
             const data = await sourceInShop(tx, shopId, scope.userId, {
                 title: patch.title ?? draft.title, content: patch.content === undefined ? draft.content : patch.content,
                 sourceKind: patch.sourceKind ?? draft.sourceKind, fileId: patch.fileId === undefined ? draft.fileId : patch.fileId,
+                policyKey: patch.policyKey === undefined ? draft.policyKey : patch.policyKey,
+                validFrom: patch.validFrom === undefined ? policyView(draft).validFrom : patch.validFrom,
+                validUntil: patch.validUntil === undefined ? policyView(draft).validUntil : patch.validUntil,
                 template: patch.template ?? draft.template,
             }, draft.fileId);
             if (data.sourceKind === 'feedback' && !document.feedbackId) throw new UnprocessableEntityException();
@@ -130,7 +134,7 @@ export class KnowledgeService {
             if (input.sourceKind === 'feedback' && !document.feedbackId) throw new UnprocessableEntityException();
             const previous = document.draft ?? document.published ?? document.revisions[0];
             if (input.template && readKnowledgeTemplate(previous?.template)?.kind !== readKnowledgeTemplate(input.template)?.kind) throw new UnprocessableEntityException();
-            const data = await sourceInShop(tx, shopId, scope.userId, { ...input, template: input.template ?? previous?.template }, document.published?.fileId);
+            const data = await sourceInShop(tx, shopId, scope.userId, { ...policyView(previous), ...input, template: input.template ?? previous?.template }, document.published?.fileId);
             const revision = await appendRevision(tx, document, data);
             return { id: revision.id, metadata: { documentId: id, revision: revision.revision } };
         }, async (tx, result) => revisionView(await revisionInDocument(tx, shopId, id, result.id), await documentInShop(tx, shopId, id)));
@@ -142,7 +146,7 @@ export class KnowledgeService {
             const document = await documentInShop(tx, shopId, id);
             requireVersion(document.version, input.expectedVersion);
             const source = await revisionInDocument(tx, shopId, id, revisionId);
-            const data = await sourceInShop(tx, shopId, scope.userId, source, source.fileId);
+            const data = await sourceInShop(tx, shopId, scope.userId, { ...source, ...policyView(source) }, source.fileId);
             const revision = await appendRevision(tx, document, data, true);
             return { id: revision.id, metadata: { documentId: id, revision: revision.revision, restoredFrom: revisionId } };
         }, async (tx, result) => revisionView(await revisionInDocument(tx, shopId, id, result.id), await documentInShop(tx, shopId, id)));
@@ -176,15 +180,17 @@ export class KnowledgeService {
                 const draft = document.draft;
                 if (!draft || draft.id !== input.revisionId || draft.status !== 'ready_for_review' || !draft.contentHash || !draft.indexedText ||
                     !validUuid(input.evaluationRunId)) throw new ConflictException();
-                await requireTemplateReady(tx, shopId, draft.template);
+                const image = await requireTemplateReady(tx, shopId, draft.template);
+                if (image && draft.contentHash !== knowledgeIndexHash(draft, draft.indexedText, null, image)) throw new ConflictException();
                 const evaluation = await tx.evaluation.findUnique({ where: knowledgeKey(shopId, input.evaluationRunId) });
-                const { policyVersion } = await tx.shop.findUniqueOrThrow({ where: { id: shopId }, select: { policyVersion: true } });
+                const { policyVersion, timezone } = await tx.shop.findUniqueOrThrow({ where: { id: shopId }, select: { policyVersion: true, timezone: true } });
                 if (evaluation?.status !== 'passed' || evaluation.knowledgeRevisionId !== draft.id || evaluation.knowledgeHash !== draft.contentHash ||
                     evaluation.policyVersion !== policyVersion || evaluation.criticalFailures !== 0 || evaluation.totalCases < 1 ||
                     (evaluation.fixture && !usesLocalOidcFixture(config))) throw new ConflictException('Cần kết quả đánh giá đạt của đúng phiên bản tri thức.');
                 if (draft.fileId && !await tx.fileObject.findFirst({ where: { shopId, id: draft.fileId, status: 'ready', purpose: 'knowledge_source' }, select: { id: true } })) {
                     throw new ConflictException();
                 }
+                await requirePublishableWindow(tx, draft, document.published, policyVersion, timezone);
                 if (document.publishedRevisionId) await tx.knowledgeRevision.update({ where: knowledgeKey(shopId, document.publishedRevisionId),
                     data: { status: 'retired', version: { increment: 1 } } });
                 await tx.knowledgeRevision.update({ where: knowledgeKey(shopId, draft.id), data: { status: 'published', evaluationId: evaluation.id,
@@ -235,6 +241,14 @@ export class KnowledgeService {
     }
 }
 
+function knowledgeIndexHash(source: { title: string; sourceKind: string } & PolicyWindow, indexedText: string, fileHash: string | null,
+    image?: { fileId: string; sha256: string } | null) {
+    const indexed: unknown[] = [source.title, source.sourceKind, fileHash, indexedText];
+    if (source.policyKey || source.validFrom || source.validUntil) indexed.push(policyView(source));
+    if (image) indexed.push(image.fileId, image.sha256);
+    return createHash('sha256').update(JSON.stringify(indexed)).digest('hex');
+}
+
 export function knowledgeIndexHandler(db: PrismaClient): JobHandler {
     return async job => {
         const { documentId, revisionId, version } = job.input as { documentId: string; revisionId: string; version: number };
@@ -255,20 +269,28 @@ export function knowledgeIndexHandler(db: PrismaClient): JobHandler {
         } catch {
             indexedText = null;
         }
-        const contentHash = indexedText ? createHash('sha256').update(JSON.stringify([source.title, source.sourceKind, source.file?.sha256 ?? null, indexedText])).digest('hex') : null;
         const warnings = ['Nguồn cần được duyệt và đánh giá đúng phiên bản trước khi sử dụng.'];
         const rejected = ['Tệp hoặc nội dung chưa đủ điều kiện lập chỉ mục văn bản.'];
         return async tx => {
             const document = await documentInShop(tx, job.shopId, documentId);
             if (document.draftRevisionId !== revisionId || document.draft?.indexJobId !== job.id || document.draft.version !== version) throw new ConflictException();
-            const status = indexedText ? 'ready_for_review' : 'failed';
+            let reviewedText = indexedText;
+            let image: Awaited<ReturnType<typeof requireTemplateReady>> = undefined;
+            try {
+                image = await requireTemplateReady(tx, job.shopId, document.draft.template);
+            } catch (error) {
+                if (!(error instanceof UnprocessableEntityException)) throw error;
+                reviewedText = null;
+            }
+            const contentHash = reviewedText ? knowledgeIndexHash(source, reviewedText, source.file?.sha256 ?? null, image) : null;
+            const status = reviewedText ? 'ready_for_review' : 'failed';
             await tx.knowledgeRevision.update({ where: knowledgeKey(job.shopId, revisionId), data: {
-                status, indexedText, contentHash, warnings: indexedText ? warnings : rejected, version: { increment: 1 },
+                status, indexedText: reviewedText, contentHash, warnings: reviewedText ? warnings : rejected, version: { increment: 1 },
             } });
             await tx.knowledgeDocument.update({ where: knowledgeKey(job.shopId, documentId), data: { status, version: { increment: 1 } } });
-            return { status: indexedText ? 'succeeded' : 'failed', completed: indexedText ? 1 : 0, total: 1, errorCount: indexedText ? 0 : 1,
-                rowErrors: indexedText ? [] : [{ row: 1, field: 'content', code: 'INVALID_KNOWLEDGE_SOURCE', message: rejected[0] }],
-                ...(indexedText ? { result: { type: 'knowledge_revision', id: revisionId } } : {}) };
+            return { status: reviewedText ? 'succeeded' : 'failed', completed: reviewedText ? 1 : 0, total: 1, errorCount: reviewedText ? 0 : 1,
+                rowErrors: reviewedText ? [] : [{ row: 1, field: 'content', code: 'INVALID_KNOWLEDGE_SOURCE', message: rejected[0] }],
+                ...(reviewedText ? { result: { type: 'knowledge_revision', id: revisionId } } : {}) };
         };
     };
 }

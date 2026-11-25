@@ -12,7 +12,7 @@ import { enqueueResourceUpdate } from '../../platform/outbox/index.js';
 import { salesAutomationState } from '../operations/index.js';
 import { readAsSession, requireShopAccess, writeShopCommand, type AuthConfig, type ShopScope } from '../workspace/index.js';
 import { approvedRuntimeBot, type ApprovedEvaluationConfig } from './approved-evaluation.js';
-import { appendBotRevision, botAuditContext, botRevisionAt, botRevisionInShop, botRevisionView, botShop, botState, botView, currentBotRevision, draftFields, initializeBot,
+import { activePublishedBot, appendBotRevision, botAuditContext, botRevisionAt, botRevisionInShop, botRevisionView, botShop, botState, botView, currentBotRevision, draftFields, initializeBot,
     type ConfigDraft } from './bot-data.js';
 import { aiKey } from './connections.js';
 import { budgetHandoff, hasAiBudget, playgroundResult, reserveAiUsage, runFixtureTools } from './engine.js';
@@ -62,6 +62,9 @@ async function publicationEvidence(tx: Prisma.TransactionClient, shopId: string,
     if (!evaluation.fixture) {
         const revision = await botRevisionAt(tx, shopId, input.draftRevision);
         const shop = await botShop(tx, shopId);
+        if (!shop.businessCountry) {
+            throw new DomainConflict('BUSINESS_COUNTRY_REQUIRED', 'Cần khai báo quốc gia kinh doanh trước khi chạy thử bot trên Messenger.');
+        }
         const approved = revision && !revision.publishedAt ? await approvedRuntimeBot(tx, shop, revision, evaluation, provider) : null;
         if (!revision || !approved) {
             throw new ConflictException('Cần phê duyệt chạy thử Messenger và đánh giá đúng bản nháp.');
@@ -83,7 +86,16 @@ export class BotService {
     constructor(private readonly db?: PrismaClient, private readonly config?: AuthConfig, private readonly provider?: ApprovedEvaluationConfig) {}
 
     configView(headers: IncomingHttpHeaders, shopId: string) {
-        return this.read(headers, shopId, tx => configView(tx, shopId));
+        return this.read(headers, shopId, async tx => {
+            const view = await configView(tx, shopId);
+            const active = view.status === 'active' && this.provider?.approval?.shopId === shopId
+                ? await activePublishedBot(tx, shopId, this.config, this.provider) : null;
+            const runtime = active?.runtime?.runtime;
+            return { ...view, providerPolicy: {
+                failover: 'disabled',
+                channelTokenBudget: runtime ? { channel: 'facebook_messenger', dailyLimit: runtime.maxDailyChannelTokens } : null,
+            } };
+        });
     }
 
     update(headers: IncomingHttpHeaders, shopId: string, patch: Partial<ConfigDraft>, requestId: string) {

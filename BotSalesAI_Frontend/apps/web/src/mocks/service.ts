@@ -1,6 +1,6 @@
 import operationIndex from '../../../../packages/contracts/src/operations.json';
 import collections from './collections.json';
-import { db, all, first, find, insert, resetDb, restoreDb, ensure, str, num, record, id, now, future, grantedPermissions, audit, MockFailure } from './database';
+import { db, all, first, find, insert, resetDb, restoreDb, ensure, str, num, record, rows, id, now, future, grantedPermissions, audit, MockFailure } from './database';
 import type { Row, Input } from './database';
 import { catalog } from './catalog';
 import { orders } from './orders';
@@ -9,12 +9,10 @@ import { markDelegatedPurchasesUnknown, procurement } from './procurement';
 import { allTimeReportWindow, finance, cashflow, profitLoss } from './finance';
 import { auxiliary } from './auxiliary';
 import { clearFileState, files, upload } from './files';
-import { marketingSummary } from './marketing-report';
 import { masters, visibleOrderAddress } from './masters';
 import { privacy as privacyOperations, safeConsentChallenge } from './privacy';
 import { shippingPolicyOperations } from './shipping-policy';
 import { promotionCurrent, promotionDate, promotionOperations } from './promotions';
-import { paymentReviews } from './payment-reviews';
 import { stocktakeOperations } from './stocktakes';
 import { stockTransferOperations } from './stock-transfers';
 import type { EventEnvelope } from '@botsales/contracts';
@@ -109,12 +107,12 @@ export type MockResult = {
     data: unknown;
     commandId?: string;
 };
-function read(op: string, input: Input): unknown {
+async function read(op: string, input: Input): Promise<unknown> {
     const { shopId } = input;
     if (op === 'getFile')
         return files(op, input);
     if (op === 'getBotConfig')
-        return first('bots', shopId);
+        return { ...first('bots', shopId), providerPolicy: { failover: 'disabled', channelTokenBudget: null } };
     if (op === 'getPrivacyPolicy')
         return first('privacyPolicies', shopId);
     if (op === 'getNotificationPolicy')
@@ -132,12 +130,16 @@ function read(op: string, input: Input): unknown {
         };
     if (op === 'getOperationsSummary')
         return {
-            asOf: now(), queuedTasks: all('workItems', shopId).filter(t => t.state === 'queued').length, overdueTasks: all('workItems', shopId).filter(t => t.dueAt && Date.parse(str(t.dueAt)) < Date.parse(now()) && !['completed', 'cancelled'].includes(str(t.state))).length, pendingApprovals: all('approvals', shopId).filter(a => a.status === 'pending').length, unknownCommands: all('commands', shopId).filter(c => c.status === 'unknown').length, roles: all('agentRoles', shopId), health: ['Meta', 'AI provider', 'Worker', 'Thông báo điện thoại'].map(component => ({ component, status: 'unknown', checkedAt: null, expiresAt: null, reason: 'Chưa có backend và kiểm tra tích hợp thật.' }))
+            asOf: now(), queuedTasks: all('workItems', shopId).filter(t => t.state === 'queued').length, overdueTasks: all('workItems', shopId).filter(t => t.dueAt && Date.parse(str(t.dueAt)) < Date.parse(now()) && !['completed', 'cancelled'].includes(str(t.state))).length, pendingApprovals: all('approvals', shopId).filter(a => a.status === 'pending').length, unknownCommands: all('commands', shopId).filter(c => c.status === 'unknown').length, roles: all('agentRoles', shopId), health: [['Meta', 'messenger'], ['AI provider', 'ai'], ['Worker', 'worker'], ['Thông báo điện thoại', 'notifications']].map(([component, runbook]) => ({ component, runbook, status: 'unknown', checkedAt: null, expiresAt: null, reason: 'Chưa có backend và kiểm tra tích hợp thật.' }))
         };
-    if (op === 'getMarketingSummary')
-        return marketingSummary(input, now(), grantedPermissions(role).includes('finance.read'));
-    if (op === 'listPaymentReviews')
+    if (op === 'getMarketingSummary') {
+        const { marketingSummary } = await import('./marketing-report');
+        return marketingSummary(input);
+    }
+    if (op === 'listPaymentReviews') {
+        const { paymentReviews } = await import('./payment-reviews');
         return paymentReviews(input);
+    }
     if (op === 'getReportSummary')
         return {
             shopId, asOf: now(), availableReports: ['inventory', 'orders', 'cashflow', 'profit_loss'].filter(type => grantedPermissions(role).includes(({ inventory: 'inventory.read', orders: 'orders.read', cashflow: 'finance.read', profit_loss: 'finance.read' } as Record<string, string>)[type] || '')),
@@ -167,6 +169,20 @@ function read(op: string, input: Input): unknown {
             data = data.filter(row => promotionCurrent(row, date));
         }
         if (op === 'listCommands') data = data.filter(canReadCommand);
+        if (op === 'listPrepJobs') {
+            const assignee = input.query.get('assignee');
+            const tasks = new Map(all('workItems', shopId).map(task => [task.id, task]));
+            data = data.map(prep => {
+                const task = tasks.get(str(prep.workItemId));
+                const dueAt = task?.dueAt ?? null;
+                const elapsed = dueAt ? Date.parse(now()) - Date.parse(str(dueAt)) : 0;
+                const overdueMinutes = elapsed > 0 && !['completed', 'cancelled'].includes(str(task?.state))
+                    ? Math.ceil(elapsed / 60_000) : null;
+                return { ...prep, dueAt, overdueMinutes };
+            });
+            if (assignee === 'me') data = data.filter(prep => prep.assigneeUserId === input.userId);
+            if (assignee === 'unassigned') data = data.filter(prep => !prep.assigneeUserId);
+        }
         if (op === 'listWorkItems') {
             const assignee = input.query.get('assignee');
             const due = input.query.get('due');
@@ -281,10 +297,21 @@ async function execute(request: MockRequest): Promise<MockResult> {
         const purpose = str(file.purpose);
         const readPermission: Record<string, string> = {
             product_image: 'catalog.read', product_import: 'catalog.import', knowledge_source: 'knowledge.read',
-            bank_statement: 'finance.read', cod_statement: 'finance.read', conversation_media: 'conversations.read'
+            bank_statement: 'finance.read', cod_statement: 'finance.read', conversation_media: 'conversations.read',
+            preparation_issue_image: 'fulfillment.read', payment_evidence_image: 'finance.reconcile'
         };
         const permission = readPermission[purpose];
+        if (purpose === 'preparation_issue_image') {
+            const sheet = find('prepJobs', str(file.resourceId), shopId);
+            ensure(permission && grantedPermissions(role).includes(permission) && rows(sheet.lines).some(line => line.issueEvidenceFileId === file.id),
+                'Tệp chứng cứ không thuộc phiếu có quyền đọc.', 404);
+        }
         ensure(permission && grantedPermissions(role).includes(permission), 'Bạn không có quyền đọc tệp theo mục đích gốc.', 403, 'FILE_READ_FORBIDDEN');
+        if (purpose === 'payment_evidence_image') {
+            ensure(file.resourceId && file.status === 'ready' && grantedPermissions(role).includes('finance.read') &&
+                grantedPermissions(role).includes('finance.reconcile'), 'Tệp không có trong phạm vi đối soát.', 404);
+            find('orders', str(file.resourceId), shopId);
+        }
         if (purpose === 'conversation_media') {
             ensure(file.resourceId, 'Tệp media thiếu phạm vi hội thoại.', 403, 'FILE_SCOPE_MISMATCH');
             find('conversations', str(file.resourceId), shopId);
@@ -310,7 +337,8 @@ async function execute(request: MockRequest): Promise<MockResult> {
         ensure(typeof purpose === 'string', 'Cần chỉ định mục đích tải tệp.', 422, 'UPLOAD_PURPOSE_REQUIRED');
         const requiredPermission: Record<string, string> = {
             product_image: 'catalog.write', product_import: 'catalog.import', knowledge_source: 'knowledge.write',
-            bank_statement: 'finance.reconcile', cod_statement: 'finance.reconcile', conversation_media: 'conversations.reply'
+            bank_statement: 'finance.reconcile', cod_statement: 'finance.reconcile', conversation_media: 'conversations.reply',
+            preparation_issue_image: 'fulfillment.write', payment_evidence_image: 'finance.reconcile'
         };
         const permission = requiredPermission[purpose];
         ensure(permission, 'Mục đích tải tệp không được hỗ trợ.', 422);
@@ -369,7 +397,7 @@ async function execute(request: MockRequest): Promise<MockResult> {
             data = await upload(input, request.form);
         }
         else if (data === undefined && meta.method === 'GET')
-            data = read(request.op, input);
+            data = await read(request.op, input);
         if (data === undefined)
             data = catalog(request.op, input);
         if (data === undefined)

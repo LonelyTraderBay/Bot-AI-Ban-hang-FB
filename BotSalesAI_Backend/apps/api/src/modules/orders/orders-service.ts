@@ -1,6 +1,6 @@
-import { ConflictException, NotFoundException, UnprocessableEntityException } from '@nestjs/common';
+import { ConflictException, ForbiddenException, NotFoundException, UnprocessableEntityException } from '@nestjs/common';
 import type { IncomingHttpHeaders } from 'node:http';
-import { Prisma, type PrismaClient, type OrderState, type SalesOrder } from '../../generated/prisma/client.js';
+import { Prisma, type PrismaClient, type OrderCustomerConfirmation, type OrderState, type SalesOrder } from '../../generated/prisma/client.js';
 import { OrderState as States } from '../../generated/prisma/enums.js';
 import { DomainConflict } from '../../http/contracts.js';
 import { listQuery, paging, validUuid } from '../../http/query.js';
@@ -9,8 +9,8 @@ import { recordAudit } from '../../platform/audit/index.js';
 import { commandDto, type ResourceRef } from '../../platform/commands/index.js';
 import { enqueueResourceUpdate } from '../../platform/outbox/index.js';
 import type { MetaInboundConfig } from '../channels/index.js';
-import { addressSnapshotView, type AddressInput } from '../customers/index.js';
-import { cancelPlannedShipment, cancelPreparation, provisionPreparation } from '../fulfillment/index.js';
+import { addressRedactions, addressSnapshotView, createAddressForCustomer, type AddressInput } from '../customers/index.js';
+import { cancelPlannedShipment, cancelPreparation, estimatedShipping, provisionPreparation } from '../fulfillment/index.js';
 import { requireQuoteEvidence } from '../inbox/index.js';
 import { reserveStock, settleStockReservation } from '../inventory/index.js';
 import { readAsSession, requireShopAccess, writeShopCommand, type AuthConfig, type ShopScope } from '../workspace/index.js';
@@ -89,6 +89,105 @@ export async function createSalesDraft(tx: Prisma.TransactionClient, shopId: str
     return order;
 }
 
+async function issueSalesQuote(tx: Prisma.TransactionClient, current: OrderDetails, now: Date,
+    priced?: Awaited<ReturnType<typeof priceOrder>>) {
+    const { shopId, id } = current;
+    priced ??= await priceOrder(tx, shopId, draftDetails(current), lineIndex(current), now);
+    requireShippingZone(priced);
+    const warnings = await quoteWarnings(tx, shopId, current.warehouseId, priced.lines);
+    if (priced.promotion && !['unpaid', 'refunded'].includes(current.paymentState) && !current.total.eq(priced.total)) {
+        throw new ConflictException();
+    }
+    return tx.orderQuote.create({
+        data: {
+            shopId, orderId: id, orderVersion: current.version, customerId: current.customerId,
+            addressSnapshotId: priced.address?.id, quoteHash: orderQuoteHash(id, current.version, priced.termsHash),
+            lines: priced.publicLines, total: priced.total, currency: priced.currency, warnings,
+            shippingRate: priced.rate ?? Prisma.DbNull, promotionSnapshot: priced.promotion ?? Prisma.DbNull,
+            createdAt: now, expiresAt: new Date(now.getTime() + quoteMs),
+        },
+    });
+}
+
+async function checkSalesQuoteEvidence(tx: Prisma.TransactionClient, current: OrderDetails, body: CustomerEvidence,
+    config: AuthConfig, meta?: MetaInboundConfig) {
+    const { shopId } = current;
+    const { quote } = await currentQuote(tx, current, body.quoteId, new Date());
+    if (body.quoteVersion !== quote.orderVersion || body.quoteHash !== quote.quoteHash) throw new ConflictException();
+    await requireQuoteEvidence(tx, {
+        shopId, customerId: current.customerId, conversationId: current.conversationId, identityId: body.customerIdentityId,
+        sourceMessageId: body.sourceMessageId, quoteId: quote.id, quoteHash: quote.quoteHash,
+        quotedAt: quote.createdAt, expiresAt: quote.expiresAt,
+    }, config, meta);
+    return quote;
+}
+
+export async function recordSalesQuoteEvidence(tx: Prisma.TransactionClient, current: OrderDetails, body: CustomerEvidence,
+    config: AuthConfig, meta?: MetaInboundConfig) {
+    const { shopId } = current;
+    const quote = await checkSalesQuoteEvidence(tx, current, body, config, meta);
+    const existing = await tx.orderCustomerConfirmation.findUnique({ where: { shopId_sourceMessageId: { shopId, sourceMessageId: body.sourceMessageId } } });
+    if (existing) {
+        if (existing.quoteId !== quote.id || existing.customerIdentityId !== body.customerIdentityId) throw new ConflictException();
+        return { id: existing.id, repeat: true };
+    }
+    return tx.orderCustomerConfirmation.create({
+        data: {
+            shopId, quoteId: quote.id, quoteHash: quote.quoteHash, customerIdentityId: body.customerIdentityId,
+            sourceMessageId: body.sourceMessageId, expiresAt: quote.expiresAt,
+        },
+    });
+}
+
+function confirmationView(record: OrderCustomerConfirmation, current: Pick<SalesOrder, 'version' | 'customerConfirmationId'>, orderVersion: number) {
+    const status = current.version !== orderVersion && current.customerConfirmationId !== record.id
+        ? 'superseded' : record.expiresAt <= new Date() ? 'expired' : 'valid';
+    return { ...record, version: 1, updatedAt: record.createdAt, status };
+}
+
+async function reusableSalesQuote(tx: Prisma.TransactionClient, current: OrderDetails, now: Date, config: AuthConfig, meta?: MetaInboundConfig) {
+    const evidence = await tx.orderCustomerConfirmation.findFirst({
+        where: { shopId: current.shopId, expiresAt: { gt: now },
+            quote: { orderId: current.id, orderVersion: current.version, customerId: current.customerId, expiresAt: { gt: now } },
+            message: { conversationId: current.conversationId ?? undefined, direction: 'inbound', redactedAt: null } },
+        orderBy: [{ createdAt: 'desc' }, { id: 'desc' }],
+    });
+    if (!evidence) return null;
+    try {
+        return await checkSalesQuoteEvidence(tx, current, { ...evidence, quoteVersion: current.version }, config, meta);
+    } catch (error) {
+        if (error instanceof ConflictException || error instanceof ForbiddenException ||
+            error instanceof NotFoundException || error instanceof UnprocessableEntityException) return null;
+        throw error;
+    }
+}
+
+export async function quoteDeliveryDraft(tx: Prisma.TransactionClient, current: OrderDetails, address: AddressInput,
+    paymentMethod: SalesOrder['paymentMethod']) {
+    const { shopId, id } = current;
+    if (current.orderState !== 'draft' || current.paymentState !== 'unpaid' || current.shippingAddressId ||
+        current.customer.privacyErasedAt || addressRedactions(current.customer).length) return null;
+    const now = new Date();
+    const lines = lineIndex(current);
+    const draft = { ...draftDetails(current), paymentMethod };
+    const shipping = await estimatedShipping(tx, shopId, address, current.currency);
+    if (shipping.outsideConfiguredRegions) return null;
+    try {
+        const preview = await priceOrder(tx, shopId, draft, lines, now);
+        if ((await quoteWarnings(tx, shopId, current.warehouseId, preview.lines)).length) return null;
+    } catch (error) {
+        if (error instanceof ConflictException || error instanceof NotFoundException || error instanceof UnprocessableEntityException) return null;
+        throw error;
+    }
+    const shippingAddress = await createAddressForCustomer(tx, shopId, current.customerId, address);
+    const priced = await priceOrder(tx, shopId, { ...draft, shippingAddressId: shippingAddress.id }, lines, now);
+    const updated = await tx.salesOrder.update({ where: orderKey(shopId, id), data: { shippingAddressId: shippingAddress.id,
+        paymentMethod, customerConfirmationId: null, version: { increment: 1 }, ...pricedOrderFields(priced) } });
+    await saveOrderLines(tx, shopId, id, priced.lines, current.lines);
+    const quote = await issueSalesQuote(tx, { ...current, ...updated }, now, priced);
+    return { order: updated, address: shippingAddress, quote, lines: priced.publicLines, rate: priced.rate };
+}
+
 export class OrdersService {
     constructor(private readonly db?: PrismaClient, private readonly config?: AuthConfig, private readonly meta?: MetaInboundConfig) {}
 
@@ -148,35 +247,26 @@ export class OrdersService {
     }
 
     quote(headers: IncomingHttpHeaders, shopId: string, id: string, requestId: string) {
-        return this.change(headers, shopId, 'quoteOrder', { id }, requestId, async tx => {
+        return this.change(headers, shopId, 'quoteOrder', { id }, requestId, async (tx, _scope, config) => {
             const current = await orderInShop(tx, shopId, id);
             requireDraft(current);
             const now = new Date();
-            const priced = await priceOrder(tx, shopId, draftDetails(current), lineIndex(current), now);
-            requireShippingZone(priced);
-            const warnings = await quoteWarnings(tx, shopId, current.warehouseId, priced.lines);
-            if (priced.promotion && !['unpaid', 'refunded'].includes(current.paymentState) && !current.total.eq(priced.total)) {
-                throw new ConflictException();
-            }
-            return tx.orderQuote.create({
-                data: {
-                    shopId, orderId: id, orderVersion: current.version, customerId: current.customerId,
-                    addressSnapshotId: priced.address?.id, quoteHash: orderQuoteHash(id, current.version, priced.termsHash),
-                    lines: priced.publicLines, total: priced.total, currency: priced.currency, warnings,
-                    shippingRate: priced.rate ?? Prisma.DbNull, promotionSnapshot: priced.promotion ?? Prisma.DbNull,
-                    createdAt: now, expiresAt: new Date(now.getTime() + quoteMs),
-                },
-            });
+            const reusable = current.conversationId ? await reusableSalesQuote(tx, current, now, config, this.meta) : null;
+            return reusable ? { id: reusable.id, repeat: true } : issueSalesQuote(tx, current, now);
         }, async (tx, scope, result) => {
             const quote = await tx.orderQuote.findUniqueOrThrow({
                 where: orderKey(shopId, result.id), include: {
-                    order: { include: { customer: true } }, addressSnapshot: { include: { address: true, } },
+                    order: { include: { customer: true } }, addressSnapshot: { include: { address: true } },
+                    confirmations: { where: { message: { direction: 'inbound', redactedAt: null } },
+                        orderBy: [{ createdAt: 'desc' }, { id: 'desc' }], take: 1 },
                 },
             });
             const { id: quoteId, orderId, orderVersion, quoteHash, lines, total, currency, warnings, expiresAt, shippingRate, addressSnapshot } = quote;
+            const evidence = quote.confirmations[0];
             return {
                 id: quoteId, shopId, orderId, orderVersion, quoteHash, lines, total: orderMoney(total, currency), warnings, expiresAt,
                 shippingRate, promotion: quote.promotionSnapshot,
+                ...(evidence?.quoteHash === quoteHash ? { customerConfirmation: confirmationView(evidence, quote.order, orderVersion) } : {}),
                 shippingAddressSnapshot: addressSnapshot && quote.order.customer.id === quote.customerId
                     ? addressSnapshotView(addressSnapshot, quote.order.customer, scope.permissions.includes('customers.read')) : null,
             };
@@ -186,34 +276,14 @@ export class OrdersService {
     evidence(headers: IncomingHttpHeaders, shopId: string, id: string, body: CustomerEvidence, requestId: string) {
         return this.change(headers, shopId, 'recordCustomerConfirmation', { id, body }, requestId, async (tx, _scope, config) => {
             const current = await orderInShop(tx, shopId, id);
-            const { quote } = await currentQuote(tx, current, body.quoteId, new Date());
-            if (body.quoteVersion !== quote.orderVersion || body.quoteHash !== quote.quoteHash) throw new ConflictException();
-            await requireQuoteEvidence(tx, {
-                shopId, customerId: current.customerId, conversationId: current.conversationId, identityId: body.customerIdentityId,
-                sourceMessageId: body.sourceMessageId, quoteId: quote.id, quoteHash: quote.quoteHash,
-                quotedAt: quote.createdAt, expiresAt: quote.expiresAt,
-            }, config, this.meta);
-            const existing = await tx.orderCustomerConfirmation.findUnique({ where: { shopId_sourceMessageId: { shopId, sourceMessageId: body.sourceMessageId } } });
-            if (existing) {
-                if (existing.quoteId !== quote.id || existing.customerIdentityId !== body.customerIdentityId) throw new ConflictException();
-                return { id: existing.id, repeat: true };
-            }
-            return tx.orderCustomerConfirmation.create({
-                data: {
-                    shopId, quoteId: quote.id, quoteHash: quote.quoteHash, customerIdentityId: body.customerIdentityId,
-                    sourceMessageId: body.sourceMessageId, expiresAt: quote.expiresAt,
-                },
-            });
+            return recordSalesQuoteEvidence(tx, current, body, config, this.meta);
         }, async (tx, _scope, result) => {
             const { quote, ...record } = await tx.orderCustomerConfirmation.findUniqueOrThrow({
                 where: orderKey(shopId, result.id), include: {
                     quote: { select: { orderVersion: true, order: { select: { version: true, customerConfirmationId: true } } } },
                 },
             });
-            const current = quote.order;
-            const status = current.version !== quote.orderVersion && current.customerConfirmationId !== record.id
-                ? 'superseded' : record.expiresAt <= new Date() ? 'expired' : 'valid';
-            return { ...record, version: 1, updatedAt: record.createdAt, status };
+            return confirmationView(record, quote.order, quote.orderVersion);
         });
     }
 

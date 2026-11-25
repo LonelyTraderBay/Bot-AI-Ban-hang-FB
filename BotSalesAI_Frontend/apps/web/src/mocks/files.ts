@@ -1,4 +1,4 @@
-import { all, find, insert, ensure, job, str, num, rows, record, id, now, future, money, sum, units, strings } from './database';
+import { all, find, insert, ensure, job, str, num, rows, record, id, now, money, sum, units, strings } from './database';
 import type { Input, Row } from './database';
 import { catalog } from './catalog';
 import statementFormats from '../../../../packages/contracts/src/statement-formats.json';
@@ -97,8 +97,23 @@ export async function upload(input: Input, form: FormData) {
     const value = form.get('file');
     ensure(value instanceof File, 'Thiếu file upload.', 422);
     const purpose = form.get('purpose');
-    ensure(typeof purpose === 'string' && ['product_image', 'product_import', 'knowledge_source', 'bank_statement', 'cod_statement', 'conversation_media'].includes(purpose), 'Cần chỉ định mục đích tải tệp hợp lệ.', 422);
+    ensure(typeof purpose === 'string' && ['product_image', 'product_import', 'knowledge_source', 'bank_statement', 'cod_statement', 'conversation_media', 'preparation_issue_image', 'payment_evidence_image'].includes(purpose), 'Cần chỉ định mục đích tải tệp hợp lệ.', 422);
     const resourceId=typeof form.get('resourceId')==='string'?String(form.get('resourceId')):null;
+    const issueEvidence = purpose === 'preparation_issue_image';
+    const transferEvidence = purpose === 'payment_evidence_image';
+    if (issueEvidence) {
+        ensure(resourceId, 'Thiếu mã phiếu chuẩn bị.', 422);
+        const sheet = find('prepJobs', resourceId, input.shopId);
+        const task = find('workItems', str(sheet.workItemId), input.shopId);
+        ensure(task.assigneeUserId === input.userId, 'Phiếu do người khác phụ trách.', 403);
+        ensure(['claimed', 'picking'].includes(str(sheet.state)), 'Phiếu đã kết thúc.', 409);
+    }
+    if (transferEvidence) {
+        ensure(resourceId, 'Thiếu mã đơn hàng.', 422);
+        const order = find('orders', resourceId, input.shopId);
+        ensure(order.orderState !== 'cancelled' && (order.orderState !== 'draft' || order.paymentMethod === 'prepay'),
+            'Đơn chưa nhận ảnh chờ đối chiếu.', 409);
+    }
     let mediaPolicy: Row | undefined;
     if (purpose === 'conversation_media') {
         ensure(resourceId, 'Tải media cần mã hội thoại.', 422, 'CONVERSATION_SCOPE_REQUIRED');
@@ -114,15 +129,16 @@ export async function upload(input: Input, form: FormData) {
     const isCsv = value.name.toLowerCase().endsWith('.csv') && ['text/csv', 'application/vnd.ms-excel', 'application/octet-stream', ''].includes(value.type);
     const isImage = ['image/png', 'image/jpeg', 'image/webp'].includes(value.type);
     const isKnowledgeFile = ['application/pdf', 'text/plain'].includes(value.type) || isCsv;
-    const purposeTypeAllowed = purpose === 'product_image' ? isImage
+    const purposeTypeAllowed = purpose === 'product_image' || issueEvidence || transferEvidence ? isImage
         : purpose === 'knowledge_source' ? isKnowledgeFile
             : purpose === 'conversation_media' ? Boolean(mediaPolicy && strings(mediaPolicy.allowedMimeTypes).includes(value.type))
                 : isCsv;
     ensure(purposeTypeAllowed, 'Định dạng không phù hợp với mục đích tải tệp.', 415);
     if (purpose === 'conversation_media') ensure(await mediaSignatureMatches(value), 'Nội dung tệp không khớp MIME đã khai báo.', 415, 'MEDIA_CONTENT_TYPE_MISMATCH');
+    if (issueEvidence || transferEvidence) ensure(await mediaSignatureMatches(value), 'Nội dung tệp không khớp MIME.', 422);
     if(purpose==='bank_statement'&&resourceId)activeAccount(input.shopId,resourceId);
     // A `ready` result here is the local synthetic scan-pass fixture, not antivirus evidence.
-    const row = insert('files', 'FileObject', input.shopId, { name: value.name, mimeType: value.type || 'text/csv', sizeBytes: value.size, status: 'ready', readUrl: null,purpose,resourceId });
+    const row = insert('files', 'FileObject', input.shopId, { name: issueEvidence ? 'anh-chung-cu-kiem-hang' : transferEvidence ? 'anh-cho-doi-chieu' : value.name, mimeType: value.type || 'text/csv', sizeBytes: value.size, status: 'ready', readUrl: null,purpose,resourceId, ...(transferEvidence ? { createdAt: now() } : {}) });
     uploads.set(str(row.id), { text: value.name.toLowerCase().endsWith('.csv') || value.type.startsWith('text/') ? await value.text() : '', file: value,purpose,resourceId });
     return row;
 }
@@ -259,7 +275,7 @@ export function files(op: string, input: Input): Row | Row[] | undefined {
     }
     if(op==='listStatementFormats')return statementFormats.formats.map(format=>({...format,resourceOptions:statementResources(shopId,format.kind)}));
     if(op==='previewStatementImport') {
-        const file=find('files',str(body.fileId),shopId),kind=file.purpose==='bank_statement'?'bank':'cod',data=statementRows(input,kind),validationToken=id('statement-preview'),expiresAt=future();
+        const file=find('files',str(body.fileId),shopId),kind=file.purpose==='bank_statement'?'bank':'cod',data=statementRows(input,kind),validationToken=id('statement-preview'),expiresAt=new Date(Date.now()+15*60000).toISOString();
         statementPreviews.set(validationToken,{shopId,fileId:str(body.fileId),accountOrCarrierId:str(body.accountOrCarrierId),sourceBatchId:str(body.sourceBatchId),formatId:str(body.formatId),kind,expiresAt});
         return {...body,kind,rows:data,validRows:data.filter(r=>!r.errors.length).length,invalidRows:data.filter(r=>r.errors.length).length,validationToken,expiresAt};
     }
@@ -336,7 +352,7 @@ export function files(op: string, input: Input): Row | Row[] | undefined {
         if(body.validationToken) {
             const preview=statementPreviews.get(str(body.validationToken));
             ensure(preview&&preview.shopId===shopId&&preview.kind===kind&&preview.fileId===body.fileId&&preview.accountOrCarrierId===body.accountOrCarrierId&&preview.sourceBatchId===body.sourceBatchId&&preview.formatId===body.formatId,'Preview không thuộc đúng tệp/tài khoản/đợt hoặc đã dùng.',409,'PREVIEW_MISMATCH');
-            ensure(Date.parse(preview.expiresAt)>Date.parse(now()),'Preview đã hết hạn; xem lại trước khi nhập.',409,'PREVIEW_EXPIRED');
+            ensure(Date.parse(preview.expiresAt)>Date.now(),'Preview đã hết hạn; xem lại trước khi nhập.',409,'PREVIEW_EXPIRED');
         }
         const previewRows=statementRows(input,kind),errors:Row[]=[];let completed=0;
         const currency=str(find('shops',shopId,shopId).currency);

@@ -14,6 +14,7 @@ const sources = {
     closeAccountingPeriod: ['accounting_period', 'finance.close', 'accounting_period.updated'],
     reopenAccountingPeriod: ['accounting_period', 'finance.close', 'accounting_period.updated'],
     matchSettlement: ['reconciliation', 'finance.reconcile', 'reconciliation.updated'],
+    updateDebtTerms: ['debt', 'finance.reconcile', undefined],
     matchCODSettlement: ['cod_settlement', 'finance.reconcile', undefined],
     createJournal: ['journal', 'finance.post', 'journal.updated'],
     postJournal: ['journal', 'finance.post', undefined],

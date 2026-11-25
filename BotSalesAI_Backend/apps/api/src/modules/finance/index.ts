@@ -26,6 +26,7 @@ export { accountingDate, writeJournal, systemAccounts, financeShop, financeMoney
 export { pairedLines } from './entries.js';
 export { bookBusinessPairs, bookDelivery, bookHandover, bookInspectedReturn } from './order-accounting.js';
 export { recordAdvertisingEstimate } from './advertising-estimates.js';
+export { recordMarketingEvidence } from './marketing-evidence.js';
 export { allocationTotals } from './reconciliation-data.js';
 export { provisionFixtureShopAccounts } from './account-policy.js';
 export { reportExportCommand, reportExportHandler } from './exports.js';

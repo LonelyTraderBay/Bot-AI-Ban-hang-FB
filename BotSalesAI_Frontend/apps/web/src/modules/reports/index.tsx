@@ -13,6 +13,7 @@ import { dateTime, formatDateOnly, isValidDateOnly } from '../../shared/model/fo
 import { Amount, DataTable, DetailLine, ErrorNotice, PageHeader, Panel, Pager, QueryState, RouteLink, Stat, Stats, Status } from '../../shared/ui/components';
 import { layoutSx } from '../../shared/ui/layout';
 import { authorizedDownloadHref, dateInTimezone, reportDateBoundary, reportFilename } from './report-utils';
+import { MarketingEvidence } from './marketing-evidence';
 
 const reportLabels: Record<ExportRequest['reportType'], string> = {
     inventory: 'Tồn kho', orders: 'Đơn hàng', cashflow: 'Dòng tiền', profit_loss: 'Lợi nhuận',
@@ -217,6 +218,7 @@ export function MarketingPage() {
     };
     const data = useApi('getMarketingSummary', query && Object.keys(query).length ? { query } : undefined, !appliedError);
     const m = data.data?.data;
+    const totalOrders = m ? m.knownAttributedOrders + (m.estimatedAttributedOrders ?? 0) + m.unknownAttributionOrders : 0;
     const marketingPeriod = m?.period;
     const [draft, setDraft] = useState({ fromDate: fromParam, toDate: toParam, bucket: bucketParam });
     const draftTouched = useRef(false);
@@ -246,8 +248,8 @@ export function MarketingPage() {
             const next = new URLSearchParams({ fromDate: marketingPeriod.fromDate, toDate: marketingPeriod.toDate, bucket: marketingPeriod.bucket });
             if (next.toString() !== search) {
                 pendingDefaultSearch.current = next.toString();
-                // Preserve a live anchor even before the router has observed its hash change.
-                void navigate({ search: '?' + next.toString(), hash: window.location.hash }, { replace: true });
+                // Server defaults can arrive while a native skip-link updates the live fragment.
+                void navigate({ search: '?' + next.toString(), hash: window.location.hash }, { replace: true, flushSync: true });
             }
         }
     }, [marketingPeriod, hasDateFilter, search, navigate]);
@@ -294,10 +296,13 @@ export function MarketingPage() {
             </Stats>
             <Stack data-testid="marketing-as-of" sx={[layoutSx.report.contextGap, layoutSx.page.sectionAfter]}>
                 {m.period && <Typography variant="body2">Kỳ {formatDateOnly(m.period.fromDate)} – {formatDateOnly(m.period.toDate)} · gộp theo {m.period.bucket === 'day' ? 'ngày' : m.period.bucket === 'week' ? 'tuần' : 'tháng'}</Typography>}
+                {m.estimatedAttributedOrders !== undefined && <Typography variant="body2">
+                    {m.knownAttributedOrders}/{totalOrders} đơn có nguồn xác định · {m.estimatedAttributedOrders} đơn quy gán ước tính · {m.unknownAttributionOrders} đơn chưa rõ nguồn
+                </Typography>}
                 <Typography variant="caption" color="text.secondary">Cập nhật {dateTime(m.asOf, m.period?.timezone || shop.timezone)} · {shop.name} · múi giờ {m.period?.timezone || shop.timezone}</Typography>
             </Stack>
             <SectionGrid data-testid="marketing-sections-grid" columns={{ xs: '1fr', lg: '1fr 1fr' }}>
-                <Panel title="Đơn theo thời gian" subtitle="Số đơn có nguồn xác định và chưa rõ nguồn do API tổng hợp.">
+                <Panel title="Đơn theo thời gian">
                     <Box role="img" aria-label={`Số đơn theo ${m.period?.bucket || 'kỳ'} trong khoảng đã chọn`} data-testid="marketing-trend-chart" sx={[{ height: 280 }, layoutSx.report.chartViewportInset]}>
                         {m.trend?.length ? <ResponsiveContainer width="100%" height="100%"><BarChart data={m.trend} accessibilityLayer>
                             <CartesianGrid stroke={colors.borderDecorative} vertical={false} />
@@ -306,12 +311,17 @@ export function MarketingPage() {
                             <Tooltip labelFormatter={value => formatDateOnly(String(value))} contentStyle={{ background: colors.raised, color: colors.textPrimary, borderColor: colors.borderDecorative }} />
                             <Legend />
                             <Bar dataKey="knownAttributedOrders" name="Có nguồn xác định" fill={colors.accent} radius={[3, 3, 0, 0]} />
+                            {!!m.estimatedAttributedOrders && <Bar dataKey="estimatedAttributedOrders" name="Quy gán ước tính" fill={colors.info} radius={[3, 3, 0, 0]} />}
                             <Bar dataKey="unknownAttributionOrders" name="Chưa rõ nguồn" fill={colors.textSecondary} radius={[3, 3, 0, 0]} />
                         </BarChart></ResponsiveContainer> : <Typography color="text.secondary" sx={layoutSx.report.emptyStateInset}>API chưa có bucket dữ liệu trong kỳ đã chọn.</Typography>}
                     </Box>
                     <DataTable label="Tổng hợp marketing theo kỳ" rows={m.trend || []} rowKey={point => point.fromDate} empty="Chưa có dữ liệu theo kỳ trong khoảng này." columns={[
                         { key: 'range', label: 'Khoảng ngày', render: point => `${formatDateOnly(point.fromDate)} – ${formatDateOnly(point.toDate)}` },
                         { key: 'known', label: 'Có nguồn', align: 'right', render: point => point.knownAttributedOrders },
+                        ...(m.estimatedAttributedOrders === undefined ? [] : [{
+                            key: 'attributionEstimate', label: 'Quy gán ước tính', align: 'right' as const,
+                            render: (point: NonNullable<typeof m.trend>[number]) => point.estimatedAttributedOrders ?? 'Chưa có',
+                        }]),
                         { key: 'unknown', label: 'Chưa rõ nguồn', align: 'right', render: point => point.unknownAttributionOrders },
                         { key: 'estimated', label: 'Chi ước tính', align: 'right', render: point => <Amount value={point.estimatedSpend} /> },
                         { key: 'actual', label: 'Chi thực tế', align: 'right', render: point => <Amount value={point.actualSpend} /> },
@@ -320,13 +330,20 @@ export function MarketingPage() {
                 <Panel title="Câu hỏi khách thường hỏi" subtitle="Các mục do API tổng hợp cung cấp.">
                     <Box data-testid="marketing-question-surface" sx={layoutSx.report.listSurfaceInset}>
                         <Stack component="ul" data-testid="marketing-top-questions" sx={[{ m: 0, p: 0 }, layoutSx.report.listMarkerInset, layoutSx.report.listItemGap]}>
-                            {m.topQuestions.length ? m.topQuestions.map((question, index) => <Typography component="li" key={`${index}-${question}`}>{question}</Typography>) : <Typography component="li" color="text.secondary">Chưa có thống kê câu hỏi trong kỳ đã chọn.</Typography>}
+                            {m.questionTopics?.length ? m.questionTopics.map(topic => <Typography component="li" key={topic.knowledgeId}>
+                                <RouteLink to={`/s/${shop.id}/knowledge/${topic.knowledgeId}`}>{topic.title}</RouteLink>
+                                {' · '}{topic.count} hội thoại · <RouteLink to={`/s/${shop.id}/inbox/${topic.conversationId}`}>Hội thoại mẫu</RouteLink>
+                                {topic.count >= 2 && <Typography variant="body2" color="text.secondary">Gợi ý nội dung cho câu hỏi lặp lại: soạn mục hỏi đáp dựa trên nội dung đã duyệt.</Typography>}
+                            </Typography>) : m.topQuestions.length ? m.topQuestions.map((question, index) =>
+                                <Typography component="li" key={`${index}-${question}`}>{question}</Typography>) :
+                                <Typography component="li" color="text.secondary">Chưa có thống kê câu hỏi trong kỳ đã chọn.</Typography>}
                         </Stack>
                     </Box>
                 </Panel>
                 {!!m.promotionResults?.length && <Panel title="Kết quả ưu đãi" subtitle="Đơn đã chốt trong kỳ. Tiền hàng tính sau giảm, trước các khoản hoàn." geometry={{ gridColumn: '1 / -1' }}>
                     <DataTable label="Kết quả ưu đãi" reflowOnMobile rows={m.promotionResults} rowKey={row => row.promotionId} columns={[
-                        { key: 'program', label: 'Chương trình', render: row => row.name },
+                        { key: 'program', label: 'Chương trình', render: row => row.orderId ?
+                            <RouteLink to={`/s/${shop.id}/orders/${row.orderId}`}>{row.name} · đơn mẫu</RouteLink> : row.name },
                         { key: 'orders', label: 'Đơn đã chốt', align: 'right', render: row => row.orders },
                         { key: 'discount', label: 'Tổng giảm', align: 'right', render: row => <Amount value={row.discount} /> },
                         { key: 'net', label: 'Tiền hàng sau giảm', align: 'right', render: row => <Amount value={row.netSales} /> },
@@ -343,10 +360,14 @@ export function MarketingPage() {
                         </BarChart></ResponsiveContainer> : <Typography color="text.secondary" sx={layoutSx.report.emptyStateInset}>Chưa có lý do mất đơn trong kỳ này.</Typography>}
                     </Box>
                     <DataTable rows={m.lostSaleReasons} rowKey={reason => reason.reason} label="Lý do không chốt đơn" empty="Chưa có lý do mất đơn trong kỳ đã chọn." columns={[
-                        { key: 'reason', label: 'Lý do', render: reason => reason.reason },
+                        { key: 'reason', label: 'Lý do', render: reason => {
+                            const source = m.lostSaleEvidence?.find(row => row.reason === reason.reason);
+                            return source ? <RouteLink to={`/s/${shop.id}/inbox/${source.conversationId}`}>{reason.reason} · hội thoại mẫu</RouteLink> : reason.reason;
+                        } },
                         { key: 'count', label: 'Số trường hợp', align: 'right', render: reason => reason.count },
                     ]} />
                 </Panel>
+                <MarketingEvidence summary={m} shopId={shop.id} />
             </SectionGrid>
             <Alert severity="info" sx={layoutSx.page.sectionBefore}>Không tự gán nguồn cho đơn thiếu dữ liệu, không ghi chi ước tính thành chi thực tế và không tự đăng nội dung hoặc tăng ngân sách.</Alert>
         </>}</QueryState>}

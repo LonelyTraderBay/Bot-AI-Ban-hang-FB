@@ -11,7 +11,8 @@ import type { AuthConfig } from '../workspace/index.js';
 import { OrdersService, type CancelOrder, type ConfirmOrder, type CustomerEvidence, type DraftPatch } from './orders-service.js';
 import type { DraftOrder } from './pricing.js';
 
-export { createSalesDraft, orderCommands, requireCurrentPaymentPrice } from './orders-service.js';
+export { orderInShop } from './order-data.js';
+export { createSalesDraft, orderCommands, quoteDeliveryDraft, recordSalesQuoteEvidence, requireCurrentPaymentPrice } from './orders-service.js';
 export { returnCommands } from './returns.js';
 import { ReturnsController, ReturnsService } from './returns.js';
 export { expireOrdersWithReservations } from './order-expiry.js';

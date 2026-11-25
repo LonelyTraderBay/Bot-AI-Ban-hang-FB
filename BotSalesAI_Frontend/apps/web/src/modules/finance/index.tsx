@@ -2,6 +2,7 @@ import {visualSx} from '@/shared/ui/visual';
 import { JournalsPage as JournalsView } from './journals';
 import {FinanceEntryEditor,financeEntryClasses as classes} from './entry-editor';
 import {StatementDialog} from './statement-import';
+import { agingLabels, DebtTermsDialog } from './debt-terms';
 import {BookProvenance,CreatePeriodDialog} from './management';
 import {ReportWarnings} from './report-warnings';
 export {OpeningBalancesPage,LedgerPage,TrialBalancePage,BalanceSheetPage} from './management';
@@ -11,7 +12,7 @@ import { ActionGroup, FormFields, PageSections, SurfaceContent } from '../../sha
 import { useState, type SyntheticEvent } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { Alert, Box, Button, MenuItem, Stack, Tab, Tabs, TextField, Typography } from '@mui/material';
-import type { AccountingPeriod, CODSettlement, FinanceEntry, ReconciliationCase } from '@botsales/contracts';
+import type { AccountingPeriod, CODSettlement, DebtItem, FinanceEntry, ReconciliationCase } from '@botsales/contracts';
 export { PaymentReviewsPage } from './payment-reviews';
 import { useApi, useCommand, usePagedApi } from '../../shared/api/hooks';
 import { useScope } from '../../shared/model/scope';
@@ -183,15 +184,18 @@ export function ReconciliationPage() {
     {importOpen && <StatementDialog onClose={() => setImport(false)}/>}</>;
 }
 export function DebtsPage() {
-    const { shop } = useScope();
+    const [terms, setTerms] = useState<DebtItem | null>(null);
     const [periodOpen,setPeriodOpen]=useState(false),[periodSaved,setPeriodSaved]=useState(false);
     const debts = useApi('listDebtItems', { query: useListQuery('listDebtItems') }), periods = useApi('listAccountingPeriods');
     const close = useCommand('closeAccountingPeriod', ['listAccountingPeriods']);
     const reopen = useCommand('reopenAccountingPeriod', ['listAccountingPeriods']);
     const [selected, setSelected] = useState<AccountingPeriod | null>(null), [approval, setApproval] = useState(''), [reason, setReason] = useState('');
-    return <><PageHeader title="Công nợ & khóa kỳ" subtitle="Theo dõi khoản còn phải thu/trả; khóa kỳ chỉ khi các điều kiện được kiểm chứng." actions={<MutationButton permission="finance.close" variant="contained" onClick={()=>setPeriodOpen(true)}>Tạo kỳ kế toán</MutationButton>}/>{periodSaved&&<Alert severity="success" role="status">Đã tạo kỳ kế toán mới.</Alert>}{periodOpen&&<CreatePeriodDialog onClose={()=>setPeriodOpen(false)} onSaved={()=>setPeriodSaved(true)}/>}<Panel title="Công nợ"><QueryState query={debts} pendingProfile="section">{debts.data && <><DataTable label="Công nợ" rows={debts.data.data} rowKey={r => r.id} columns={[
-        { key: 'id', label: 'Khoản nợ', render: r => r.id }, { key: 'who', label: 'Đối tượng', render: r => `${r.counterpartyType === 'supplier' ? 'Nhà cung cấp' : r.counterpartyType === 'carrier' ? 'Đơn vị vận chuyển' : r.counterpartyType === 'customer' ? 'Khách hàng' : r.counterpartyType} / Mã đối tượng: ${r.counterpartyId}` }, { key: 'direction', label: 'Loại', render: r => r.direction === 'receivable' ? 'Phải thu' : 'Phải trả' }, { key: 'original', label: 'Ban đầu', render: r => <Amount value={r.originalAmount}/> }, { key: 'current', label: 'Còn lại', render: r => <Amount value={r.outstandingAmount}/> }, { key: 'due', label: 'Đến hạn', render: r => dateTime(r.dueAt, shop.timezone) }, { key: 'dispute', label: 'Tranh chấp', render: r => r.disputed ? 'Đang giữ xử lý' : 'Không' }
-    ]}/><Pager page={debts.data.page}/></>}</QueryState></Panel><Panel title="Kỳ kế toán" beforeGap={"section"}><QueryState query={periods} pendingProfile="section"><DataTable label="Kỳ kế toán" rows={periods.data?.data || []} rowKey={r => r.id} columns={[
+    return <><PageHeader title="Công nợ & khóa kỳ" subtitle="Theo dõi khoản còn phải thu/trả; khóa kỳ chỉ khi các điều kiện được kiểm chứng." actions={<MutationButton permission="finance.close" variant="contained" onClick={()=>setPeriodOpen(true)}>Tạo kỳ kế toán</MutationButton>}/>{periodSaved&&<Alert severity="success" role="status">Đã tạo kỳ kế toán mới.</Alert>}{periodOpen&&<CreatePeriodDialog onClose={()=>setPeriodOpen(false)} onSaved={()=>setPeriodSaved(true)}/>}<Panel title="Công nợ"><QueryState query={debts} pendingProfile="section">{debts.data && <><DataTable label="Công nợ" reflowOnMobile rows={debts.data.data} rowKey={r => r.id} columns={[
+        { key: 'id', label: 'Khoản nợ', render: r => r.id }, { key: 'who', label: 'Đối tượng', render: r => `${r.counterpartyType === 'supplier' ? 'Nhà cung cấp' : r.counterpartyType === 'carrier' ? 'Đơn vị vận chuyển' : r.counterpartyType === 'customer' ? 'Khách hàng' : r.counterpartyType} / Mã đối tượng: ${r.counterpartyId}` }, { key: 'direction', label: 'Loại', render: r => r.direction === 'receivable' ? 'Phải thu' : 'Phải trả' }, { key: 'original', label: 'Ban đầu', render: r => <Amount value={r.originalAmount}/> }, { key: 'current', label: 'Còn lại', render: r => <Amount value={r.outstandingAmount}/> }, { key: 'due', label: 'Hạn trả và tuổi nợ', render: r => [r.dueDate ? formatDateOnly(r.dueDate) : null, r.agingBucket ? agingLabels[r.agingBucket] : null].filter(Boolean).join(' · ') || 'Chưa đặt hạn' },
+        { key: 'dispute', label: 'Tranh chấp', render: r => r.disputed ? 'Đang giữ xử lý' : 'Không' },
+        { key: 'action', label: 'Thao tác', render: r => <MutationButton permission="finance.reconcile"
+            disabled={(decimalUnits(r.outstandingAmount.amount) ?? 0n) <= 0n} onClick={() => setTerms(r)}>Hạn và tranh chấp</MutationButton> }
+    ]}/><Pager page={debts.data.page}/></>}</QueryState></Panel>{terms && <DebtTermsDialog key={terms.id} debt={terms} close={() => setTerms(null)} />}<Panel title="Kỳ kế toán" beforeGap={"section"}><QueryState query={periods} pendingProfile="section"><DataTable label="Kỳ kế toán" rows={periods.data?.data || []} rowKey={r => r.id} columns={[
         { key: 'period', label: 'Kỳ', render: r => `${formatDateOnly(r.startDate)} → ${formatDateOnly(r.endDate)}` }, { key: 'state', label: 'Trạng thái', render: r => <Status domain="accountingPeriod" value={r.state}/> }, { key: 'issues', label: 'Điều kiện còn thiếu', render: r => r.blockingIssues.join('; ') || 'Xác minh lại tại lúc ghi' },
         {
             key: 'action', label: 'Thao tác', render: r => <MutationButton permission="finance.close" onClick={() => { setSelected(r); setApproval(''); setReason(''); }}>{r.state === 'closed' ? 'Mở lại có phê duyệt' : 'Kiểm & khóa kỳ'}</MutationButton>

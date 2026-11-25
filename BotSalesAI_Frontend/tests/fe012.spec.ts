@@ -92,7 +92,7 @@ test('FE012.AC01 searchable customer and product pickers submit contract-shaped 
     await expect(page.getByText('Bản nháp', { exact: true })).toBeVisible();
 });
 
-test('FE012 canonical customer address choice completes the mock order flow with a versioned snapshot', async ({ page }) => {
+test('FE012 canonical customer address choice resumes a recorded customer quote after reopening before explicit confirmation', async ({ page }) => {
     await gotoDemo(page, '/s/shop-demo/orders/new');
     await expect(page.getByText(/Đơn xác nhận giữ snapshot địa chỉ của báo giá/)).toBeVisible();
     await chooseOption(page, 'Khách hàng', 'Linh (khách mẫu)');
@@ -111,10 +111,21 @@ test('FE012 canonical customer address choice completes the mock order flow with
     const quoteResponse = page.waitForResponse(response => response.request().method() === 'POST' && new URL(response.url()).pathname.endsWith(`/orders/${orderId}/quote`));
     await page.getByRole('button', { name: 'Lấy báo giá hiện tại' }).click();
     const quote = await quoteResponse;
-    expect((await quote.json()).data.orderVersion).toBe(1);
+    const original = (await quote.json()).data;
+    expect(original.orderVersion).toBe(1);
     const confirmationResponse = page.waitForResponse(response => response.request().method() === 'POST' && new URL(response.url()).pathname.endsWith('/customer-confirmations'));
     await page.getByRole('button', { name: 'Mô phỏng khách đồng ý báo giá' }).click();
-    await confirmationResponse;
+    const saved = (await (await confirmationResponse).json()).data;
+    await page.goBack();
+    await page.waitForURL('**/orders/new');
+    await page.goForward();
+    await page.waitForURL('**/orders/' + orderId);
+    const reopened = page.waitForResponse(response => response.request().method() === 'POST' && new URL(response.url()).pathname.endsWith('/orders/' + orderId + '/quote'));
+    await page.getByRole('button', { name: 'Lấy báo giá hiện tại' }).click();
+    const resumed = (await (await reopened).json()).data;
+    expect(resumed.id).toBe(original.id);
+    expect(resumed.customerConfirmation.id).toBe(saved.id);
+    await expect(page.getByRole('alert').filter({ hasText: 'Đã ghi nhận bằng chứng ' + saved.id })).toBeVisible();
     const confirmResponse = page.waitForResponse(response => response.request().method() === 'POST' && new URL(response.url()).pathname.endsWith(`/orders/${orderId}/confirm`));
     await page.getByRole('button', { name: 'Xác nhận đơn & giữ hàng' }).click();
     expect((await confirmResponse).status()).toBe(202);

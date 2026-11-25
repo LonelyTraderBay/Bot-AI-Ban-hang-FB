@@ -181,17 +181,53 @@ test('job detail follows an export created in the current synthetic shop and can
     await expect.poll(jobGetCount).toBe(beforeRefetch+1);
 });
 
-test('FE009.G01 shop setup checklist guides to supported pages and leaves missing contract fields unverified',async({page})=>{
-    const writes:string[]=[];
-    page.on('request',request=>{ if(request.method()!=='GET') writes.push(`${request.method()} ${new URL(request.url()).pathname}`); });
+test('FE009.G01 saves only the explicit business country and keeps dependent live readiness separate',async({page},testInfo)=>{
+    const calls = observeShopRequests(page);
+    await page.setViewportSize({width:390,height:844});
     await gotoDemo(page,'/s/shop-demo/settings/shop');
     await expect(page.getByRole('heading',{name:'Checklist thiết lập vận hành',exact:true})).toBeVisible();
-    await expect(page.getByText(/Quốc gia kinh doanh không được suy ra từ múi giờ/)).toBeVisible();
-    await expect(page.getByText('Quốc gia và giờ kinh doanh',{exact:true})).toBeVisible();
-    await expect(page.getByText('Chưa có trường cấu hình trong contract',{exact:true})).toBeVisible();
+    await testInfo.attach('R33 shown', { body: await page.screenshot({ fullPage: true }), contentType: 'image/png' });
+    const country = page.getByLabel('Quốc gia kinh doanh');
+    await expect(country).toHaveValue('');
+    await expect(page.getByText('Cần khai báo quốc gia kinh doanh để chạy bot trên Messenger.',{exact:true})).toBeVisible();
     await expect(page.locator('main#main-content').getByRole('link',{name:'Cấu hình giao hàng',exact:true})).toHaveAttribute('href','/s/shop-demo/settings/shipping');
     await expect(page.getByRole('link',{name:'Quản lý thành viên',exact:true})).toHaveAttribute('href','/s/shop-demo/settings/team');
-    expect(writes).toEqual([]);
+    await country.fill('LA');
+    await page.getByRole('button',{name:'Lưu cấu hình',exact:true}).click();
+    await expect(page.getByRole('status').filter({hasText:'Đã lưu cấu hình cửa hàng.'})).toBeVisible();
+    await expect(country).toHaveValue('LA');
+    await expect(page.getByText('Cần phê duyệt phạm vi và quyền nhà cung cấp.',{exact:true})).toBeVisible();
+    const change = calls.find(call=>call.method==='PATCH'&&call.path.endsWith('/shops/shop-demo'));
+    expect(JSON.parse(change?.body||'null')).toEqual({businessCountry:'LA'});
+    expect(change?.headers['if-match']).toMatch(/^"\d+"$/);
+});
+
+test('FE009.G03 saves text policy dates and displays them on the revision',async({page},testInfo)=>{
+    const calls = observeShopRequests(page);
+    await page.setViewportSize({width:390,height:844});
+    await gotoDemo(page,'/s/shop-demo/knowledge');
+    await page.getByRole('button',{name:'Thêm nguồn kiến thức',exact:true}).click();
+    const dialog = page.getByRole('dialog',{name:'Nguồn kiến thức mới'});
+    await expect(dialog).toBeVisible();
+    await testInfo.attach('R23 editor shown', { body: await page.screenshot({ fullPage: true }), contentType: 'image/png' });
+    await dialog.getByLabel('Tiêu đề').fill('Chính sách đổi trả mẫu');
+    await dialog.getByLabel('Nội dung',{exact:true}).fill('Giữ phiếu mua để đối chiếu.');
+    await dialog.getByLabel('Mã chủ đề chính sách').fill('returns:standard');
+    await dialog.getByLabel('Hiệu lực từ ngày').fill('2030-07-20');
+    await dialog.getByLabel('Hiệu lực đến hết ngày').fill('2030-07-19');
+    const save = dialog.getByRole('button',{name:'Lưu bản nháp',exact:true});
+    await expect(save).toBeDisabled();
+    await dialog.getByLabel('Hiệu lực đến hết ngày').fill('2030-07-21');
+    await save.click();
+    await page.getByRole('link',{name:'Mở nguồn vừa tạo',exact:true}).click();
+    await expect(page.getByRole('heading',{name:'Chính sách đổi trả mẫu',exact:true})).toBeVisible();
+    await expect(page.getByText('returns:standard',{exact:true})).toBeVisible();
+    await expect(page.getByText('2030-07-20 – 2030-07-21',{exact:false})).toBeVisible();
+    const change = calls.find(call=>call.method==='POST'&&call.path.endsWith('/shops/shop-demo/knowledge'));
+    expect(JSON.parse(change?.body||'null')).toMatchObject({policyKey:'returns:standard',validFrom:'2030-07-20',validUntil:'2030-07-21'});
+    await page.getByRole('button',{name:'Sửa bản nháp',exact:true}).click();
+    await expect(page.getByRole('dialog',{name:'Sửa nháp'}).getByLabel('Hiệu lực đến hết ngày')).toHaveValue('2030-07-21');
+    await testInfo.attach('R24 editor shown', { body: await page.screenshot({ fullPage: true }), contentType: 'image/png' });
 });
 
 test('FE009.G05 consent management persists challenges without granting consent before customer action',async({page})=>{

@@ -1,4 +1,4 @@
-import { all, db, find, insert, ensure, checkVersion, touch, command, str, num, rows, now, future, stockFor, move, units, sum, money, record, assertOpenPeriod } from './database';
+import { all, db, find, insert, ensure, checkVersion, touch, command, str, num, rows, now, future, stockFor, move, units, sum, money, record, variant, assertOpenPeriod } from './database';
 import type { Input, Row } from './database';
 import { pricedLines } from './catalog';
 import { postBusinessJournal, fiscalDate } from './accounting';
@@ -8,6 +8,19 @@ import { applyPromotion, assertPaidPromotionPrice, assertPromotionQuote } from '
 
 function pricedOrder(shopId: string, order: Row) {
     return applyPromotion(shopId, str(order.warehouseId), str(order.promotionId), pricedLines(shopId, rows(order.lines)));
+}
+function pinApprovedProductImage(shopId: string, variantId: string) {
+    const product = variant(shopId, variantId).product;
+    const ids = new Set(all('knowledge', shopId).map(doc => doc.publishedRevisionId).filter(Boolean));
+    const sources = all('revisions', shopId).filter(revision => ids.has(revision.id)).flatMap(revision => {
+        const template = record(revision.template);
+        return template.kind === 'product_content' && template.productId === product.id && template.imageFileId
+            ? [{ fileId: str(template.imageFileId), knowledgeRevisionId: str(revision.id) }] : [];
+    });
+    const image = sources[0];
+    const unambiguous = image && sources.every(source => source.fileId === image.fileId);
+    const file = image && all('files', shopId).find(row => row.id === image.fileId);
+    return unambiguous && file?.status === 'ready' && file.purpose === 'product_image' ? image : null;
 }
 /** Confirmation hash belongs to the mock server, never computed by the UI as authority. */
 export async function hashValue(value: unknown) {
@@ -52,10 +65,17 @@ export async function orders(op: string, input: Input): Promise<Row | undefined>
             const shippingRate = shippingRateForQuote(shopId, shippingAddressSnapshot);
             const { lines, promotion } = pricedOrder(shopId, order);
             assertPaidPromotionPrice(order, lines);
-            const quote = insert('quotes', 'OrderQuote', shopId, {
-                orderId: order.id, orderVersion: order.version, lines, promotion, total: money(sum(lines, 'lineTotal'), str(find('shops', shopId, shopId).currency)), shippingAddressSnapshot, shippingRate, expiresAt: future(), warnings: ['Báo giá mô phỏng, chưa gửi khách.']
-            });
-            quote.quoteHash = await hashValue({ orderId: order.id, orderVersion: order.version, lines, total: quote.total, shippingAddressSnapshot, shippingRate, promotion });
+            const total = money(sum(lines, 'lineTotal'), str(find('shops', shopId, shopId).currency));
+            const quoteHash = await hashValue({ orderId: order.id, orderVersion: order.version, lines, total, shippingAddressSnapshot, shippingRate, promotion });
+            const currentQuote = all('quotes', shopId).find(quote => quote.orderId === order.id && quote.orderVersion === order.version &&
+                quote.quoteHash === quoteHash && Date.parse(str(quote.expiresAt)) > Date.parse(now()) &&
+                all('confirmations', shopId).some(proof => proof.quoteId === quote.id && proof.status === 'valid'));
+            if (currentQuote) {
+                const customerConfirmation = all('confirmations', shopId).find(proof => proof.quoteId === currentQuote.id && proof.status === 'valid');
+                return { ...currentQuote, customerConfirmation };
+            }
+            const quote = insert('quotes', 'OrderQuote', shopId, { orderId: order.id, orderVersion: order.version, lines, promotion, total,
+                shippingAddressSnapshot, shippingRate, quoteHash, expiresAt: future(), warnings: ['Báo giá mô phỏng, chưa gửi khách.'] });
             order.allowedActions = ['edit', 'quote', 'confirm', 'cancel', 'record_payment'];
             return quote;
         }
@@ -100,7 +120,7 @@ export async function orders(op: string, input: Input): Promise<Row | undefined>
                 kind: 'prepare_order', source: { type: 'order', id: order.id }, state: 'queued', assigneeUserId: null, dueAt: null, blockedReason: null, allowedActions: ['claim']
             });
             insert('prepJobs', 'PrepJob', shopId, {
-                orderId: order.id, assigneeUserId: null, workItemId: task.id, state: 'queued', lines: rows(quote.lines).map(l => ({ orderLineId: l.id, sku: l.sku, requiredQuantity: l.quantity, pickedQuantity: 0, hasIssue: false }))
+                orderId: order.id, assigneeUserId: null, workItemId: task.id, state: 'queued', lines: rows(quote.lines).map(l => ({ orderLineId: l.id, sku: l.sku, requiredQuantity: l.quantity, pickedQuantity: 0, hasIssue: false, productImageSnapshot: pinApprovedProductImage(shopId, str(l.variantId)) }))
             });
             insert('notifications', 'Notification', shopId, {
                 workItemId: task.id, source: { type: 'order', id: order.id }, recipientUserId: input.userId, channel: 'in_app', title: `Đơn ${str(order.id)} cần chuẩn bị`, safeBody: `${rows(order.lines).length} mặt hàng cần chuẩn bị.`, deliveryStatus: 'queued', openedAt: null, acknowledgedAt: null, allowedActions: ['acknowledge']

@@ -566,6 +566,14 @@
       "Shop": {
         "type": "object",
         "properties": {
+          "businessCountry": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "pattern": "^[A-Z]{2}$",
+            "description": "Explicit business country code. A null value means the shop has not supplied it."
+          },
           "id": {
             "$ref": "#/components/schemas/Id"
           },
@@ -609,6 +617,14 @@
       "ShopWrite": {
         "type": "object",
         "properties": {
+          "businessCountry": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "pattern": "^[A-Z]{2}$",
+            "description": "Explicit business country code. A null value means the shop has not supplied it."
+          },
           "name": {
             "type": "string",
             "minLength": 1,
@@ -637,6 +653,14 @@
       "ShopPatch": {
         "type": "object",
         "properties": {
+          "businessCountry": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "pattern": "^[A-Z]{2}$",
+            "description": "Explicit business country code. A null value means the shop has not supplied it."
+          },
           "name": {
             "type": "string",
             "minLength": 1,
@@ -1809,6 +1833,9 @@
                 "type": "null"
               }
             ]
+          },
+          "customerConfirmation": {
+            "$ref": "#/components/schemas/CustomerConfirmation"
           }
         },
         "required": [
@@ -2809,6 +2836,31 @@
       "Knowledge": {
         "type": "object",
         "properties": {
+          "policyKey": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "maxLength": 100,
+            "pattern": "^(promotion|faq|shipping|returns):[a-z0-9]+(?:-[a-z0-9]+)*$",
+            "description": "Stable topic key for policy text. Within a shop, approved revisions of different sources with the same key cannot overlap."
+          },
+          "validFrom": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "date",
+            "description": "First effective date in the shop time zone, inclusive."
+          },
+          "validUntil": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "date",
+            "description": "Last effective date in the shop time zone, inclusive."
+          },
           "id": {
             "$ref": "#/components/schemas/Id"
           },
@@ -2956,6 +3008,31 @@
       "KnowledgeWrite": {
         "type": "object",
         "properties": {
+          "policyKey": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "maxLength": 100,
+            "pattern": "^(promotion|faq|shipping|returns):[a-z0-9]+(?:-[a-z0-9]+)*$",
+            "description": "Stable topic key for policy text. Within a shop, approved revisions of different sources with the same key cannot overlap."
+          },
+          "validFrom": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "date",
+            "description": "First effective date in the shop time zone, inclusive."
+          },
+          "validUntil": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "date",
+            "description": "Last effective date in the shop time zone, inclusive."
+          },
           "title": {
             "type": "string",
             "minLength": 1,
@@ -3586,6 +3663,51 @@
           "requireHumanOrderConfirmation": {
             "type": "boolean"
           },
+          "providerPolicy": {
+            "type": "object",
+            "description": "Effective provider policy reported by getBotConfig for this shop. Null channel budget means no approved active provider runtime was found.",
+            "properties": {
+              "failover": {
+                "type": "string",
+                "enum": [
+                  "disabled"
+                ]
+              },
+              "channelTokenBudget": {
+                "anyOf": [
+                  {
+                    "type": "object",
+                    "properties": {
+                      "channel": {
+                        "type": "string",
+                        "enum": [
+                          "facebook_messenger"
+                        ]
+                      },
+                      "dailyLimit": {
+                        "type": "integer",
+                        "minimum": 1,
+                        "maximum": 2147483647
+                      }
+                    },
+                    "required": [
+                      "channel",
+                      "dailyLimit"
+                    ],
+                    "additionalProperties": false
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              }
+            },
+            "required": [
+              "failover",
+              "channelTokenBudget"
+            ],
+            "additionalProperties": false
+          },
           "publishedAt": {
             "anyOf": [
               {
@@ -4140,7 +4262,9 @@
               "knowledge_source",
               "bank_statement",
               "cod_statement",
-              "conversation_media"
+              "conversation_media",
+              "preparation_issue_image",
+              "payment_evidence_image"
             ]
           },
           "resourceId": {
@@ -5465,7 +5589,9 @@
               "knowledge_source",
               "bank_statement",
               "cod_statement",
-              "conversation_media"
+              "conversation_media",
+              "preparation_issue_image",
+              "payment_evidence_image"
             ]
           },
           "resourceId": {
@@ -5720,6 +5846,31 @@
       "KnowledgeRevision": {
         "type": "object",
         "properties": {
+          "policyKey": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "maxLength": 100,
+            "pattern": "^(promotion|faq|shipping|returns):[a-z0-9]+(?:-[a-z0-9]+)*$",
+            "description": "Stable topic key for policy text. Within a shop, approved revisions of different sources with the same key cannot overlap."
+          },
+          "validFrom": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "date",
+            "description": "First effective date in the shop time zone, inclusive."
+          },
+          "validUntil": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "date",
+            "description": "Last effective date in the shop time zone, inclusive."
+          },
           "id": {
             "$ref": "#/components/schemas/Id"
           },
@@ -6285,6 +6436,31 @@
       "KnowledgeWritePatch": {
         "type": "object",
         "properties": {
+          "policyKey": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "maxLength": 100,
+            "pattern": "^(promotion|faq|shipping|returns):[a-z0-9]+(?:-[a-z0-9]+)*$",
+            "description": "Stable topic key for policy text. Within a shop, approved revisions of different sources with the same key cannot overlap."
+          },
+          "validFrom": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "date",
+            "description": "First effective date in the shop time zone, inclusive."
+          },
+          "validUntil": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "date",
+            "description": "Last effective date in the shop time zone, inclusive."
+          },
           "title": {
             "type": "string",
             "minLength": 1,
@@ -7456,6 +7632,24 @@
               "cancelled"
             ]
           },
+          "dueAt": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/DateTime"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "overdueMinutes": {
+            "type": [
+              "integer",
+              "null"
+            ],
+            "minimum": 1,
+            "description": "Minutes since the work item's deadline, rounded up while the work is open."
+          },
           "lines": {
             "type": "array",
             "items": {
@@ -7478,6 +7672,39 @@
                 },
                 "hasIssue": {
                   "type": "boolean"
+                },
+                "productImageSnapshot": {
+                  "type": [
+                    "object",
+                    "null"
+                  ],
+                  "description": "Product image from the approved knowledge revision pinned when the preparation line was created.",
+                  "properties": {
+                    "fileId": {
+                      "type": "string",
+                      "format": "uuid"
+                    },
+                    "knowledgeRevisionId": {
+                      "type": "string",
+                      "format": "uuid"
+                    }
+                  },
+                  "required": [
+                    "fileId",
+                    "knowledgeRevisionId"
+                  ],
+                  "additionalProperties": false
+                },
+                "issueEvidenceFileId": {
+                  "anyOf": [
+                    {
+                      "$ref": "#/components/schemas/Id"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ],
+                  "description": "Last private issue evidence saved for the line, visible with preparation read permission."
                 }
               },
               "required": [
@@ -7543,6 +7770,17 @@
                 "type": "null"
               }
             ]
+          },
+          "issueEvidenceFileId": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Id"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Private evidence uploaded for this preparation sheet by the picker."
           }
         },
         "required": [
@@ -9381,6 +9619,43 @@
           },
           "disputed": {
             "type": "boolean"
+          },
+          "dueDate": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "disputeHold": {
+            "type": "boolean"
+          },
+          "agingBucket": {
+            "type": "string",
+            "enum": [
+              "no_due_date",
+              "current",
+              "overdue_1_30",
+              "overdue_31_60",
+              "overdue_61_90",
+              "overdue_over_90",
+              "settled"
+            ]
+          },
+          "daysOverdue": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "minimum": 0
+              },
+              {
+                "type": "null"
+              }
+            ]
           }
         },
         "required": [
@@ -9784,6 +10059,29 @@
                 "type": "null"
               }
             ]
+          },
+          "label": {
+            "type": "string",
+            "maxLength": 160
+          },
+          "maxAgeMs": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "lagMs": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "runbook": {
+            "type": "string",
+            "enum": [
+              "database",
+              "worker",
+              "messenger",
+              "ai",
+              "notifications",
+              "budgets"
+            ]
           }
         },
         "required": [
@@ -9885,6 +10183,17 @@
           "text": {
             "type": "string",
             "maxLength": 10000
+          },
+          "workSummary": {
+            "description": "Available for newly published digests. Pending and blocked reflect the closing instant; completed reflects the current-at-cutoff completion within the half-open period. Each group includes up to 100 source IDs.",
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/DigestWorkSummary"
+              },
+              {
+                "type": "null"
+              }
+            ]
           }
         },
         "required": [
@@ -10002,6 +10311,236 @@
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/PromotionPerformance"
+            }
+          },
+          "demandStock": {
+            "type": "array",
+            "description": "The 25 variants with highest confirmed units in the selected period, with current available stock in the shop default warehouse and one order reference. Omitted without both source permissions.",
+            "maxItems": 25,
+            "items": {
+              "type": "object",
+              "properties": {
+                "variantId": {
+                  "$ref": "#/components/schemas/Id"
+                },
+                "sku": {
+                  "type": "string",
+                  "maxLength": 80
+                },
+                "orderedUnits": {
+                  "type": "integer",
+                  "minimum": 0
+                },
+                "availableUnits": {
+                  "anyOf": [
+                    {
+                      "type": "integer",
+                      "minimum": 0
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "orderId": {
+                  "$ref": "#/components/schemas/Id"
+                }
+              },
+              "required": [
+                "variantId",
+                "sku",
+                "orderedUnits",
+                "availableUnits",
+                "orderId"
+              ],
+              "additionalProperties": false
+            }
+          },
+          "questionTopics": {
+            "type": "array",
+            "description": "Distinct conversations grouped by the approved knowledge source captured by bot replies, with one conversation reference. Omitted without source permissions.",
+            "maxItems": 10,
+            "items": {
+              "type": "object",
+              "properties": {
+                "knowledgeId": {
+                  "$ref": "#/components/schemas/Id"
+                },
+                "title": {
+                  "type": "string",
+                  "maxLength": 180
+                },
+                "count": {
+                  "type": "integer",
+                  "minimum": 0
+                },
+                "conversationId": {
+                  "$ref": "#/components/schemas/Id"
+                }
+              },
+              "required": [
+                "knowledgeId",
+                "title",
+                "count",
+                "conversationId"
+              ],
+              "additionalProperties": false
+            }
+          },
+          "lostSaleEvidence": {
+            "type": "array",
+            "description": "Recorded sales blockers with one conversation reference per reason. Omitted without conversation permission.",
+            "maxItems": 10,
+            "items": {
+              "type": "object",
+              "properties": {
+                "reason": {
+                  "type": "string",
+                  "maxLength": 300
+                },
+                "count": {
+                  "type": "integer",
+                  "minimum": 0
+                },
+                "conversationId": {
+                  "$ref": "#/components/schemas/Id"
+                }
+              },
+              "required": [
+                "reason",
+                "count",
+                "conversationId"
+              ],
+              "additionalProperties": false
+            }
+          },
+          "estimatedAttributedOrders": {
+            "type": "integer",
+            "minimum": 0,
+            "description": "Orders tied to a reviewed estimated attribution source. Excluded from known and unknown counts."
+          },
+          "campaignResults": {
+            "type": "array",
+            "description": "Up to 50 campaign results using reviewed evidence. Order and journal references are samples and require source permissions. Campaign spend is null without explicitly linked posted advertising expense.",
+            "maxItems": 50,
+            "items": {
+              "type": "object",
+              "properties": {
+                "channel": {
+                  "type": "string",
+                  "maxLength": 50
+                },
+                "campaignId": {
+                  "type": "string",
+                  "maxLength": 100
+                },
+                "knownOrders": {
+                  "type": "integer",
+                  "minimum": 0
+                },
+                "estimatedOrders": {
+                  "type": "integer",
+                  "minimum": 0
+                },
+                "orderId": {
+                  "anyOf": [
+                    {
+                      "$ref": "#/components/schemas/Id"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "attributionSourceId": {
+                  "anyOf": [
+                    {
+                      "type": "string",
+                      "maxLength": 160
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "actualSpend": {
+                  "anyOf": [
+                    {
+                      "$ref": "#/components/schemas/Money"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "spendJournalId": {
+                  "anyOf": [
+                    {
+                      "$ref": "#/components/schemas/Id"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                }
+              },
+              "required": [
+                "channel",
+                "campaignId",
+                "knownOrders",
+                "estimatedOrders",
+                "orderId",
+                "attributionSourceId",
+                "actualSpend",
+                "spendJournalId"
+              ],
+              "additionalProperties": false
+            }
+          },
+          "actualSpendSources": {
+            "type": "array",
+            "description": "A sample of recorded advertising journal sources, grouped by campaign or unassigned spend, and available only with finance.read.",
+            "maxItems": 25,
+            "items": {
+              "type": "object",
+              "properties": {
+                "channel": {
+                  "anyOf": [
+                    {
+                      "type": "string",
+                      "maxLength": 50
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "campaignId": {
+                  "anyOf": [
+                    {
+                      "type": "string",
+                      "maxLength": 100
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "journalId": {
+                  "$ref": "#/components/schemas/Id"
+                },
+                "sourceId": {
+                  "type": "string",
+                  "maxLength": 160
+                }
+              },
+              "required": [
+                "channel",
+                "campaignId",
+                "journalId",
+                "sourceId"
+              ],
+              "additionalProperties": false
             }
           }
         },
@@ -14054,6 +14593,10 @@
                 "type": "null"
               }
             ]
+          },
+          "estimatedAttributedOrders": {
+            "type": "integer",
+            "minimum": 0
           }
         },
         "required": [
@@ -14388,6 +14931,9 @@
           },
           "netSales": {
             "$ref": "#/components/schemas/Money"
+          },
+          "orderId": {
+            "$ref": "#/components/schemas/Id"
           }
         },
         "required": [
@@ -14519,6 +15065,32 @@
           },
           "updatedAt": {
             "$ref": "#/components/schemas/DateTime"
+          },
+          "pendingTransferImages": {
+            "type": "array",
+            "description": "Unverified payment pictures scoped to the order. Available with reconciliation permission.",
+            "items": {
+              "type": "object",
+              "properties": {
+                "fileId": {
+                  "$ref": "#/components/schemas/Id"
+                },
+                "status": {
+                  "type": "string",
+                  "const": "pending_review"
+                },
+                "createdAt": {
+                  "type": "string",
+                  "format": "date-time"
+                }
+              },
+              "required": [
+                "fileId",
+                "status",
+                "createdAt"
+              ],
+              "additionalProperties": false
+            }
           }
         },
         "required": [
@@ -15176,6 +15748,11 @@
           "forbiddenPromises": {
             "type": "string",
             "maxLength": 1000
+          },
+          "imageFileId": {
+            "type": "string",
+            "format": "uuid",
+            "description": "Optional catalog image selected for approval with this knowledge revision."
           }
         },
         "required": [
@@ -15249,6 +15826,90 @@
             "$ref": "#/components/schemas/SalesScriptKnowledgeTemplate"
           }
         ]
+      },
+      "DebtTermsUpdate": {
+        "type": "object",
+        "properties": {
+          "expectedVersion": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "dueDate": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "disputeHold": {
+            "type": "boolean"
+          },
+          "reason": {
+            "type": "string",
+            "minLength": 5,
+            "maxLength": 1000
+          }
+        },
+        "required": [
+          "expectedVersion",
+          "dueDate",
+          "disputeHold",
+          "reason"
+        ],
+        "additionalProperties": false
+      },
+      "DigestWorkSummary": {
+        "type": "object",
+        "properties": {
+          "coverage": {
+            "type": "string",
+            "enum": [
+              "complete",
+              "partial"
+            ]
+          },
+          "pending": {
+            "$ref": "#/components/schemas/DigestWorkGroup"
+          },
+          "blocked": {
+            "$ref": "#/components/schemas/DigestWorkGroup"
+          },
+          "completed": {
+            "$ref": "#/components/schemas/DigestWorkGroup"
+          }
+        },
+        "required": [
+          "coverage",
+          "pending",
+          "blocked",
+          "completed"
+        ],
+        "additionalProperties": false
+      },
+      "DigestWorkGroup": {
+        "type": "object",
+        "properties": {
+          "count": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "workItemIds": {
+            "type": "array",
+            "maxItems": 100,
+            "items": {
+              "$ref": "#/components/schemas/Id"
+            }
+          }
+        },
+        "required": [
+          "count",
+          "workItemIds"
+        ],
+        "additionalProperties": false
       }
     }
   }

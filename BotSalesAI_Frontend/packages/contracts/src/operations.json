@@ -5506,6 +5506,32 @@
         "schema": {
           "type": "string"
         }
+      },
+      {
+        "name": "state",
+        "required": false,
+        "schema": {
+          "type": "string",
+          "enum": [
+            "queued",
+            "claimed",
+            "picking",
+            "packed",
+            "handed_over",
+            "cancelled"
+          ]
+        }
+      },
+      {
+        "name": "assignee",
+        "required": false,
+        "schema": {
+          "type": "string",
+          "enum": [
+            "me",
+            "unassigned"
+          ]
+        }
       }
     ],
     "bodyType": "json"
@@ -6810,6 +6836,52 @@
       }
     ],
     "headers": [],
+    "queryParameters": [],
+    "bodyType": "json"
+  },
+  "updateDebtTerms": {
+    "method": "PATCH",
+    "path": "/shops/{shopId}/debts/{resourceId}",
+    "permission": "finance.reconcile",
+    "versionRequired": false,
+    "requestSchema": "DebtTermsUpdate",
+    "responseSchema": "DebtItemResponse",
+    "status": 200,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      },
+      {
+        "name": "resourceId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
+    "headers": [
+      {
+        "name": "X-CSRF-Token",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16
+        }
+      },
+      {
+        "name": "Idempotency-Key",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16,
+          "maxLength": 200
+        }
+      }
+    ],
     "queryParameters": [],
     "bodyType": "json"
   },

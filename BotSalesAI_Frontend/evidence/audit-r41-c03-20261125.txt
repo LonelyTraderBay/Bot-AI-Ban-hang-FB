@@ -1,0 +1,193 @@
+
+> botsales-frontend@0.1.0 test:e2e
+> node scripts/run-e2e.mjs tests/fe013.spec.ts tests/ui-fulfillment-layout.spec.ts --project=chromium --project=firefox --workers=1
+
+
+> npm run setup
+
+> botsales-frontend@0.1.0 setup
+> node scripts/setup.mjs
+
+{"status":"PASS","outputs":15,"schemas":381,"operations":259,"routes":67}
+Copying the worker script at "D:\BotSalesAI\artifacts\audit-r49-plan-20261125\src\BotSalesAI_Frontend\apps\web\public"...
+
+Worker script successfully copied!
+  - public
+
+Continue by describing the network in your application:
+
+
+https://mswjs.io/docs/quick-start
+
+Thiết lập xong. npm run dev chạy frontend mô phỏng; không kết nối khách hàng hoặc provider thật.
+
+> npm run build
+
+> botsales-frontend@0.1.0 build
+> npm run generate:check && npm run typecheck && npm run build --workspace @botsales/web
+
+
+> botsales-frontend@0.1.0 generate:check
+> node scripts/generate.mjs --check
+
+{"status":"PASS","outputs":15,"schemas":381,"operations":259,"routes":67}
+
+> botsales-frontend@0.1.0 typecheck
+> tsc -p apps/web/tsconfig.json --noEmit
+
+
+> @botsales/web@0.1.0 build
+> vite build --mode production
+
+vite v7.3.7 building client environment for production...
+transforming...
+../../node_modules/zod/v4/core/util.js (400:0): A comment
+
+"// Wrapped in a `@__PURE__` IIFE: esbuild never tree-shakes a top-level initializer that contains a member access on `Number`, so the bare object literal survived into every bundle."
+
+in "../../node_modules/zod/v4/core/util.js" contains an annotation that Rollup cannot interpret due to the position of the comment. The comment will be removed to avoid issues.
+../../node_modules/zod/v4/core/regexes.js (74:0): A comment
+
+"/** Anchors a pattern source. The interpolation lives here rather than at the call site because
+ * esbuild will not drop a `@__PURE__` call whose own argument interpolates a variable, but it
+ * will drop `anchor(dateSource)`. Keeping it inline pinned `date` into every bundle. */"
+
+in "../../node_modules/zod/v4/core/regexes.js" contains an annotation that Rollup cannot interpret due to the position of the comment. The comment will be removed to avoid issues.
+✓ 1974 modules transformed.
+rendering chunks...
+computing gzip size...
+dist/index.html                                1.23 kB │ gzip:   0.61 kB
+dist/assets/index-BV-JM2ej.css                 3.73 kB │ gzip:   1.39 kB
+dist/assets/download-8lJFmiSZ.js               0.23 kB │ gzip:   0.17 kB
+dist/assets/hooks-BDKGg6qA.js                  4.73 kB │ gzip:   2.24 kB
+dist/assets/draft-conflict-DMnFSsgv.js         5.37 kB │ gzip:   2.49 kB
+dist/assets/index-WL8gZu3g.js                  8.73 kB │ gzip:   3.42 kB
+dist/assets/index-D6OBuTb1.js                 10.41 kB │ gzip:   3.61 kB
+dist/assets/index-_w0usDqo.js                 18.47 kB │ gzip:   6.84 kB
+dist/assets/index-DC1NeWo5.js                 20.05 kB │ gzip:   7.30 kB
+dist/assets/index-D347em6y.js                 20.33 kB │ gzip:   6.65 kB
+dist/assets/index-Brqyn8Us.js                 20.71 kB │ gzip:   6.71 kB
+dist/assets/index-CGFNpsch.js                 22.81 kB │ gzip:   7.35 kB
+dist/assets/index-CsP2HgQf.js                 25.25 kB │ gzip:   8.60 kB
+dist/assets/index-B2aJEYeP.js                 26.47 kB │ gzip:   9.27 kB
+dist/assets/index-4eKPI-P8.js                 29.97 kB │ gzip:   9.43 kB
+dist/assets/query-Df7VyXaF.js                 33.15 kB │ gzip:   9.92 kB
+dist/assets/index-DzsxA8fh.js                 34.61 kB │ gzip:  11.50 kB
+dist/assets/index-BsBl8QTp.js                 34.72 kB │ gzip:  10.88 kB
+dist/assets/index-BziM26PW.js                 37.78 kB │ gzip:  12.45 kB
+dist/assets/index-D8pLZ9fm.js                 38.56 kB │ gzip:  11.88 kB
+dist/assets/index-rR7WCBDk.js                 42.25 kB │ gzip:  11.65 kB
+dist/assets/i18n-CWH4T2DL.js                  47.13 kB │ gzip:  15.53 kB
+dist/assets/index-Cq7Lt_0N.js                 73.33 kB │ gzip:  20.38 kB
+dist/assets/schemas-5LedEglp.js              114.74 kB │ gzip:  34.86 kB
+dist/assets/index-d8sFczbL.js                119.20 kB │ gzip:  38.14 kB
+dist/assets/contract-data-CABbqFL2.js        222.36 kB │ gzip:  29.32 kB
+dist/assets/react-runtime-gLMyUIL2.js        279.79 kB │ gzip:  90.28 kB
+dist/assets/charts-CefMFtCR.js               320.23 kB │ gzip:  96.79 kB
+dist/assets/mui-DHHWwXqy.js                  341.46 kB │ gzip: 104.32 kB
+dist/assets/schema-validation-Cmf6uIdq.js  1,398.88 kB │ gzip: 105.38 kB
+
+(!) Some chunks are larger than 500 kB after minification. Consider:
+- Using dynamic import() to code-split the application
+- Use build.rollupOptions.output.manualChunks to improve chunking: https://rollupjs.org/configuration-options/#output-manualchunks
+- Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.
+✓ built in 5.36s
+
+> npm run build:demo
+
+> botsales-frontend@0.1.0 build:demo
+> npm run generate:check && npm run typecheck && npm run build:demo --workspace @botsales/web
+
+
+> botsales-frontend@0.1.0 generate:check
+> node scripts/generate.mjs --check
+
+{"status":"PASS","outputs":15,"schemas":381,"operations":259,"routes":67}
+
+> botsales-frontend@0.1.0 typecheck
+> tsc -p apps/web/tsconfig.json --noEmit
+
+
+> @botsales/web@0.1.0 build:demo
+> vite build --mode demo --outDir dist-demo
+
+vite v7.3.7 building client environment for demo...
+transforming...
+../../node_modules/zod/v4/core/util.js (400:0): A comment
+
+"// Wrapped in a `@__PURE__` IIFE: esbuild never tree-shakes a top-level initializer that contains a member access on `Number`, so the bare object literal survived into every bundle."
+
+in "../../node_modules/zod/v4/core/util.js" contains an annotation that Rollup cannot interpret due to the position of the comment. The comment will be removed to avoid issues.
+../../node_modules/zod/v4/core/regexes.js (74:0): A comment
+
+"/** Anchors a pattern source. The interpolation lives here rather than at the call site because
+ * esbuild will not drop a `@__PURE__` call whose own argument interpolates a variable, but it
+ * will drop `anchor(dateSource)`. Keeping it inline pinned `date` into every bundle. */"
+
+in "../../node_modules/zod/v4/core/regexes.js" contains an annotation that Rollup cannot interpret due to the position of the comment. The comment will be removed to avoid issues.
+✓ 2368 modules transformed.
+rendering chunks...
+computing gzip size...
+dist-demo/index.html                              1.23 kB │ gzip:   0.61 kB
+dist-demo/assets/index-BV-JM2ej.css               3.73 kB │ gzip:   1.39 kB
+dist-demo/assets/download-CWiaXb8A.js             0.24 kB │ gzip:   0.17 kB
+dist-demo/assets/control-C1jDIPLK.js              1.73 kB │ gzip:   0.94 kB
+dist-demo/assets/hooks-Bib_n-9G.js                4.76 kB │ gzip:   2.22 kB
+dist-demo/assets/draft-conflict-BgUgjwzp.js       5.37 kB │ gzip:   2.49 kB
+dist-demo/assets/index-B5iRNZ55.js                8.73 kB │ gzip:   3.42 kB
+dist-demo/assets/index-CYHPr_Z0.js               11.05 kB │ gzip:   3.89 kB
+dist-demo/assets/index-Dek6fGJn.js               18.00 kB │ gzip:   6.60 kB
+dist-demo/assets/index-CzBMQ6uh.js               20.24 kB │ gzip:   7.38 kB
+dist-demo/assets/index-C1WeXhed.js               21.00 kB │ gzip:   6.78 kB
+dist-demo/assets/index-DzBuejUo.js               22.81 kB │ gzip:   7.36 kB
+dist-demo/assets/index-Bcc3XDjs.js               23.20 kB │ gzip:   7.56 kB
+dist-demo/assets/index-CChYlf8T.js               27.62 kB │ gzip:   9.35 kB
+dist-demo/assets/index-A7GOFRsP.js               29.97 kB │ gzip:   9.44 kB
+dist-demo/assets/index-CHgH3J4b.js               32.27 kB │ gzip:  11.09 kB
+dist-demo/assets/query-Df7VyXaF.js               33.15 kB │ gzip:   9.92 kB
+dist-demo/assets/index-rhB2fhbR.js               34.77 kB │ gzip:  10.91 kB
+dist-demo/assets/index-DJWnT8rZ.js               35.06 kB │ gzip:  11.68 kB
+dist-demo/assets/index-DBYi0VH3.js               35.88 kB │ gzip:  11.86 kB
+dist-demo/assets/index-D-ZReHWv.js               39.30 kB │ gzip:  12.08 kB
+dist-demo/assets/index-BrX7PpCI.js               42.65 kB │ gzip:  11.79 kB
+dist-demo/assets/i18n-CWH4T2DL.js                47.13 kB │ gzip:  15.53 kB
+dist-demo/assets/index-CMaHIgSb.js               73.41 kB │ gzip:  20.43 kB
+dist-demo/assets/schemas-CrtemtDb.js            114.74 kB │ gzip:  34.86 kB
+dist-demo/assets/index-Dbxo9YJ5.js              123.47 kB │ gzip:  39.43 kB
+dist-demo/assets/schema-validation-bmH8FQFT.js  151.10 kB │ gzip:  45.62 kB
+dist-demo/assets/browser-SxNgvJ77.js            256.40 kB │ gzip:  87.31 kB
+dist-demo/assets/service-DnmH1UzT.js            260.09 kB │ gzip:  63.13 kB
+dist-demo/assets/react-runtime-gLMyUIL2.js      279.79 kB │ gzip:  90.28 kB
+dist-demo/assets/charts-p0bC36ID.js             320.23 kB │ gzip:  96.79 kB
+dist-demo/assets/mui-Eb4arA-z.js                341.46 kB │ gzip: 104.32 kB
+dist-demo/assets/contract-data-BBNxaePa.js      412.70 kB │ gzip:  50.04 kB
+✓ built in 3.76s
+
+> node node_modules\@playwright\test\cli.js test tests/fe013.spec.ts tests/ui-fulfillment-layout.spec.ts --project=chromium --project=firefox --workers=1
+
+Running 14 tests using 1 worker
+
+(node:27020) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+[BABEL] Note: The code generator has deoptimised the styling of C:\Users\Joker-PC\AppData\Local\Temp\botsales-vite-cache\722b88284aa10545ff4b\playwright-webserver\playwright-33140-56bb34cb-8cfa-4d17-9297-3b882e430556\deps\react-dom_client.js?v=15ebfeed as it exceeds the max of 500KB.
+  ok  1 [chromium] › tests\fe013.spec.ts:46:1 › FE013.C04 shipping preview distinguishes missing address, unserviceable zone, and expired mock quote (5.4s)
+  ok  2 [chromium] › tests\fe013.spec.ts:72:1 › FE013.AC01–AC04 stale claim conflict is visible; pick, pack, dispatch and delivery use current API versions once (11.7s)
+BROWSER=chromium ROLE_STATE=command_unknown ROLE=owner ROUTE=R42 OPERATION=handoverShipment RESULT=PASS
+  ok  3 [chromium] › tests\fe013.spec.ts:232:1 › FE013.AC03 unknown handover cannot be repeated before command reconciliation (5.9s)
+  ok  4 [chromium] › tests\fe013.spec.ts:283:1 › FE013.AC01 role scope and FE013.AC05 responsive shipment/preparation views remain accessible (4.4s)
+  ok  5 [chromium] › tests\ui-fulfillment-layout.spec.ts:19:1 › SC2-C01 R41 filters preparation by stage and assignee and shows the work item deadline (2.7s)
+  ok  6 [chromium] › tests\ui-fulfillment-layout.spec.ts:50:1 › Fulfillment R41/R42 preserve shell gutter and contain responsive route layouts from 320-1440px (8.0s)
+  ok  7 [chromium] › tests\ui-fulfillment-layout.spec.ts:79:1 › Fulfillment prep, shipment-create, detail and event dialogs fit mobile and desktop without submitting (6.1s)
+(node:41112) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ok  8 [firefox] › tests\fe013.spec.ts:46:1 › FE013.C04 shipping preview distinguishes missing address, unserviceable zone, and expired mock quote (3.5s)
+  ok  9 [firefox] › tests\fe013.spec.ts:72:1 › FE013.AC01–AC04 stale claim conflict is visible; pick, pack, dispatch and delivery use current API versions once (13.3s)
+BROWSER=firefox ROLE_STATE=command_unknown ROLE=owner ROUTE=R42 OPERATION=handoverShipment RESULT=PASS
+  ok 10 [firefox] › tests\fe013.spec.ts:232:1 › FE013.AC03 unknown handover cannot be repeated before command reconciliation (7.1s)
+  ok 11 [firefox] › tests\fe013.spec.ts:283:1 › FE013.AC01 role scope and FE013.AC05 responsive shipment/preparation views remain accessible (5.2s)
+  ok 12 [firefox] › tests\ui-fulfillment-layout.spec.ts:19:1 › SC2-C01 R41 filters preparation by stage and assignee and shows the work item deadline (2.8s)
+  ok 13 [firefox] › tests\ui-fulfillment-layout.spec.ts:50:1 › Fulfillment R41/R42 preserve shell gutter and contain responsive route layouts from 320-1440px (12.9s)
+  ok 14 [firefox] › tests\ui-fulfillment-layout.spec.ts:79:1 › Fulfillment prep, shipment-create, detail and event dialogs fit mobile and desktop without submitting (6.8s)
+
+  14 passed (1.8m)
+exit=0

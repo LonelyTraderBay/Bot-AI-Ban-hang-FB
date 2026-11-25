@@ -40,7 +40,7 @@ const include = new Map([
         'scripts/probe-target.mjs', 'scripts/staging-data-config.mjs', 'scripts/check-staging-data.mjs', 'scripts/evaluate-staging-ai.mjs',
         'scripts/check-object-storage.mjs',
         'scripts/record-reviewed-evidence.mjs', 'scripts/record-procurement-evidence.mjs', 'scripts/record-shipment-evidence.mjs',
-        'scripts/record-advertising-estimate-evidence.mjs',
+        'scripts/record-advertising-estimate-evidence.mjs', 'scripts/record-marketing-evidence.mjs',
     ].map(file => [workspace + '/' + file, workspace + '/' + file]),
     ...['openapi.json', 'operation-index.json', 'permission-catalog.json'].map(file => ['botsales-kit/contracts/' + file, 'botsales-kit/contracts/' + file]),
     ['botsales-kit/fixtures/statement-formats.json', 'botsales-kit/fixtures/statement-formats.json'],

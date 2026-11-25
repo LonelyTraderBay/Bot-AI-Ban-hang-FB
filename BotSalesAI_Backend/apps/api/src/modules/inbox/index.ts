@@ -18,6 +18,7 @@ export async function requireCustomerConversation(tx: Prisma.TransactionClient, 
 export { inboxCommands, inboxModule } from './conversations.js';
 export { dispatchMessengerMessages } from './dispatch.js';
 export { processBotInbound } from './bot-inbound.js';
+export { marketingConversationSignals } from './marketing.js';
 
 type QuoteEvidence = {
     shopId: string; customerId: string; conversationId: string | null; identityId: string; sourceMessageId: string;

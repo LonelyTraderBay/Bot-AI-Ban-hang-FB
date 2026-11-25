@@ -1439,14 +1439,14 @@ Ghim baseline tại commit `e22bb99d6839df9943308556c94499c04e7b7f85`. Khi ngu�
 
 | Nguồn | Số mục | SHA-256 |
 |---|---:|---|
-| [openapi.json](../botsales-kit/contracts/openapi.json) | 259 thao tác / 381 schema | `6cb1fee95276cad30441c4aba0abb29f52b0ab51cd5b2a666439eea87d2a7173` |
-| [operation-index.json](../botsales-kit/contracts/operation-index.json) | 259 thao tác | `369c3a08ec3ee76d55c594bc454c1636c08202f2c2a6fad81cf96755c9086909` |
-| [route-manifest.json](../botsales-kit/contracts/route-manifest.json) | 67 màn / 16 module | `600f9b92a74aa2c541cd6a1ac97fcfe7bd43246b7803d8444a80360ba1aedfd1` |
+| [openapi.json](../botsales-kit/contracts/openapi.json) | 260 thao tác / 384 schema | `25731c3f995c660630a78d9755d4f34be63af9ad5a1d31163c93a9cb534d49da` |
+| [operation-index.json](../botsales-kit/contracts/operation-index.json) | 260 thao tác | `5b05395589c0c0e3c94cd5fa775f2a2debbc12c74b62bc6712b46890fd76d3e8` |
+| [route-manifest.json](../botsales-kit/contracts/route-manifest.json) | 67 màn / 16 module | `48005a97b71bd7b1931e0ec54ec173a37ab4ff63437d1503042ee473866633a1` |
 | [feature-catalog.json](../botsales-kit/contracts/feature-catalog.json) | 64 tính năng | `0b3f6c8a1fa8739d7ecd53937d40bfe54559c4d8e274e27bb7c4542171b654b0` |
 | [permission-catalog.json](../botsales-kit/contracts/permission-catalog.json) | 56 quyền / 7 preset / 4 vai trò AI | `144ff0315d2510e2a0c55df1d3eaa82730bf6b7b678461d548229939d2e29acd` |
 | [events.schema.json](../botsales-kit/contracts/events.schema.json) | 32 loại sự kiện phân biệt | `7b67ae36fabe0b22978fbb47e897b635ca4b7518b7599eee486d3a1af23f18fc` |
 | [migration-map.json](../botsales-kit/contracts/migration-map.json) | Các mốc tương thích | `7aadcab2a2dfecace76ef92793f2e13521b88d604e5bf12ce051e1568f06248e` |
-| [core-acceptance-scenarios.json](../botsales-kit/fixtures/core-acceptance-scenarios.json) | 55 ca màn hình | `b3abc6055884194d8b9e5a0912c3d40420ab6f2e00d7f3d69c03a5d5004be5b8` |
+| [core-acceptance-scenarios.json](../botsales-kit/fixtures/core-acceptance-scenarios.json) | 55 ca màn hình | `5a4b1e81181a5c70bc03ff6e05da958edad159a93b55e4cf358e4d43bcfd93e6` |
 | [acceptance-scenarios.json](../botsales-kit/fixtures/acceptance-scenarios.json) | 69 ca theo tính năng, gồm ca bổ sung cho R61 | `485633643bcb58ef13854561c7d8fe19d0c46098f4b8359985e025a1be1618c4` |
 
 ### Toàn bộ màn hình
@@ -1495,7 +1495,7 @@ Các cột đọc, ghi và ca chuẩn lấy từ route manifest. Cột thêm t�
 | R38 Hàng chờ phê duyệt | `operations` | [BE-20](#be-20) | `listApprovals`, `getApproval`, `listPurchaseDelegations`, `listPurchaseDelegationReservations` | `decideApproval`, `createPurchaseDelegation`, `updatePurchaseDelegation` | — | `SC2-F04`, `SC2-F05`, `SC2-D06` |
 | R39 Trung tâm thông báo | `notifications` | [BE-13](#be-13) | `listNotifications`, `getNotification` | `acknowledgeNotification` | — | `SC2-A02`, `SC2-A03`, `SC2-A04`, `SC2-A07` |
 | R40 Thiết bị, kênh nhận và lịch trực | `notifications` | [BE-13](#be-13) | `listDevices`, `getNotificationPolicy` | `createDevice`, `revokeDevice`, `testDevice`, `beginTelegramPairing`, `updateNotificationPolicy` | — | `SC2-A01`, `SC2-A05`, `SC2-A06`, `SC2-A08` |
-| R41 Chuẩn bị và lấy hàng | `fulfillment` | [BE-13](#be-13) | `listPrepJobs`, `getPrepJob` | `pickPrepLine`, `packPrepJob` | `getWorkItem`, `claimWorkItem` | `SC2-C01`, `SC2-C02`, `SC2-C03` |
+| R41 Chuẩn bị và lấy hàng | `fulfillment` | [BE-13](#be-13) | `listPrepJobs`, `getPrepJob`, `getFile` | `pickPrepLine`, `packPrepJob`, `uploadFile` | `getWorkItem`, `claimWorkItem` | `SC2-C01`, `SC2-C02`, `SC2-C03` |
 | R42 Vận đơn và giao hàng | `fulfillment` | [BE-13](#be-13) | `listShipments`, `getShipment` | `createShipment`, `handoverShipment`, `recordShipmentEvent` | — | `SC2-C04`, `SC2-C05`, `SC2-C06` |
 | R43 Đổi trả và kiểm hàng hoàn | `orders` | [BE-13](#be-13) | `listReturnCases`, `getReturnCase` | `createReturnCase`, `inspectReturn` | — | `SC2-C07`, `SC2-C08` |
 | R44 Nhà cung cấp hàng hóa | `procurement` | [BE-16](#be-16) | `listSuppliers`, `getSupplier`, `listSupplierOffers` | `createSupplier`, `updateSupplier`, `setSupplierStatus`, `createSupplierOffer` | — | `SC2-D02` |
@@ -1504,8 +1504,8 @@ Các cột đọc, ghi và ca chuẩn lấy từ route manifest. Cột thêm t�
 | R47 Nhận hàng và đối chiếu | `procurement` | [BE-16](#be-16) | `listGoodsReceipts`, `getGoodsReceipt` | `createGoodsReceipt`, `postGoodsReceipt` | — | `SC2-D01`, `SC2-D08` |
 | R48 Chứng từ và sổ kép | `finance` | [BE-12](#be-12) | `listJournals`, `getJournal` | `createJournal`, `postJournal`, `reverseJournal` | — | `SC2-E01`, `SC2-E02`, `SC2-E03` |
 | R49 Đối soát ngân hàng và COD | `finance` | [BE-17](#be-17) | `listReconciliationCases`, `listBankTransactions`, `listCODSettlements`, `listStatementFormats` | `importBankStatement`, `importCODStatement`, `matchSettlement`, `matchCODSettlement`, `previewStatementImport` | — | `SC2-E04`, `SC2-E05` |
-| R50 Công nợ và khóa kỳ | `finance` | [BE-17](#be-17) | `listDebtItems`, `listAccountingPeriods` | `closeAccountingPeriod`, `reopenAccountingPeriod`, `createAccountingPeriod` | — | `SC2-E06`, `SC2-E07` |
-| R51 Bốn vai trò AI và quyền | `bot` | [BE-20](#be-20) | `listAgentRoles`, `listBudgetPolicies` | `updateAgentRole`, `controlAutomation` | — | `SC2-F01`, `SC2-H02`, `SC2-H03` |
+| R50 Công nợ và khóa kỳ | `finance` | [BE-17](#be-17) | `listDebtItems`, `listAccountingPeriods` | `closeAccountingPeriod`, `reopenAccountingPeriod`, `createAccountingPeriod`, `updateDebtTerms` | — | `SC2-E06`, `SC2-E07` |
+| R51 Bốn vai trò AI và quyền | `bot` | [BE-20](#be-20) | `listAgentRoles`, `listBudgetPolicies`, `getBotConfig` | `updateAgentRole`, `controlAutomation` | — | `SC2-F01`, `SC2-H02`, `SC2-H03` |
 | R52 Bản tin và sức khỏe hệ thống | `operations` | [BE-20](#be-20) | `listDigests`, `getOperationsSummary` | `controlAutomation` | — | `SC2-F06`, `SC2-F07`, `SC2-F08`, `SC2-H01`, `SC2-H04`, `SC2-H08` |
 | R53 Thông tin hỗ trợ marketing | `reports` | [BE-20](#be-20) | `getMarketingSummary` | — | — | `SC2-G07`, `SC2-G08` |
 | R54 Yêu cầu sau bán | `customers` | [BE-08](#be-08) | `listServiceCases`, `getServiceCase` | `createServiceCase`, `setServiceCaseStatus` | — | `SC2-B06`, `SC2-G04` |
@@ -1519,7 +1519,7 @@ Các cột đọc, ghi và ca chuẩn lấy từ route manifest. Cột thêm t�
 | R62 Cấu hình giao hàng | `fulfillment` | [BE-11](#be-11) | `getShippingPolicy` | `updateShippingPolicy` | — | `SC2-C04` |
 | R63 Ngoại lệ và tác vụ nền | `operations` | [BE-20](#be-20) | `listWorkItems`, `listJobs`, `getJob`, `listCommands`, `getCommand` | `claimWorkItem` | — | `SC2-F02`, `SC2-F03`, `SC2-H01`, `SC2-H04` |
 | R64 Ưu đãi và combo | `catalog` | [BE-14](#be-14) | `listPromotions`, `listProducts` | `createPromotion`, `updatePromotion`, `decidePromotion` | — | `SC2-B05`, `SC2-G03` |
-| R65 Xác minh thu tiền và hoàn tiền | `finance` | [BE-17](#be-17) | `listPaymentReviews` | — | — | `SC2-E04`, `SC2-E05`, `SC2-C07` |
+| R65 Xác minh thu tiền và hoàn tiền | `finance` | [BE-17](#be-17) | `listPaymentReviews`, `getFile` | `uploadFile` | — | `SC2-E04`, `SC2-E05`, `SC2-C07` |
 | R66 Phiên kiểm kê kho | `inventory` | [BE-15](#be-15) | `listStocktakes`, `listWarehouses`, `listStockSnapshots` | `createStocktake`, `updateStocktake`, `postStocktake` | — | `SC2-D01` |
 | R67 Phiếu chuyển kho | `inventory` | [BE-15](#be-15) | `listStockTransfers`, `listWarehouses`, `listStockSnapshots` | `createStockTransfer`, `updateStockTransfer` | — | `SC2-D01` |
 
@@ -1736,6 +1736,7 @@ Bảng màn hình truy vết ca SC và SC2 từ nguồn. Bảng tính năng truy
 | `getCODSettlement` | `GET /shops/{shopId}/cod-settlements/{resourceId}` | [BE-17](#be-17) | `finance.read` | — | 200 | — |
 | `listDebtItems` | `GET /shops/{shopId}/debts` | [BE-17](#be-17) | `finance.read` | — | 200 | R50 |
 | `getDebtItem` | `GET /shops/{shopId}/debts/{resourceId}` | [BE-17](#be-17) | `finance.read` | — | 200 | — |
+| `updateDebtTerms` | `PATCH /shops/{shopId}/debts/{resourceId}` | [BE-17](#be-17) | `finance.reconcile` | CSRF, IK | 200 | R50 |
 | `listAccountingPeriods` | `GET /shops/{shopId}/periods` | [BE-12](#be-12) | `finance.read` | — | 200 | R50 |
 | `createAccountingPeriod` | `POST /shops/{shopId}/periods` | [BE-12](#be-12) | `finance.close` | CSRF, IK | 201 | R50 |
 | `getAccountingPeriod` | `GET /shops/{shopId}/periods/{resourceId}` | [BE-12](#be-12) | `finance.read` | — | 200 | — |
@@ -1802,7 +1803,7 @@ Bảng màn hình truy vết ca SC và SC2 từ nguồn. Bảng tính năng truy
 
 | Operation | HTTP và đường dẫn | Việc chính | Quyền | Header ghi | Thành công | Màn dùng |
 |---|---|---|---|---|---|---|
-| `getBotConfig` | `GET /shops/{shopId}/bot/config` | [BE-19](#be-19) | `bot.read` | — | 200 | R26, R27 |
+| `getBotConfig` | `GET /shops/{shopId}/bot/config` | [BE-19](#be-19) | `bot.read` | — | 200 | R26, R27, R51 |
 | `updateBotDraft` | `PATCH /shops/{shopId}/bot/config` | [BE-19](#be-19) | `bot.configure` | CSRF, IK, Ver | 200 | R26 |
 | `runPlayground` | `POST /shops/{shopId}/bot/playground` | [BE-19](#be-19) | `bot.configure` | CSRF, IK | 200 | R27 |
 | `listEvaluations` | `GET /shops/{shopId}/bot/evaluations` | [BE-19](#be-19) | `bot.read` | — | 200 | R28 |
@@ -1839,8 +1840,8 @@ Bảng màn hình truy vết ca SC và SC2 từ nguồn. Bảng tính năng truy
 
 | Operation | HTTP và đường dẫn | Việc chính | Quyền | Header ghi | Thành công | Màn dùng |
 |---|---|---|---|---|---|---|
-| `uploadFile` | `POST /shops/{shopId}/uploads` | [BE-08](#be-08) | — | CSRF, IK | 201 | R06, R10, R11, R13, R23 |
-| `getFile` | `GET /shops/{shopId}/uploads/{fileId}` | [BE-08](#be-08) | — | — | 200 | R06, R11, R13, R23 |
+| `uploadFile` | `POST /shops/{shopId}/uploads` | [BE-08](#be-08) | — | CSRF, IK | 201 | R06, R10, R11, R13, R23, R41, R65 |
+| `getFile` | `GET /shops/{shopId}/uploads/{fileId}` | [BE-08](#be-08) | — | — | 200 | R06, R11, R13, R23, R41, R65 |
 
 #### API imports
 

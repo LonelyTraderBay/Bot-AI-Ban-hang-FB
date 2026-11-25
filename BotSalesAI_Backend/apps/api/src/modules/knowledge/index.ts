@@ -11,7 +11,7 @@ import type { KnowledgeWrite } from './data.js';
 import { FeedbackController, FeedbackService } from './feedback.js';
 import { KnowledgeService, type Publish, type VersionReason } from './service.js';
 
-export { assignedKnowledge, publishedKnowledge } from './data.js';
+export { approvedPreparationImages, assignedKnowledge, assignedSalesScripts, publishedKnowledge } from './data.js';
 export { feedbackCommands } from './feedback.js';
 export { knowledgeCommands, knowledgeIndexHandler } from './service.js';
 

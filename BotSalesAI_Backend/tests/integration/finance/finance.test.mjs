@@ -3,6 +3,7 @@ import { randomUUID } from 'node:crypto';
 import { readFileSync } from 'node:fs';
 import { after, before, test } from 'node:test';
 import { URLSearchParams } from 'node:url';
+import sharp from 'sharp';
 import { createApp } from '../../../apps/api/dist/app.js';
 import { readDatabaseUrl } from '../../../apps/api/dist/config.js';
 import { createContractValidator, schemaFromContract } from '../../../apps/api/dist/http/contracts.js';
@@ -115,12 +116,12 @@ function lines(debit, credit, amount, shop = shopA) {
     ];
 }
 
-async function product(shop = shopA) {
+async function product(shop = shopA, actor = owner) {
     const sku = 'BE12-' + randomUUID();
     const response = await send('products', {
         name: sku, description: '', categoryId: null, status: 'active', imageFileIds: [],
         variants: [{ sku, active: true, name: 'Mặc định', options: {}, price: money('15000.01', shop) }],
-    }, { shop });
+    }, { shop, actor });
     return (await json(response, 201, 'ProductResponse')).variants[0];
 }
 
@@ -290,20 +291,21 @@ test('SC2-E01 and SC-020: adjustment and finance entries obey period and journal
     assert.equal(await db.financeJournal.count({ where: { shopId: isolated.id } }), 0);
 });
 
-async function paymentFixtures() {
-    const buyer = await json(await send('customers', { displayName: 'Khách kiểm thanh toán', phone: '0901111222', email: null, notes: '' }),
+async function paymentFixtures(shop = shopA, actor = owner) {
+    const options = { shop, actor };
+    const buyer = await json(await send('customers', { displayName: 'Khách kiểm thanh toán', phone: '0901111222', email: null, notes: '' }, options),
         201, 'CustomerResponse');
     const address = await json(await send('customers/' + buyer.id + '/addresses', {
         label: 'Địa chỉ A', recipient: 'Khách kiểm thanh toán', phone: '0901111222', line1: 'Căn số A',
         ward: null, district: null, postalCode: null, province: 'Hà Nội', countryCode: 'VN',
-    }), 201, 'CustomerAddressResponse');
-    const { conversation } = await orderConversation(admin, shopId, buyer.id);
-    const variant = await product();
+    }, options), 201, 'CustomerAddressResponse');
+    const { conversation } = await orderConversation(admin, shop.id, buyer.id);
+    const variant = await product(shop, actor);
     await json(await send('inventory/adjustments', {
-        warehouseId: shopA.defaultWarehouseId, variantId: variant.id, quantityDelta: 2, expectedVersion: 1, unitCost: money('1'), reason: 'Tồn thử thanh toán',
-    }), 202, 'CommandResponse');
+        warehouseId: shop.defaultWarehouseId, variantId: variant.id, quantityDelta: 2, expectedVersion: 1, unitCost: money('1', shop), reason: 'Tồn thử thanh toán',
+    }, options), 202, 'CommandResponse');
     const draft = {
-        customerId: buyer.id, conversationId: conversation.id, warehouseId: shopA.defaultWarehouseId, notes: '',
+        customerId: buyer.id, conversationId: conversation.id, warehouseId: shop.defaultWarehouseId, notes: '',
         lines: [{ variantId: variant.id, quantity: 1 }], shippingAddressId: address.id, paymentMethod: 'prepay',
     };
     return { draft, variant, conversation };
@@ -315,6 +317,70 @@ async function observation(orderId, amount, kind = 'bank_receipt') {
         shopId, orderId, kind, amount, currency: shopA.currency, reference: 'CHECK-' + randomUUID(), observedAt: instant, verifiedAt: instant,
     } });
 }
+
+test('SC2-E04-PHOTO: pending bank evidence stays private to finance and leaves the ledger unchanged', async context => {
+    for (const [shop, actor, peer, peerShop] of [[shopA, owner, other, shopB], [shopB, other, owner, shopA]]) {
+        await context.test(shop.currency, async () => {
+            await ensurePeriod(shop, localAccountingDate(new Date(), shop.timezone), actor);
+            const { draft } = await paymentFixtures(shop, actor);
+            const options = { shop, actor };
+            const order = await json(await send('orders', draft, options), 201, 'OrderResponse');
+            const step = async (resource, code, schema, user = actor, inShop = shop) => json(await request(path(resource, inShop), user), code, schema);
+            const privateText = 'synthetic-customer-identifier';
+            const photo = await sharp({ create: { width: 8, height: 8, channels: 3, background: '#bbaabb' } })
+                .withExif({ IFD0: { ImageDescription: privateText } }).jpeg().toBuffer();
+            assert.ok((await sharp(photo).metadata()).exif.includes(privateText));
+            const snapshots = () => Promise.all([
+                db.financeJournal.count({ where: { shopId: shop.id } }),
+                db.financeEntry.count({ where: { shopId: shop.id } }),
+                db.paymentEvidence.count({ where: { shopId: shop.id } }),
+            ]);
+            const before = await snapshots();
+            function upload(resourceId, key = randomUUID(), user = actor, inShop = shop) {
+                const body = new globalThis.FormData();
+                body.set('purpose', 'payment_evidence_image');
+                if (resourceId) body.set('resourceId', resourceId);
+                body.set('file', new globalThis.Blob([photo], { type: 'image/jpeg' }), privateText + '.jpg');
+                return request(path('uploads', inShop), user, { method: 'POST', body,
+                    headers: { origin, 'x-csrf-token': user.csrf, 'idempotency-key': key } });
+            }
+            const key = randomUUID();
+            const stored = await json(await upload(order.id, key), 201, 'FileObjectResponse');
+            assert.equal(stored.status, 'ready');
+            assert.equal(stored.resourceId, order.id);
+            assert.ok(!stored.name.includes(privateText));
+            assert.equal((await json(await upload(order.id, key), 201, 'FileObjectResponse')).id, stored.id);
+            await json(await upload(), 422, 'Problem');
+            await json(await upload(order.id, randomUUID(), peer, peerShop), 404, 'Problem');
+            const review = 'payment-reviews?kind=collection&q=' + order.id;
+            const [pending] = await step(review, 200, 'PaymentReviewListResponse');
+            assert.equal(pending.verified.amount, '0');
+            assert.equal(pending.status, 'unpaid');
+            assert.deepEqual(pending.pendingTransferImages.map(item => [item.fileId, item.status]), [[stored.id, 'pending_review']]);
+            const filePath = 'uploads/' + stored.id;
+            const file = await step(filePath, 200, 'FileObjectResponse');
+            const signed = new URL(file.readUrl, base).search;
+            const source = await request(path(filePath, shop) + signed, actor);
+            assert.equal(source.status, 200);
+            assert.match(source.headers.get('cache-control'), /no-store/u);
+            assert.ok(!(await sharp(Buffer.from(await source.arrayBuffer())).metadata()).exif);
+            assert.equal((await fetch(base + path(filePath, shop) + signed)).status, 401);
+            await step(filePath + signed, 404, 'Problem', peer, peerShop);
+            if (shop.id === shopA.id) {
+                await json(await upload(order.id, randomUUID(), restricted), 403, 'Problem');
+                await step(filePath, 404, 'Problem', restricted);
+                const [readOnly] = await step(review, 200, 'PaymentReviewListResponse', restricted);
+                assert.equal(readOnly.pendingTransferImages, undefined);
+            }
+            await json(await send('orders/' + order.id + '/pay', { expectedVersion: order.version, amount: money('15000.01', shop),
+                method: 'bank_transfer', reference: 'UNVERIFIED', reason: 'Ảnh đang chờ đối chiếu', evidenceRef: stored.id }, options), 422, 'Problem');
+            assert.equal((await step('orders/' + order.id, 200, 'OrderResponse')).paymentState, 'unpaid');
+            assert.deepEqual(await snapshots(), before);
+            console.log(JSON.stringify({ case: 'SC2_E04_PENDING_TRANSFER_IMAGE', currency: shop.currency, attachedToOrder: true,
+                idempotent: true, removedMetadata: true, noSignedAnonymousRead: true, ledgerUnchanged: true }));
+        });
+    }
+});
 
 test('SC2-E04 SC2-E05 SC2-E06: prepay needs verified observations, deposits stay outside revenue, and carrier collection changes no bank journal', async () => {
     const { draft, conversation } = await paymentFixtures();
@@ -573,10 +639,35 @@ test('SC2-E03: advertising and packaging are distinct posted costs with cited so
         assert.equal(observed.estimatedSpend, null);
         const stored = await db.financeEntry.findUniqueOrThrow({ where: { shopId_id: { shopId: shop.id, id: adDraft.id } } });
         assert.ok(actual.sourceJournalIds.includes(stored.journalId));
+        assert.deepEqual(observed.actualSpendSources, [{ channel: null, campaignId: null, journalId: stored.journalId, sourceId: invoice.sourceRef.id }]);
+        const proof = await reviewedEvidenceFixture('marketing', { cwd: process.cwd(),
+            env: { ...process.env, MARKETING_EVIDENCE_SHOPS: shop.id },
+            document: 'Synthetic approved invoice allocation. Whole advertising document assigned to the matching source campaign.' });
+        const campaignId = 'campaign-' + randomUUID();
+        try {
+            const manifest = { shopId: shop.id, reviewerId: actor.userId, entryId: adDraft.id, date, expectedRevision: 0,
+                channel: 'messenger', campaignId, confidence: 'known', sourceId: 'allocation-' + randomUUID() };
+            const unsupported = await proof.prepare({ ...manifest, entryId: packageDraft.id });
+            await assert.rejects(proof.execute(unsupported), /Attestation rejected \(422\)/);
+            const estimated = await proof.prepare({ ...manifest, confidence: 'estimated' });
+            await assert.rejects(proof.execute(estimated), /Attestation rejected \(422\)/);
+            const hash = await proof.prepare(manifest);
+            await proof.execute(hash);
+            const linked = await marketing();
+            assert.deepEqual(linked.actualSpend, actual.advertisingExpense);
+            assert.deepEqual(linked.campaignResults.find(row => row.campaignId === campaignId), {
+                channel: 'messenger', campaignId, knownOrders: 0, estimatedOrders: 0, orderId: null, attributionSourceId: null,
+                actualSpend: money('37.5', shop), spendJournalId: stored.journalId,
+            });
+        } finally {
+            await proof.close();
+        }
         await json(await request(path('finance/entries/' + adDraft.id, shop), actor === owner ? other : owner), 404, 'Problem');
         await json(await send('finance/entries/' + adDraft.id + '/reverse', { expectedVersion: stored.version,
             reason: 'Đảo hóa đơn nguồn thử' }, { shop, actor }), 202, 'CommandResponse');
-        assert.deepEqual((await marketing()).actualSpend, money('0', shop));
+        const afterReversal = await marketing();
+        assert.deepEqual(afterReversal.actualSpend, money('0', shop));
+        assert.deepEqual(afterReversal.campaignResults.find(row => row.campaignId === campaignId)?.actualSpend, money('0', shop));
         const corrected = await profit();
         assert.deepEqual(corrected.advertisingExpense, money('0', shop));
         assert.deepEqual(corrected.packagingExpense, money('8.25', shop));
@@ -787,6 +878,14 @@ test('SC2-E04 SC2-E05 SC2-E06 R65: private statement preview, durable import, pa
     const matchedPath = 'reconciliation-cases/' + review.id + '/match';
     const allocation = (amount, expectedVersion = review.version) => ({ transactionId: bankTx.id, expectedVersion,
         reason: 'Đã xác minh giao dịch và công nợ', allocations: [{ resource: { type: 'debt', id: debt.id }, amount: money(amount, shop) }] });
+    const terms = (version, disputeHold) => send('debts/' + debt.id, { expectedVersion: version, dueDate: null, disputeHold,
+        reason: disputeHold ? 'Mở tranh chấp nguồn công nợ' : 'Đã giải quyết tranh chấp' }, { shop, method: 'PATCH' })
+        .then(reply => json(reply, 200, 'DebtItemResponse'));
+    const held = await terms(debt.version, true);
+    assert.deepEqual((await get('reconciliation-cases/' + review.id, 'ReconciliationCaseResponse')).suggestedResourceIds, []);
+    await post(matchedPath, allocation('90000'), 'Problem', 409);
+    assert.deepEqual((await get('debts/' + debt.id, 'DebtItemResponse')).outstandingAmount, debt.outstandingAmount);
+    await terms(held.version, false);
     await post(matchedPath, allocation('249001'), 'Problem', 422);
     const allocKey = randomUUID();
     const first = await post(matchedPath, allocation('90000'), 'CommandResponse', 202, allocKey);
@@ -875,4 +974,55 @@ test('SC2-E04 SC2-E05 SC2-E06 R65: private statement preview, durable import, pa
     assert.deepEqual(cashflow.disbursements, money('9900', shop));
     assert.deepEqual((await get('finance/profit-loss' + window, 'ProfitLossResponse')).shippingExpense, money('20000', shop));
     await json(await request(path('payment-reviews', shop), other), 404, 'Problem');
+});
+
+test('SC2-E06-TERMS: due dates and dispute decisions use local dates, versions and isolated accounting', async context => {
+    for (const [shop, actor, otherShop, foreign] of [[shopA, owner, shopB, other], [shopB, other, shopA, owner]]) {
+        await context.test(shop.currency, async () => {
+            const at = new Date();
+            const calendarDate = localAccountingDate(at, shop.timezone);
+            await ensurePeriod(shop, calendarDate, actor);
+            const options = { shop, actor };
+            const buyer = await json(await send('customers', { displayName: 'Đối tác kiểm công nợ', phone: '0900000000', email: null, notes: '' },
+                options), 201, 'CustomerResponse');
+            const { order } = await deliveredDebt(admin, db, shop, buyer.id, at);
+            const get = (resource, code, schema, user = actor, tenant = shop) => request(path(resource, tenant), user).then(reply => json(reply, code, schema));
+            const list = await get('debts?limit=100', 200, 'DebtItemListResponse');
+            const debt = list.find(item => item.source.id === order.id);
+            assert.ok(debt);
+            assert.equal(debt.dueAt, null);
+            const due = new Date(Date.parse(calendarDate) - 31 * 86_400_000).toISOString().slice(0, 10);
+            const payload = { expectedVersion: debt.version, dueDate: due, disputeHold: true, reason: 'Chờ đối chiếu công nợ bằng chứng từ' };
+            const resource = 'debts/' + debt.id;
+            const update = (body, code, key = randomUUID(), overrides = {}) => send(resource, body, { ...options, method: 'PATCH', key, ...overrides })
+                .then(reply => json(reply, code, code === 200 ? 'DebtItemResponse' : 'Problem'));
+            const before = await db.financeJournal.count({ where: { shopId: shop.id } });
+            const key = randomUUID();
+            const held = await update(payload, 200, key);
+            assert.equal(held.version, debt.version + 1);
+            assert.equal(held.dueDate, due);
+            assert.equal(held.agingBucket, 'overdue_31_60');
+            assert.equal(held.daysOverdue, 31);
+            assert.equal(held.disputeHold, true);
+            assert.equal(held.disputed, true);
+            assert.deepEqual(held.outstandingAmount, debt.outstandingAmount);
+            assert.equal((await update(payload, 200, key)).version, held.version);
+            await update({ ...payload, expectedVersion: debt.version }, 412);
+            await update({ ...payload, expectedVersion: held.version }, 404, randomUUID(), { shop: otherShop, actor: foreign });
+            if (shop.id === shopA.id) await update({ ...payload, expectedVersion: held.version }, 403, randomUUID(), { actor: restricted });
+            assert.equal((await get(resource, 200, 'DebtItemResponse')).disputeHold, true);
+            const released = await update({ ...payload, expectedVersion: held.version, dueDate: calendarDate,
+                disputeHold: false, reason: 'Đủ chứng từ xác nhận gỡ giữ công nợ' }, 200);
+            assert.equal(released.disputed, false);
+            assert.equal(released.agingBucket, 'current');
+            assert.equal(released.daysOverdue, 0);
+            assert.deepEqual(released.outstandingAmount, debt.outstandingAmount);
+            assert.equal(await db.financeJournal.count({ where: { shopId: shop.id } }), before);
+            const audits = await db.auditEntry.findMany({ where: { shopId: shop.id, action: 'updateDebtTerms', resourceId: debt.id },
+                orderBy: { createdAt: 'asc' } });
+            assert.deepEqual(audits.map(row => row.metadata.reason), [payload.reason, 'Đủ chứng từ xác nhận gỡ giữ công nợ']);
+            console.log(JSON.stringify({ case: 'SC2_E06_DEBT_TERMS', currency: shop.currency, protected: true,
+                pastDueDays: held.daysOverdue, staleEdit412: true, ledgerUnchanged: true, decisions: audits.length }));
+        });
+    }
 });

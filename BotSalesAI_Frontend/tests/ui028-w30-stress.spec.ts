@@ -170,6 +170,9 @@ for (const scenario of scenarios) {
                     const rect = element.getBoundingClientRect();
                     if (!rect.width || !rect.height || !element.innerText?.trim()) return false;
                     const style = getComputedStyle(element);
+                    // Mobile DataTable exposes the labels in each cell and keeps a clipped header for assistive technology.
+                    if (element.tagName === 'THEAD' && rect.width <= 1 && rect.height <= 1
+                        && style.position === 'absolute' && style.clipPath === 'inset(50%)') return false;
                     const clippedX = ['hidden', 'clip'].includes(style.overflowX) && element.scrollWidth > element.clientWidth + 2;
                     const clippedY = ['hidden', 'clip'].includes(style.overflowY) && element.scrollHeight > element.clientHeight + 2;
                     return clippedX || clippedY;

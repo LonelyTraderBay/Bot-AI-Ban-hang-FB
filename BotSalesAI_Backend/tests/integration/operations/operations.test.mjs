@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict';
 import { createHash, randomUUID } from 'node:crypto';
 import { after, before, test } from 'node:test';
+import { URLSearchParams } from 'node:url';
 import { createApp } from '../../../apps/api/dist/app.js';
 import { Prisma } from '../../../apps/api/dist/generated/prisma/client.js';
 import { readDatabaseUrl } from '../../../apps/api/dist/config.js';
@@ -18,6 +19,7 @@ import { Database } from '../../../apps/api/dist/platform/database/client.js';
 import { runJob } from '../../../apps/api/dist/platform/jobs/index.js';
 import { fixtureShops } from '../../../apps/api/prisma/p0-fixture.mjs';
 import { fixtureWriter, orderConversation, quoteEvidenceFixture } from '../orders/fixtures.mjs';
+import { reviewedEvidenceFixture } from '../helpers/reviewed-evidence-fixture.mjs';
 import { assertFixtureDatabase, fixtureSession } from '../workspace/session-fixture.mjs';
 
 const [shopA, shopB] = fixtureShops;
@@ -202,7 +204,8 @@ test('SC2-F01 SC2-F04 SC2-H02 SC2-H03 -- role fences, immutable approved amount 
     const modelConnectionId = await connectedAi();
     const roleRoute = 'agent-roles/' + proposed.id;
     await request(roleRoute, 'Problem', { shop: shopB.id, actor: foreign, status: 404 });
-    const assign = { expectedVersion: proposed.version, humanOwnerId: owner.userId, modelConnectionId, policyVersion: proposed.policyVersion };
+    const { policyVersion } = await db.shop.findUniqueOrThrow({ where: { id: shopId }, select: { policyVersion: true } });
+    const assign = { expectedVersion: proposed.version, humanOwnerId: owner.userId, modelConnectionId, policyVersion };
     await put(roleRoute, { ...assign, humanOwnerId: foreign.userId }, 'Problem', { status: 404 });
     await put(roleRoute, { ...assign, humanOwnerId: reviewer.userId }, 'Problem', { status: 403 });
     await put(roleRoute, { ...assign, policyVersion: 'expired-policy' }, 'Problem', { status: 422 });
@@ -498,6 +501,74 @@ test('SC2-D06 SC2-D07 SC2-F05 SC2-H02 SC2-H04 SC2-H06 -- delegated purchase outc
         workerOutcomes: ['unknown', 'failed', 'failed', 'succeeded'], duplicateResults: 0, privateMetadataReturned: false, foreignAccess: 404 }));
 });
 
+test('SC2-F06 -- digest uses work state at cutoff, exact group totals and scoped sources', async () => {
+    const utc = new Date();
+    utc.setUTCHours(8, 0, 0, 0);
+    const hours = (from, count) => new Date(+from + count * 3600000);
+    const aEnd = hours(utc, -15);
+    const bEnd = hours(utc, -22);
+    const bZone = 'Pacific/Honolulu';
+    const originalPolicies = await db.notificationPolicy.findMany({ where: { shopId: { in: [shopId, shopB.id] } } });
+    try {
+        await admin.shop.update({ where: { id: shopB.id }, data: { timezone: bZone } });
+        for (const [fixture, actor] of [[shopA, owner], [shopB, foreign]]) {
+            const scope = { actor, shop: fixture.id };
+            const previous = await request('notification-policy', 'NotificationPolicyResponse', scope);
+            await put('notification-policy', { expectedVersion: previous.version, enabled: true, timezone: fixture === shopB ? bZone : shopA.timezone,
+                quietHours: null, remindAfterMinutes: 30, maxReminders: 0, primaryUserIds: [actor.userId], fallbackUserIds: [],
+                fallbackChannel: 'none', urgentMayBypassQuietHours: false }, 'NotificationPolicyResponse', scope);
+        }
+        const make = (shopId, state, createdAt) => ({ shopId, id: randomUUID(), kind: 'recovery', sourceType: 'fixture_f06',
+            sourceId: randomUUID(), state, createdAt });
+        const pending = make(shopId, 'queued', hours(aEnd, -35));
+        const blocked = make(shopId, 'blocked', hours(aEnd, -1));
+        const completed = make(shopId, 'completed', hours(aEnd, -24));
+        const completedBefore = make(shopId, 'completed', hours(aEnd, -25));
+        const atCutoff = make(shopId, 'blocked', aEnd);
+        const foreignDone = make(shopB.id, 'completed', hours(bEnd, -1));
+        const manyPending = Array.from({ length: 101 }, () => make(shopId, 'queued', hours(aEnd, -2)));
+        await admin.workItem.createMany({ data: [pending, blocked, completed, completedBefore, atCutoff, foreignDone, ...manyPending] });
+        await admin.workItem.update({ where: key(pending.id), data: { state: 'completed' } });
+        await admin.workItem.update({ where: key(blocked.id), data: { state: 'queued' } });
+        const digestCount = () => db.ownerDigest.count({ where: { shopId: { in: [shopId, shopB.id] } } });
+        const initialCount = await digestCount();
+        await publishOwnerDigests(db, utc, '23');
+        assert.equal(await digestCount(), initialCount);
+        await Promise.all([publishOwnerDigests(db, utc, '0'), publishOwnerDigests(db, utc, '0')]);
+        assert.equal(await digestCount(), initialCount + 2);
+        const get = async (end, scope) => {
+            const rows = await request('digests?limit=100', 'DigestListResponse', scope);
+            const row = rows.find(item => item.periodEnd === end.toISOString());
+            assert.ok(row, 'digest period uses the shop-local cutoff');
+            assert.equal(row.periodStart, hours(end, -24).toISOString());
+            assert.deepEqual(await request('digests/' + row.id, 'DigestResponse', scope), row);
+            return row;
+        };
+        const a = await get(aEnd, { shop: shopId, actor: owner });
+        const b = await get(bEnd, { shop: shopB.id, actor: foreign });
+        assert.ok(a.workSummary && b.workSummary, 'missing historical WorkItem groups and source links');
+        assert.equal(a.workSummary.pending.count, 102);
+        assert.equal(a.workSummary.pending.workItemIds.length, 100);
+        assert.deepEqual(a.workSummary.blocked, { count: 1, workItemIds: [blocked.id] });
+        assert.deepEqual(a.workSummary.completed, { count: 1, workItemIds: [completed.id] });
+        assert.deepEqual(b.workSummary.completed, { count: 1, workItemIds: [foreignDone.id] });
+        assert.equal(a.workSummary.completed.workItemIds.includes(pending.id), false);
+        for (const [row, item, actor] of [[a, blocked, owner], [b, foreignDone, foreign]]) {
+            assert.equal((await request('work-items/' + item.id, 'WorkItemResponse', { shop: item.shopId, actor })).id, item.id);
+            assert.equal(await db.appNotification.count({ where: { shopId: item.shopId, sourceId: row.id, recipientUserId: actor.userId } }), 1);
+        }
+        await request('work-items/' + foreignDone.id, 'Problem', { status: 404 });
+        await request('digests/' + a.id, 'Problem', { shop: shopB.id, actor: foreign, status: 404 });
+        console.log(JSON.stringify({ status: 'SC2_F06_WORK_ITEM_GROUPS', shopAPending: a.workSummary.pending.count,
+            shopALinkCap: a.workSummary.pending.workItemIds.length, shopABlocked: 1, shopACompleted: 1, shopBCompleted: 1,
+            lateTransitionsUsePriorState: true, distinctCutoffs: [a.periodEnd, b.periodEnd], concurrentDailyRows: 2 }));
+    } finally {
+        await admin.shop.update({ where: { id: shopB.id }, data: { timezone: shopB.timezone } });
+        for (const policy of originalPolicies)
+            await db.notificationPolicy.update({ where: { shopId: policy.shopId }, data: { ...policy, updatedAt: new Date(), version: { increment: 1 } } });
+        await admin.workItem.deleteMany({ where: { sourceType: 'fixture_f06', shopId: { in: [shopId, shopB.id] } } });
+    }
+});
 test('SC2-F06 SC2-F07 -- digest preserves local period and worker health expires', async () => {
     const previous = await request('notification-policy', 'NotificationPolicyResponse');
     const input = {
@@ -545,6 +616,71 @@ test('SC2-F06 SC2-F07 -- digest preserves local period and worker health expires
     }
 });
 
+test('SC2-F07 -- health uses fresh authorized observations and distinguishes stale, failed and uncertain checks', async () => {
+    const aiId = await connectedAi();
+    const channelId = randomUUID();
+    await admin.channelConnection.create({ data: { id: channelId, shopId, provider: 'messenger', pageId: randomUUID(), status: 'connected',
+        policyVersion: 'messenger-fixture-v1', policyVerifiedAt: new Date() } });
+    const aiComponent = 'ai:' + aiId;
+    const channelComponent = 'messenger:' + channelId;
+    const health = async options => (await request('operations-summary', 'OperationsSummaryResponse', options)).health;
+    const find = (rows, id) => {
+        const row = rows.find(check => check.component === id);
+        assert.ok(row, 'missing shop-scoped observation for ' + id);
+        return row;
+    };
+    const old = new Date(Date.now() - 25 * 3600000);
+    const reviewerKey = { shopId_userId: { shopId, userId: reviewer.userId } };
+    try {
+        let rows = await health();
+        const ai = find(rows, aiComponent);
+        assert.equal(ai.status, 'healthy');
+        assert.match(ai.reason, /thử nghiệm/i);
+        assert.equal(ai.runbook, 'ai');
+        assert.equal(Date.parse(ai.expiresAt) - Date.parse(ai.checkedAt), ai.maxAgeMs);
+        const unobserved = find(rows, channelComponent);
+        assert.equal(unobserved.status, 'unknown');
+        assert.equal(unobserved.checkedAt, null);
+        assert.equal(unobserved.runbook, 'messenger');
+
+        await admin.channelConnection.update({ where: key(channelId), data: { lastWebhookAt: new Date() } });
+        assert.equal(find(await health(), channelComponent).status, 'healthy');
+        await admin.channelConnection.update({ where: key(channelId), data: { lastWebhookAt: old } });
+        assert.equal(find(await health(), channelComponent).status, 'unknown');
+
+        const { checkJobId } = await db.aiConnection.findUniqueOrThrow({ where: key(aiId) });
+        const report = async (jobStatus, checkedAt) => {
+            await admin.job.update({ where: key(checkJobId), data: { status: jobStatus } });
+            await admin.aiConnection.update({ where: key(aiId), data: { status: 'degraded', lastCheckedAt: checkedAt } });
+            return find(await health(), aiComponent);
+        };
+        assert.equal((await report('awaiting_confirmation', new Date())).status, 'unknown');
+        const failed = await report('failed', new Date());
+        assert.equal(failed.status, 'down');
+        assert.match(failed.reason, /thất bại/i);
+        const expired = await report('failed', old);
+        assert.equal(expired.status, 'unknown');
+        assert.match(expired.reason, /hết hiệu lực/i);
+        assert.equal((await report('failed', new Date(Date.now() + 3600000))).status, 'unknown');
+
+        const cross = await health({ shop: shopB.id, actor: foreign });
+        assert.ok(!cross.some(row => row.component === aiComponent || row.component === channelComponent));
+        const membership = await db.membership.findUniqueOrThrow({ where: reviewerKey });
+        await db.membership.update({ where: reviewerKey, data: { roles: ['viewer'], permissionVersion: { increment: 1 } } });
+        try {
+            rows = await health({ actor: reviewer });
+            assert.ok(!rows.some(row => row.component === aiComponent || row.component === channelComponent));
+            assert.equal(find(rows, 'postgresql').status, 'healthy');
+        } finally {
+            await db.membership.update({ where: reviewerKey, data: { roles: membership.roles, permissionVersion: { increment: 1 } } });
+        }
+        console.log(JSON.stringify({ status: 'SC2_F07_PROVIDER_OBSERVATIONS', aiFixture: 'healthy-failed-stale-uncertain',
+            messenger: 'absent-fresh-stale', futureSample: 'unknown', foreignScopeHidden: true, limitedRoleHidden: true }));
+    } finally {
+        await admin.channelConnection.delete({ where: key(channelId) });
+        await admin.aiConnection.update({ where: key(aiId), data: { deletedAt: new Date(), status: 'disabled', credentialCiphertext: null, keyLast4: null, lastCheckedAt: null, checkJobId: null } });
+    }
+});
 test('SC2-G07 SC2-G08 -- shop-local reporting counts the actual order and net promotion only once', async () => {
     const lines = (await product(2)).map(row => ({ variantId: row.id, quantity: 1 }));
     for (const line of lines) await db.$transaction(tx => recordStockMovement(tx, { shopId, warehouseId, variantId: line.variantId, actorId: owner.userId,
@@ -578,14 +714,34 @@ test('SC2-G07 SC2-G08 -- shop-local reporting counts the actual order and net pr
     assert.equal(summary.trend.length, 1);
     const row = summary.promotionResults.find(row => row.promotionId === promo.id);
     assert.deepEqual({ orders: row.orders, discount: row.discount, netSales: row.netSales }, { orders: 1, discount: money('10'), netSales: money('190') });
-    assert.equal(summary.knownAttributedOrders, 0);
+    assert.equal(row.orderId, first.id);
+    assert.equal(summary.knownAttributedOrders, before.knownAttributedOrders);
     assert.ok(summary.unknownAttributionOrders >= 1);
+    for (const line of lines) {
+        const row = summary.demandStock?.find(item => item.variantId === line.variantId);
+        assert.deepEqual(row && { orderedUnits: row.orderedUnits, availableUnits: row.availableUnits, orderId: row.orderId },
+            { orderedUnits: 1, availableUnits: 2, orderId: first.id });
+    }
+    const period = await db.accountingPeriod.findFirst({ where: { shopId, startDate: { lte: new Date(date) }, endDate: { gte: new Date(date) } } });
+    if (!period) await post('periods', { startDate: date, endDate: date, reason: 'Kỳ kiểm tồn báo cáo Marketing' }, 'AccountingPeriodResponse', { status: 201 });
+    const movedLine = { variantId: lines[0].variantId, quantity: 2 };
+    const target = await post('warehouses', { code: 'R53-' + randomUUID().slice(0, 8), name: 'Kho nhận R67', addressLine: 'Fixture' },
+        'WarehouseResponse', { status: 201 });
+    const transfer = await post('inventory/transfers', { fromWarehouseId: warehouseId, toWarehouseId: target.id, lines: [movedLine],
+        reason: 'Chuyển tồn kiểm R53' }, 'StockTransferResponse', { status: 201 });
+    const sent = await patch('inventory/transfers/' + transfer.id, { action: 'dispatch' }, 'StockTransferResponse', { version: transfer.version });
+    const duringTransfer = await request(marketingQuery, 'MarketingSummaryResponse');
+    const transferred = summary => summary.demandStock.find(item => item.variantId === movedLine.variantId);
+    assert.deepEqual([transferred(duringTransfer).orderedUnits, transferred(duringTransfer).availableUnits], [1, 0]);
+    await patch('inventory/transfers/' + transfer.id, { action: 'receive', lines: [movedLine] }, 'StockTransferResponse', { version: sent.version });
+    assert.equal(transferred(await request(marketingQuery, 'MarketingSummaryResponse')).availableUnits, 0);
     assert.deepEqual(summary.actualSpend, before.actualSpend);
     assert.deepEqual(summary.estimatedSpend, before.estimatedSpend);
     const defaults = await request('marketing-summary', 'MarketingSummaryResponse');
     assert.equal(defaults.trend.length, 30);
     const foreignReport = await request('marketing-summary?fromDate=' + date + '&toDate=' + date, 'MarketingSummaryResponse', { shop: shopB.id, actor: foreign });
     assert.ok(!foreignReport.promotionResults.some(row => row.promotionId === promo.id));
+    assert.ok(!foreignReport.demandStock.some(row => lines.some(line => line.variantId === row.variantId)));
     await request('marketing-summary?fromDate=2020-01-01&toDate=2030-01-01', 'Problem', { status: 422 });
     const dashboard = await request('dashboard', 'DashboardResponse');
     assert.ok(dashboard.pendingOrders >= 2);
@@ -594,5 +750,112 @@ test('SC2-G07 SC2-G08 -- shop-local reporting counts the actual order and net pr
         const command = await post('bot/pause', { expectedVersion: bot.version, reason: 'Dừng bot với quyền phiên hiện hành' }, 'CommandResponse', { status: 202 });
         assert.equal(command.status, 'succeeded');
         assert.equal((await request('bot/config', 'BotConfigResponse')).status, 'paused');
+    }
+});
+
+test('SC2-G07 R53 aggregates only traceable question topics and reports blocked sales with scoped evidence', async () => {
+    const title = 'Hướng dẫn chọn kích cỡ ' + randomUUID().slice(0, 8);
+    const now = new Date();
+    const date = localAccountingDate(now, shopA.timezone);
+    const route = 'marketing-summary?' + new URLSearchParams({ fromDate: date, toDate: date });
+    const doc = await admin.knowledgeDocument.create({ data: { shopId } });
+    const revision = await admin.knowledgeRevision.create({ data: {
+        shopId, documentId: doc.id, revision: 1, sourceKind: 'manual', title, content: title,
+        status: 'retired', publishedAt: new Date(+now - 86400000), approvedBy: owner.userId,
+    } });
+    const customer = await admin.customer.create({ data: { shopId, displayName: 'Khách mẫu R53' } });
+    async function task(conversationId, outcome, options = {}) {
+        const message = await admin.channelMessage.create({ data: {
+            shopId, conversationId, externalId: randomUUID(), origin: 'fixture', direction: 'inbound', senderKind: 'customer',
+            text: 'Nội dung riêng tư của hội thoại kiểm R53', redactedAt: options.redact ? now : null, createdAt: options.createdAt ?? now,
+        } });
+        await admin.botInboundTask.create({ data: {
+            shopId, messageId: message.id, conversationGeneration: 1, channelGeneration: 1, botGeneration: 1, outcome, finishedAt: now,
+        } });
+        if (outcome === 'knowledge') await admin.channelMessage.create({ data: {
+            shopId, conversationId, externalId: randomUUID(), origin: 'fixture', direction: 'outbound', senderKind: 'bot',
+            text: 'Nguồn tri thức đã ghim', clientMessageId: 'bot-' + message.id,
+            sourceEvidence: [{ type: 'knowledge_revision', id: revision.id }],
+        } });
+    }
+    const { conversation: first } = await orderConversation(admin, shopId, customer.id);
+    const { conversation: second } = await orderConversation(admin, shopId, customer.id);
+    const { conversation: redacted } = await orderConversation(admin, shopId, customer.id);
+    const before = await request(route, 'MarketingSummaryResponse');
+    await task(first.id, 'knowledge');
+    await task(first.id, 'knowledge');
+    await task(second.id, 'knowledge');
+    await task(redacted.id, 'knowledge', { redact: true });
+    await task(first.id, 'knowledge', { createdAt: new Date(+now - 86400000) });
+    await task(second.id, 'stock_insufficient');
+    const results = await request(route, 'MarketingSummaryResponse');
+    assert.deepEqual(results.questionTopics.find(row => row.knowledgeId === doc.id), {
+        knowledgeId: doc.id, title, count: 2, conversationId: [first.id, second.id].sort()[0],
+    });
+    const reason = 'Tồn hiện tại chưa đủ';
+    assert.equal(results.lostSaleReasons.find(row => row.reason === reason)?.count, (before.lostSaleReasons.find(row => row.reason === reason)?.count ?? 0) + 1);
+    assert.ok(results.lostSaleEvidence.some(row => row.reason === reason));
+    assert.doesNotMatch(JSON.stringify(results), /Nội dung riêng tư/);
+    const outside = await request(route, 'MarketingSummaryResponse', { actor: foreign, shop: shopB.id });
+    assert.ok(!outside.questionTopics.some(row => row.knowledgeId === doc.id));
+});
+
+test('SC2-G08 R53 only credits reviewed campaign evidence and keeps estimates and unknown orders distinct', async () => {
+    const attestation = await reviewedEvidenceFixture('marketing', {
+        cwd: process.cwd(), env: { ...process.env, MARKETING_EVIDENCE_SHOPS: [shopA.id, shopB.id].join(',') },
+        document: 'Synthetic reviewed channel and campaign source, per-order attribution. Known: direct source. Estimated: documented model.',
+    });
+    try {
+        for (const [shop, actor, confidence, other] of [[shopA, owner, 'known', foreign], [shopB, foreign, 'estimated', owner]]) {
+            const options = { actor, shop: shop.id };
+            const date = localAccountingDate(new Date(), shop.timezone);
+            const path = 'marketing-summary?' + new URLSearchParams({ fromDate: date, toDate: date, bucket: 'week' });
+            const [variant] = await product(1, actor, shop);
+            await db.$transaction(tx => recordStockMovement(tx, {
+                shopId: shop.id, warehouseId: shop.defaultWarehouseId, variantId: variant.id, actorId: actor.userId,
+                kind: 'receipt', source: { type: 'fixture_receipt', id: randomUUID() }, reason: 'Sổ kho kiểm quy gán', delta: { onHand: 5 }, receivedValue: '50',
+            }));
+            const customer = await post('customers', { displayName: 'Khách kiểm quy gán', phone: '0900000223', email: null, notes: '' },
+                'CustomerResponse', { ...options, status: 201 });
+            const shipping = await post('customers/' + customer.id + '/addresses', { label: 'Mặc định', recipient: 'Khách kiểm', phone: '0900000223',
+                line1: 'Địa chỉ thử', ward: null, district: null, province: shop.currency === 'LAK' ? 'Vientiane' : 'Hà Nội',
+                countryCode: shop.currency === 'LAK' ? 'LA' : 'VN', postalCode: null,
+            }, 'CustomerAddressResponse', { ...options, status: 201 });
+            const { conversation } = await orderConversation(admin, shop.id, customer.id);
+            const order = await post('orders', {
+                customerId: customer.id, conversationId: conversation.id, warehouseId: shop.defaultWarehouseId, shippingAddressId: shipping.id,
+                notes: '', paymentMethod: 'cod', lines: [{ variantId: variant.id, quantity: 2 }], promotionId: null,
+            }, 'OrderResponse', { ...options, status: 201 });
+            const offer = await post('orders/' + order.id + '/quote', undefined, 'OrderQuoteResponse', options);
+            const proof = await post('orders/' + order.id + '/customer-confirmations', await quoteEvidenceFixture(admin, offer, conversation), 'CustomerConfirmationResponse', options);
+            assert.equal((await post('orders/' + order.id + '/confirm', { expectedVersion: order.version, quoteId: offer.id, customerConfirmationId: proof.id },
+                'CommandResponse', { ...options, status: 202 })).status, 'succeeded');
+            const before = await request(path, 'MarketingSummaryResponse', options);
+            const input = { shopId: shop.id, reviewerId: actor.userId, orderId: order.id, date, expectedRevision: 0,
+                confidence, channel: 'messenger', campaignId: 'campaign-' + randomUUID(), sourceId: 'source-' + randomUUID() };
+            const wrongShop = await attestation.prepare({ ...input, reviewerId: other.userId });
+            await assert.rejects(attestation.execute(wrongShop), /Attestation rejected \(404\)/);
+            const wrongDay = await attestation.prepare({ ...input, date: '2000-01-01' });
+            await assert.rejects(attestation.execute(wrongDay), /Attestation rejected \(422\)/);
+            const hash = await attestation.prepare(input);
+            const [firstResult, retry] = await Promise.all([attestation.execute(hash), attestation.execute(hash)]);
+            assert.equal(JSON.parse(firstResult.stdout).evidenceId, JSON.parse(retry.stdout).evidenceId);
+            const changed = await attestation.prepare({ ...input, sourceId: 'other-source' });
+            await assert.rejects(attestation.execute(changed), /Attestation rejected \(412\)/);
+            const report = await request(path, 'MarketingSummaryResponse', options);
+            assert.equal(report.unknownAttributionOrders, before.unknownAttributionOrders - 1);
+            assert.equal(report.knownAttributedOrders, before.knownAttributedOrders + Number(confidence === 'known'));
+            assert.equal(report.estimatedAttributedOrders, before.estimatedAttributedOrders + Number(confidence === 'estimated'));
+            assert.equal(report.trend[0].estimatedAttributedOrders, report.estimatedAttributedOrders);
+            assert.deepEqual(report.actualSpend, before.actualSpend);
+            assert.deepEqual(report.estimatedSpend, before.estimatedSpend);
+            const campaign = report.campaignResults.find(row => row.campaignId === input.campaignId);
+            assert.deepEqual(campaign, { channel: input.channel, campaignId: input.campaignId, knownOrders: Number(confidence === 'known'),
+                estimatedOrders: Number(confidence === 'estimated'), orderId: order.id, actualSpend: null, spendJournalId: null,
+                attributionSourceId: input.sourceId });
+            await request(path, 'Problem', { ...options, actor: other, status: 404 });
+        }
+    } finally {
+        await attestation.close();
     }
 });
