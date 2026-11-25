@@ -1,13 +1,14 @@
-import { useState } from 'react';
-import { Button, MenuItem, TextField } from '@mui/material';
+import { useRef, useState } from 'react';
+import { Alert, Box, Button, MenuItem, TextField, Typography } from '@mui/material';
 import { useSearchParams } from 'react-router-dom';
 import type { PaymentReview } from '@botsales/contracts';
-import { useApi } from '@/shared/api/hooks';
+import { useApi, useCommand } from '@/shared/api/hooks';
+import { authorizedDownloadHref } from '@/shared/model/download';
 import { useListQuery } from '@/shared/model/filters';
 import { dateTime } from '@/shared/model/format';
 import { useCan, useScope } from '@/shared/model/scope';
 import { ActionGroup, FieldGroup, FormFields } from '@/shared/ui/composition';
-import { Amount, DataTable, DetailLine, EditDialog, PageHeader, Pager, Panel, QueryState, RouteLink, Toolbar } from '@/shared/ui/components';
+import { Amount, DataTable, DetailLine, EditDialog, ErrorNotice, MutationButton, PageHeader, Pager, Panel, QueryState, RouteLink, Toolbar } from '@/shared/ui/components';
 
 const reviewLabels: Record<PaymentReview['status'], string> = {
     unpaid: 'Chờ xác minh thu', partial: 'Đã xác minh một phần', cod_pending: 'Chờ đối soát COD',
@@ -49,7 +50,7 @@ export function PaymentReviewsPage() {
                 <DataTable label="Hàng đợi thu và hoàn tiền" reflowOnMobile rows={list.data.data} rowKey={row => row.id}
                     empty="Chưa có khoản tiền theo bộ lọc." columns={[
                         { key: 'order', label: 'Đơn hàng', render: row => row.orderId },
-                        { key: 'status', label: 'Tình trạng', render: row => `${row.kind === 'refund' ? 'Hoàn tiền' : 'Thu tiền'} · ${reviewLabels[row.status]}` },
+                        { key: 'status', label: 'Tình trạng', render: row => `${row.kind === 'refund' ? 'Hoàn tiền' : 'Thu tiền'} · ${reviewLabels[row.status]}${row.pendingTransferImages?.length ? ' · ' + row.pendingTransferImages.length + ' ảnh chờ đối chiếu' : ''}` },
                         { key: 'expected', label: 'Phải thu/hoàn', align: 'right', render: row => <Amount value={row.expected} /> },
                         { key: 'verified', label: 'Đã xác minh', align: 'right', render: row => <Amount value={row.verified} /> },
                         { key: 'remaining', label: 'Còn lại', align: 'right', render: row => <Amount value={row.remaining} /> },
@@ -68,6 +69,7 @@ function PaymentReviewDetails({ row, close }: { row: PaymentReview; close: () =>
     const { shop } = useScope();
     const canReadOrders = useCan('orders.read');
     const canReadWork = useCan('operations.read');
+    const canReconcile = useCan('finance.reconcile');
     const shopPath = `/s/${shop.id}`;
     return <EditDialog open title={`Chứng từ đơn ${row.orderId}`} onClose={close} actions={<Button onClick={close}>Đóng</Button>}>
         <FormFields>
@@ -81,6 +83,7 @@ function PaymentReviewDetails({ row, close }: { row: PaymentReview; close: () =>
             <DetailLine label="Giao dịch ngân hàng">{row.bankTransactionIds.join(', ') || 'Chưa liên kết'}</DetailLine>
             <DetailLine label="Đợt đối soát COD">{row.codSettlementIds.join(', ') || 'Chưa liên kết'}</DetailLine>
             <DetailLine label="Mã bằng chứng">{row.references.join(', ') || 'Chưa ghi nhận mã'}</DetailLine>
+            {canReconcile && row.kind === 'collection' && <PendingTransferPhotos key={row.orderId} row={row} />}
             <ActionGroup direction="row">
                 {canReadOrders && <RouteLink to={`${shopPath}/orders/${encodeURIComponent(row.orderId)}`}>Mở đơn hàng</RouteLink>}
                 {canReadOrders && row.returnIds.length > 0 && <RouteLink to={`${shopPath}/returns?orderId=${encodeURIComponent(row.orderId)}`}>Mở phiếu đổi trả</RouteLink>}
@@ -91,4 +94,56 @@ function PaymentReviewDetails({ row, close }: { row: PaymentReview; close: () =>
             </ActionGroup>
         </FormFields>
     </EditDialog>;
+}
+
+function PendingTransferPhotos({ row }: { row: PaymentReview }) {
+    const { shop } = useScope();
+    const picker = useRef<HTMLInputElement>(null);
+    const [selected, setSelected] = useState<string>();
+    const [problem, setProblem] = useState<string>();
+    const upload = useCommand('uploadFile', ['listPaymentReviews']);
+    const photos = row.pendingTransferImages ?? [];
+    const photoId = photos.find(file => file.fileId === selected)?.fileId;
+    const file = useApi('getFile', { path: { fileId: photoId ?? '' } }, Boolean(photoId));
+    const source = file.data?.data;
+    const origin = window.location.origin;
+    const href = source?.status === 'ready' && source.purpose === 'payment_evidence_image' &&
+        source.resourceId === row.orderId && source.readUrl ? authorizedDownloadHref(source.readUrl, origin, __MOCK__) : null;
+
+    async function addPhoto(photo: File) {
+        setProblem(undefined);
+        if (!['image/jpeg', 'image/png', 'image/webp'].includes(photo.type) || !photo.size) {
+            setProblem('Chọn ảnh JPEG, PNG hoặc WebP.');
+            return;
+        }
+        const form = new FormData();
+        form.append('file', photo);
+        form.append('purpose', 'payment_evidence_image');
+        form.append('resourceId', row.orderId);
+        const result = await upload.execute({ form });
+        if (result.data.status !== 'ready') setProblem('Ảnh chưa qua kiểm tra.');
+        else setSelected(result.data.id);
+    }
+
+    return <FormFields beforeGap="surface">
+        <Typography variant="subtitle2">Ảnh chuyển khoản chờ đối chiếu</Typography>
+        <Typography variant="caption">Che thông tin cá nhân trước khi tải. Chỉ xác nhận thu tiền từ chứng từ đã kiểm.</Typography>
+        <ErrorNotice error={upload.error || (photoId ? file.error : null)} />
+        {problem && <Alert severity="error">{problem}</Alert>}
+        <ActionGroup direction="row" flexWrap="wrap">
+            <MutationButton permission="finance.reconcile" variant="outlined" busy={upload.pending} disabled={upload.unresolved}
+                onClick={() => picker.current?.click()}>Tải ảnh chuyển khoản</MutationButton>
+            {photos.map(photo => <Button key={photo.fileId} size="small" aria-pressed={selected === photo.fileId}
+                onClick={() => setSelected(photo.fileId)}>Ảnh lúc {dateTime(photo.createdAt, shop.timezone)}</Button>)}
+        </ActionGroup>
+        <input ref={picker} hidden type="file" aria-label="Ảnh chuyển khoản" accept="image/jpeg,image/png,image/webp"
+            onChange={event => {
+                const photo = event.currentTarget.files?.[0];
+                event.currentTarget.value = '';
+                if (photo) void addPhoto(photo).catch(() => undefined);
+            }} />
+        {photoId && file.isPending && <Typography variant="caption" role="status">Đang tải ảnh…</Typography>}
+        {href && new URL(href).origin === origin && <Box component="img" src={href} alt="Ảnh chuyển khoản chờ đối chiếu"
+            sx={{ display: 'block', maxWidth: '100%', width: 240, maxHeight: 180, objectFit: 'contain' }} />}
+    </FormFields>;
 }

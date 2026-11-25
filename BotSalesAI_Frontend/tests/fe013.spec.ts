@@ -128,9 +128,23 @@ test('FE013.AC01–AC04 stale claim conflict is visible; pick, pack, dispatch an
     await quantity.fill('0');
     await prepDialog.getByRole('textbox', { name: 'Nhập/quét SKU thực tế' }).fill('AO-002');
     await prepDialog.getByRole('textbox', { name: 'Vấn đề phát hiện (để trống khi đạt)' }).fill('Thiếu hàng khi kiểm thực tế');
+    const priorViewport = page.viewportSize();
+    await page.setViewportSize({ width: 390, height: 844 });
+    const issueUpload = page.waitForResponse(response => response.request().method() === 'POST' && new URL(response.url()).pathname.endsWith('/uploads'));
+    const files = page.waitForEvent('filechooser');
+    await prepDialog.getByRole('button', { name: 'Chọn ảnh chứng cứ' }).click();
+    await (await files).setFiles({
+        name: 'kiem-hang.png', mimeType: 'image/png',
+        buffer: Buffer.from('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/w8AAgMB/6X6jRYAAAAASUVORK5CYII=', 'base64'),
+    });
+    expect((await issueUpload).status()).toBe(201);
+    await expect(prepDialog.getByText('Ảnh đã tải, chờ xác nhận dòng.')).toBeVisible();
     const partialPick = page.waitForResponse(response => response.request().method() === 'POST' && new URL(response.url()).pathname.endsWith('/pick'));
     await prepDialog.getByRole('button', { name: 'Xác nhận dòng đã kiểm' }).click();
-    expect((await partialPick).status()).toBe(200);
+    const flagged = await partialPick;
+    expect(flagged.status()).toBe(200);
+    expect((await flagged.json()).data.lines[0].issueEvidenceFileId).toBeTruthy();
+    await expect(prepDialog.getByRole('img', { name: 'Ảnh chứng cứ kiểm hàng cho SKU AO-002' })).toBeVisible();
     await expect(prepDialog.getByRole('button', { name: 'Đóng', exact: true }).last()).toBeEnabled();
     await expect(prepDialog.getByText('0/1', { exact: true })).toBeVisible();
     await expect(prepDialog.getByRole('button', { name: 'Xác nhận đã đóng gói' })).toBeDisabled();
@@ -140,6 +154,8 @@ test('FE013.AC01–AC04 stale claim conflict is visible; pick, pack, dispatch an
     const completedPick = page.waitForResponse(response => response.request().method() === 'POST' && new URL(response.url()).pathname.endsWith('/pick'));
     await prepDialog.getByRole('button', { name: 'Xác nhận dòng đã kiểm' }).click();
     expect((await completedPick).status()).toBe(200);
+    expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBe(390);
+    if (priorViewport) await page.setViewportSize(priorViewport);
     await expect(prepDialog.getByRole('button', { name: 'Xác nhận đã đóng gói' })).toBeEnabled();
 
     await prepDialog.getByRole('button', { name: 'Xác nhận đã đóng gói' }).click();

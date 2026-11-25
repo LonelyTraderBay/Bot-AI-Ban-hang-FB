@@ -6,7 +6,7 @@ import { validUuid } from '../../http/query.js';
 
 type ProductTemplate = {
     kind: 'product_content'; productId: string; sourceOwner: string; features: string; sizeUse: string;
-    warranty: string; alternatives: string; forbiddenPromises: string;
+    warranty: string; alternatives: string; forbiddenPromises: string; imageFileId?: string;
 };
 type ScriptTemplate = {
     kind: 'sales_script'; industry: string; persona: string; needs: string; requiredFacts: string; boundaries: string;
@@ -23,6 +23,16 @@ export function readKnowledgeTemplate(input: Prisma.JsonValue | undefined) {
     })) as ProductTemplate | ScriptTemplate;
 }
 
+async function selectedProductImage(tx: Prisma.TransactionClient, shopId: string, template: ProductTemplate) {
+    if (!template.imageFileId) return null;
+    const image = await tx.productImage.findFirst({
+        where: { shopId, productId: template.productId, fileId: template.imageFileId, file: { purpose: 'product_image', status: 'ready' } },
+        select: { fileId: true, file: { select: { sha256: true } } },
+    });
+    if (!image) throw new UnprocessableEntityException('Ảnh nguồn phải sẵn sàng và đang gắn với sản phẩm trong cửa hàng.');
+    return { fileId: image.fileId, sha256: image.file.sha256 };
+}
+
 export async function templateContent(tx: Prisma.TransactionClient, shopId: string, template: NonNullable<ReturnType<typeof readKnowledgeTemplate>>) {
     if (template.kind === 'sales_script') {
         return [
@@ -35,6 +45,7 @@ export async function templateContent(tx: Prisma.TransactionClient, shopId: stri
         where: { shopId_id: { shopId, id: template.productId } }, select: { name: true, status: true },
     }) : undefined;
     if (!product || product.status === 'archived') throw new UnprocessableEntityException('Sản phẩm nguồn phải thuộc cửa hàng và còn sử dụng.');
+    await selectedProductImage(tx, shopId, template);
     return [
         ['Sản phẩm', product.name], ['Điểm nổi bật', template.features], ['Kích cỡ và cách dùng', template.sizeUse],
         ['Bảo hành / đổi trả', template.warranty], ['Sản phẩm thay thế', template.alternatives], ['Điều không được cam kết', template.forbiddenPromises],
@@ -48,4 +59,5 @@ export async function requireTemplateReady(tx: Prisma.TransactionClient, shopId:
     if (template.kind === 'product_content' && !await tx.product.findFirst({
         where: { shopId, id: template.productId, status: 'active' }, select: { id: true },
     })) throw new UnprocessableEntityException('Cần sản phẩm nguồn đang hoạt động trước khi gửi duyệt hoặc xuất bản.');
+    return template.kind === 'product_content' ? selectedProductImage(tx, shopId, template) : null;
 }

@@ -1334,9 +1334,9 @@
       "id": "SC-051",
       "module": "reports",
       "name": "Export scope và formula",
-      "given": "Export orders có text bắt đầu =,+,-,@; principal thiếu finance.read.",
-      "when": "Tạo/tải export có field tài chính.",
-      "then": "Server hạn chế field/source permission; CSV escaping an toàn; không job/download cross-tenant.",
+      "given": "CSV đơn dùng 13 cột cố định. Tồn kho có tên bắt đầu bằng =,+,-,@ và tên chứa dấu phẩy, dấu nháy. Vai trò kế toán ở một shop có reports.export nhưng thiếu inventory.read.",
+      "when": "Tạo, tra tác vụ và tải các CSV trên hai shop. Đối chiếu tổng tiền và tiền tệ với API của đơn.",
+      "then": "CSV đơn khớp tổng và tiền tệ. CSV tồn thoát tiền tố công thức và dấu phân cách. Tạo export thiếu quyền đọc nguồn bị từ chối. Shop khác không tạo, tra tác vụ hoặc tải được.",
       "testLayer": "backend_integration",
       "severity": "critical",
       "operationIds": [

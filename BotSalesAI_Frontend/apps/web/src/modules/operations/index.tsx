@@ -1,11 +1,11 @@
 import { label as businessLabel } from '@/shared/model/labels';
 import { ActionGroup, FormFields, SectionGrid, SurfaceContent } from '../../shared/ui/composition';
 import { useEffect, useState } from 'react';
-import { useSearchParams } from 'react-router-dom';
+import { useLocation, useSearchParams } from 'react-router-dom';
 import { visualSx } from '@/shared/ui/visual';
 import { Alert, Box, Button, MenuItem, Stack, TextField, Typography } from '@mui/material';
 import { layoutSx } from '../../shared/ui/layout';
-import type { AgentRole, WorkItem } from '@botsales/contracts';
+import type { AgentRole, DigestWorkSummary, HealthCheck, WorkItem } from '@botsales/contracts';
 import { useApi, usePagedApi, useCommand } from '@/shared/api/hooks';
 import { useScope, useCan } from '@/shared/model/scope';
 import { useListQuery } from '@/shared/model/filters';
@@ -129,6 +129,11 @@ export function OperationsPage() {
                 </>}
             </QueryState>
         </Panel>
+        <Panel title="Trạng thái phụ thuộc" beforeGap="section" bodyMode="inset">
+            <QueryState query={summary}>
+                {summary.data && <HealthChecks checks={summary.data.data.health} />}
+            </QueryState>
+        </Panel>
         {canReadCommands && <CommandsPanel/>}
         <EditDialog open={!!item} title="Cập nhật công việc" onClose={() => setItem(null)} busy={update.pending} actions={<Button variant="contained" disabled={!item || !availableActions.includes(action) || codePointLength(reason.trim()) < 5 || (action === 'reassign' && !assignee) || update.pending} onClick={async () => {
             if (!item || !availableActions.includes(action)) return;
@@ -161,14 +166,86 @@ export function OperationsPage() {
 
 export function ApprovalsPage() { return <ApprovalsView />; }
 
+const runbooks = {
+    database: { title: 'PostgreSQL', steps: 'Kiểm tra kết nối và readiness từ môi trường chạy API. Đối chiếu sự cố với các phép kiểm PostgreSQL và Redis trước khi thử lại thao tác.' },
+    worker: { title: 'Worker và hàng đợi', steps: 'Kiểm tra worker, Redis và hàng đợi bền vững. Mở trang ngoại lệ để đối chiếu tác vụ thất bại hoặc chưa rõ trước khi chạy lại.' },
+    messenger: { title: 'Messenger', steps: 'Đối chiếu phạm vi trang, webhook có chữ ký và nhật ký tiếp nhận. Kiểm tra riêng quyền gửi và biên nhận nếu lỗi xảy ra khi trả lời.' },
+    ai: { title: 'Kết nối AI', steps: 'Mở kết nối AI, kiểm tra quyền truy cập đúng model và đối chiếu kết quả lần kiểm gần nhất. Dùng mã lần chạy để tra cứu phản hồi chưa rõ.' },
+    notifications: { title: 'Web Push và Telegram', steps: 'Mở thiết bị thông báo, xác nhận quyền và liên kết của thiết bị rồi chạy phép gửi thử. Kiểm tra đã nhận trên thiết bị trước khi xử lý fallback.' },
+    budgets: { title: 'Hạn mức vận hành', steps: 'Đối chiếu hạn mức đã duyệt, số đã dùng và số dự trù theo kỳ. Kiểm tra yêu cầu đang chờ đối soát trước khi xin đổi hạn mức.' },
+} satisfies Record<NonNullable<HealthCheck['runbook']>, { title: string; steps: string }>;
+
+function HealthChecks({ checks }: { checks: readonly HealthCheck[] }) {
+    const { shop } = useScope();
+    const [, setClock] = useState(0);
+    const currentTime = Date.now();
+    useEffect(() => {
+        const expiries = checks.map(check => Date.parse(check.expiresAt ?? '')).filter(expires => expires > currentTime);
+        if (!expiries.length) return;
+        const timer = window.setTimeout(() => setClock(Date.now()), Math.max(1, Math.min(...expiries) - Date.now()));
+        return () => window.clearTimeout(timer);
+    }, [checks, currentTime]);
+    return <Box role="region" aria-label="Trạng thái phụ thuộc">
+        <SurfaceContent>
+            {checks.map(check => {
+                const label = check.label ?? check.component;
+                const expired = check.status !== 'unknown' && (!check.checkedAt || !check.expiresAt ||
+                    Date.parse(check.checkedAt) > currentTime || Date.parse(check.expiresAt) <= currentTime);
+                const status = expired ? 'unknown' : check.status;
+                const reason = expired ? 'Cần kiểm tra lại để xác nhận trạng thái hiện tại.' : check.reason;
+                return <Box key={check.component}>
+                    <Stack direction="row" justifyContent="space-between" alignItems="flex-start" sx={layoutSx.surface.headerFlowGap}>
+                        <Typography sx={{ minWidth: 0, overflowWrap: 'anywhere' }}>{label}</Typography><Status value={status} />
+                    </Stack>
+                    {reason && <Typography variant="body2" color="text.secondary" sx={layoutSx.detail.relatedContentGap}>{reason}</Typography>}
+                    <Typography variant="caption" component="div">{check.checkedAt ? dateTime(check.checkedAt, shop.timezone) : 'Chưa kiểm tra thực tế'}</Typography>
+                    {check.expiresAt && <Typography variant="caption" component="div">Hết hiệu lực {dateTime(check.expiresAt, shop.timezone)}</Typography>}
+                    {check.lagMs !== undefined && <Typography variant="caption" component="div">Chờ {Math.ceil(check.lagMs / 1000)} giây</Typography>}
+                    {check.runbook && status !== 'healthy' && <RouteLink to={`/s/${shop.id}/operations/digests#runbook-${check.runbook}`}>Hướng dẫn xử lý {label}</RouteLink>}
+                </Box>;
+            })}
+        </SurfaceContent>
+    </Box>;
+}
+
+function WorkItemSources({ shopId, ids }: { shopId: string; ids: readonly string[] }) {
+    return ids.length
+        ? <ActionGroup direction="row">{ids.map(id => <RouteLink key={id} to={`/s/${shopId}/operations?q=${encodeURIComponent(id)}`}>{id}</RouteLink>)}</ActionGroup>
+        : 'Không có mục công việc được tham chiếu';
+}
+
+const digestGroups = { pending: 'đang chờ xử lý', blocked: 'đang bị chặn', completed: 'đã hoàn tất' } as const;
+
+function DigestSources({ summary }: { summary: DigestWorkSummary }) {
+    const { shop } = useScope();
+    return <SurfaceContent rhythm="dividedRows">
+        {summary.coverage === 'partial' && <Alert severity="warning">Lịch sử công việc của kỳ này còn thiếu.</Alert>}
+        {(Object.keys(digestGroups) as Array<keyof typeof digestGroups>).map(group => {
+            const { count, workItemIds } = summary[group];
+            const label = `${count} công việc ${digestGroups[group]}`;
+            return workItemIds.length ? <Box component="details" key={group} sx={layoutSx.detail.rowInsetBlock}>
+                <Typography component="summary" sx={{ cursor: 'pointer' }}>{label}</Typography>
+                {count > workItemIds.length && <Typography variant="caption">Có liên kết cho {workItemIds.length} công việc gần nhất.</Typography>}
+                <WorkItemSources shopId={shop.id} ids={workItemIds} />
+            </Box> : <Typography component="div" key={group} sx={layoutSx.detail.rowInsetBlock}>{label}</Typography>;
+        })}
+    </SurfaceContent>;
+}
 export function DigestsPage() {
     const { shop } = useScope();
+    const { hash } = useLocation();
     const canReadEvaluations = useCan('bot.read');
     const list = useApi('listDigests', { query: useListQuery('listDigests') });
     const health = useApi('getOperationsSummary');
     const control = useCommand('controlAutomation', ['listAgentRoles', 'getBotConfig', 'getOperationsSummary']);
     const [stop, setStop] = useState<{ role: AgentRole; action: 'pause' | 'resume' } | null>(null);
 
+    useEffect(() => {
+        if (!hash.startsWith('#runbook-')) return;
+        const section = document.getElementById(hash.slice(1));
+        section?.scrollIntoView();
+        section?.focus({ preventScroll: true });
+    }, [hash]);
     return <>
         <PageHeader title="Bản tin & sức khỏe hệ thống" subtitle="Những việc quan trọng cần chủ shop quyết định; không thay thế người trực thực tế."
             actions={canReadEvaluations && <RouteLink to={`/s/${shop.id}/bot/evaluations`}>Đánh giá chất lượng AI</RouteLink>} />
@@ -181,7 +258,11 @@ export function DigestsPage() {
                             <Stack direction="row" justifyContent="space-between" sx={layoutSx.surface.headerFlowGap}><Stack><Typography component="div" variant="subtitle2">{dateTime(digest.periodStart, shop.timezone)} → {dateTime(digest.periodEnd, shop.timezone)}</Typography><Typography variant="caption" color="text.secondary">{digest.id} · phiên bản {digest.version}</Typography></Stack><Status value={digest.status} /></Stack>
                             <Typography sx={[layoutSx.surface.sectionBefore, { whiteSpace: 'pre-wrap' }]}>{digest.text}</Typography>
                             <DetailLine label="Thời điểm tạo / cập nhật">{dateTime(digest.createdAt, shop.timezone)} / {dateTime(digest.updatedAt, shop.timezone)}</DetailLine>
-                            <DetailLine label="Nguồn công việc">{digest.workItemIds.length ? digest.workItemIds.join(' · ') : 'Không có mục công việc được tham chiếu'}</DetailLine>
+                            {digest.workSummary
+                                ? <DigestSources summary={digest.workSummary} />
+                                : <DetailLine label="Nguồn công việc">
+                                    <WorkItemSources shopId={shop.id} ids={digest.workItemIds} />
+                                </DetailLine>}
                         </Box>)}
                         {list.data?.data.length === 0 && <Empty text="Chưa có bản tin điều hành trong danh sách hiện tại."/>}
                         <Pager page={list.data?.page} />
@@ -190,17 +271,19 @@ export function DigestsPage() {
             </Panel>
             <Panel title="Trạng thái phụ thuộc" bodyMode="inset">
                 <QueryState query={health}>
-                    <Stack>
-                        {health.data?.data.health.map(check => <Box key={check.component} sx={layoutSx.page.sectionAfter}>
-                            <Stack direction="row" justifyContent="space-between"><Typography>{check.component}</Typography><Status value={check.status} /></Stack>
-                            <Typography variant="body2" color="text.secondary" sx={layoutSx.detail.relatedContentGap}>{check.reason || 'Không có ghi chú'}</Typography>
-                            <Typography variant="caption">{check.checkedAt ? dateTime(check.checkedAt, shop.timezone) : 'Chưa kiểm tra thực tế'}</Typography>
-                        </Box>)}
-                    </Stack>
+                    {health.data && <HealthChecks checks={health.data.data.health} />}
                 </QueryState>
                 <Alert severity="info" sx={layoutSx.surface.sectionBefore}>Chỉ hiển thị lịch sử bản tin theo hợp đồng hiện hành. Chưa có API tạo/sửa lịch bản tin; không dựng nút lưu lịch giả.</Alert>
             </Panel>
         </SectionGrid>
+        <Panel title="Hướng dẫn xử lý sự cố" beforeGap="section" bodyMode="inset">
+            <SurfaceContent>
+                {Object.entries(runbooks).map(([key, entry]) => <Box key={key} id={'runbook-' + key} tabIndex={-1}>
+                    <Typography component="h3" variant="subtitle2">{entry.title}</Typography>
+                    <Typography variant="body2" color="text.secondary">{entry.steps}</Typography>
+                </Box>)}
+            </SurfaceContent>
+        </Panel>
         <Panel title="Phục hồi & sẵn sàng triển khai" subtitle="Bảng kiểm hiển thị rõ những điều chưa được xác minh trong bản frontend demo." beforeGap={"section"} bodyMode="inset">
             <SurfaceContent  data-testid="readiness-preview">
                 <Alert severity="warning">Chưa có nguồn readiness/restore trong API hiện hành. Các mục bên dưới giữ trạng thái chưa xác minh và không thể cấp tín hiệu cho phép phát hành.</Alert>

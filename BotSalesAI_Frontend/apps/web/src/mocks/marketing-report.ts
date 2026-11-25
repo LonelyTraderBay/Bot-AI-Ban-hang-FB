@@ -1,6 +1,6 @@
 import type { MarketingBucket, MarketingSummary, MarketingTrendPoint } from '@botsales/contracts';
 import { dateOnlyInTimezone, isValidDateOnly } from '../shared/model/format';
-import { all, ensure, first, money, now, record, str, units } from './database';
+import { all, ensure, first, money, now, num, record, rows, str, units } from './database';
 import type { Input } from './database';
 import { marketingFixture } from './marketing-fixture';
 import { classifiedExpenses } from './accounting';
@@ -89,13 +89,27 @@ function getRange(input: Input, timezone: string, asOf: string) {
 }
 
 /** Aggregate only the synthetic event rows that fall inside the shop-local date range. */
-export function marketingSummary(input: Input, asOf = now(), canReadFinance = true): MarketingSummary {
+export function marketingSummary(input: Input, asOf = now()): MarketingSummary {
     const shop = first('shops', input.shopId);
     const timezone = String(shop.timezone);
     const currency = String(shop.currency);
+    const permissions = input.permissions ?? [];
     const range = getRange(input, timezone, asOf);
     const source = input.shopId === 'shop-demo' ? marketingFixture : [];
-    const advertising = canReadFinance ? classifiedExpenses(input.shopId).filter(row => row.category === 'advertising_expense') : [];
+    const orders = all('orders', input.shopId);
+    const confirmedIn = (from: string, to: string) => orders.filter(order => {
+        if (order.orderState !== 'confirmed' && order.orderState !== 'completed') return false;
+        const instant = str(order.createdAt);
+        const day = dateOnlyInTimezone(new Date(instant), timezone);
+        return instant <= asOf && day >= from && day <= to;
+    });
+    const selected = confirmedIn(range.fromDate, range.toDate);
+    const estimateOrderId = input.shopId === 'shop-demo' ? 'DH-DEMO-PAID-01' : '';
+    const estimateOrder = selected.find(order => order.id === estimateOrderId);
+    const estimateDay = estimateOrder ? dateOnlyInTimezone(new Date(str(estimateOrder.createdAt)), timezone) : null;
+    const estimateCount = (from: string, to: string) => Number(estimateDay !== null && estimateDay >= from && estimateDay <= to);
+    const canReadOrders = permissions.includes('orders.read');
+    const advertising = permissions.includes('finance.read') ? classifiedExpenses(input.shopId).filter(row => row.category === 'advertising_expense') : [];
     const actualSpend = (fromDate: string, toDate: string) => {
         const entries = advertising.filter(row => row.day >= fromDate && row.day <= toDate);
         return entries.length ? money(entries.reduce((total, row) => total + row.total, 0n), currency) : null;
@@ -104,12 +118,13 @@ export function marketingSummary(input: Input, asOf = now(), canReadFinance = tr
     for (let fromDate = range.fromDate; fromDate <= range.toDate;) {
         const toDate = bucketEnd(fromDate, range.bucket, range.toDate);
         const values = aggregate(source, fromDate, toDate, currency);
-        points.push({ fromDate, toDate, knownAttributedOrders: values.knownAttributedOrders, unknownAttributionOrders: values.unknownAttributionOrders, estimatedSpend: values.estimatedSpend, actualSpend: actualSpend(fromDate, toDate) });
+        points.push({ fromDate, toDate, knownAttributedOrders: values.knownAttributedOrders, estimatedAttributedOrders: estimateCount(fromDate, toDate),
+            unknownAttributionOrders: values.unknownAttributionOrders, estimatedSpend: values.estimatedSpend, actualSpend: actualSpend(fromDate, toDate) });
         fromDate = addDays(toDate, 1);
     }
     const totals = aggregate(source, range.fromDate, range.toDate, currency);
     const usedPromotions = new Map<string, { name: string; orders: number; discount: bigint; sales: bigint }>();
-    for (const order of all('orders', input.shopId)) {
+    for (const order of orders) {
         if (order.orderState === 'cancelled' || !order.promotionAppliedAt || !order.promotion || !order.total) continue;
         const instant = str(order.promotionAppliedAt);
         const date = dateOnlyInTimezone(new Date(instant), timezone);
@@ -124,6 +139,32 @@ export function marketingSummary(input: Input, asOf = now(), canReadFinance = tr
     const promotionResults = Array.from(usedPromotions, ([promotionId, group]) => ({
         promotionId, name: group.name, orders: group.orders, discount: money(group.discount, currency), netSales: money(group.sales, currency),
     }));
-    return { asOf, period: { ...range, timezone }, trend: points, ...totals, actualSpend: actualSpend(range.fromDate, range.toDate),
+    let demandStock: MarketingSummary['demandStock'];
+    if (canReadOrders && permissions.includes('inventory.read')) {
+        const stock = all('stock', input.shopId).filter(row => row.warehouseId === shop.defaultWarehouseId);
+        const variants = new Map<string, NonNullable<MarketingSummary['demandStock']>[number]>();
+        for (const order of selected) {
+            for (const line of rows(order.lines)) {
+                const variantId = str(line.variantId);
+                const current = variants.get(variantId);
+                if (current) { current.orderedUnits += num(line.quantity); continue; }
+                const position = stock.find(row => row.variantId === variantId);
+                variants.set(variantId, { variantId, sku: str(line.sku), orderedUnits: num(line.quantity),
+                    availableUnits: position ? num(position.available) : null, orderId: str(order.id) });
+            }
+        }
+        demandStock = [...variants.values()].sort((a, b) => b.orderedUnits - a.orderedUnits || a.variantId.localeCompare(b.variantId)).slice(0, 25);
+    }
+    // The demo links predefined synthetic sources. The live API only reads reviewed evidence.
+    const estimatedAttributedOrders = estimateCount(range.fromDate, range.toDate);
+    const campaignResults = estimatedAttributedOrders ? [{ channel: 'messenger', campaignId: 'mau-thang-9',
+        knownOrders: 0, estimatedOrders: 1, orderId: canReadOrders ? estimateOrderId : null,
+        attributionSourceId: canReadOrders ? 'ho-so-quy-gan-mau-01' : null, actualSpend: null, spendJournalId: null }] : [];
+    const topicDay = '2026-09-29';
+    const questionTopics = permissions.includes('conversations.read') && permissions.includes('knowledge.read')
+        ? input.shopId === 'shop-demo' && range.fromDate <= topicDay && range.toDate >= topicDay
+            ? [{ title: 'Hướng dẫn chọn kích cỡ', knowledgeId: 'k2', count: 2, conversationId: 'cv1' }] : [] : undefined;
+    return { asOf, period: { ...range, timezone }, trend: points, ...totals, estimatedAttributedOrders, actualSpend: actualSpend(range.fromDate, range.toDate),
+        campaignResults, demandStock, questionTopics,
         ...(promotionResults.length ? { promotionResults } : {}) };
 }

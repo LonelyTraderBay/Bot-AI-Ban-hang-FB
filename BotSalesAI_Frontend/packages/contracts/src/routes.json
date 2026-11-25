@@ -2167,7 +2167,8 @@
       "readPermission": "fulfillment.read",
       "readOperations": [
         "listPrepJobs",
-        "getPrepJob"
+        "getPrepJob",
+        "getFile"
       ],
       "actions": [
         {
@@ -2178,6 +2179,11 @@
         {
           "label": "packPrepJob",
           "operationId": "packPrepJob",
+          "permission": "fulfillment.write"
+        },
+        {
+          "label": "Tải ảnh chứng cứ kiểm hàng",
+          "operationId": "uploadFile",
           "permission": "fulfillment.write"
         }
       ],
@@ -2664,6 +2670,11 @@
           "label": "Tạo kỳ kế toán",
           "operationId": "createAccountingPeriod",
           "permission": "finance.close"
+        },
+        {
+          "label": "Cập nhật hạn và tranh chấp",
+          "operationId": "updateDebtTerms",
+          "permission": "finance.reconcile"
         }
       ],
       "purpose": "Công nợ / Khóa kỳ và điều chỉnh",
@@ -2698,7 +2709,8 @@
       "readPermission": "bot.read",
       "readOperations": [
         "listAgentRoles",
-        "listBudgetPolicies"
+        "listBudgetPolicies",
+        "getBotConfig"
       ],
       "actions": [
         {
@@ -3307,11 +3319,18 @@
       "module": "finance",
       "readPermission": "finance.read",
       "readOperations": [
-        "listPaymentReviews"
+        "listPaymentReviews",
+        "getFile"
       ],
-      "actions": [],
+      "actions": [
+        {
+          "label": "Tải ảnh chờ đối chiếu",
+          "operationId": "uploadFile",
+          "permission": "finance.reconcile"
+        }
+      ],
       "purpose": "Tập trung khoản cần xác minh hoặc cần hoàn.",
-      "content": "Số dự kiến, đã xác minh và còn lại, đến hạn, người phụ trách, đơn/phiếu trả, giao dịch, bút toán.",
+      "content": "Số dự kiến, đã xác minh và còn lại, đến hạn, người phụ trách, đơn/phiếu trả, giao dịch, bút toán. Cho phép lưu và xem ảnh chuyển khoản chờ đối chiếu theo đơn.",
       "behavior": "Bộ lọc theo dữ liệu cửa hàng. Ghi nhận nghiệp vụ qua đơn, đổi trả và đối soát hiện có.",
       "edgeCases": "COD đang giữ và dữ liệu chưa đủ có trạng thái riêng. Số dư nghĩa vụ được đối chiếu từ nguồn ghi sổ.",
       "states": [

@@ -8,7 +8,7 @@ import { commandDto, type ResourceRef } from '../../platform/commands/index.js';
 import { readAsSession, requireShopAccess, writeShopCommand, type AuthConfig } from '../workspace/index.js';
 import {
     addressForCustomer, addressRedactions, addressView, checkedAddress, checkedCustomer, cleanText, customerInShop, customerView,
-    type AddressInput, type CustomerInput,
+    createAddressForCustomer, type AddressInput, type CustomerInput,
 } from './customer-data.js';
 
 type Versioned = { id: string; version: number };
@@ -128,10 +128,8 @@ export class CustomersService {
     }
 
     createAddress(headers: IncomingHttpHeaders, shopId: string, customerId: string, input: AddressInput, requestId: string) {
-        return this.change(headers, shopId, 'createCustomerAddress', 'customer_address', { customerId, input }, requestId, async tx => {
-            if (addressRedactions(await customerInShop(tx, shopId, customerId)).length) throw new ForbiddenException();
-            return tx.customerAddress.create({ data: { ...input, ...checkedAddress(input), shopId, customerId } });
-        }, (tx, result) => this.address(tx, shopId, customerId, result.id));
+        return this.change(headers, shopId, 'createCustomerAddress', 'customer_address', { customerId, input }, requestId, tx =>
+            createAddressForCustomer(tx, shopId, customerId, input), (tx, result) => this.address(tx, shopId, customerId, result.id));
     }
 
     updateAddress(headers: IncomingHttpHeaders, shopId: string, customerId: string, id: string, input: Partial<AddressInput>, requestId: string) {

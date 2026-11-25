@@ -1,0 +1,185 @@
+
+> botsales-frontend@0.1.0 test:e2e
+> node scripts/run-e2e.mjs tests/fe015.spec.ts --project=chromium --project=firefox -g FE015.E0[46] --workers=1
+
+
+> npm run setup
+
+> botsales-frontend@0.1.0 setup
+> node scripts/setup.mjs
+
+{"status":"PASS","outputs":15,"schemas":384,"operations":260,"routes":67}
+Copying the worker script at "D:\BotSalesAI\artifacts\audit-r50-plan-20261125\src\BotSalesAI_Frontend\apps\web\public"...
+
+Worker script successfully copied!
+  - public
+
+Continue by describing the network in your application:
+
+
+https://mswjs.io/docs/quick-start
+
+Thiết lập xong. npm run dev chạy frontend mô phỏng; không kết nối khách hàng hoặc provider thật.
+
+> npm run build
+
+> botsales-frontend@0.1.0 build
+> npm run generate:check && npm run typecheck && npm run build --workspace @botsales/web
+
+
+> botsales-frontend@0.1.0 generate:check
+> node scripts/generate.mjs --check
+
+{"status":"PASS","outputs":15,"schemas":384,"operations":260,"routes":67}
+
+> botsales-frontend@0.1.0 typecheck
+> tsc -p apps/web/tsconfig.json --noEmit
+
+
+> @botsales/web@0.1.0 build
+> vite build --mode production
+
+vite v7.3.7 building client environment for production...
+transforming...
+../../node_modules/zod/v4/core/regexes.js (74:0): A comment
+
+"/** Anchors a pattern source. The interpolation lives here rather than at the call site because
+ * esbuild will not drop a `@__PURE__` call whose own argument interpolates a variable, but it
+ * will drop `anchor(dateSource)`. Keeping it inline pinned `date` into every bundle. */"
+
+in "../../node_modules/zod/v4/core/regexes.js" contains an annotation that Rollup cannot interpret due to the position of the comment. The comment will be removed to avoid issues.
+../../node_modules/zod/v4/core/util.js (400:0): A comment
+
+"// Wrapped in a `@__PURE__` IIFE: esbuild never tree-shakes a top-level initializer that contains a member access on `Number`, so the bare object literal survived into every bundle."
+
+in "../../node_modules/zod/v4/core/util.js" contains an annotation that Rollup cannot interpret due to the position of the comment. The comment will be removed to avoid issues.
+✓ 1977 modules transformed.
+rendering chunks...
+computing gzip size...
+dist/index.html                                1.23 kB │ gzip:   0.61 kB
+dist/assets/index-BV-JM2ej.css                 3.73 kB │ gzip:   1.39 kB
+dist/assets/download-8lJFmiSZ.js               0.23 kB │ gzip:   0.17 kB
+dist/assets/hooks-CeQM4B3z.js                  4.73 kB │ gzip:   2.24 kB
+dist/assets/draft-conflict-CmrFLW8v.js         5.37 kB │ gzip:   2.49 kB
+dist/assets/index-B7trnTIQ.js                  8.73 kB │ gzip:   3.42 kB
+dist/assets/index-jOafsSma.js                 10.41 kB │ gzip:   3.62 kB
+dist/assets/index--k6Ft9x8.js                 18.47 kB │ gzip:   6.84 kB
+dist/assets/index-DbqxpkE3.js                 20.71 kB │ gzip:   6.72 kB
+dist/assets/index-spiOQo21.js                 22.47 kB │ gzip:   7.38 kB
+dist/assets/index-ssli1a4t.js                 22.81 kB │ gzip:   7.36 kB
+dist/assets/index-CpuWHdv3.js                 24.67 kB │ gzip:   8.51 kB
+dist/assets/index-B7vLJ7yU.js                 25.25 kB │ gzip:   8.60 kB
+dist/assets/index-DvtQZz5H.js                 26.47 kB │ gzip:   9.27 kB
+dist/assets/index-DIDvTSy4.js                 29.97 kB │ gzip:   9.44 kB
+dist/assets/query-Df7VyXaF.js                 33.15 kB │ gzip:   9.92 kB
+dist/assets/index-CtlcJQhu.js                 34.61 kB │ gzip:  11.50 kB
+dist/assets/index-ghteq1Bo.js                 34.72 kB │ gzip:  10.88 kB
+dist/assets/index-RLfaKLoX.js                 38.21 kB │ gzip:  12.60 kB
+dist/assets/index-DfMfVwTA.js                 42.25 kB │ gzip:  11.65 kB
+dist/assets/index-BgRLkKSn.js                 42.63 kB │ gzip:  13.17 kB
+dist/assets/i18n-CWH4T2DL.js                  47.13 kB │ gzip:  15.53 kB
+dist/assets/index-CmylyBqO.js                 77.66 kB │ gzip:  21.95 kB
+dist/assets/schemas-cTXPY0Aa.js              114.74 kB │ gzip:  34.86 kB
+dist/assets/index-BUsxJT9n.js                119.54 kB │ gzip:  38.29 kB
+dist/assets/contract-data-BgMlKWPn.js        223.24 kB │ gzip:  29.42 kB
+dist/assets/react-runtime-gLMyUIL2.js        279.79 kB │ gzip:  90.28 kB
+dist/assets/charts-CefMFtCR.js               320.23 kB │ gzip:  96.79 kB
+dist/assets/mui-DHHWwXqy.js                  341.46 kB │ gzip: 104.32 kB
+dist/assets/schema-validation-CKqEwYSD.js  1,458.73 kB │ gzip: 112.36 kB
+
+(!) Some chunks are larger than 500 kB after minification. Consider:
+- Using dynamic import() to code-split the application
+- Use build.rollupOptions.output.manualChunks to improve chunking: https://rollupjs.org/configuration-options/#output-manualchunks
+- Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.
+✓ built in 4.39s
+
+> npm run build:demo
+
+> botsales-frontend@0.1.0 build:demo
+> npm run generate:check && npm run typecheck && npm run build:demo --workspace @botsales/web
+
+
+> botsales-frontend@0.1.0 generate:check
+> node scripts/generate.mjs --check
+
+{"status":"PASS","outputs":15,"schemas":384,"operations":260,"routes":67}
+
+> botsales-frontend@0.1.0 typecheck
+> tsc -p apps/web/tsconfig.json --noEmit
+
+
+> @botsales/web@0.1.0 build:demo
+> vite build --mode demo --outDir dist-demo
+
+vite v7.3.7 building client environment for demo...
+transforming...
+../../node_modules/zod/v4/core/util.js (400:0): A comment
+
+"// Wrapped in a `@__PURE__` IIFE: esbuild never tree-shakes a top-level initializer that contains a member access on `Number`, so the bare object literal survived into every bundle."
+
+in "../../node_modules/zod/v4/core/util.js" contains an annotation that Rollup cannot interpret due to the position of the comment. The comment will be removed to avoid issues.
+../../node_modules/zod/v4/core/regexes.js (74:0): A comment
+
+"/** Anchors a pattern source. The interpolation lives here rather than at the call site because
+ * esbuild will not drop a `@__PURE__` call whose own argument interpolates a variable, but it
+ * will drop `anchor(dateSource)`. Keeping it inline pinned `date` into every bundle. */"
+
+in "../../node_modules/zod/v4/core/regexes.js" contains an annotation that Rollup cannot interpret due to the position of the comment. The comment will be removed to avoid issues.
+✓ 2371 modules transformed.
+rendering chunks...
+computing gzip size...
+dist-demo/index.html                              1.23 kB │ gzip:   0.61 kB
+dist-demo/assets/index-BV-JM2ej.css               3.73 kB │ gzip:   1.39 kB
+dist-demo/assets/download-CWiaXb8A.js             0.24 kB │ gzip:   0.17 kB
+dist-demo/assets/control-CflZFKx3.js              1.73 kB │ gzip:   0.94 kB
+dist-demo/assets/hooks-DW8Ek5QP.js                4.76 kB │ gzip:   2.22 kB
+dist-demo/assets/draft-conflict-CqYQ02MU.js       5.37 kB │ gzip:   2.49 kB
+dist-demo/assets/index-Fy0GX9GZ.js                8.73 kB │ gzip:   3.42 kB
+dist-demo/assets/index-CDYB380Z.js               11.05 kB │ gzip:   3.89 kB
+dist-demo/assets/index-Du_rQIY7.js               18.00 kB │ gzip:   6.60 kB
+dist-demo/assets/index-BFttDy2q.js               21.00 kB │ gzip:   6.78 kB
+dist-demo/assets/index-1bh7nzTM.js               22.81 kB │ gzip:   7.36 kB
+dist-demo/assets/index-CVV45jNP.js               24.85 kB │ gzip:   8.57 kB
+dist-demo/assets/index-BiWarye3.js               25.33 kB │ gzip:   8.28 kB
+dist-demo/assets/index-BoO9xi0a.js               27.62 kB │ gzip:   9.35 kB
+dist-demo/assets/index-CSuxP3DD.js               29.97 kB │ gzip:   9.44 kB
+dist-demo/assets/index-9FwFay01.js               32.27 kB │ gzip:  11.08 kB
+dist-demo/assets/query-Df7VyXaF.js               33.15 kB │ gzip:   9.92 kB
+dist-demo/assets/index--qbqTjXH.js               34.77 kB │ gzip:  10.91 kB
+dist-demo/assets/index-E9az63xr.js               35.06 kB │ gzip:  11.68 kB
+dist-demo/assets/index-tKI2OhLF.js               36.27 kB │ gzip:  11.98 kB
+dist-demo/assets/index-CTUpXwbz.js               42.65 kB │ gzip:  11.79 kB
+dist-demo/assets/index-CGSz1rAL.js               43.36 kB │ gzip:  13.35 kB
+dist-demo/assets/i18n-CWH4T2DL.js                47.13 kB │ gzip:  15.53 kB
+dist-demo/assets/index-ipT5oz3X.js               77.74 kB │ gzip:  22.00 kB
+dist-demo/assets/schemas-CBYZlK9i.js            114.74 kB │ gzip:  34.86 kB
+dist-demo/assets/index-DL2meLNJ.js              123.82 kB │ gzip:  39.61 kB
+dist-demo/assets/schema-validation-BguakXQh.js  151.10 kB │ gzip:  45.62 kB
+dist-demo/assets/browser-B5ADv4dq.js            256.40 kB │ gzip:  87.31 kB
+dist-demo/assets/service-Dky76enA.js            263.62 kB │ gzip:  64.34 kB
+dist-demo/assets/react-runtime-gLMyUIL2.js      279.79 kB │ gzip:  90.28 kB
+dist-demo/assets/charts-p0bC36ID.js             320.23 kB │ gzip:  96.79 kB
+dist-demo/assets/mui-Eb4arA-z.js                341.46 kB │ gzip: 104.32 kB
+dist-demo/assets/contract-data-BnuOxayc.js      421.85 kB │ gzip:  52.01 kB
+✓ built in 3.36s
+
+> node node_modules\@playwright\test\cli.js test tests/fe015.spec.ts --project=chromium --project=firefox -g FE015.E0[46] --workers=1
+
+Running 8 tests using 1 worker
+
+(node:34588) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+[BABEL] Note: The code generator has deoptimised the styling of C:\Users\Joker-PC\AppData\Local\Temp\botsales-vite-cache\872c8bd7ec68c8b3c7d2\playwright-webserver\playwright-32700-3a5ec6c9-9686-46e5-810f-dcd595320a38\deps\react-dom_client.js?v=0a7d1ed9 as it exceeds the max of 500KB.
+  ok 1 [chromium] › tests\fe015.spec.ts:279:1 › FE015.E04 offline statement import preserves the verified preview and never replays the write (3.0s)
+  ok 2 [chromium] › tests\fe015.spec.ts:315:1 › FE015.E04 permission changes clear a statement preview before writes resume (2.0s)
+  ok 3 [chromium] › tests\fe015.spec.ts:589:1 › FE015.E04 private transfer evidence is listed under the selected payment review (1.2s)
+  ok 4 [chromium] › tests\fe015.spec.ts:606:1 › FE015.E06 debt terms record a hold and show the overdue bracket (1.2s)
+(node:32228) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ok 5 [firefox] › tests\fe015.spec.ts:279:1 › FE015.E04 offline statement import preserves the verified preview and never replays the write (3.4s)
+  ok 6 [firefox] › tests\fe015.spec.ts:315:1 › FE015.E04 permission changes clear a statement preview before writes resume (2.4s)
+  ok 7 [firefox] › tests\fe015.spec.ts:589:1 › FE015.E04 private transfer evidence is listed under the selected payment review (1.5s)
+  ok 8 [firefox] › tests\fe015.spec.ts:606:1 › FE015.E06 debt terms record a hold and show the overdue bracket (1.4s)
+
+  8 passed (28.1s)
+exit=0

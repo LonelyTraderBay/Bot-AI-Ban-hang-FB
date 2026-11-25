@@ -6,6 +6,7 @@ import { ExactDecimal } from '../../platform/money/index.js';
 import { evaluateStagingDraft, liveBotSnapshot, proposeSalesDraft, reserveAiUsage, stagingDraftCase, stagingDraftIntent, StagingAiError,
     type ApprovedEvaluationConfig } from '../ai/index.js';
 import { metaInboundPage } from '../channels/index.js';
+import { localAccountingDate } from '../finance/index.js';
 import { requireShopAccess, type AuthConfig } from '../workspace/index.js';
 import { recordInboundDraft, workForHandoff } from './bot-drafts.js';
 
@@ -76,6 +77,23 @@ async function finish(tx: Prisma.TransactionClient, row: Task, outcome: string) 
     await tx.botInboundTask.update({ where: taskWhere(row), data: { finishedAt: new Date(), outcome } });
 }
 
+async function channelTokensAvailable(tx: Prisma.TransactionClient, shopId: string, channelId: string, now: Date,
+    timezone: string, reservedTokens: number, limit: number) {
+    const day = localAccountingDate(now, timezone);
+    const [usage] = await tx.$queryRaw<{ tokens: bigint; includesUnmeteredRun: boolean }[]>`
+        SELECT COALESCE(SUM(t.reserved_tokens), 0) AS tokens,
+               COUNT(*) FILTER (WHERE t.reserved_tokens IS NULL) > 0 AS "includesUnmeteredRun"
+        FROM bot_inbound_tasks t
+        JOIN channel_messages m ON m.shop_id = t.shop_id AND m.id = t.message_id
+        JOIN channel_conversations c ON c.shop_id = m.shop_id AND c.id = m.conversation_id
+        WHERE t.shop_id = ${shopId}::uuid AND c.channel_id = ${channelId}::uuid
+          AND t.external_started_at >= (${day}::date::timestamp AT TIME ZONE ${timezone})
+          AND t.external_started_at < ((${day}::date + 1)::timestamp AT TIME ZONE ${timezone})
+    `;
+    // An attempt started before the migration still counts against today's approved cap.
+    return !usage.includesUnmeteredRun && usage.tokens + BigInt(reservedTokens) <= BigInt(limit);
+}
+
 export async function processStagedBotInbound(db: PrismaClient, auth: AuthConfig, provider?: ApprovedEvaluationConfig, request = fetch) {
     const now = new Date();
     const cutoff = new Date(now.getTime() - recoveryMs);
@@ -94,15 +112,22 @@ export async function processStagedBotInbound(db: PrismaClient, auth: AuthConfig
         const ready = await eligible(tx, row, auth, provider);
         if (!ready) { await finish(tx, row, 'stale_staging_scope'); return null; }
         const { bot, runtime, scope } = ready;
+        const { reservedTokens, maxDailyChannelTokens } = runtime.runtime;
+        if (!await channelTokensAvailable(tx, row.shopId, row.message.conversation.channelId, now,
+            bot.shop.timezone, reservedTokens, maxDailyChannelTokens)) {
+            await finish(tx, row, 'channel_token_limit');
+            return null;
+        }
         if (!await reserveAiUsage(tx, bot.shop, bot.revision.dailyBudget, now, new ExactDecimal(runtime.runtime.reservedAmount))) {
             await finish(tx, row, 'budget_limit');
             return null;
         }
-        await tx.botInboundTask.update({ where: taskWhere(row), data: { externalStartedAt: now } });
+        await tx.botInboundTask.update({ where: taskWhere(row), data: { externalStartedAt: now, reservedTokens } });
         await recordAudit(tx, { shopId: row.shopId, actorId: bot.actorId, requestId: row.messageId, action: 'startStagingAi', resourceType: 'message',
             resourceId: row.messageId, metadata: { ...bot.auditContext, permissionVersion: scope.permissionVersion,
                 runId: row.providerRunId, capUsd: runtime.runtime.maxUsd, currency: runtime.runtime.currency,
-                reservedAmount: runtime.runtime.reservedAmount, resourceVersion: row.message.version, result: 'started' } });
+                reservedAmount: runtime.runtime.reservedAmount, reservedTokens, maxDailyChannelTokens,
+                resourceVersion: row.message.version, result: 'started' } });
         return { runId: row.providerRunId, plan: runtime.plan, key: runtime.key };
     }, true);
     if (!prepared) return;

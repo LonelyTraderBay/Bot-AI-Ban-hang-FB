@@ -3,11 +3,13 @@ import { createHash, randomUUID } from 'node:crypto';
 import { readFileSync } from 'node:fs';
 import { after, before, test } from 'node:test';
 import { URLSearchParams } from 'node:url';
+import sharp from 'sharp';
 import { createApp } from '../../../apps/api/dist/app.js';
 import { readDatabaseUrl } from '../../../apps/api/dist/config.js';
 import { createContractValidator, schemaFromContract } from '../../../apps/api/dist/http/contracts.js';
 import { localAccountingDate } from '../../../apps/api/dist/modules/finance/index.js';
 import { recordStockMovement } from '../../../apps/api/dist/modules/inventory/index.js';
+import { knowledgeIndexHandler } from '../../../apps/api/dist/modules/knowledge/index.js';
 import { acceptFixturePairing, deviceTestHandler, dispatchExternalNotifications, dispatchPreparationNotifications,
     readTelegramConfig, readWebPushConfig } from '../../../apps/api/dist/modules/notifications/index.js';
 import { telegramPairingCode } from '../../../apps/api/dist/modules/notifications/telegram.js';
@@ -80,15 +82,15 @@ function send(resource, body, { actor = owner, shop = shopA, key = randomUUID(),
     });
 }
 
-async function customer() {
+async function customer(shop = shopA, actor = owner) {
     const person = await json(await send('customers', {
         displayName: 'Khách fixture ' + randomUUID().slice(0, 8), phone: '0900000111', email: null, notes: '',
-    }), 201, 'CustomerResponse');
+    }, { shop, actor }), 201, 'CustomerResponse');
     const address = await json(await send('customers/' + person.id + '/addresses', {
         label: 'Địa chỉ giao', recipient: 'Người nhận thử', phone: '0900000111', line1: 'Địa chỉ 1',
         ward: null, district: null, province: 'Hà Nội', postalCode: null, countryCode: 'VN',
-    }), 201, 'CustomerAddressResponse');
-    const { conversation } = await orderConversation(admin, shopId, person.id);
+    }, { shop, actor }), 201, 'CustomerAddressResponse');
+    const { conversation } = await orderConversation(admin, shop.id, person.id);
     return { person, address, conversation };
 }
 
@@ -133,6 +135,232 @@ function confirm(order, offer, proof, options) {
         expectedVersion: order.version, quoteId: offer.id, customerConfirmationId: proof.id,
     }, options);
 }
+
+test('SC2-C02 SC2-G02 pins an approved catalog image and retains it after replacement', async t => {
+    async function upload(shop, actor, background) {
+        const png = await sharp({ create: { width: 6, height: 6, channels: 3, background } }).png().toBuffer();
+        const form = new globalThis.FormData();
+        form.set('purpose', 'product_image');
+        form.set('file', new globalThis.Blob([png], { type: 'image/png' }), background + '.png');
+        const file = await json(await request(route('uploads', shop), actor, { method: 'POST', body: form, headers: {
+            origin, 'idempotency-key': randomUUID(), 'x-csrf-token': actor.csrf,
+        } }), 201, 'FileObjectResponse');
+        assert.equal(file.status, 'ready');
+        return file;
+    }
+    const fixtures = await Promise.all([[shopA, owner, other, shopB], [shopB, other, owner, shopA]].map(async ([shop, actor, peer, peerShop]) => ({
+        shop, actor, peer, peerShop, firstImage: await upload(shop, actor, 'red'), secondImage: await upload(shop, actor, 'blue'),
+    })));
+    for (const fixture of fixtures) await t.test(fixture.shop.currency, async () => {
+        const { shop, actor, peer, peerShop, firstImage, secondImage } = fixture;
+        const scope = { shop, actor };
+        const otherImage = fixtures.find(row => row.shop.id !== shop.id).firstImage;
+        const post = (path, body, status, response, options = {}) => send(path, body, { ...scope, ...options }).then(res => json(res, status, response));
+        const get = (path, status, response, who = actor, target = shop) => request(route(path, target), who).then(res => json(res, status, response));
+        const original = await product(shop, actor, 1, ['15000']);
+        const variant = original.variants[0];
+        const changeImage = (version, ...fileIds) => post('products/' + original.id, { imageFileIds: fileIds },
+            200, 'ProductResponse', { method: 'PATCH', version });
+        const linked = await changeImage(original.version, firstImage.id);
+        const item = {
+            title: 'Nguồn ảnh ' + original.name, sourceKind: 'manual', content: null, fileId: null,
+            template: { kind: 'product_content', productId: original.id, sourceOwner: 'Danh mục fixture',
+                features: 'Bản mẫu', sizeUse: 'Cỡ S', warranty: 'Kiểm phiếu', alternatives: 'Theo kho', forbiddenPromises: 'Không nói quá',
+                imageFileId: firstImage.id },
+        };
+        const knowledge = await post('knowledge', item, 201, 'KnowledgeResponse');
+        assert.equal(knowledge.template.imageFileId, firstImage.id);
+        for (const fileId of [otherImage.id, secondImage.id]) {
+            await post('knowledge', { ...item, template: { ...item.template, imageFileId: fileId } }, 422, 'Problem');
+        }
+        const path = 'knowledge/' + knowledge.id;
+        const authorize = async (tx, job, permission) => Boolean(await requireShopAccess(tx, job.actorId, job.shopId, permission));
+        async function publish(version, documentPath = path) {
+            const job = await post(documentPath + '/submit-review', { expectedVersion: version, reason: 'Kiểm đúng ảnh nguồn' }, 202, 'JobResponse');
+            await runJob(db, { shopId: shop.id, id: job.id, sourceOperation: 'submitKnowledgeReview' }, knowledgeIndexHandler(db), authorize);
+            const indexed = await get(documentPath, 200, 'KnowledgeResponse');
+            assert.equal(indexed.status, 'ready_for_review');
+            const evaluation = await admin.evaluation.create({ data: { shopId: shop.id, configRevision: 1, datasetVersion: 'fixture-r48-approved-image',
+                knowledgeRevisionId: indexed.draftRevisionId, knowledgeHash: indexed.contentHash,
+                policyVersion: (await db.shop.findUniqueOrThrow({ where: { id: shop.id } })).policyVersion,
+                status: 'passed', totalCases: 1, passedCases: 1, criticalFailures: 0, fixture: true } });
+            const command = await post(documentPath + '/publish', { expectedVersion: indexed.version, revisionId: indexed.draftRevisionId,
+                evaluationRunId: evaluation.id, reason: 'Duyệt ảnh cho fixture' }, 202, 'CommandResponse');
+            assert.equal(command.status, 'succeeded');
+            return get(documentPath, 200, 'KnowledgeResponse');
+        }
+
+        const published = await publish(knowledge.version);
+        assert.equal(published.template.imageFileId, firstImage.id);
+        await serializable(db, tx => recordStockMovement(tx, { shopId: shop.id, actorId: actor.userId,
+            warehouseId: shop.defaultWarehouseId, variantId: variant.id, kind: 'receipt',
+            source: { type: 'fixture_receipt', id: randomUUID() }, reason: 'Tồn cho phiếu có ảnh', delta: { onHand: 6 }, receivedValue: '600' }), true);
+        const client = await customer(shop, actor);
+        async function prepare() {
+            const order = await post('orders', draft(client, variant, { warehouseId: shop.defaultWarehouseId }), 201, 'OrderResponse');
+            const offer = await post('orders/' + order.id + '/quote', undefined, 200, 'OrderQuoteResponse');
+            const proof = await post('orders/' + order.id + '/customer-confirmations', await quoteEvidenceFixture(admin, offer, client.conversation),
+                200, 'CustomerConfirmationResponse');
+            assert.equal((await json(await confirm(order, offer, proof, scope), 202, 'CommandResponse')).status, 'succeeded');
+            const row = await db.prepJob.findUniqueOrThrow({ where: { shopId_orderId: { shopId: shop.id, orderId: order.id } } });
+            return 'prep-jobs/' + row.id;
+        }
+        const firstPrep = await prepare();
+        const imageFor = async prep => (await get(prep, 200, 'PrepJobResponse')).lines[0].productImageSnapshot;
+        const expected = { fileId: firstImage.id, knowledgeRevisionId: published.publishedRevisionId };
+        assert.deepEqual(await imageFor(firstPrep), expected);
+
+        const catalog = await changeImage(linked.version, secondImage.id);
+        assert.deepEqual(catalog.imageFileIds, [secondImage.id]);
+        await post(path + '/revisions', { ...item, template: { ...item.template, imageFileId: secondImage.id } },
+            201, 'KnowledgeResponse');
+        const secondPrep = await prepare();
+        assert.deepEqual(await imageFor(secondPrep), expected);
+        const revision = await publish((await get(path, 200, 'KnowledgeResponse')).version);
+        assert.equal(revision.template.imageFileId, secondImage.id);
+        assert.notEqual(revision.contentHash, published.contentHash);
+        const thirdPrep = await prepare();
+        assert.deepEqual(await imageFor(thirdPrep), { fileId: secondImage.id, knowledgeRevisionId: revision.publishedRevisionId });
+        assert.deepEqual(await imageFor(firstPrep), expected);
+        assert.deepEqual(await imageFor(secondPrep), expected);
+        await get(firstPrep, 404, 'Problem', peer, peerShop);
+        await get('uploads/' + firstImage.id, 404, 'Problem', peer, peerShop);
+
+        if (shop.id === shopA.id) {
+            const membership = { shopId_userId: { shopId: shop.id, userId: viewer.userId } };
+            const originalRole = await db.membership.findUniqueOrThrow({ where: membership });
+            const role = ids => db.membership.update({ where: membership, data: { roles: ids, permissionVersion: { increment: 1 } } });
+            try {
+                await role(['warehouse']);
+                const retained = await get('uploads/' + firstImage.id, 200, 'FileObjectResponse', viewer);
+                assert.equal(retained.status, 'ready');
+                const bytes = await request(retained.readUrl.replace(/^\/api\/v2/u, ''), viewer);
+                assert.equal(bytes.status, 200);
+                assert.equal(bytes.headers.get('content-type'), 'image/png');
+                assert.ok((await bytes.arrayBuffer()).byteLength > 0);
+                await role(['accountant']);
+                await get('uploads/' + firstImage.id, 404, 'Problem', viewer);
+            } finally {
+                await role(originalRole.roles);
+            }
+        }
+        await changeImage(catalog.version, firstImage.id, secondImage.id);
+        const competing = await post('knowledge', { ...item, title: 'Nguồn ảnh song song ' + original.name }, 201, 'KnowledgeResponse');
+        await publish(competing.version, 'knowledge/' + competing.id);
+        const conflict = await prepare();
+        assert.equal(await imageFor(conflict), null);
+        assert.deepEqual(await imageFor(firstPrep), expected);
+        console.log(JSON.stringify({ case: 'SC2_C02_G02_APPROVED_IMAGE', currency: shop.currency, oldAndNewIsolated: true,
+            draftNeverSelected: true, conflictFailsClosed: true, foreignPhoto404: true, oldFileScoped: shop.id === shopA.id }));
+    });
+});
+
+
+test('SC2-C03 blocks packing and limits private issue evidence to the assigned preparation sheet', async context => {
+    for (const [shop, actor, foreignShop, foreignActor] of [[shopA, owner, shopB, other], [shopB, other, shopA, owner]]) {
+        await context.test(shop.currency, async () => {
+            const options = { shop, actor };
+            const post = async (resource, body, status, schema, overrides) =>
+                json(await send(resource, body, { ...options, ...overrides }), status, schema);
+            const catalog = await product(shop, actor, 1, ['11000']);
+            const variant = catalog.variants[0];
+            await serializable(db, tx => recordStockMovement(tx, {
+                shopId: shop.id, actorId: actor.userId, warehouseId: shop.defaultWarehouseId, variantId: variant.id,
+                kind: 'receipt', source: { type: 'fixture_receipt', id: randomUUID() }, reason: 'Tồn hàng kiểm ảnh issue',
+                delta: { onHand: 2 }, receivedValue: '20000',
+            }), true);
+            const client = await customer(shop, actor);
+            async function prepare() {
+                const order = await post('orders', draft(client, variant, { warehouseId: shop.defaultWarehouseId }), 201, 'OrderResponse');
+                const quote = await post('orders/' + order.id + '/quote', undefined, 200, 'OrderQuoteResponse');
+                const proof = await post('orders/' + order.id + '/customer-confirmations',
+                    await quoteEvidenceFixture(admin, quote, client.conversation), 200, 'CustomerConfirmationResponse');
+                await json(await confirm(order, quote, proof, options), 202, 'CommandResponse');
+                return db.prepJob.findUniqueOrThrow({
+                    where: { shopId_orderId: { shopId: shop.id, orderId: order.id } }, include: { workItem: true, lines: true },
+                });
+            }
+            const prep = await prepare();
+            const another = await prepare();
+            const privateMarker = 'synthetic-customer-address';
+            const picture = await sharp({ create: { width: 4, height: 4, channels: 3, background: '#aabbcc' } })
+                .withExif({ IFD0: { ImageDescription: privateMarker } }).jpeg().toBuffer();
+            assert.ok((await sharp(picture).metadata()).exif.includes(privateMarker));
+            const uploadKey = randomUUID();
+            function upload(id, key = randomUUID(), as = actor, target = shop) {
+                const body = new globalThis.FormData();
+                body.append('purpose', 'preparation_issue_image');
+                if (id) body.append('resourceId', id);
+                body.append('file', new globalThis.Blob([picture], { type: 'image/jpeg' }), privateMarker + '.jpg');
+                return request(route('uploads', target), as, {
+                    method: 'POST', headers: { origin, 'idempotency-key': key, 'x-csrf-token': as.csrf }, body,
+                });
+            }
+            await json(await upload(null), 422, 'Problem');
+            await json(await upload(prep.id), 403, 'Problem');
+            await post('work-items/' + prep.workItemId + '/claim', { expectedVersion: prep.workItem.version }, 200, 'WorkItemResponse');
+            await post('work-items/' + another.workItemId + '/claim', { expectedVersion: another.workItem.version }, 200, 'WorkItemResponse');
+            const uploaded = await json(await upload(prep.id, uploadKey), 201, 'FileObjectResponse');
+            assert.equal(uploaded.id, (await json(await upload(prep.id, uploadKey), 201, 'FileObjectResponse')).id);
+            assert.equal(uploaded.resourceId, prep.id);
+            assert.equal(uploaded.status, 'ready');
+            assert.equal(uploaded.readUrl, null);
+            assert.ok(!uploaded.name.includes(privateMarker));
+            await json(await request(route('uploads/' + uploaded.id, shop), actor), 404, 'Problem');
+            const line = prep.lines[0];
+            const input = {
+                expectedVersion: prep.version, orderLineId: line.orderLineId, scannedSku: line.sku,
+                pickedQuantity: 1, issueReason: 'Bao bì bị hỏng', issueEvidenceFileId: uploaded.id,
+            };
+            await post('prep-jobs/' + another.id + '/pick', {
+                ...input, expectedVersion: another.version, orderLineId: another.lines[0].orderLineId,
+            }, 422, 'Problem');
+            await post('prep-jobs/' + prep.id + '/pick', { ...input, issueReason: null }, 422, 'Problem');
+            const pickKey = randomUUID();
+            const blocked = await post('prep-jobs/' + prep.id + '/pick', input, 200, 'PrepJobResponse', { key: pickKey });
+            assert.equal(blocked.lines[0].issueEvidenceFileId, uploaded.id);
+            assert.equal(blocked.lines[0].hasIssue, true);
+            assert.equal((await post('prep-jobs/' + prep.id + '/pick', input, 200, 'PrepJobResponse', { key: pickKey })).version, blocked.version);
+            await post('prep-jobs/' + prep.id + '/pack', { expectedVersion: blocked.version }, 409, 'Problem');
+
+            const path = route('uploads/' + uploaded.id, shop);
+            const visible = await json(await request(path, actor), 200, 'FileObjectResponse');
+            const signedSuffix = new URL(visible.readUrl, base).search;
+            const saved = await request(path + signedSuffix, actor);
+            assert.equal(saved.status, 200);
+            assert.match(saved.headers.get('cache-control'), /no-store/);
+            assert.equal(saved.headers.get('content-type'), 'image/jpeg');
+            assert.ok(!(await sharp(Buffer.from(await saved.arrayBuffer())).metadata()).exif);
+            assert.equal((await fetch(base + path + signedSuffix)).status, 401);
+            await json(await request(route('uploads/' + uploaded.id, foreignShop) + signedSuffix, foreignActor), 404, 'Problem');
+            if (shop.id === shopA.id) {
+                const membership = { shopId_userId: { shopId: shop.id, userId: viewer.userId } };
+                const original = await db.membership.findUniqueOrThrow({ where: membership });
+                const role = roles => db.membership.update({ where: membership, data: { roles, permissionVersion: { increment: 1 } } });
+                try {
+                    await role(['accountant']);
+                    await json(await request(path, viewer), 404, 'Problem');
+                    await role(['warehouse']);
+                    const allowed = await json(await request(path, viewer), 200, 'FileObjectResponse');
+                    assert.equal((await request(path + new URL(allowed.readUrl, base).search, viewer)).status, 200);
+                    await json(await request(path + signedSuffix, viewer), 404, 'Problem');
+                } finally {
+                    await role(original.roles);
+                }
+            }
+
+
+            const fixed = await post('prep-jobs/' + prep.id + '/pick', {
+                ...input, expectedVersion: blocked.version, issueReason: null, issueEvidenceFileId: null,
+            }, 200, 'PrepJobResponse');
+            assert.equal(fixed.lines[0].hasIssue, false);
+            assert.equal(fixed.lines[0].issueEvidenceFileId, uploaded.id);
+            assert.equal((await post('prep-jobs/' + prep.id + '/pack', { expectedVersion: fixed.version }, 200, 'PrepJobResponse')).state, 'packed');
+            console.log(JSON.stringify({ case: 'SC2_C03_PRIVATE_EVIDENCE', currency: shop.currency, packBlockedUntilResolved: true,
+                noPersonalFilenameOrExif: true, sameSheetOnly: true, crossShop: 404, linkedHistory: true }));
+        });
+    }
+});
 
 test('SC2-C04: a versioned shipping policy matches shop and address and excludes fees from merchandise total', async () => {
     const before = await json(await request(route('shipping-policy')), 200, 'ShippingPolicyResponse');
@@ -470,6 +698,19 @@ test('SC2-C01 SC2-C02 SC2-C03 SC2-A02 SC2-F02: order confirmation creates one ta
     const confirmed = await json(await request(route('orders/' + order.id)), 200, 'OrderResponse');
     assert.ok(confirmed.prepTaskId);
     const prepRef = await db.prepJob.findUniqueOrThrow({ where: { shopId_orderId: { shopId, orderId: order.id } } });
+    const dueAt = new Date(Date.now() - 120_000);
+    await admin.workItem.update({ where: { shopId_id: { shopId, id: prepRef.workItemId } }, data: { dueAt } });
+    const prepList = (query, actor = owner, shop = shopA) =>
+        request(route('prep-jobs', shop) + '?' + query, actor).then(res => json(res, 200, 'PrepJobListResponse'));
+    const queued = await prepList('state=queued&assignee=unassigned&limit=100');
+    const due = queued.find(row => row.id === prepRef.id);
+    assert.ok(due);
+    assert.equal(due.state, 'queued');
+    assert.equal(due.assigneeUserId, null);
+    assert.equal(due.dueAt, dueAt.toISOString());
+    assert.ok(due.overdueMinutes >= 2);
+    assert.ok(!(await prepList('state=queued&assignee=unassigned', other, shopB)).some(row => row.id === prepRef.id));
+    await json(await request(route('prep-jobs/' + prepRef.id, shopB), other), 404, 'Problem');
     const work = await json(await request(route('work-items/' + prepRef.workItemId)), 200, 'WorkItemResponse');
     assert.equal(work.id, confirmed.prepTaskId);
     assert.deepEqual(work.allowedActions, ['claim']);
@@ -519,6 +760,9 @@ test('SC2-C01 SC2-C02 SC2-C03 SC2-A02 SC2-F02: order confirmation creates one ta
         const prep = await json(await request(route('prep-jobs/' + prepRef.id)), 200, 'PrepJobResponse');
         assert.equal(prep.assigneeUserId, claimant.userId);
         assert.equal(prep.state, 'claimed');
+        assert.equal((await prepList('state=claimed&assignee=me&limit=1', claimant))[0].id, prep.id);
+        assert.ok(!(await prepList('state=queued&assignee=unassigned&limit=100')).some(row => row.id === prep.id));
+        assert.ok(!(await prepList('state=claimed&assignee=me&limit=100', otherActor)).some(row => row.id === prep.id));
         await json(await request(route('prep-jobs') + '?limit=10'), 200, 'PrepJobListResponse');
         const input = { expectedVersion: prep.version, orderLineId: prep.lines[0].orderLineId,
             scannedSku: prep.lines[0].sku, pickedQuantity: 1, issueReason: 'Cần kiểm lại hàng' };
@@ -532,6 +776,10 @@ test('SC2-C01 SC2-C02 SC2-C03 SC2-A02 SC2-F02: order confirmation creates one ta
         const fixed = await json(await pick(claimant, { ...input, expectedVersion: blocked.version, issueReason: null }), 200, 'PrepJobResponse');
         const packed = await json(await pack(fixed.version), 200, 'PrepJobResponse');
         assert.equal(packed.state, 'packed');
+        assert.equal((await prepList('state=packed&assignee=me&limit=1', claimant))[0].id, prep.id);
+        assert.ok(!(await prepList('state=handed_over&limit=100')).some(row => row.id === prep.id));
+        console.log(JSON.stringify({ status: 'SC2_C01_PREP_FILTERS', unassignedVisible: true, dueAtSource: 'work_item',
+            positiveOverdue: true, scopedClaimed: true, packedDistinct: true, crossShop: 404 }));
         assert.equal(await db.auditEntry.count({ where: { shopId, action: 'claimWorkItem', resourceId: work.id } }), 1);
         assert.equal(await db.prepJob.count({ where: { shopId, orderId: order.id } }), 1);
         assert.equal(await db.appNotification.count({ where: { shopId, workItemId: work.id, recipientUserId: owner.userId } }), 1);
@@ -599,6 +847,19 @@ async function observePayment(orderId, amount, kind) {
 }
 
 test('SC2-E02: weighted cost is frozen at handover and recognized only on evidenced delivery', async () => {
+    const shopPath = '/shops/' + shopId;
+    const shop = await json(await request(shopPath), 200, 'ShopResponse');
+    const configured = await json(await request(shopPath, owner, {
+        method: 'PATCH',
+        body: JSON.stringify({ businessCountry: 'VN' }),
+        headers: {
+            origin, 'content-type': 'application/json', 'x-csrf-token': owner.csrf,
+            'idempotency-key': randomUUID(), 'if-match': '"' + shop.version + '"',
+        },
+    }), 200, 'ShopResponse');
+    assert.deepEqual([configured.businessCountry, configured.currency, configured.timezone], ['VN', 'VND', 'Asia/Ho_Chi_Minh']);
+    const comparison = await json(await request('/shops/' + shopB.id, other), 200, 'ShopResponse');
+    assert.deepEqual([comparison.businessCountry, comparison.currency], [null, 'LAK']);
     await openPeriod();
     const { order, variant } = await packedOrder(3, '4.02');
     await fillStock(variant, 3, order.warehouseId, '16');
@@ -645,7 +906,8 @@ test('SC2-E02: weighted cost is frozen at handover and recognized only on eviden
         'Delivered order identifies the policy recorded on its revenue journal');
     console.log(JSON.stringify({ status: 'SC2_E02_WEIGHTED_SNAPSHOT', initialUnits: 6, initialValue: '20.02', issuedUnits: 3,
         recordedCost: '10.01', laterReceipt: '50', remainingValue: '60.01', deliveryRevenueOnce: true, policyVersionPinned: true,
-        orderMatchesJournalPolicy: true }));
+        orderMatchesJournalPolicy: true, country: configured.businessCountry, currency: configured.currency,
+        timezone: configured.timezone, otherShopCurrency: comparison.currency }));
 });
 
 test('SC-031, SC2-C05, SC2-C06, SC2-C07 and SC2-C08: handoff recovery, manual carrier evidence, subsequent returns and exact stock and finance', async t => {

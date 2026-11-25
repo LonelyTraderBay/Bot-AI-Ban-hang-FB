@@ -7,7 +7,7 @@ let demoUrl = '';
 let closeDemo: (() => Promise<void>) | undefined;
 
 test.beforeAll(async () => {
-    const server = await startDemoServer();
+    const server = await startDemoServer({ runtime: 'dev' });
     demoUrl = server.url;
     closeDemo = server.close;
 });
@@ -133,7 +133,7 @@ test('FE021.E08 report explanation is mock-only, cites the filtered P&L snapshot
 });
 
 test('UI003 report timestamps follow the active shop timezone', async ({ browser }) => {
-    const isolated = await startDemoServer({ cacheIsolationKey: 'fe015-ui003-timezone' });
+    const isolated = await startDemoServer({ runtime: 'dev', cacheIsolationKey: 'fe015-ui003-timezone' });
     const context = await browser.newContext({ timezoneId: 'America/Los_Angeles' });
     const page = await context.newPage();
     try {
@@ -276,7 +276,7 @@ test('FE015.AC02 closed accounting period is visible and disables journal draft 
     const calls:string[]=[];page.on('request',r=>{if(r.method()==='POST'&&new URL(r.url()).pathname.endsWith('/journals'))calls.push(r.postData()||'');});await journal.getByRole('button',{name:'Lưu nháp'}).click();expect(calls).toEqual([]);
 });
 
-test('FE015.E04 offline statement import sends no write and reconnect does not replay it', async ({ page }) => {
+test('FE015.E04 offline statement import preserves the verified preview and never replays the write', async ({ page }) => {
     let submissions = 0;
     page.on('request', request => {
         if (request.method() === 'POST' && new URL(request.url()).pathname.endsWith('/bank-transactions/import')) submissions++;
@@ -302,8 +302,36 @@ test('FE015.E04 offline statement import sends no write and reconnect does not r
         await page.context().setOffline(false);
     }
     await expect(offline).toHaveCount(0);
+    await expect(dialog).toBeVisible();
+    await expect(dialog.getByRole('textbox', { name: 'Mã đợt nhập duy nhất' })).toHaveValue('FE015-OFFLINE-BATCH');
+    await expect(dialog.getByRole('table', { name: 'Xem trước bảng đối soát' })).toBeVisible();
+    await expect(submit).toBeEnabled();
+    expect(submissions).toBe(0);
+    await submit.click();
+    await expect(dialog.getByRole('link', { name: /Xem kết quả nhập/ })).toBeVisible();
+    expect(submissions).toBe(1);
+});
+
+test('FE015.E04 permission changes clear a statement preview before writes resume', async ({ page }) => {
+    let submissions = 0;
+    page.on('request', request => {
+        if (request.method() === 'POST' && new URL(request.url()).pathname.endsWith('/bank-transactions/import')) submissions++;
+    });
+    await gotoDemo(page, '/s/shop-demo/finance/reconciliation');
+    const csv = [
+        'externalTransactionId,amount,currency,direction,occurredAt,referenceText',
+        'FE015-ROLE-SWITCH,100000,VND,credit,2026-09-29T12:00:00Z,Scoped sample',
+    ].join('\n');
+    const { dialog } = await previewCsv(page, 'bank', 'bank', 'FE015-SCOPE-BATCH', csv);
+    await expect(dialog.getByRole('table', { name: 'Xem trước bảng đối soát' })).toBeVisible();
+    await page.evaluate(async () => {
+        const demo = await import('/src/mocks/service.ts');
+        demo.setRole('manager');
+        window.dispatchEvent(new Event('online'));
+    });
+    await expect(dialog).toHaveCount(0);
     await expect(page.getByRole('heading', { name: 'Đối soát ngân hàng & COD' })).toBeVisible();
-    await expect(page.getByRole('row').filter({ hasText: 'FE015-OFFLINE-ITEM' })).toHaveCount(0);
+    await expect(page.getByRole('button', { name: 'Nhập bảng đối soát' })).toHaveCount(0);
     expect(submissions).toBe(0);
 });
 
@@ -556,4 +584,39 @@ test('FE015.AC03 unknown journal posting is not resent from the same draft', asy
     await expect.poll(() => postCalls.length).toBe(1);
     expect(postCalls).toHaveLength(1);
     console.log(`BROWSER=${test.info().project.name} ROLE_STATE=command_unknown ROLE=owner ROUTE=R48 OPERATION=postJournal RESULT=PASS`);
+});
+
+test('FE015.E04 private transfer evidence is listed under the selected payment review', async ({ page }) => {
+    await gotoDemo(page, '/s/shop-demo/finance/payment-reviews?kind=collection');
+    const row = page.getByRole('table', { name: 'Hàng đợi thu và hoàn tiền' }).getByRole('row')
+        .filter({ has: page.getByRole('button', { name: 'Xem chứng từ' }) }).first();
+    await row.getByRole('button', { name: 'Xem chứng từ' }).click();
+    const dialog = page.getByRole('dialog', { name: /^Chứng từ đơn / });
+    const chooser = page.waitForEvent('filechooser');
+    const upload = page.waitForResponse(response => response.url().endsWith('/uploads') && response.request().method() === 'POST');
+    await dialog.getByRole('button', { name: 'Tải ảnh chuyển khoản' }).click();
+    await (await chooser).setFiles({ name: 'synthetic-transfer.png', mimeType: 'image/png',
+        buffer: Buffer.from('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/w8AAgMB/6X6jRYAAAAASUVORK5CYII=', 'base64') });
+    expect((await upload).status()).toBe(201);
+    await expect(dialog.getByRole('img', { name: 'Ảnh chuyển khoản chờ đối chiếu' })).toBeVisible();
+    await dialog.getByRole('button', { name: 'Đóng', exact: true }).last().click();
+    await expect(row).toContainText('1 ảnh chờ đối chiếu');
+});
+
+test('FE015.E06 debt terms record a hold and show the overdue bracket', async ({ page }) => {
+    await gotoDemo(page, '/s/shop-demo/finance/debts-periods');
+    const row = page.getByRole('table', { name: 'Công nợ' }).getByRole('row')
+        .filter({ has: page.getByRole('button', { name: 'Hạn và tranh chấp' }) }).first();
+    await row.getByRole('button', { name: 'Hạn và tranh chấp' }).click();
+    const dialog = page.getByRole('dialog', { name: 'Hạn trả và tranh chấp công nợ' });
+    const due = new Date(Date.now() - 32 * 86_400_000).toISOString().slice(0, 10);
+    await dialog.getByLabel('Ngày đến hạn').fill(due);
+    await dialog.getByRole('checkbox', { name: 'Tạm giữ phân bổ do tranh chấp' }).check();
+    await dialog.getByRole('textbox', { name: 'Lý do quyết định' }).fill('Chờ đối chiếu nguồn công nợ thử');
+    const patch = page.waitForResponse(response => response.request().method() === 'PATCH' && /\/debts\//.test(response.url()));
+    await dialog.getByRole('button', { name: 'Lưu quyết định' }).click();
+    expect((await patch).status()).toBe(200);
+    await expect(dialog).toHaveCount(0);
+    await expect(row).toContainText('Quá hạn 31–60 ngày');
+    await expect(row).toContainText('Đang giữ xử lý');
 });

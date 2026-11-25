@@ -2,7 +2,7 @@ import { NotFoundException } from '@nestjs/common';
 import { Prisma } from '../../generated/prisma/client.js';
 import { validUuid } from '../../http/query.js';
 import { ExactDecimal } from '../../platform/money/index.js';
-import { financeMoney } from './journal.js';
+import { financeMoney, localAccountingDate } from './journal.js';
 import { journalScope } from './report-data.js';
 
 export const manualCarrierId = 'e7dbe0d2-4aaa-48ea-8b6f-cc89071c6949';
@@ -11,15 +11,26 @@ export type Debt = {
     id: string; shopId: string; version: number; createdAt: Date; updatedAt: Date; accountId: string;
     sourceId: string; sourceType: 'order' | 'goods_receipt'; counterpartyId: string; counterpartyType: 'carrier' | 'supplier';
     orderId: string | null; effectiveDate: Date; currency: string; original: Prisma.Decimal; outstanding: Prisma.Decimal;
+    dueDate: Date | null; disputeHold: boolean;
 };
 
-export function debtView(debt: Debt) {
+export function debtDisputed(debt: Debt) {
+    return debt.disputeHold || debt.outstanding.lt(0);
+}
+
+export function debtView(debt: Debt, timezone: string, asOf = new Date()) {
+    const dueDate = debt.dueDate?.toISOString().slice(0, 10) ?? null;
+    const daysOverdue = dueDate === null ? null : Math.max(0,
+        (Date.parse(localAccountingDate(asOf, timezone)) - Date.parse(dueDate)) / 86_400_000);
+    const agingBucket = debt.outstanding.eq(0) ? 'settled' : daysOverdue === null ? 'no_due_date'
+        : daysOverdue === 0 ? 'current' : daysOverdue <= 30 ? 'overdue_1_30'
+            : daysOverdue <= 60 ? 'overdue_31_60' : daysOverdue <= 90 ? 'overdue_61_90' : 'overdue_over_90';
     const { id, shopId, version, createdAt, updatedAt, sourceId, sourceType, counterpartyId, counterpartyType, currency } = debt;
     return {
         id, shopId, version, createdAt, updatedAt, source: { type: sourceType, id: sourceId },
         counterpartyId, counterpartyType, direction: counterpartyType === 'carrier' ? 'receivable' : 'payable',
         originalAmount: financeMoney(debt.original, currency), outstandingAmount: financeMoney(ExactDecimal.max(0, debt.outstanding), currency),
-        dueAt: null, disputed: debt.outstanding.lt(0),
+        dueAt: debt.dueDate, dueDate, agingBucket, daysOverdue, disputeHold: debt.disputeHold, disputed: debtDisputed(debt),
     };
 }
 
@@ -55,8 +66,9 @@ export function findDebts(tx: Prisma.TransactionClient, shopId: string, currency
         )
         SELECT s.id, s."shopId", s."accountId", s.currency, s."createdAt", s."sourceId", s."sourceType",
                s."counterpartyId", s."counterpartyType", s."orderId", s."effectiveDate", s.original,
-               (1 + allocations.count + returns.count)::int AS version,
-               greatest(s."journalUpdatedAt", allocations.latest, returns.latest) AS "updatedAt",
+               (1 + allocations.count + returns.count + coalesce(terms.version, 0))::int AS version,
+               greatest(s."journalUpdatedAt", allocations.latest, returns.latest, terms.updated_at) AS "updatedAt",
+               terms.due_date AS "dueDate", coalesce(terms.dispute_hold, false) AS "disputeHold",
                s.original - allocations.amount - returns.credit AS outstanding
         FROM selected s
         CROSS JOIN LATERAL (
@@ -68,6 +80,7 @@ export function findDebts(tx: Prisma.TransactionClient, shopId: string, currency
             FROM order_returns r WHERE r.shop_id=s."shopId" AND r.order_id=s."orderId"
               AND r.state='inspected' AND r.receivable_credit > 0
         ) returns
+        LEFT JOIN debt_terms terms ON terms.shop_id=s."shopId" AND terms.debt_line_id=s.id
         ORDER BY s."createdAt" DESC, s.id DESC
     `);
 }

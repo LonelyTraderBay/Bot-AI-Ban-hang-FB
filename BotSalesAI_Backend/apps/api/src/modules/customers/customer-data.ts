@@ -46,6 +46,11 @@ export async function customerInShop(tx: Prisma.TransactionClient, shopId: strin
     return customer;
 }
 
+export async function createAddressForCustomer(tx: Prisma.TransactionClient, shopId: string, customerId: string, input: AddressInput) {
+    if (addressRedactions(await customerInShop(tx, shopId, customerId)).length) throw new ForbiddenException();
+    return tx.customerAddress.create({ data: { ...input, ...checkedAddress(input), shopId, customerId } });
+}
+
 export async function addressForCustomer(tx: Prisma.TransactionClient, shopId: string, customerId: string, id: string) {
     if (!validUuid(customerId) || !validUuid(id)) throw new NotFoundException();
     const address = await tx.customerAddress.findUnique({ where: { shopId_customerId_id: { shopId, customerId, id } } });

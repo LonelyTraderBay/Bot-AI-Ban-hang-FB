@@ -20,28 +20,30 @@ export function ShopSettingsPage() {
     const canManageShop = useCan('shop.manage');
     const update = useCommand('updateShop', ['getShop']);
     const [name, setName] = useState(shop.name), [timezone, setTimezone] = useState(shop.timezone), [locale, setLocale] = useState(shop.locale), [error, setError] = useState<Error | null>(null), [saved, setSaved] = useState(false), [timezoneTouched, setTimezoneTouched] = useState(false), [settingsSubmitted, setSettingsSubmitted] = useState(false);
+    const [businessCountry, setBusinessCountry] = useState(shop.businessCountry ?? null);
     const latestShop = useApi('getShop');
     const currentShop = latestShop.data && latestShop.data.data.version >= shop.version ? latestShop.data.data : shop;
     const editor = useVersionedDraft({
         identity: `${shop.id}:settings`,
-        source: { version: currentShop.version, values: { name: currentShop.name, timezone: currentShop.timezone, locale: currentShop.locale } },
-        draft: { name, timezone, locale },
-        apply: values => { setName(values.name); setTimezone(values.timezone); setLocale(values.locale); },
+        source: { version: currentShop.version, values: { name: currentShop.name, timezone: currentShop.timezone, locale: currentShop.locale, businessCountry: currentShop.businessCountry ?? null } },
+        draft: { name, timezone, locale, businessCountry },
+        apply: values => { setName(values.name); setTimezone(values.timezone); setLocale(values.locale); setBusinessCountry(values.businessCountry); },
         refresh: () => latestShop.refetch({ throwOnError: true }),
     });
     const formRef = useDraftForm(editor.dirty);
     const timezoneError = !isValidTimeZone(timezone) ? 'Nhập múi giờ hợp lệ, ví dụ Asia/Vientiane.' : '';
+    const countryError = businessCountry !== null && !/^[A-Z]{2}$/.test(businessCountry);
     const save = async () => {
         setSettingsSubmitted(true);
-        if (!name.trim() || timezoneError) return;
+        if (!name.trim() || timezoneError || countryError) return;
         setError(null); setSaved(false);
         const prepared = editor.prepare();
         if (!prepared) return;
-        const submitted = { name, timezone, locale };
+        const submitted = { name, timezone, locale, businessCountry };
         try {
             const result = await update.execute({ path: { shopId: shop.id }, version: prepared.version, body: prepared.patch });
             cache.setQueryData(['shop', scope.session.user.id, shop.id, scope.membership.permissionVersion], result);
-            editor.committed({ version: result.data.version, values: { name: result.data.name, timezone: result.data.timezone, locale: result.data.locale } }, submitted);
+            editor.committed({ version: result.data.version, values: { name: result.data.name, timezone: result.data.timezone, locale: result.data.locale, businessCountry: result.data.businessCountry ?? null } }, submitted);
             setSaved(true);
         }
         catch (error) { editor.failed(error); setError(error instanceof Error ? error : new Error('Không lưu được cấu hình')); }
@@ -53,7 +55,7 @@ export function ShopSettingsPage() {
             <Panel title="Thông tin cơ sở" bodyMode="inset">
                 <FormFields component="form" ref={formRef} noValidate onSubmit={event => { event.preventDefault(); void save(); }}>
                     <ErrorNotice error={error || update.error} />
-                    <DraftConflict editor={editor} labels={{ name: 'Tên cửa hàng', timezone: 'Múi giờ', locale: 'Ngôn ngữ' }} busy={update.pending}/>
+                    <DraftConflict editor={editor} labels={{ name: 'Tên cửa hàng', timezone: 'Múi giờ', locale: 'Ngôn ngữ', businessCountry: 'Quốc gia kinh doanh' }} busy={update.pending}/>
                     {saved && <Alert severity="success" role="status">Đã lưu cấu hình cửa hàng.</Alert>}
                     <FieldGroup direction={{ xs: 'column', sm: 'row' }} alignItems={{ xs: 'stretch', sm: 'start' }}>
                         <TextField label="Tên cửa hàng" value={name} disabled={!canManageShop} onChange={event => { setName(event.target.value); setSaved(false); }} sx={{ flex: 1, minWidth: 0 }} />
@@ -63,14 +65,19 @@ export function ShopSettingsPage() {
                         <TextField label="Múi giờ" value={timezone} disabled={!canManageShop} onBlur={() => setTimezoneTouched(true)} onChange={event => { setTimezone(event.target.value); setSaved(false); }} error={(timezoneTouched || settingsSubmitted) && !!timezoneError} helperText={(timezoneTouched || settingsSubmitted) && timezoneError ? timezoneError : 'Áp dụng cho ngày giờ theo cửa hàng.'} sx={{ flex: 1, minWidth: 0 }} />
                         <TextField label="Ngôn ngữ giao diện" value="Tiếng Việt" disabled helperText={`Giao diện hiện chỉ hỗ trợ tiếng Việt. Ngôn ngữ lưu cho cửa hàng: ${locale}.`} sx={{ flex: 1, minWidth: 0 }} />
                     </FieldGroup>
+                    <TextField label="Quốc gia kinh doanh" name="businessCountry" value={businessCountry ?? ''} disabled={!canManageShop}
+                        onChange={event => { setBusinessCountry(event.target.value.trim().toUpperCase() || null); setSaved(false); }}
+                        error={countryError} helperText={countryError ? 'Nhập mã hai chữ cái, ví dụ LA hoặc VN.' : 'Khai báo bằng mã ISO 3166-1, ví dụ LA hoặc VN.'} />
                     <TextField label="Giao diện" value="Graphite Gold · Dark-only" disabled />
-                    <MutationButton permission="shop.manage" type="submit" variant="contained" busy={update.pending} disabled={!canManageShop || !editor.dirty || update.pending}>Lưu cấu hình</MutationButton>
+                    <MutationButton permission="shop.manage" type="submit" variant="contained" busy={update.pending} disabled={!canManageShop || !editor.dirty || countryError || update.pending}>Lưu cấu hình</MutationButton>
                 </FormFields>
             </Panel>
-            <Panel title="Checklist thiết lập vận hành" subtitle="Các mục không có trường API được giữ ở trạng thái chưa xác minh; không suy diễn đã sẵn sàng." bodyMode="inset">
+            <Panel title="Checklist thiết lập vận hành" bodyMode="inset">
                 <Stack sx={layoutSx.surface.compactContentGap}>
-                    <Alert severity="info">{__MOCK__ ? 'Bản xem trước mô phỏng. Chỉ tên, tiền tệ, múi giờ và ngôn ngữ được lưu qua API hiện tại.' : 'API hiện chỉ cho phép sửa thông tin cơ sở được hỗ trợ.'} Quốc gia kinh doanh không được suy ra từ múi giờ.</Alert>
-                    <SetupChecklistItem title="Quốc gia và giờ kinh doanh" status="Chưa có trường cấu hình trong contract" />
+                    <SetupChecklistItem title="Chạy bot trên Messenger" status={currentShop.businessCountry
+                        ? 'Cần phê duyệt phạm vi và quyền nhà cung cấp.'
+                        : 'Cần khai báo quốc gia kinh doanh để chạy bot trên Messenger.'} />
+                    <SetupChecklistItem title="Giờ kinh doanh" status="Chưa có cấu hình trong hệ thống." />
                     <SetupChecklistItem title="Địa chỉ, vùng giao và phí vận chuyển" status="Khai báo phí dự kiến theo tỉnh/thành và quốc gia." to={canManageShop ? `/s/${shop.id}/settings/shipping` : undefined} action="Cấu hình giao hàng" />
                     <SetupChecklistItem title="Người duyệt và thành viên" status="Quyền lấy từ membership; chưa có API gán chính sách duyệt" to={`/s/${shop.id}/settings/team`} action="Quản lý thành viên" />
                     <SetupChecklistItem title="Kết nối kênh bán hàng" status={__MOCK__ ? 'Kết nối mô phỏng; không có quyền provider thật' : 'Kiểm tra trạng thái kết nối'} to={`/s/${shop.id}/integrations/channels`} action="Mở kết nối" />

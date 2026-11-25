@@ -16,6 +16,8 @@ export function paymentReviews(input: Input) {
     const returns = all('returns', shopId);
     const debtApplications = new Map(all('orderReceiptDebtApplications', shopId).map(row => [row.financeEntryId, units(row.amount)]));
     const assignments = all('workItems', shopId).filter(row => row.kind === 'payment_mismatch' && !['completed', 'cancelled'].includes(str(row.state)));
+    const transferPhotos = input.permissions?.includes('finance.reconcile')
+        ? all('files', shopId).filter(row => row.purpose === 'payment_evidence_image' && row.status === 'ready') : null;
     const result: Row[] = [];
     for (const order of all('orders', shopId)) {
         if (!order.total || record(order.total).currency !== currency || order.orderState === 'cancelled') continue;
@@ -73,6 +75,8 @@ export function paymentReviews(input: Input) {
                 ...common, id: `collection-${order.id}`, kind: 'collection', status, expected: order.total,
                 verified: disputed && verified <= 0n ? null : money(verified, currency), remaining: disputed ? null : money(expected - verified, currency),
                 bankTransactionIds: bankIds, codSettlementIds: settlements.map(row => row.id),
+                ...(transferPhotos ? { pendingTransferImages: transferPhotos.filter(file => file.resourceId === order.id)
+                    .map(file => ({ fileId: file.id, status: 'pending_review', createdAt: file.createdAt })) } : {}),
                 ...documentation([...receipts, ...debtReceipts, ...allocations, ...codReceipts], journals.filter(row => row.sourceType === 'order_delivery' && row.sourceId === order.id)),
             });
         }

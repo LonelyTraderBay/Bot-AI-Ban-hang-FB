@@ -116,6 +116,17 @@ export class PaymentReviews extends FinanceAccess {
                 orderBy: [{ createdAt: 'asc' }, { id: 'asc' }],
                 select: { id: true, sourceType: true, sourceId: true, assigneeUserId: true, dueAt: true },
             });
+            const mayReadPhotos = scope.permissions.includes('finance.reconcile');
+            const photos = mayReadPhotos ? await tx.fileObject.findMany({ where: { shopId, purpose: 'payment_evidence_image',
+                status: 'ready', resourceId: { in: orderIds } }, orderBy: [{ createdAt: 'desc' }, { id: 'desc' }],
+                select: { id: true, resourceId: true, createdAt: true } }) : [];
+            const photosByOrder = new Map<string, typeof photos>();
+            for (const file of photos) {
+                if (!file.resourceId) continue;
+                const group = photosByOrder.get(file.resourceId);
+                if (group) group.push(file);
+                else photosByOrder.set(file.resourceId, [file]);
+            }
             const byId = new Map(sources.map(order => [order.id, order]));
             const money = (amount: Prisma.Decimal) => financeMoney(amount, currency);
             return { ...result, data: result.data.map(row => {
@@ -141,6 +152,9 @@ export class PaymentReviews extends FinanceAccess {
                     bankTransactionIds: orderBanks,
                     codSettlementIds: unique([...allocations.map(item => item.codSettlementId), ...(collection ? [order.codSettlementOrder?.settlementId] : [])]),
                     references: unique([...entries.flatMap(item => [item.evidenceId, item.paymentReference]), ...allocations.map(item => item.transaction.externalTransactionId)]),
+                    ...(collection && mayReadPhotos ? { pendingTransferImages: (photosByOrder.get(row.orderId) ?? []).map(photo => ({
+                        fileId: photo.id, status: 'pending_review' as const, createdAt: photo.createdAt,
+                    })) } : {}),
                     updatedAt: row.createdAt,
                 };
             }) };

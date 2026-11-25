@@ -7,6 +7,8 @@ import { messengerFixtureEnabled } from '../channels/index.js';
 import { requireShopAccess, type AuthConfig } from '../workspace/index.js';
 import { afterSalesRequest, authorizedAfterSales, recordReturnIntake } from './after-sales.js';
 import { inboundIntentKey, recordInboundDraft, workForHandoff } from './bot-drafts.js';
+import { checkoutPrompt, checkoutReply } from './checkout.js';
+import { consultationReply } from './consultation.js';
 import { queueMessengerMessage, sendEligibility } from './message-data.js';
 import { processStagedBotInbound } from './staged-bot-inbound.js';
 
@@ -52,12 +54,17 @@ async function executeTask(tx: Prisma.TransactionClient, config: AuthConfig, key
     if (request && !afterSales) return handoff('after_sales_handoff');
     if (afterSales && bot.revision.maxToolSteps < (afterSales.kind === 'tracking' ? 1 : 2)) return handoff('tool_limit');
     if (!await reserveAiUsage(tx, bot.shop, bot.revision.dailyBudget, new Date())) return handoff(budgetHandoff().code);
+    const auditContext = { ...bot.auditContext, permissionVersion: scope.permissionVersion };
     const result = afterSales
         ? { ...afterSales, code: afterSales.kind === 'tracking' ? 'order_tracking' : 'return_intake', draft: undefined }
-        : await runFixtureTools(tx, bot.shop, bot.revision, bot.context.knowledge, scope.permissions, { text: row.message.text, customerContextId: null });
-    if (!afterSales && !['catalog', 'inventory', 'knowledge', 'draft_proposal'].includes(result.code)) return handoff(result.code);
+        : await checkoutReply(tx, config, { message: row.message, conversation, generations: row, scope, auditContext,
+            maxToolSteps: bot.revision.maxToolSteps }) ??
+            await consultationReply(tx, row.message, row, bot, scope.permissions) ??
+            await runFixtureTools(tx, bot.shop, bot.revision, bot.context.knowledge, scope.permissions, { text: row.message.text, customerContextId: null });
+    if (!afterSales && !['catalog', 'inventory', 'knowledge', 'draft_proposal',
+        'consultation_needs', 'consultation_facts', 'consultation_policy', 'checkout_details_required', 'checkout_quote', 'checkout_evidence'].includes(result.code)) return handoff(result.code);
     const sources = [...result.sources];
-    const auditContext = { ...bot.auditContext, permissionVersion: scope.permissionVersion };
+    let text = result.text;
     if (afterSales?.kind === 'return_request') {
         const created = await recordReturnIntake(tx, config, { actorId: bot.actorId, messageId, conversation, orderId: afterSales.orderId, auditContext });
         if (!created) return handoff('after_sales_handoff');
@@ -67,13 +74,15 @@ async function executeTask(tx: Prisma.TransactionClient, config: AuthConfig, key
         const order = await recordInboundDraft(tx, config, { actorId: bot.actorId, messageId, conversation, warehouseId: bot.shop.defaultWarehouseId,
             auditContext, proposal: result.draft });
         sources.push(order);
+        const prompt = checkoutPrompt(scope.permissions, bot.revision.maxToolSteps);
+        if (prompt) text += '\n' + prompt;
         await workForHandoff(tx, conversation, false);
     }
     await recordCommand(tx, { shopId, actorId: bot.actorId, operationId: 'sendMessage', idempotencyKey: inboundIntentKey(config, shopId, messageId, 'send') },
         { sourceMessageId: messageId, configHash: bot.context.contentHash, sources: sources.map(({ type, id }) => ({ type, id })) },
         async command => {
             const message = await queueMessengerMessage(tx, conversation, {
-                commandId: command.id, clientMessageId: 'bot-' + messageId, text: result.text, botGeneration: row.botGeneration, sources,
+                commandId: command.id, clientMessageId: 'bot-' + messageId, text, botGeneration: row.botGeneration, sources,
                 afterSalesRequestId: afterSales ? messageId : undefined,
             });
             await recordAudit(tx, { shopId, actorId: bot.actorId, requestId: messageId, action: 'sendMessage', resourceType: 'message', resourceId: message.id,

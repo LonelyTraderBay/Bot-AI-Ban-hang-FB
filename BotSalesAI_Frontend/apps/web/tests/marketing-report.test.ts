@@ -15,7 +15,10 @@ describe('Marketing report read model', () => {
         expect(summary.period).toEqual({ fromDate: '2026-08-31', toDate: '2026-09-29', bucket: 'day', timezone: 'Asia/Vientiane' });
         expect(summary.trend).toHaveLength(30);
         expect(summary.knownAttributedOrders).toBe(3);
+        expect(summary.estimatedAttributedOrders).toBe(1);
         expect(summary.unknownAttributionOrders).toBe(5);
+        expect(summary.demandStock).toBeUndefined();
+        expect(summary.questionTopics).toBeUndefined();
         expect(summary.estimatedSpend).toEqual({ amount: '750000', currency: 'VND' });
         expect(summary.actualSpend).toBeNull();
         expect(summary.trend?.reduce((sum, point) => sum + point.unknownAttributionOrders, 0)).toBe(summary.unknownAttributionOrders);
@@ -60,6 +63,7 @@ describe('Marketing report read model', () => {
     it('does not borrow sample marketing data across shops', () => {
         const summary = marketingSummary(input({}, 'shop-second'));
         expect(summary.knownAttributedOrders).toBe(0);
+        expect(summary.estimatedAttributedOrders).toBe(0);
         expect(summary.unknownAttributionOrders).toBe(0);
         expect(summary.topQuestions).toEqual([]);
         expect(summary.lostSaleReasons).toEqual([]);

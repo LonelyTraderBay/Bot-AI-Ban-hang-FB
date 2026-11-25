@@ -39,7 +39,9 @@ describe('FE021 route, contract, and frontend ownership map', () => {
     for (const missing of ['series', 'rows', 'dateRange']) expect(openapi.components.schemas.ReportSummary.properties).not.toHaveProperty(missing);
     expect(openapi.components.schemas.MarketingSummary.properties).toHaveProperty('period');
     expect(openapi.components.schemas.MarketingSummary.properties).toHaveProperty('trend');
-    for (const missing of ['demandVsStock', 'contentIdeas', 'evidenceLinks']) expect(openapi.components.schemas.MarketingSummary.properties).not.toHaveProperty(missing);
+    for (const field of ['demandStock', 'questionTopics', 'lostSaleEvidence', 'estimatedAttributedOrders', 'campaignResults', 'actualSpendSources']) {
+      expect(openapi.components.schemas.MarketingSummary.properties).toHaveProperty(field);
+    }
   });
 
   it('binds screens and export rules to the mock/API owners without HTML rendering', () => {
@@ -58,7 +60,8 @@ describe('FE021 route, contract, and frontend ownership map', () => {
     expect(reports).toContain("useCommand('createExport'");
     expect(reports).toContain('reportDateBoundary');
     expect(reports).toContain('m.lostSaleReasons');
-    expect(mock).toContain("marketingSummary(input, now(), grantedPermissions(role).includes('finance.read'))");
+    expect(mock).toContain('marketingSummary(input)');
+    expect(marketingReadModel).toContain('input.permissions');
     expect(marketingReadModel).toContain("input.query.get('fromDate')");
     expect(marketingReadModel).toContain("input.query.get('toDate')");
     expect(reports).not.toContain('không thể lọc chuỗi này theo kỳ ở frontend');

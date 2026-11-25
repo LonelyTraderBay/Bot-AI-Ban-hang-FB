@@ -124,8 +124,12 @@ function EvaluationReport({ report, shopId }: { report: Evaluation; shopId: stri
 const roleNames = { sales_admin: 'Admin bán hàng', accountant: 'Kế toán', warehouse_buyer: 'Kho & mua hàng', supervisor: 'Trưởng nhóm' };
 export function AgentTeamPage() {
     const { shop } = useScope();
+    const canReadCommands = useCan('jobs.read');
+    const commandHistory = `/s/${shop.id}/operations/exceptions?view=commands`;
     const roles = useApi('listAgentRoles');
     const budgets = useApi('listBudgetPolicies');
+    const config = useApi('getBotConfig');
+    const providerPolicy = config.data?.data.providerPolicy;
     const update = useCommand('updateAgentRole', ['listAgentRoles', 'getOperationsSummary']);
     const control = useCommand('controlAutomation', ['listAgentRoles', 'getBotConfig', 'getOperationsSummary']);
     const budgetUpdate = useCommand('updateBudgetPolicy', ['listBudgetPolicies']);
@@ -140,13 +144,30 @@ export function AgentTeamPage() {
         }
     ]}/></QueryState></Panel>
  <Panel title="Chi phí AI & dự phòng nhà cung cấp" beforeGap={"section"} bodyMode="inset">
-    <SurfaceContent  data-testid="provider-failover-preview">
-        <Alert severity="info">Chi phí trong phòng thử là ước tính mô phỏng. Chỉ dùng provider dự phòng đã được phê duyệt; demo không chuyển dữ liệu khách sang provider khác.</Alert>
-        <DetailLine label="Ngân sách token / kênh">Theo chính sách và hạn mức do hệ thống trả về; không dùng chung với ngân sách mua hàng.</DetailLine>
-        <DetailLine label="Provider dự phòng">Chưa có trạng thái failover được xác minh trong dữ liệu frontend.</DetailLine>
-        <DetailLine label="Khi hết hạn mức">Dừng câu trả lời tự động và chuyển nhân viên xử lý; không âm thầm đổi provider.</DetailLine>
-    </SurfaceContent>
+    <QueryState query={config}>
+        <SurfaceContent data-testid="provider-failover-preview">
+            {__MOCK__ && <Alert severity="info">Chính sách nhà cung cấp trong chế độ demo dùng dữ liệu mô phỏng.</Alert>}
+            <DetailLine label="Nhà cung cấp dự phòng">
+                {providerPolicy?.failover === 'disabled' ? 'Tắt chuyển tự động' : 'API chưa báo trạng thái'}
+            </DetailLine>
+            <DetailLine label="Hạn mức token của kênh">
+                {providerPolicy?.channelTokenBudget
+                    ? `Messenger · ${providerPolicy.channelTokenBudget.dailyLimit.toLocaleString('vi-VN')} token/ngày`
+                    : providerPolicy ? 'Chưa có hạn mức cho luồng đang chạy' : 'API chưa báo hạn mức'}
+            </DetailLine>
+            {providerPolicy && <DetailLine label="Khi hết hạn mức">Chuyển hội thoại sang nhân viên xử lý.</DetailLine>}
+        </SurfaceContent>
+    </QueryState>
  </Panel>
+ {canReadCommands && <Panel title="Đối chiếu thao tác" beforeGap="section" bodyMode="inset">
+    <SurfaceContent>
+        <Typography variant="body2">Dùng mã lệnh để kiểm tra kết quả trước khi gửi lại. Lệnh được hệ thống tiếp nhận có thể vẫn đang chờ xử lý.</Typography>
+        <ActionGroup>
+            <RouteLink to={commandHistory + '&status=succeeded'}>Lệnh đã hoàn tất</RouteLink>
+            <RouteLink to={commandHistory + '&status=unknown'}>Lệnh chưa rõ kết quả</RouteLink>
+        </ActionGroup>
+    </SurfaceContent>
+ </Panel>}
  <EditDialog open={!!editing} title="Giao trách nhiệm và cấu hình vai trò" onClose={() => setEditing(null)} busy={update.pending} actions={<Button variant="contained" disabled={!owner || !connection || !policy || update.pending} onClick={async () => { try {
         await update.execute({ path: { resourceId: editing?.id || '' }, body: { expectedVersion: editing?.version || 1, humanOwnerId: owner, modelConnectionId: connection, policyVersion: policy } });
         setEditing(null);

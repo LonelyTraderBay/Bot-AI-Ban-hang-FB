@@ -1,5 +1,5 @@
 import { ActionGroup, FieldGroup, FormFields, PageSections } from '../../shared/ui/composition';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { visualSx } from '@/shared/ui/visual';
 import { useSearchParams } from 'react-router-dom';
 import { Alert, Box, Button, Checkbox, FormControlLabel, MenuItem, Stack, TextField, Typography } from '@mui/material';
@@ -7,7 +7,9 @@ import type { ShipmentEventWrite } from '@botsales/contracts';
 import { useApi, usePagedApi, useCommand } from '@/shared/api/hooks';
 import { useCan, useScope } from '@/shared/model/scope';
 import { useListQuery } from '@/shared/model/filters';
+import { authorizedDownloadHref } from '@/shared/model/download';
 import { limitCodePoints, codePointLength, dateTime, dateTimeLocalInput, dateTimeLocalToISOString } from '@/shared/model/format';
+import { label as businessLabel } from '@/shared/model/labels';
 import { layoutSx } from '@/shared/ui/layout';
 import { Amount, PageHeader, Panel, DataTable, QueryState, Toolbar, Pager, Status, MutationButton, EditDialog, ErrorNotice, ConfirmDialog, RouteLink, DetailLine, LookupLoadMore } from '@/shared/ui/components';
 export { ShippingPolicyPage } from './shipping-policy';
@@ -24,14 +26,34 @@ const shipmentEventOptions: Array<{ value: ShipmentEventWrite['eventType']; labe
 
 export function FulfillmentPage() {
     const { shop } = useScope();
+    const [, setParams] = useSearchParams();
     const query = useListQuery('listPrepJobs');
     const list = useApi('listPrepJobs', { query });
     const [selected, setSelected] = useState<string | null>(null);
+    const setFilter = (key: 'state' | 'assignee', value: string) => setParams(previous => {
+        const next = new URLSearchParams(previous);
+        if (value) next.set(key, value);
+        else next.delete(key);
+        next.delete('cursor');
+        return next;
+    });
 
     return <>
         <PageHeader title="Chuẩn bị hàng" subtitle="Nhận việc, lấy đúng SKU, kiểm đủ số lượng rồi đóng gói." actions={<RouteLink to={`/s/${shop.id}/shipments`}>Vận đơn & bàn giao</RouteLink>} />
         <Panel>
-            <Toolbar operation="listPrepJobs" />
+            <Toolbar operation="listPrepJobs" filters={<FieldGroup bodyMode="toolbar" direction={{ xs: 'column', sm: 'row' }}
+                role="group" aria-label="Bộ lọc chuẩn bị hàng">
+                <TextField select label="Giai đoạn chuẩn bị" value={query?.state ?? ''} onChange={event => setFilter('state', event.target.value)}>
+                    <MenuItem value="">Tất cả giai đoạn</MenuItem>
+                    {['queued', 'claimed', 'picking', 'packed', 'handed_over', 'cancelled'].map(state =>
+                        <MenuItem key={state} value={state}>{businessLabel(state)}</MenuItem>)}
+                </TextField>
+                <TextField select label="Người nhận việc" value={query?.assignee ?? ''} onChange={event => setFilter('assignee', event.target.value)}>
+                    <MenuItem value="">Tất cả người nhận</MenuItem>
+                    <MenuItem value="me">Của tôi</MenuItem>
+                    <MenuItem value="unassigned">Chưa nhận</MenuItem>
+                </TextField>
+            </FieldGroup>} />
             <QueryState query={list} pendingProfile="section">
                 {list.data && <>
                     <DataTable pinActionOnMobile label="Công việc chuẩn bị đơn" rows={list.data.data} rowKey={prep => prep.id} columns={[
@@ -39,6 +61,11 @@ export function FulfillmentPage() {
                         { key: 'state', label: 'Giai đoạn', render: prep => <Status value={prep.state} /> },
                         { key: 'items', label: 'Dòng hàng', render: prep => `${prep.lines.filter(line => line.requiredQuantity === line.pickedQuantity && !line.hasIssue).length}/${prep.lines.length} đã kiểm đủ` },
                         { key: 'assigned', label: 'Người nhận', render: prep => prep.assigneeUserId || 'Chưa có' },
+                        { key: 'due', label: 'Hạn chuẩn bị', render: prep => <div>
+                            {prep.dueAt ? dateTime(prep.dueAt, shop.timezone) : prep.dueAt === null ? 'Chưa đặt hạn' : 'Chưa có dữ liệu'}
+                            {prep.overdueMinutes !== null && prep.overdueMinutes !== undefined &&
+                                <Typography variant="caption" display="block">Trễ {prep.overdueMinutes} phút</Typography>}
+                        </div> },
                         { key: 'action', label: 'Thao tác', render: prep => <Button variant="outlined" onClick={() => setSelected(prep.id)}>Mở phiếu lấy hàng</Button> },
                     ]} />
                     <Pager page={list.data.page} />
@@ -49,6 +76,19 @@ export function FulfillmentPage() {
     </>;
 }
 
+function PreparationPhoto({ fileId, purpose, label }: { fileId: string; purpose: 'product_image' | 'preparation_issue_image'; label: string }) {
+    const file = useApi('getFile', { path: { fileId } });
+    const [failedUrl, setFailedUrl] = useState<string>();
+    if (file.isPending) return <Typography role="status" variant="caption">Đang tải ảnh…</Typography>;
+    const info = file.data?.data;
+    const href = info?.status === 'ready' && info.purpose === purpose && info.readUrl
+        ? authorizedDownloadHref(info.readUrl, window.location.origin, __MOCK__) : null;
+    if (!href || new URL(href).origin !== window.location.origin || failedUrl === href)
+        return <Typography variant="caption">{label} hiện chưa đọc được.</Typography>;
+    return <Box component="img" src={href} alt={label} loading="lazy"
+        onError={() => setFailedUrl(href)} sx={{ display: 'block', maxWidth: '100%', width: 120, height: 96, objectFit: 'contain' }} />;
+}
+
 function PrepDialog({ resourceId, onClose }: { resourceId: string; onClose: () => void }) {
     const { shop, session, membership } = useScope();
     const get = useApi('getPrepJob', { path: { resourceId } });
@@ -57,10 +97,15 @@ function PrepDialog({ resourceId, onClose }: { resourceId: string; onClose: () =
     const workItem = task.data?.data;
     const claim = useCommand('claimWorkItem', ['getWorkItem', 'getPrepJob', 'listWorkItems', 'listPrepJobs']);
     const pick = useCommand('pickPrepLine', ['getPrepJob', 'listPrepJobs']);
+    const upload = useCommand('uploadFile', []);
     const pack = useCommand('packPrepJob', ['getPrepJob', 'listPrepJobs', 'getOrder', 'listOrders']);
     const [scans, setScans] = useState<Record<string, string>>({});
     const [quantities, setQuantities] = useState<Record<string, string>>({});
     const [issues, setIssues] = useState<Record<string, string>>({});
+    const [evidenceIds, setEvidenceIds] = useState<Record<string, string | undefined>>({});
+    const [evidenceError, setEvidenceError] = useState<string>();
+    const issueFileInput = useRef<HTMLInputElement>(null);
+    const evidenceLine = useRef<string>(undefined);
     const [packing, setPacking] = useState(false);
     const [draftCommit, setDraftCommit] = useState<{ scope: string; sequence: number }>();
     const assigned = workItem?.assigneeUserId === session.user.id;
@@ -71,9 +116,36 @@ function PrepDialog({ resourceId, onClose }: { resourceId: string; onClose: () =
         claim.resetAfterReconcile();
     }
 
+    function addIssuePhoto(lineId: string) {
+        evidenceLine.current = lineId;
+        issueFileInput.current?.click();
+    }
+
+    async function uploadIssuePhoto(file: File, lineId: string) {
+        setEvidenceError(undefined);
+        if (!['image/jpeg', 'image/png', 'image/webp'].includes(file.type) || !(file.size > 0)) {
+            setEvidenceError('Chọn tệp ảnh JPEG, PNG hoặc WebP.');
+            return;
+        }
+        const form = new FormData();
+        form.append('file', file);
+        form.append('purpose', 'preparation_issue_image');
+        form.append('resourceId', resourceId);
+        const result = await upload.execute({ form });
+        if (result.data.status === 'ready') setEvidenceIds(current => ({ ...current, [lineId]: result.data.id }));
+        else setEvidenceError('Ảnh chưa qua kiểm tra. Vui lòng chọn ảnh khác.');
+    }
+
     return <>
-        <EditDialog open title={`Phiếu chuẩn bị ${prep?.orderId || ''}`} onClose={onClose} busy={pick.pending || claim.pending} draftCommit={draftCommit} actions={({ requestClose, busy }) => <Button disabled={busy} onClick={requestClose}>Đóng</Button>}>
-            <ErrorNotice error={claim.error || pick.error || task.error} />
+        <EditDialog open title={`Phiếu chuẩn bị ${prep?.orderId || ''}`} onClose={onClose} busy={pick.pending || claim.pending || upload.pending} draftCommit={draftCommit} actions={({ requestClose, busy }) => <Button disabled={busy} onClick={requestClose}>Đóng</Button>}>
+            <ErrorNotice error={claim.error || pick.error || task.error || upload.error} />
+            {evidenceError && <Alert severity="error">{evidenceError}</Alert>}
+            <input ref={issueFileInput} hidden type="file" aria-label="Ảnh chứng cứ kiểm hàng" accept="image/jpeg,image/png,image/webp"
+                onChange={event => {
+                    const file = event.currentTarget.files?.[0];
+                    event.currentTarget.value = '';
+                    if (file && evidenceLine.current) void uploadIssuePhoto(file, evidenceLine.current).catch(() => undefined);
+                }} />
             <QueryState query={get}>
                 {prep && <FormFields >
                     <Stack direction="row" justifyContent="space-between" alignItems="center">
@@ -112,6 +184,10 @@ function PrepDialog({ resourceId, onClose }: { resourceId: string; onClose: () =
                                 <Typography fontWeight={visualSx.typography.fontWeight.strong}>{line.sku}</Typography>
                                 <Typography>{line.pickedQuantity}/{line.requiredQuantity}</Typography>
                             </Stack>
+                            {line.productImageSnapshot && <PreparationPhoto purpose="product_image"
+                                fileId={line.productImageSnapshot.fileId} label={'Ảnh đã duyệt của SKU ' + line.sku} />}
+                            {line.issueEvidenceFileId && <PreparationPhoto purpose="preparation_issue_image"
+                                fileId={line.issueEvidenceFileId} label={'Ảnh chứng cứ kiểm hàng cho SKU ' + line.sku} />}
                             {line.hasIssue && <Alert severity="warning" sx={layoutSx.notice.contentGap}>Dòng hàng còn vấn đề cần xử lý.</Alert>}
                             <FormFields beforeGap="surface">
                                 <TextField label="Nhập/quét SKU thực tế" value={scan} onChange={event => setScans(current => ({ ...current, [line.orderLineId]: limitCodePoints(event.target.value, 100) }))} disabled={!canEdit}  />
@@ -126,9 +202,19 @@ function PrepDialog({ resourceId, onClose }: { resourceId: string; onClose: () =
                                     disabled={!canEdit}
                                 />
                                 <TextField label="Vấn đề phát hiện (để trống khi đạt)" value={issue} onChange={event => setIssues(current => ({ ...current, [line.orderLineId]: limitCodePoints(event.target.value, 1000) }))} disabled={!canEdit}  />
+                                {canEdit && codePointLength(issue.trim()) >= 3 && <>
+                                    <Typography variant="caption">Che tên, số điện thoại và địa chỉ trước khi tải ảnh.</Typography>
+                                    <ActionGroup>
+                                        <MutationButton permission="fulfillment.write" variant="outlined" busy={upload.pending}
+                                            disabled={pick.pending} onClick={() => addIssuePhoto(line.orderLineId)}>Chọn ảnh chứng cứ</MutationButton>
+                                        {evidenceIds[line.orderLineId] && <Button size="small" disabled={pick.pending || upload.pending}
+                                            onClick={() => setEvidenceIds(current => ({ ...current, [line.orderLineId]: undefined }))}>Bỏ ảnh chưa lưu</Button>}
+                                    </ActionGroup>
+                                    {evidenceIds[line.orderLineId] && <Typography variant="caption" role="status">Ảnh đã tải, chờ xác nhận dòng.</Typography>}
+                                </>}
                                 <MutationButton
                                     permission="fulfillment.write"
-                                    busy={pick.pending}
+                                    busy={pick.pending || upload.pending}
                                     disabled={!canEdit || !scan.trim() || !quantityIsValid || codePointLength(issue) > 1000}
                                     onClick={() => void pick.execute({ path: { resourceId }, body: {
                                         expectedVersion: prep.version,
@@ -136,7 +222,11 @@ function PrepDialog({ resourceId, onClose }: { resourceId: string; onClose: () =
                                         scannedSku: scan.trim(),
                                         pickedQuantity: Number(quantity),
                                         issueReason: issue.trim() || null,
-                                    } }).then(() => setDraftCommit(current => ({ scope: line.orderLineId, sequence: (current?.sequence || 0) + 1 }))).catch(() => undefined)}
+                                        ...(issue.trim() && evidenceIds[line.orderLineId] ? { issueEvidenceFileId: evidenceIds[line.orderLineId] } : {}),
+                                    } }).then(() => {
+                                        setEvidenceIds(current => ({ ...current, [line.orderLineId]: undefined }));
+                                        setDraftCommit(current => ({ scope: line.orderLineId, sequence: (current?.sequence || 0) + 1 }));
+                                    }).catch(() => undefined)}
                                 >Xác nhận dòng đã kiểm</MutationButton>
                             </FormFields>
                         </Box>;

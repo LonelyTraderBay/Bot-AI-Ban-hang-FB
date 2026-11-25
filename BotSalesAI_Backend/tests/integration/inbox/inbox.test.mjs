@@ -289,16 +289,35 @@ test('T069 Meta: text replies honor scope, handoff and the window at queue and d
     assert.equal(await db.outboxEvent.count({ where: { shopId: shopA.id, eventType: 'message.created',
         payload: { path: ['resourceId'], equals: stored.id } } }), 2);
 
-    const priorGeneration = await queue('Phản hồi chờ trước khi giao lại');
-    await action('release');
+    const uncertain = await queue('Phản hồi mất xác nhận trước khi dừng');
+    let uncertainCalls = 0;
+    await dispatchMessengerMessages(db, config, meta, async () => {
+        uncertainCalls += 1;
+        throw new Error('Synthetic provider response lost after submission');
+    });
+    assert.equal((await command(uncertain.id)).status, 'unknown');
+    const priorGeneration = await queue('Phản hồi chờ trước khi dừng');
+    const beforePause = await detail();
+    const beforeGeneration = (await db.channelConversation.findUniqueOrThrow({ where })).generation;
+    const pauseInput = { scope: 'conversation', resourceId: conversation.id, action: 'pause',
+        expectedVersion: beforePause.version, reason: 'Tạm dừng hội thoại trước khi gửi' };
+    await send('automation-control', pauseInput, 'Problem', { shop: shopB, actor: other, expected: 404 });
+    const paused = await send('automation-control', pauseInput, 'CommandResponse', { expected: 202 });
+    assert.equal(paused.status, 'succeeded');
+    const afterPause = await detail();
+    assert.equal(afterPause.mode, 'paused');
+    assert.equal((await db.channelConversation.findUniqueOrThrow({ where })).generation, beforeGeneration + 1);
+    await dispatchMessengerMessages(db, config, meta, blockedFetch);
     await dispatchMessengerMessages(db, config, meta, blockedFetch);
     assert.equal((await command(priorGeneration.id)).status, 'failed');
     assert.deepEqual(await command(queued.id), sent);
+    assert.equal((await command(uncertain.id)).status, 'unknown');
+    await get('commands/' + uncertain.id, 'Problem', { shop: shopB, actor: other, expected: 404 });
     const retained = (await get(path + '/messages', 'MessageListResponse')).find(message => message.id === stored.id);
     assert.equal(retained.status, 'sent');
     assert.equal(calls, 1);
-    console.log(JSON.stringify({ status: 'SC2_H02_PROVIDER_BOUNDARY', pendingGeneration: 'failed',
-        acceptedStillSent: true, acceptedProviderCalls: calls }));
+    console.log(JSON.stringify({ status: 'SC2_H02_PROVIDER_BOUNDARY', scope: 'conversation', pendingGeneration: 'failed',
+        acceptedStillSent: true, acceptedProviderCalls: calls, uncertainStillUnknown: true, uncertainCalls, crossShop: 404 }));
     await action('takeover');
     const expired = await queue('Phản hồi đã quá cửa sổ khi worker chạy');
     await writer.channelConversation.update({ where, data: { lastInboundAt: new Date(Date.now() - 25 * 3600000) } });
@@ -855,4 +874,70 @@ test('SC2-B01 SC2-G02: structured knowledge checks source shop, required policie
     assert.deepEqual(await db.$transaction(tx => assignedKnowledge(tx, shopB.id, [revision.id])), []);
     const [match] = await db.$transaction(tx => publishedKnowledge(tx, shopA.id, marker));
     assert.match(match.indexedText, /Theo lịch giao đã xác nhận/);
+});
+
+test('SC2-G03: approved text policy windows are scoped to the shop calendar', async () => {
+    const year = new Date().getUTCFullYear() + 2;
+    const from = year + '-06-15', until = year + '-06-16';
+    const policyKey = 'shipping:window-' + randomUUID().slice(0, 8);
+    const title = 'Policy window ' + randomUUID();
+    const statement = 'Hand over the package within two working days.';
+    const input = { title, sourceKind: 'manual', fileId: null, content: statement, policyKey, validFrom: from, validUntil: until };
+    const peer = { shop: shopB, actor: other };
+    const shopBRecord = await db.shop.findUniqueOrThrow({ where: { id: shopB.id } });
+    const review = async (values, scope = {}) => {
+        const shop = scope.shop ?? shopA;
+        const draft = await send('knowledge', values, 'KnowledgeResponse', { ...scope, expected: 201 });
+        assert.deepEqual([draft.policyKey, draft.validFrom, draft.validUntil], [values.policyKey, values.validFrom, values.validUntil]);
+        const path = 'knowledge/' + draft.id;
+        const job = await send(path + '/submit-review', { expectedVersion: draft.version, reason: 'Review synthetic policy terms' },
+            'JobResponse', { ...scope, expected: 202 });
+        await runJob(db, { shopId: shop.id, id: job.id, sourceOperation: 'submitKnowledgeReview' }, knowledgeIndexHandler(db), authorize);
+        const indexed = await get(path, 'KnowledgeResponse', scope);
+        const revision = await get(path + '/revisions/' + indexed.draftRevisionId, 'KnowledgeRevisionResponse', scope);
+        const evaluation = await writer.evaluation.create({ data: {
+            shopId: shop.id, configRevision: 1, datasetVersion: 'fixture-policy-window', knowledgeRevisionId: revision.id,
+            knowledgeHash: revision.contentHash, policyVersion: (await db.shop.findUniqueOrThrow({ where: { id: shop.id } })).policyVersion,
+            status: 'passed', totalCases: 1, passedCases: 1, criticalFailures: 0, fixture: true,
+        } });
+        return { path, revision, body: { expectedVersion: indexed.version, revisionId: revision.id, evaluationRunId: evaluation.id,
+            reason: 'Approve synthetic policy terms' } };
+    };
+    const publish = (pending, scope = {}, expected = 202) =>
+        send(pending.path + '/publish', pending.body, expected === 202 ? 'CommandResponse' : 'Problem', { ...scope, expected });
+    const currentAt = (shop, iso) => db.$transaction(tx => publishedKnowledge(tx, shop.id, title, new Date(year + iso)));
+    try {
+        await writer.shop.update({ where: { id: shopB.id }, data: { timezone: 'UTC' } });
+        await send('knowledge', { ...input, validUntil: year + '-06-14' }, 'Problem', { expected: 422 });
+        const first = await review(input);
+        const conflicting = await review({ ...input, content: 'Hand over the package within five working days.' });
+        const secondShop = await review({ ...input, content: 'Hand over the package after inspection.' }, peer);
+        const following = await review({ ...input, title: title + ' next', validFrom: year + '-06-17', validUntil: year + '-06-18' });
+
+        assert.deepEqual(await currentAt(shopA, '-06-15T00:00:00.000Z'), []);
+        await publish(first, { actor: staff }, 403);
+        await publish(first);
+        assert.equal((await publish(conflicting, {}, 409)).code, 'KNOWLEDGE_POLICY_OVERLAP');
+        assert.equal((await get(conflicting.path, 'KnowledgeResponse')).status, 'ready_for_review');
+        await publish(secondShop, peer);
+        await publish(following);
+        assert.equal((await get(first.path, 'KnowledgeResponse')).approvedBy, owner.userId);
+
+        assert.deepEqual(await currentAt(shopA, '-06-14T16:59:59.999Z'), []);
+        assert.deepEqual((await currentAt(shopA, '-06-14T17:00:00.000Z')).map(row => row.id), [first.revision.id]);
+        assert.deepEqual(await currentAt(shopB, '-06-14T17:00:00.000Z'), []);
+        assert.deepEqual((await currentAt(shopB, '-06-15T00:00:00.000Z')).map(row => row.id), [secondShop.revision.id]);
+        assert.deepEqual((await currentAt(shopA, '-06-16T16:59:59.999Z')).map(row => row.id), [first.revision.id]);
+        assert.deepEqual((await currentAt(shopA, '-06-16T17:00:00.000Z')).map(row => row.id), [following.revision.id]);
+        assert.deepEqual((await currentAt(shopB, '-06-16T17:00:00.000Z')).map(row => row.id), [secondShop.revision.id]);
+        assert.deepEqual(await currentAt(shopB, '-06-17T00:00:00.000Z'), []);
+        const assignments = (iso) => db.$transaction(tx => assignedKnowledge(tx, shopA.id,
+            [first.revision.id, secondShop.revision.id, following.revision.id], new Date(year + iso)));
+        assert.deepEqual((await assignments('-06-15T00:00:00.000Z')).map(row => row.id), [first.revision.id]);
+        assert.deepEqual((await assignments('-06-17T00:00:00.000Z')).map(row => row.id), [following.revision.id]);
+        assert.equal((await get(first.path + '/revisions/' + first.revision.id, 'KnowledgeRevisionResponse')).content, statement);
+        await get(first.path, 'Problem', { ...peer, expected: 404 });
+    } finally {
+        await writer.shop.update({ where: { id: shopB.id }, data: { timezone: shopBRecord.timezone } });
+    }
 });

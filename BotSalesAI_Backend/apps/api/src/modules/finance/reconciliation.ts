@@ -1,4 +1,4 @@
-import { Body, ConflictException, Controller, Get, HttpCode, Param, Post, Query, Req, Res, UnprocessableEntityException } from '@nestjs/common';
+import { Body, ConflictException, Controller, Get, HttpCode, Param, Patch, Post, Query, Req, Res, UnprocessableEntityException } from '@nestjs/common';
 import type { IncomingHttpHeaders, IncomingMessage, ServerResponse } from 'node:http';
 import type { Prisma } from '../../generated/prisma/client.js';
 import { validator } from '../../http/contract-source.js';
@@ -10,8 +10,8 @@ import { commandDto } from '../../platform/commands/index.js';
 import { allocateAmountByValue, ExactDecimal } from '../../platform/money/index.js';
 import { enqueueResourceUpdate } from '../../platform/outbox/index.js';
 import { FinanceAccess } from './access.js';
-import { debtInShop, debtView, findDebts } from './debts.js';
-import { cleanFinanceText, financeKey, financeShop, localAccountingDate, parseMoney, type Money } from './journal.js';
+import { debtDisputed, debtInShop, debtView, findDebts } from './debts.js';
+import { accountingDate, cleanFinanceText, financeKey, financeShop, localAccountingDate, parseMoney, type Money } from './journal.js';
 import { bankDetails, bankInShop, bankView, caseDetails, caseInShop, codBalance, codDetails, codInShop, codView, postAllocation,
     reconciliationView, updateReconciliation, type BankView, type CaseView } from './reconciliation-data.js';
 import { sumAmounts } from './report-data.js';
@@ -19,6 +19,8 @@ import { observedBankReceipt } from './statements.js';
 
 type BankMatch = { expectedVersion: number; transactionId: string; allocations: { resource: { type: string; id: string }; amount: Money }[]; reason: string };
 type CodMatch = { expectedVersion: number; bankTransactionId: string; feeEvidenceRef: string; actualFees: Money; reason: string };
+type DebtTermsUpdate = { expectedVersion: number; dueDate: string | null; disputeHold: boolean; reason: string };
+const termsInput = new SchemaPipe(validator.compile(schemaFromContract('DebtTermsUpdate')));
 const bankInput = new SchemaPipe(validator.compile(schemaFromContract('MatchSettlement')));
 const codInput = new SchemaPipe(validator.compile(schemaFromContract('CODMatch')));
 const rulesDate = (bank: BankView, timezone: string) => localAccountingDate(bank.occurredAt, timezone);
@@ -36,7 +38,7 @@ async function reconciliationViews(tx: Prisma.TransactionClient, shopId: string,
     const candidates = sourceIds.length ? await findDebts(tx, shopId, rows[0].transaction.currency, { sourceIds }) : [];
     return rows.map(row => {
         const sourceSet = new Set(suggestedSources(row));
-        return reconciliationView(row, candidates.filter(debt => sourceSet.has(debt.sourceId) && debt.outstanding.gt(0) &&
+        return reconciliationView(row, candidates.filter(debt => sourceSet.has(debt.sourceId) && debt.outstanding.gt(0) && !debtDisputed(debt) &&
             (debt.counterpartyType === 'carrier') === (row.transaction.direction === 'credit')).map(debt => debt.id));
     });
 }
@@ -94,15 +96,38 @@ export class Reconciliation extends FinanceAccess {
 
     debts(headers: IncomingHttpHeaders, shopId: string, raw: Record<string, unknown>) {
         return this.read(headers, shopId, async (tx, scope) => {
-            const { currency } = await financeShop(tx, shopId);
+            const { currency, timezone } = await financeShop(tx, shopId);
             const page = getPage(raw, scope, 'debts');
             const result = page.result(await findDebts(tx, shopId, currency, { before: page.position, limit: page.limit + 1 }));
-            return { ...result, data: result.data.map(debtView) };
+            const asOf = new Date();
+            return { ...result, data: result.data.map(debt => debtView(debt, timezone, asOf)) };
         });
     }
 
     debt(headers: IncomingHttpHeaders, shopId: string, id: string) {
-        return this.read(headers, shopId, async tx => debtView(await debtInShop(tx, shopId, (await financeShop(tx, shopId)).currency, id)));
+        return this.read(headers, shopId, async tx => {
+            const { currency, timezone } = await financeShop(tx, shopId);
+            return debtView(await debtInShop(tx, shopId, currency, id), timezone);
+        });
+    }
+
+    updateTerms(headers: IncomingHttpHeaders, shopId: string, id: string, input: DebtTermsUpdate, requestId: string) {
+        const reason = cleanFinanceText(input.reason, 5);
+        const dueDate = input.dueDate ? accountingDate(input.dueDate) : null;
+        return this.write({ headers, shopId, action: 'updateDebtTerms', payload: { id, input }, requestId, reason }, async tx => {
+            const { currency } = await financeShop(tx, shopId);
+            const debt = await debtInShop(tx, shopId, currency, id);
+            requireVersion(debt.version, input.expectedVersion);
+            if (debt.outstanding.lte(0)) throw new ConflictException('Khoản nợ đã chốt hoặc cần đối chiếu số dư.');
+            const where = { shopId_debtLineId: { shopId, debtLineId: id } };
+            const terms = { dueDate, disputeHold: input.disputeHold };
+            await tx.debtTerms.upsert({ where, create: { shopId, debtLineId: id, ...terms },
+                update: { ...terms, version: { increment: 1 } } });
+            return { id, version: debt.version + 1 };
+        }, async tx => {
+            const { currency, timezone } = await financeShop(tx, shopId);
+            return debtView(await debtInShop(tx, shopId, currency, id), timezone);
+        });
     }
 
     matchBank(headers: IncomingHttpHeaders, shopId: string, id: string, input: BankMatch, requestId: string) {
@@ -120,6 +145,7 @@ export class Reconciliation extends FinanceAccess {
             const parts = input.allocations.map(part => {
                 const amount = parseMoney(part.amount, currency, true);
                 const debt = byId.get(part.resource.id);
+                if (debt?.disputeHold) throw new ConflictException('Khoản nợ đang tạm giữ do tranh chấp.');
                 if (!debt || amount.gt(debt.outstanding) || (debt.counterpartyType === 'carrier') !== (bank.direction === 'credit')) {
                     throw new UnprocessableEntityException('Phân bổ vượt công nợ, sai phạm vi hoặc sai chiều tiền.');
                 }
@@ -154,7 +180,7 @@ export class Reconciliation extends FinanceAccess {
             if (difference.lt(0)) throw new UnprocessableEntityException('Tiền về và phí vượt phải thu COD của đợt.');
             const debtRows = await findDebts(tx, shopId, currency, { orderIds: cod.orders.map(order => order.orderId) });
             const debts = debtRows.sort((a, b) => a.effectiveDate.getTime() - b.effectiveDate.getTime() || a.id.localeCompare(b.id));
-            if (debts.length !== cod.orders.length || debts.some(debt => debt.counterpartyId !== cod.carrierId || debt.outstanding.lt(0)) ||
+            if (debts.length !== cod.orders.length || debts.some(debt => debt.counterpartyId !== cod.carrierId || debtDisputed(debt)) ||
                 !sumAmounts(debts, debt => debt.outstanding).eq(codBalance(cod))) throw new ConflictException('Công nợ của đợt đổi sau khi nhập sao kê.');
             let remaining = gross;
             const allocated = [];
@@ -251,6 +277,15 @@ export class ReconciliationController {
         @Req() request: IncomingMessage, @Res({ passthrough: true }) response: ServerResponse) {
         noStore(response);
         return versionedEnvelope(response, await this.reconciliation.debt(request.headers, shopId, id));
+    }
+
+    @Patch('debts/:resourceId')
+    @ContractOperation('updateDebtTerms')
+    async updateTerms(@Param('shopId', idPipe) shopId: string, @Param('resourceId', idPipe) id: string, @Body(termsInput) input: DebtTermsUpdate,
+        @Req() request: IncomingMessage, @Res({ passthrough: true }) response: ServerResponse) {
+        noStore(response);
+        return versionedEnvelope(response, await this.reconciliation.updateTerms(request.headers, shopId, id, input,
+            String(response.getHeader('X-Request-Id'))));
     }
 
     @Post('reconciliation-cases/:resourceId/match')

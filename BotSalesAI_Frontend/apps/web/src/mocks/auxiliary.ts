@@ -17,7 +17,12 @@ function knowledgeContent(shopId: string, fields: Row, previous?: Row, requireRe
     const product = parsed.kind === 'product_content' ? find('products', str(parsed.productId), shopId) : undefined;
     ensure(!product || (product.status !== 'archived' && (!requireReady || product.status === 'active')),
         'Sản phẩm nguồn phải còn sử dụng trong cửa hàng.', 422);
-    const text = Object.entries(parsed).filter(([key]) => !['kind', 'productId', 'sourceOwner'].includes(key))
+    if (product && parsed.imageFileId) {
+        const file = all('files', shopId).find(row => row.id === parsed.imageFileId);
+        ensure(file?.purpose === 'product_image' && file.status === 'ready' && strings(product.imageFileIds).includes(str(file.id)),
+            'Ảnh nguồn phải sẵn sàng và đang gắn với sản phẩm trong cửa hàng.', 422);
+    }
+    const text = Object.entries(parsed).filter(([key]) => !['kind', 'productId', 'sourceOwner', 'imageFileId'].includes(key))
         .map(([, value]) => str(value).trim()).join('\n');
     return { ...fields, template: parsed, content: product ? str(product.name) + '\n' + text : text };
 }
@@ -147,7 +152,7 @@ export async function auxiliary(op: string, input: Input): Promise<Row | Row[] |
             if (body.fileId)
                 find('files', str(body.fileId), shopId);
             const k = insert('knowledge', 'Knowledge', shopId, {
-                ...draft, revision: 1, status: 'draft', contentHash: await hashValue(draft.content), publishedAt: null, approvedBy: null, warnings: [], publishedRevisionId: null, draftRevisionId: null
+                ...draft, revision: 1, status: 'draft', contentHash: await hashValue([draft.content, record(draft.template).imageFileId ?? null]), publishedAt: null, approvedBy: null, warnings: [], publishedRevisionId: null, draftRevisionId: null
             });
             const revision = insert('revisions', 'KnowledgeRevision', shopId, { ...k, id: id('knowledge-revision'), documentId: k.id });
             k.draftRevisionId = revision.id;
@@ -163,7 +168,7 @@ export async function auxiliary(op: string, input: Input): Promise<Row | Row[] |
             Object.assign(k, knowledgeContent(shopId, body, k));
             k.revision = num(k.revision) + 1;
             k.status = 'draft';
-            k.contentHash = await hashValue(k.content);
+            k.contentHash = await hashValue([k.content, record(k.template).imageFileId ?? null]);
             touch(k);
             const revision = insert('revisions', 'KnowledgeRevision', shopId, { ...k, id: id('knowledge-revision'), documentId: k.id });
             k.draftRevisionId = revision.id;
@@ -192,6 +197,9 @@ export async function auxiliary(op: string, input: Input): Promise<Row | Row[] |
             k.approvedBy = input.userId;
             k.publishedAt = now();
             k.publishedRevisionId = body.revisionId;
+            const revision = find('revisions', str(body.revisionId), shopId);
+            touch(Object.assign(revision, { status: 'published', publishedAt: k.publishedAt, approvedBy: k.approvedBy,
+                publishedRevisionId: k.publishedRevisionId }));
             touch(k);
             return command(shopId, op, { type: 'knowledge', id: k.id });
         }
@@ -217,14 +225,16 @@ export async function auxiliary(op: string, input: Input): Promise<Row | Row[] |
             if (op === 'restoreKnowledgeRevision') {
                 const old = find('revisions', str(input.path.revisionId), shopId);
                 ensure(old.documentId === k.id, 'Phiên bản không thuộc tài liệu.', 404);
-                content = { title: old.title, sourceKind: old.sourceKind, fileId: old.fileId, content: old.content, ...(old.template ? { template: old.template } : {}) };
+                content = { title: old.title, sourceKind: old.sourceKind, fileId: old.fileId, content: old.content,
+                    policyKey: old.policyKey ?? null, validFrom: old.validFrom ?? null, validUntil: old.validUntil ?? null,
+                    ...(old.template ? { template: old.template } : {}) };
             }
             if (content.fileId)
                 find('files', str(content.fileId), shopId);
             Object.assign(k, knowledgeContent(shopId, content, k));
             k.revision = num(k.revision) + 1;
             k.status = 'draft';
-            k.contentHash = await hashValue(k.content);
+            k.contentHash = await hashValue([k.content, record(k.template).imageFileId ?? null]);
             touch(k);
             const revision = insert('revisions', 'KnowledgeRevision', shopId, { ...k, id: id('knowledge-revision'), documentId: k.id });
             k.draftRevisionId = revision.id;

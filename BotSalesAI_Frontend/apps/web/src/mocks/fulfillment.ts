@@ -78,6 +78,13 @@ export function fulfillment(op: string, input: Input): Row | undefined {
             ensure(line, 'Sai dòng hàng.', 422);
             ensure(line.sku === body.scannedSku, 'Mã SKU không khớp.', 422);
             ensure(num(body.pickedQuantity) >= 0 && num(body.pickedQuantity) <= num(line.requiredQuantity), 'Số lượng lấy vượt yêu cầu.', 422);
+            if (body.issueEvidenceFileId) {
+                const image = all('files', shopId).find(file => file.id === body.issueEvidenceFileId);
+                ensure(body.issueReason && image?.purpose === 'preparation_issue_image' && image.status === 'ready' && image.resourceId === prep.id &&
+                    !rows(prep.lines).some(other => other !== line && other.issueEvidenceFileId === image.id),
+                    'Ảnh chứng cứ phải được tải cho dòng lỗi trên đúng phiếu.', 422);
+                line.issueEvidenceFileId = image.id;
+            }
             line.pickedQuantity = body.pickedQuantity;
             line.hasIssue = !!body.issueReason;
             prep.state = 'picking';

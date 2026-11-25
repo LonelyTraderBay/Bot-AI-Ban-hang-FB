@@ -2,6 +2,7 @@ import assert from 'node:assert/strict';
 import { randomUUID } from 'node:crypto';
 import { setTimeout as delay } from 'node:timers/promises';
 import { URLSearchParams } from 'node:url';
+import sharp from 'sharp';
 import { readDatabaseUrl } from '../../../apps/api/dist/config.js';
 import { localAccountingDate } from '../../../apps/api/dist/modules/finance/index.js';
 import { recordStockMovement } from '../../../apps/api/dist/modules/inventory/index.js';
@@ -41,12 +42,13 @@ export async function verifyOrdersFlow(page, actorId, csrfToken, { fulfillment =
         label: 'Địa chỉ ' + id, recipient: 'Người nhận Firefox', phone: '0900000123', line1: 'Địa chỉ giả lập',
         countryCode: 'VN', province: 'Hà Nội', ward: null, district: null, postalCode: null,
     });
-    const { variants } = await post('/products', {
+    const product = await post('/products', {
         name: 'Sản phẩm ' + sku, description: '', categoryId: null, status: 'active', imageFileIds: [],
         variants: [{ sku, name: 'Mặc định', active: true, options: {}, price: { currency: shop.currency, amount: '15000.01' } },
             ...(promotion ? [{ sku: sku + '-COMBO', name: 'Bổ sung combo', active: true, options: {},
                 price: { currency: shop.currency, amount: '5000' } }] : [])],
     });
+    const { variants } = product;
     const writer = fixtureWriter();
     const url = readDatabaseUrl(process.env);
     assertFixtureDatabase(url);
@@ -62,6 +64,7 @@ export async function verifyOrdersFlow(page, actorId, csrfToken, { fulfillment =
                 receivedValue: '1000.005', delta: { onHand: 1 },
             }), true);
         }
+        const sourceImage = fulfillment ? await approveBrowserProductImage(page, product, writer, mutationHeaders) : null;
         const offerRule = promotion ? await createBrowserPromotion(page, variants, id) : null;
         const prior = await page.request.get(api + '/shipping-policy');
         const policy = await page.request.put(api + '/shipping-policy', {
@@ -119,7 +122,15 @@ export async function verifyOrdersFlow(page, actorId, csrfToken, { fulfillment =
         await dialog.getByRole('textbox', { name: 'Mã tin nhắn xác nhận' }).fill(proof.sourceMessageId);
         const evidence = mutationResponse(page, '/orders/' + order.id + '/customer-confirmations');
         await dialog.getByRole('button', { name: 'Ghi nhận bằng chứng' }).click();
-        assert.equal((await evidence).status(), 200);
+        const stored = await responseData(await evidence, 200);
+        await page.reload();
+        const reopened = mutationResponse(page, '/orders/' + order.id + '/quote');
+        await page.getByRole('button', { name: 'Lấy báo giá hiện tại' }).click();
+        const resumed = await responseData(await reopened, 200);
+        assert.equal(resumed.id, offer.id);
+        assert.equal(resumed.customerConfirmation.id, stored.id);
+        await page.getByRole('alert').filter({ hasText: 'Đã ghi nhận bằng chứng ' + stored.id }).waitFor();
+        console.log('SC2_B03_R19_REOPEN: recovered the same quote and evidence after a full page reload.');
 
         const confirm = mutationResponse(page, '/orders/' + order.id + '/confirm');
         await page.getByRole('button', { name: 'Xác nhận đơn & giữ hàng' }).click();
@@ -130,7 +141,13 @@ export async function verifyOrdersFlow(page, actorId, csrfToken, { fulfillment =
         assert.equal(current.data.shippingAddressSnapshot.addressId, address.id);
         assert.equal(await db.stockReservation.count({ where: { shopId: shop.id, orderId: order.id } }), 1);
         if (messenger) console.log('Firefox T072 R06 R18 R19: signed and replayed Messenger confirmation bound to the same conversation, quote and order.');
-        if (fulfillment) await verifyFulfillment(page, db, current.data, sku, actorId, post, runtime);
+        if (sourceImage) {
+            const removed = await page.request.patch(api + '/products/' + product.id, {
+                data: { imageFileIds: [] }, headers: { ...mutationHeaders(), 'if-match': '"' + sourceImage.productVersion + '"' },
+            });
+            assert.deepEqual((await responseData(removed, 200)).imageFileIds, []);
+            await verifyFulfillment(page, db, current.data, sku, actorId, post, runtime, sourceImage);
+        }
         if (offerRule) {
             await page.goto(app + '/products/promotions');
             const paused = await decideBrowserPromotion(page, offerRule, 'Tạm dừng');
@@ -197,7 +214,55 @@ async function responseData(response, expectedStatus) {
     return (await response.json()).data;
 }
 
-async function verifyFulfillment(page, db, order, sku, actorId, post, runtime) {
+async function approveBrowserProductImage(page, product, writer, mutationHeaders) {
+    const png = await sharp({ create: { width: 8, height: 8, channels: 3, background: 'red' } }).png().toBuffer();
+    const file = await responseData(await page.request.post(api + '/uploads', {
+        multipart: { purpose: 'product_image', file: { name: 'anh-da-duyet.png', mimeType: 'image/png', buffer: png } },
+        headers: mutationHeaders(),
+    }), 201);
+    assert.equal(file.status, 'ready');
+    const updated = await responseData(await page.request.patch(api + '/products/' + product.id, {
+        data: { imageFileIds: [file.id] }, headers: { ...mutationHeaders(), 'if-match': '"' + product.version + '"' },
+    }), 200);
+    await page.goto(app + '/knowledge?template=product_content');
+    await page.getByRole('combobox', { name: 'Sản phẩm nguồn' }).click();
+    await page.getByRole('option', { name: product.name, exact: true }).click();
+    await page.getByRole('combobox', { name: 'Ảnh nguồn' }).click();
+    await page.getByRole('option', { name: 'Ảnh 1 trong danh mục' }).click();
+    for (const label of ['Tiêu đề bản nháp', 'Chủ nguồn nội dung', 'Điểm nổi bật có nguồn', 'Kích cỡ và cách sử dụng',
+        'Bảo hành / đổi trả', 'Sản phẩm thay thế', 'Điều không được cam kết']) {
+        await page.getByRole('textbox', { name: label, exact: true }).fill('Thông tin fixture');
+    }
+    const create = mutationResponse(page, '/knowledge');
+    await page.getByRole('button', { name: 'Lưu nháp kiến thức' }).click();
+    const draft = await responseData(await create, 201);
+    assert.equal(draft.template.imageFileId, file.id);
+    const path = api + '/knowledge/' + draft.id;
+    const submitted = await page.request.post(path + '/submit-review', {
+        data: { expectedVersion: draft.version, reason: 'Thẩm định ảnh cho ca Firefox' }, headers: mutationHeaders(),
+    });
+    assert.equal(submitted.status(), 202);
+    let reviewed;
+    for (let attempt = 0; attempt < 40; attempt++) {
+        reviewed = await responseData(await page.request.get(path), 200);
+        if (reviewed.status !== 'processing') break;
+        await delay(200);
+    }
+    assert.equal(reviewed?.status, 'ready_for_review');
+    const { policyVersion } = await writer.shop.findUniqueOrThrow({ where: { id: shop.id }, select: { policyVersion: true } });
+    const evaluation = await writer.evaluation.create({ data: { shopId: shop.id, configRevision: 1,
+        datasetVersion: 'fixture-r48-firefox-ready-image', knowledgeRevisionId: reviewed.draftRevisionId,
+        knowledgeHash: reviewed.contentHash, policyVersion,
+        status: 'passed', totalCases: 1, passedCases: 1, criticalFailures: 0, fixture: true } });
+    const published = await page.request.post(path + '/publish', { headers: mutationHeaders(),
+        data: { expectedVersion: reviewed.version, revisionId: reviewed.draftRevisionId, evaluationRunId: evaluation.id,
+            reason: 'Duyệt ảnh nguồn cho kiểm Firefox' } });
+    assert.equal((await responseData(published, 202)).status, 'succeeded');
+    console.log('SC2_G02_FIREFOX_IMAGE: selected product image, indexed, approved and pinned its knowledge revision.');
+    return { fileId: file.id, knowledgeRevisionId: reviewed.draftRevisionId, productVersion: updated.version };
+}
+
+async function verifyFulfillment(page, db, order, sku, actorId, post, runtime, sourceImage) {
     const stock = () => db.stockPosition.findUniqueOrThrow({ where: { shopId_warehouseId_variantId: {
         shopId: shop.id, warehouseId: order.warehouseId, variantId: order.lines[0].variantId,
     } } });
@@ -215,15 +280,60 @@ async function verifyFulfillment(page, db, order, sku, actorId, post, runtime) {
     assert.ok((await responseData(await ack, 200)).acknowledgedAt);
     assert.equal((await db.workItem.findUniqueOrThrow({ where: { shopId_id: { shopId: shop.id, id: prep.workItemId } } })).state, 'queued');
 
-    await page.goto(app + '/fulfillment');
+    await page.goto(app + '/fulfillment?state=queued&assignee=unassigned');
     const prepRow = page.getByRole('row').filter({ hasText: order.id });
+    await page.getByRole('columnheader', { name: 'Hạn chuẩn bị' }).waitFor();
+    const work = await db.workItem.findUniqueOrThrow({ where: { shopId_id: { shopId: shop.id, id: prep.workItemId } } });
+    assert.ok(work.dueAt);
+    const queued = await responseData(await page.request.get(api + '/prep-jobs?state=queued&assignee=unassigned'), 200);
+    assert.equal(queued.find(row => row.id === prep.id).dueAt, work.dueAt.toISOString());
     await prepRow.getByRole('button', { name: 'Mở phiếu lấy hàng' }).click();
     const checklist = page.getByRole('dialog', { name: 'Phiếu chuẩn bị ' + order.id });
+    const currentPrep = await responseData(await page.request.get(api + '/prep-jobs/' + prep.id), 200);
+    assert.deepEqual(currentPrep.lines[0].productImageSnapshot,
+        { fileId: sourceImage.fileId, knowledgeRevisionId: sourceImage.knowledgeRevisionId });
+    const photo = checklist.getByRole('img', { name: 'Ảnh đã duyệt của SKU ' + sku });
+    await photo.waitFor();
+    await page.waitForFunction(url => Array.from(globalThis.document.images).some(image => image.src === url && image.naturalWidth === 8),
+        await photo.getAttribute('src'));
+    assert.equal(new URL(await photo.getAttribute('src')).origin, appOrigin);
+    console.log('SC2_C02_FIREFOX_IMAGE: verified the pinned original file after removing its catalog association.');
     const claimed = mutationResponse(page, '/work-items/' + prep.workItemId + '/claim');
     await checklist.getByRole('button', { name: 'Tôi nhận chuẩn bị đơn' }).click();
     assert.equal((await responseData(await claimed, 200)).assigneeUserId, actorId);
+    const mine = await responseData(await page.request.get(api + '/prep-jobs?state=claimed&assignee=me'), 200);
+    const remaining = await responseData(await page.request.get(api + '/prep-jobs?state=queued&assignee=unassigned'), 200);
+    assert.ok(mine.some(row => row.id === prep.id));
+    assert.ok(!remaining.some(row => row.id === prep.id));
+    console.log('SC2_C01_FIREFOX_LIVE: deadline matches WorkItem; unassigned task moves to my claimed tasks');
     await checklist.getByRole('textbox', { name: 'Nhập/quét SKU thực tế' }).fill(sku);
     await checklist.getByRole('spinbutton', { name: 'Số lượng đã lấy' }).fill('1');
+    const issue = checklist.getByRole('textbox', { name: 'Vấn đề phát hiện (để trống khi đạt)' });
+    await issue.fill('Bao bì bị hỏng');
+    const image = await sharp({ create: { width: 6, height: 6, channels: 3, background: 'blue' } }).png().toBuffer();
+    const upload = mutationResponse(page, '/uploads');
+    const fileChooser = page.waitForEvent('filechooser');
+    await checklist.getByRole('button', { name: 'Chọn ảnh chứng cứ' }).click();
+    await (await fileChooser).setFiles({
+        name: 'synthetic-package.png', mimeType: 'image/png', buffer: image,
+    });
+    const privateFile = await responseData(await upload, 201);
+    assert.equal(privateFile.purpose, 'preparation_issue_image');
+    await checklist.getByText('Ảnh đã tải, chờ xác nhận dòng.').waitFor();
+    const flagged = mutationResponse(page, '/prep-jobs/' + prep.id + '/pick');
+    await checklist.getByRole('button', { name: 'Xác nhận dòng đã kiểm' }).click();
+    const withIssue = await responseData(await flagged, 200);
+    assert.equal(withIssue.lines[0].issueEvidenceFileId, privateFile.id);
+    assert.equal(withIssue.lines[0].hasIssue, true);
+    await checklist.getByText('Dòng hàng còn vấn đề cần xử lý.').waitFor();
+    assert.ok(await checklist.getByRole('button', { name: 'Xác nhận đã đóng gói' }).isDisabled());
+    const evidencePhoto = checklist.getByRole('img', { name: 'Ảnh chứng cứ kiểm hàng cho SKU ' + sku });
+    await evidencePhoto.waitFor();
+    const src = await evidencePhoto.getAttribute('src');
+    assert.equal(new URL(src).origin, appOrigin);
+    await page.waitForFunction(url => Array.from(globalThis.document.images).some(image => image.src === url && image.naturalWidth === 6), src);
+    await issue.fill('');
+    console.log('SC2_C03_FIREFOX_PRIVATE: uploaded and opened private issue evidence, with packing disabled until correction.');
     const pick = mutationResponse(page, '/prep-jobs/' + prep.id + '/pick');
     await checklist.getByRole('button', { name: 'Xác nhận dòng đã kiểm' }).click();
     assert.equal((await responseData(await pick, 200)).state, 'picking');
@@ -344,6 +454,12 @@ async function verifyDeviceTestAndRevocation(page, device) {
         await delay(200);
     }
     assert.equal(status, 'succeeded');
+    // The worker updates the device version. Telegram is already active before the test send.
+    const refreshed = page.waitForResponse(response => response.request().method() === 'GET' &&
+        new URL(response.url()).pathname === new URL(api + '/devices').pathname && response.ok());
+    await page.reload();
+    const current = (await responseData(await refreshed, 200)).find(row => row.id === device.id);
+    assert.ok(current && current.version > device.version && current.lastVerifiedAt);
     const active = deviceRow.filter({ hasText: 'Đang hoạt động' });
     await active.getByRole('button', { name: 'Thu hồi', exact: true }).click();
     const revoke = mutationResponse(page, '/devices/' + device.id + '/revoke');

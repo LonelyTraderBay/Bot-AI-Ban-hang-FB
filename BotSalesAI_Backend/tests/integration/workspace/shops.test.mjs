@@ -408,3 +408,35 @@ test('P0-05: member role changes re-check scope, protect ownership, version perm
         });
     }
 });
+
+test('SC2-G01: shop country is explicit, independently editable and never inferred', async () => {
+    const read = (actor, id) => request(shopPath(id), actor).then(response => json(response, 200, 'ShopResponse')).then(body => body.data);
+    const [first, second] = await Promise.all([read(ownerA, shopA.id), read(ownerB, shopB.id)]);
+    assert.equal(first.businessCountry, null);
+    assert.equal(second.businessCountry, null);
+    const { csrfToken } = await sessionFor(ownerA);
+    const change = (patch, version, actor = ownerA) => request(shopPath(shopA.id), actor, {
+        method: 'PATCH', headers: { 'content-type': 'application/json', origin: authConfig.appOrigin,
+            'x-csrf-token': csrfToken, 'idempotency-key': randomUUID(), 'if-match': '"' + version + '"' }, body: JSON.stringify(patch),
+    });
+    await json(await change({ businessCountry: 'ZZ' }, first.version), 422, 'Problem');
+    const { data: updated } = await json(await change({ businessCountry: 'LA' }, first.version), 200, 'ShopResponse');
+    assert.equal(updated.businessCountry, 'LA');
+    assert.equal(updated.currency, 'VND');
+    assert.equal(updated.timezone, 'Asia/Ho_Chi_Minh');
+    assert.equal(updated.locale, 'vi-VN');
+    assert.notEqual(updated.policyVersion, first.policyVersion);
+    assert.equal((await read(ownerB, shopB.id)).businessCountry, null);
+    assert.equal((await read(ownerA, shopA.id)).businessCountry, 'LA');
+    await json(await change({ businessCountry: 'VN' }, first.version), 412, 'Problem');
+    const { data: vietnam } = await json(await change({ businessCountry: 'VN' }, updated.version), 200, 'ShopResponse');
+    assert.deepEqual([vietnam.businessCountry, vietnam.currency, vietnam.timezone], ['VN', 'VND', 'Asia/Ho_Chi_Minh']);
+    const comparison = await read(ownerB, shopB.id);
+    assert.deepEqual([comparison.businessCountry, comparison.currency, comparison.timezone],
+        [second.businessCountry, 'LAK', second.timezone]);
+    const { data: cleared } = await json(await change({ businessCountry: null }, vietnam.version), 200, 'ShopResponse');
+    assert.equal(cleared.businessCountry, null);
+    assert.equal((await read(ownerA, shopA.id)).businessCountry, null);
+    console.log(JSON.stringify({ status: 'SC2_G01_VN_REFERENCE', country: vietnam.businessCountry,
+        currency: vietnam.currency, timezone: vietnam.timezone, otherShopCurrency: comparison.currency }));
+});

@@ -22,7 +22,7 @@ import { requireIdempotencyKey, writeAsSession, writeShopCommand } from '../poli
 
 const membersManage = 'members.manage';
 type MemberWrite = { member: Membership; audit?: Prisma.InputJsonObject };
-export type ShopWrite = { name: string; timezone: string; locale: string; currency: string };
+export type ShopWrite = { name: string; timezone: string; locale: string; currency: string; businessCountry?: string | null };
 export type ShopPatch = Partial<Omit<ShopWrite, 'currency'>>;
 export const shopCommands: CommandSource[] = [
     { operationId: 'createShop', resourceType: 'shop', scopePermissions: { onboarding: 'shop.manage' } },
@@ -30,7 +30,7 @@ export const shopCommands: CommandSource[] = [
 ];
 const shopFields = {
     id: true, name: true, currency: true, timezone: true, locale: true, defaultWarehouseId: true,
-    version: true, policyVersion: true, createdAt: true,
+    version: true, policyVersion: true, createdAt: true, businessCountry: true,
 } satisfies Prisma.ShopSelect;
 
 const visibleShops = (userId: string): Prisma.ShopWhereInput => ({
@@ -48,8 +48,8 @@ function membershipView(member: Membership, actorId: string) {
     };
 }
 
-function shopDto({ id, name, currency, timezone, locale, defaultWarehouseId, version, policyVersion }: Pick<Shop, keyof typeof shopFields>) {
-    return { id, name, currency, timezone, locale, defaultWarehouseId, version, policyVersion };
+function shopDto({ id, name, currency, timezone, locale, defaultWarehouseId, version, policyVersion, businessCountry }: Pick<Shop, keyof typeof shopFields>) {
+    return { id, name, currency, timezone, locale, defaultWarehouseId, version, policyVersion, businessCountry };
 }
 
 async function memberInShop(tx: Prisma.TransactionClient, shopId: string, memberId: string) {
@@ -64,7 +64,18 @@ function canonicalRoles(roles: Role[]): Role[] {
     return [...roles].sort();
 }
 
-async function shopSettings(tx: Prisma.TransactionClient, { name, locale, timezone }: Omit<ShopWrite, 'currency'>) {
+// ISO 3166-1 alpha-2 assigned country and territory codes.
+const businessCountries = new Set((
+    'AD AE AF AG AI AL AM AO AQ AR AS AT AU AW AX AZ BA BB BD BE BF BG BH BI BJ BL BM BN BO BQ BR BS BT BV BW BY BZ ' +
+    'CA CC CD CF CG CH CI CK CL CM CN CO CR CU CV CW CX CY CZ DE DJ DK DM DO DZ EC EE EG EH ER ES ET FI FJ FK FM FO FR ' +
+    'GA GB GD GE GF GG GH GI GL GM GN GP GQ GR GS GT GU GW GY HK HM HN HR HT HU ID IE IL IM IN IO IQ IR IS IT JE JM JO JP ' +
+    'KE KG KH KI KM KN KP KR KW KY KZ LA LB LC LI LK LR LS LT LU LV LY MA MC MD ME MF MG MH MK ML MM MN MO MP MQ MR MS ' +
+    'MT MU MV MW MX MY MZ NA NC NE NF NG NI NL NO NP NR NU NZ OM PA PE PF PG PH PK PL PM PN PR PS PT PW PY QA RE RO RS ' +
+    'RU RW SA SB SC SD SE SG SH SI SJ SK SL SM SN SO SR SS ST SV SX SY SZ TC TD TF TG TH TJ TK TL TM TN TO TR TT TV TW ' +
+    'TZ UA UG UM US UY UZ VA VC VE VG VI VN VU WF WS YE YT ZA ZM ZW'
+).split(' '));
+
+async function shopSettings(tx: Prisma.TransactionClient, { name, locale, timezone, businessCountry }: Omit<ShopWrite, 'currency'>) {
     const cleanName = name.trim();
     const cleanZone = timezone.trim();
     let cleanLocale: string;
@@ -78,7 +89,10 @@ async function shopSettings(tx: Prisma.TransactionClient, { name, locale, timezo
         !/^(?:UTC|[a-zA-Z][a-zA-Z0-9_+\/-]*)$/.test(cleanZone)) throw new UnprocessableEntityException();
     const [zone] = await tx.$queryRaw<{ valid: boolean }[]>`SELECT EXISTS (SELECT FROM pg_timezone_names WHERE name=${cleanZone}) AS valid`;
     if (!zone.valid) throw new UnprocessableEntityException('Múi giờ chưa có trong cơ sở dữ liệu.');
-    return { name: cleanName, timezone: cleanZone, locale: cleanLocale };
+    if (businessCountry != null && !businessCountries.has(businessCountry)) {
+        throw new UnprocessableEntityException('Quốc gia kinh doanh cần mã quốc gia hoặc vùng lãnh thổ ISO 3166-1 hợp lệ.');
+    }
+    return { name: cleanName, timezone: cleanZone, locale: cleanLocale, ...(businessCountry == null ? {} : { businessCountry }) };
 }
 
 export class ShopsService {
@@ -149,8 +163,10 @@ export class ShopsService {
                 requireVersion(current.version, version);
                 const data = await shopSettings(tx, { ...current, ...patch });
                 const zoneChanged = data.timezone !== current.timezone;
-                const shop = await tx.shop.update({ where: { id: shopId }, data: { ...data, version: { increment: 1 },
-                    ...(zoneChanged ? { policyVersion: randomUUID() } : {}) } });
+                const businessCountry = patch.businessCountry === undefined ? current.businessCountry : patch.businessCountry;
+                const policyChanged = zoneChanged || businessCountry !== current.businessCountry;
+                const shop = await tx.shop.update({ where: { id: shopId }, data: { ...data, businessCountry, version: { increment: 1 },
+                    ...(policyChanged ? { policyVersion: randomUUID() } : {}) } });
                 if (zoneChanged) await tx.notificationPolicy.updateMany({ where: { shopId },
                     data: { timezone: shop.timezone, version: { increment: 1 } } });
                 await recordAudit(tx, { shopId, actorId: scope.userId, requestId, action: 'updateShop', resourceType: 'shop', resourceId: shopId,

@@ -1,4 +1,4 @@
-import {useRef,useState} from 'react';
+import {useEffect,useRef,useState} from 'react';
 import {Alert,Button,MenuItem,TextField} from '@mui/material';
 import type {StatementPreview} from '@botsales/contracts';
 import {useApi,useCommand} from '@/shared/api/hooks';
@@ -9,12 +9,20 @@ import {FormFields} from '@/shared/ui/composition';
 import {DataTable,EditDialog,ErrorNotice,QueryState,RouteLink} from '@/shared/ui/components';
 
 export function StatementDialog({onClose}:{onClose:()=>void}) {
-    const {shop}=useScope(),formats=useApi('listStatementFormats');
+    const {shop,online}=useScope(),formats=useApi('listStatementFormats');
     const upload=useCommand('uploadFile',[]),previewCommand=useCommand('previewStatementImport',[]),bank=useCommand('importBankStatement',['listBankTransactions','listReconciliationCases']),cod=useCommand('importCODStatement',['listCODSettlements']);
     const [kind,setKind]=useState<'bank'|'cod'>('bank'),[file,setFile]=useState<File|null>(null),[resource,setResource]=useState(''),[batch,setBatch]=useState(''),[formatId,setFormat]=useState('botsales-csv-v1'),[fileId,setFileId]=useState(''),[preview,setPreview]=useState<StatementPreview|null>(null),[jobId,setJob]=useState(''),[error,setError]=useState(''),[draftCommit,setDraftCommit]=useState<{scope:null;sequence:number}>();
     const input=useRef<HTMLInputElement|null>(null),form=useRef<HTMLFormElement|null>(null),bind=useDraftForm(!jobId&&Boolean(file||resource||batch));
     const descriptor=formats.data?.data.find(f=>f.kind===kind&&f.formatId===formatId),busy=upload.pending||previewCommand.pending||bank.pending||cod.pending;
-    const blocked=upload.unresolved||previewCommand.unresolved||bank.unresolved||cod.unresolved;
+    const blocked=!online||upload.unresolved||previewCommand.unresolved||bank.unresolved||cod.unresolved;
+    useEffect(() => {
+        if (!preview) return;
+        const timer = window.setTimeout(() => {
+            setPreview(null);
+            setError('Bản xem trước đã hết hạn. Vui lòng kiểm tra lại CSV.');
+        }, Math.max(0, Date.parse(preview.expiresAt) - Date.now()));
+        return () => window.clearTimeout(timer);
+    }, [preview]);
     const valid=Boolean(descriptor&&file&&descriptor.resourceOptions.some(r=>r.id===resource)&&batch.trim()&&codePointLength(batch)<=200&&file.size>0&&file.size<=descriptor.maxBytes&&['text/csv','application/vnd.ms-excel'].includes(file.type));
     const clearPreview=()=>{setPreview(null);setError('');};
     const prepare=async()=>{

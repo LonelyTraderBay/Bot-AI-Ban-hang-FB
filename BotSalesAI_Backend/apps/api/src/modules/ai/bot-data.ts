@@ -15,7 +15,7 @@ export type ConfigDraft = {
     requireHumanOrderConfirmation: true;
 };
 const initial = { connectionId: null, instructions: '', knowledgeRevisionIds: [] as string[], maxToolSteps: 0, dailyBudget: null };
-export const botSelect = { id: true, currency: true, timezone: true, policyVersion: true, createdAt: true, defaultWarehouseId: true } satisfies Prisma.ShopSelect;
+export const botSelect = { id: true, currency: true, businessCountry: true, timezone: true, policyVersion: true, createdAt: true, defaultWarehouseId: true } satisfies Prisma.ShopSelect;
 export type BotShop = Prisma.ShopGetPayload<{ select: typeof botSelect }>;
 type DraftFields = Pick<BotRevision, 'connectionId' | 'instructions' | 'knowledgeRevisionIds' | 'maxToolSteps' | 'dailyBudget'>;
 

@@ -2,7 +2,7 @@ import { all, find, insert, ensure, checkVersion, touch, command, str, num, rows
 import type { Input, Row } from './database';
 import { activeAccount, activeWarehouse } from './masters';
 import { MANAGEMENT_POLICY, accountByCode, fiscalDate, setStockValue, postBusinessJournal, validateJournalLines, ledgerReport, trialBalanceReport, balanceSheetReport, journalReports, bookSnapshot } from './accounting';
-import { isValidDateOnly, limitCodePoints } from '../shared/model/format';
+import { dateOnlyInTimezone, isValidDateOnly, limitCodePoints } from '../shared/model/format';
 import { stockFor, variant } from './database';
 function validateAccounts(shopId: string, lines: Row[]) {
     const currency=str(find('shops',shopId,shopId).currency);
@@ -209,6 +209,21 @@ export function finance(op: string, input: Input): Row | undefined {
             approval.status = 'consumed';
             touch(approval);
             return command(shopId, op, { type: 'period', id: p.id });
+        }
+        case 'updateDebtTerms': {
+            const debt = find('debts', input.id, shopId);
+            checkVersion(debt, input);
+            ensure(units(debt.outstandingAmount) > 0n, 'Khoản nợ đã chốt.', 409);
+            const dueDate = body.dueDate;
+            const reason = str(body.reason).trim();
+            ensure(dueDate === null || isValidDateOnly(str(dueDate)), 'Ngày đến hạn không hợp lệ.', 422);
+            ensure(reason.length >= 5 && typeof body.disputeHold === 'boolean', 'Cần ghi lý do và quyết định.', 422);
+            const localDay = dateOnlyInTimezone(new Date(), str(find('shops', shopId, shopId).timezone));
+            const days = dueDate === null ? null : Math.max(0, (Date.parse(localDay) - Date.parse(str(dueDate))) / 86_400_000);
+            const bucket = days === null ? 'no_due_date' : days === 0 ? 'current' : days <= 30 ? 'overdue_1_30'
+                : days <= 60 ? 'overdue_31_60' : days <= 90 ? 'overdue_61_90' : 'overdue_over_90';
+            return touch(Object.assign(debt, { dueDate, dueAt: dueDate === null ? null : dueDate + 'T00:00:00.000Z',
+                disputeHold: body.disputeHold, disputed: body.disputeHold, daysOverdue: days, agingBucket: bucket }));
         }
         case 'matchSettlement': {
             const c = find('reconciliations', input.id, shopId);
