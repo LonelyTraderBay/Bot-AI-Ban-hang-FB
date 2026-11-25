@@ -74,3 +74,11 @@ Tệp sở hữu gồm `apps/web/src/modules/workspace/index.tsx`, `shop-setting
 - Backend đạt 45 kiểm thử đơn vị, workspace 25/25, tài chính 18/18 và AI 13/13 trên fixture. Kiểm nâng cấp, Inbox/Privacy/Jobs, webhook mô phỏng và các CLI chứng từ đã qua các lượt tập trung.
 - Frontend đạt verify, 291 ca Vitest và 122 ca domain/network. Chromium/Firefox đạt 16/16 kiểm tra demo dựng, gồm giới hạn trang đầu 511.397/512.000 byte gzip. Hai lượt riêng kiểm phiên, lỗi tải lại và dữ liệu cũ.
 - JSON/YAML của 384 schema đồng nhất, kit đạt 544/544. Rà soát toàn nhánh duyệt các sửa đổi cuối trong d5bb1c2a. Các migration 60 và 61 hiện chạy trên fixture. Bước triển khai Supabase tiếp tục theo quy trình sao lưu và xác minh đích của hồ sơ Cloud.
+
+## Xác minh migration trên Supabase thử
+
+Ngày 25/11/2026, áp `20261125006000_shop_closure` và `20261125006100_closed_inbound_handoff` lên `botsalesai-dev` từ commit `975c7c84`. Prisma xác nhận schema đã cập nhật và đối chiếu 61/61 checksum khớp.
+
+Đã kiểm bản sao trước khi áp bằng cách đọc toàn bộ archive và xác minh SHA-256. Bản sao lưu tại `D:/BotSalesAI/backup/supabase-before-shop-closure-975c7c84-20261125T154907687Z/database.dump` với SHA-256 `37de664ed60d695b8e0f43d3ba7c9510a56228417b082378f87bbde9068aeac3`. Biên nhận ở `migration-verification.json` cạnh bản sao.
+
+Hai shop mẫu vẫn hoạt động và năm hội thoại cũ có giá trị mặc định đúng. Dấu kiểm của dữ liệu cũ khớp trước và sau cập nhật. Backend dùng role runtime đọc được hai cột mới qua TLS. Lượt này xác minh database, còn luồng giao diện Cloud chưa chạy.
