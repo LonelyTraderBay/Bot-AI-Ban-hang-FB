@@ -24,3 +24,5 @@ R02 dùng bộ lọc trạng thái và phân trang theo URL. R33 dùng Panel, Mu
 Ca hồi quy ban đầu tái hiện việc ô tên cửa hàng và bản nháp biến mất khi lần tải lại nhận HTTP 503. Với bản sửa, cùng ca kiểm tra trên Chromium và Firefox giữ được nội dung đang nhập, hiện cảnh báo dữ liệu cũ và xóa cảnh báo sau khi tải thành công. Khi lần tải kế tiếp nhận 404, biểu mẫu biến mất. Phản hồi 503 tiếp theo vẫn giữ màn hình lỗi và dữ liệu shop đã bị xóa khỏi cache của Shell.
 
 Bản demo dựng lại đạt 14/14 ca luồng đóng/mở và 2/2 phép đo kích thước trên Chromium và Firefox. Trang đầu dùng 511.404/512.000 byte gzip, còn dư 596 byte. Khối lớn nhất dùng 104.320/204.800 byte. Ba ca phiên bị thu hồi qua SSE hoặc hết hạn qua 401 đều đạt trên cả hai trình duyệt với API kiểm thử cục bộ.
+
+Sau khi tích hợp kiểm tra tiền đặt cọc ở d5bb1c2a, `npm run verify` đạt toàn bộ cổng, gồm 122 ca domain/network và 291 ca Vitest. Bản demo dựng lại đạt 16/16 ca luồng đóng/mở và ngân sách tài nguyên trên Chromium và Firefox. Trang đầu dùng 511.397/512.000 byte gzip, còn dư 603 byte.
