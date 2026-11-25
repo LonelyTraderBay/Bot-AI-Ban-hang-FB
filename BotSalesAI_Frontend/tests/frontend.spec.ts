@@ -39,7 +39,10 @@ async function chooseMockOption(page: import('@playwright/test').Page, label: st
 }
 
 test('catalog create uses the HTTP mock and successful save clears the draft guard', async ({ page }) => {
-    await gotoDemo(page, '/s/shop-demo/products');
+    const products = await navigateDemoAndRead(page, new URL('/s/shop-demo/products', demoUrl).toString(), response =>
+        response.request().method() === 'GET' && new URL(response.url()).pathname === '/api/v2/shops/shop-demo/products');
+    expect(products.status()).toBe(200);
+    expect(await products.finished()).toBeNull();
     await expect(page.getByRole('heading', { name: 'Sản phẩm', exact: true })).toBeVisible();
     await expect(page.getByText('Dữ liệu mô phỏng', { exact: true })).toBeVisible();
 
