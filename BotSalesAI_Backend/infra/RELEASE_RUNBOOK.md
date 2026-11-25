@@ -246,9 +246,26 @@ Lệnh chạy 21 nhóm tuần tự trên cùng manifest, gồm cả adapter th�
 Đặt `OPERATIONS_DATABASE_URL` vào kho bí mật của tác vụ giám sát theo môi trường. Cấp quyền đọc các bảng cần cho chế độ được chạy. Kết nối PostgreSQL của API, worker và công cụ dùng UTC. Giữ mặc định database UTC cho công cụ SQL và migration. Các báo cáo nghiệp vụ tiếp tục dùng múi giờ cửa hàng khi tính ngày và kỳ.
 
 - **Hàng đợi:** Chạy `npm run --silent check:operations -- queue <max-queue-ms> <max-unknown-ms>`. Nhập ngưỡng theo mục tiêu đã duyệt. Kết quả ghi tuổi heartbeat, outbox chờ phát, job đến hạn, lease quá hạn và command/job chờ đối chiếu. Heartbeat hết hiệu lực sau 30 giây như Operations Overview. Phần `externalDispatch` ghi số đang chờ và tuổi mục cũ nhất của đơn mua, Messenger, Messenger AI và thông báo ngoài. `EXTERNAL_DISPATCH_LAG` báo một trong các nhóm đã vượt ngưỡng hàng đợi. Khi heartbeat còn mới mà nhóm ngoài bị chậm, đối chiếu riêng nhóm đó với provider. `recordedUnknown` của Messenger AI và thông báo là số bản ghi chưa rõ đang lưu để so sánh giữa các lần đo. `OUTBOX_TERMINAL_FAILURE` báo có sự kiện đã hết lượt thử, kể cả khi hàng chờ có độ trễ bằng 0. Đối chiếu số `terminalOutboxFailures` với lần đo trước và chuyển người trực điều tra nguyên nhân.
-- **Kho tệp S3.** Chạy `npm run --silent check:operations -- file-storage <max-transfer-ms> <max-purge-ms>` với ngưỡng đã duyệt. Đồng bộ `FILE_OBJECT_STORE_TRANSFER_NEW_FILES` của lệnh với cấu hình worker đang chạy. `FILE_TRANSFER_LAG` báo tệp mới đã chờ quá ngưỡng tính từ lúc tạo. Khi đặt `0`, báo cáo vẫn đếm tệp chờ nhưng tạm ngưng cảnh báo chuyển mới. `FILE_PURGE_LAG` tiếp tục báo tệp hết hạn hoặc bị thu hồi còn chờ dọn. Tuổi dọn tính từ mốc hết hạn đã qua hoặc ước tính từ lúc tạo khi tệp bị từ chối chưa có mốc đó. Số ước tính nằm ở `rejectedWithoutElapsedExpiry`. Lệnh chỉ đọc trạng thái PostgreSQL và dùng được với quyền `SELECT` trên các bảng tệp. Dùng `check:object-storage` để đối chiếu bytes đã lưu ở S3.
+- **Kho tệp S3.** Chạy `npm run --silent check:operations -- file-storage <max-transfer-ms> <max-purge-ms>` với ngưỡng đã duyệt. Đồng bộ `FILE_OBJECT_STORE_TRANSFER_NEW_FILES` của lệnh với cấu hình worker đang chạy. `FILE_TRANSFER_LAG` báo tệp mới đã chờ quá ngưỡng tính từ lúc tạo. Khi đặt `0`, báo cáo vẫn đếm tệp chờ nhưng tạm ngưng cảnh báo chuyển mới. `FILE_PURGE_LAG` tiếp tục báo tệp hết hạn hoặc bị thu hồi còn chờ dọn. Tuổi dọn tính từ mốc hết hạn đã qua hoặc ước tính từ lúc tạo khi tệp bị từ chối chưa có mốc đó. Số ước tính nằm ở `rejectedWithoutElapsedExpiry`. Khi shop đóng, chỉ tệp xuất dữ liệu cá nhân còn được tính vào hàng chờ chuyển của shop đó. Việc giám sát tệp cần dọn áp dụng cho mọi shop. Dùng `check:object-storage` để đối chiếu bytes đã lưu ở S3.
 - **Toàn vẹn dữ liệu:** Chạy `npm run --silent check:operations -- integrity` trong cửa sổ kiểm đối chiếu đã chốt. Một lần đọc nhất quán kiểm vị trí tồn với sổ movement, cân bằng bút toán đã ghi và kích thước/checksum của blob đang lưu. Đây là phép kiểm đọc dữ liệu diện rộng. Chạy riêng với phép kiểm hàng đợi và thử chi phí truy vấn trên tải staging.
 - **Tiếp nhận kết quả:** Mã thoát `0` tương ứng `OK`, `2` tương ứng `ATTENTION`, và `1` tương ứng `UNAVAILABLE`. Khi thu JSON qua tác vụ giám sát, lưu stdout và stderr riêng. Lưu thời điểm và mã nguyên nhân, đối chiếu lần đo gần nhất và chuyển đến người trực theo kênh được duyệt. Khi có cảnh báo sai lệch, dùng công cụ nghiệp vụ hoặc DB cô lập để điều tra theo quyền. Báo cáo chỉ đọc tổng số và độ trễ, không tự chạy lại giao dịch hoặc gửi thông báo.
+
+### Cấp quyền cho tác vụ giám sát kho tệp
+
+Sau khi áp migration thêm `shops.closed_at` và trước khi chuyển tác vụ `file-storage` sang bản mới, cấp quyền cho role mà `OPERATIONS_DATABASE_URL` sử dụng. Truy vấn nối tệp với shop qua membership của người tải lên. Prisma đọc thêm `memberships.id` để xác nhận dòng membership tồn tại. Hai cột `shops.id` và `shops.closed_at` xác định shop đang hoạt động.
+
+Ví dụ dưới đây dùng tên role `botsales_storage_monitor`. Thay bằng role giám sát thực tế đã có quyền `CONNECT` trên database và `USAGE` trên schema `public`. Nếu role hiện có đã đọc được cả ba bảng tệp, chỉ cần hai lệnh cuối.
+
+```sql
+GRANT SELECT (shop_id, id, uploader_id, status, purpose, expires_at, created_at)
+    ON public.file_objects TO botsales_storage_monitor;
+GRANT SELECT (shop_id, file_id) ON public.file_blobs TO botsales_storage_monitor;
+GRANT SELECT (shop_id, file_id, state) ON public.file_storage TO botsales_storage_monitor;
+GRANT SELECT (shop_id, user_id, id) ON public.memberships TO botsales_storage_monitor;
+GRANT SELECT (id, closed_at) ON public.shops TO botsales_storage_monitor;
+```
+
+Chạy lệnh `file-storage` của bản mới bằng đúng `OPERATIONS_DATABASE_URL` và ngưỡng của tác vụ. Xác nhận JSON có `check: "file-storage"` cùng các số đếm trong `observations`. `OK` và `ATTENTION` đều cho biết truy vấn đã chạy. Nếu nhận `UNAVAILABLE`, kiểm tra kết nối và quyền của role trước khi chuyển lịch giám sát.
 
 ### Sức khỏe thành phần trên R37 và R52
 
