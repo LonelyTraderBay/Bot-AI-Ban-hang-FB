@@ -1,5 +1,11 @@
 # Báo cáo Frontend — nguồn kết quả hiện hành
 
+## Nhập mã vận đơn thủ công C05 · 25/11/2026
+
+Ứng viên R55 từ `a44f8f77` dùng ô mã vận đơn trong hộp thoại R42. Hợp đồng nhận mã tùy chọn khi tạo vận đơn. Giao diện bỏ khoảng trắng ở hai đầu, giữ chế độ giao thủ công và hiện mã đã lưu trong bảng. [Form R42](../apps/web/src/modules/fulfillment/index.tsx) · [Phép kiểm FE013](../tests/fe013.spec.ts)
+
+Chromium và Firefox qua preview đạt 10/10 ca, gồm vòng đóng gói, tạo vận đơn, nhập mã, bàn giao, đối soát lệnh chưa rõ và kiểm bản demo. Hai trình duyệt đo 511.025 byte gzip ở trang đầu, dưới ngưỡng 512.000 byte. Cấp nhãn và truy vấn kết quả từ hãng còn theo T071.
+
 ## Sửa hồi quy khi chạy CI cho PR #43 · 25/11/2026
 
 Bản demo của commit `685448aa` tải 514.581 byte JavaScript gzip ở trang tổng quan. Ngưỡng kiểm hiện hành là 512.000 byte. Hai mô-đun báo cáo marketing và đối soát thanh toán mô phỏng được tải khi có yêu cầu tương ứng. Chromium và Firefox cùng đo 510.931 byte sau bản sửa. [Job Firefox](https://github.com/LonelyTraderBay/Bot-AI-Ban-hang-FB/actions/runs/45605105474/job/139173847409) · [Ca đo bản demo](../tests/artifacts/demo-preview.spec.ts)

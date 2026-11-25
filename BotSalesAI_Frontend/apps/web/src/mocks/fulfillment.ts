@@ -111,7 +111,7 @@ export function fulfillment(op: string, input: Input): Row | undefined {
             ensure(body.warehouseId === order.warehouseId, 'Kho không khớp đơn.', 422);
             ensure(rows(order.lines).length === (Array.isArray(body.orderLineIds) ? body.orderLineIds.length : 0), 'Mô phỏng này bàn giao toàn bộ dòng của đơn.', 422);
             const shipment = insert('shipments', 'Shipment', shopId, {
-                orderId: order.id, warehouseId: order.warehouseId, carrierId: body.carrierId ?? null, trackingCode: null, state: 'planned', shippingFeeQuote: recordMoney(order.shippingRate).fee ?? null, shippingFeeActual: null, events: []
+                orderId: order.id, warehouseId: order.warehouseId, carrierId: body.carrierId ?? null, trackingCode: str(body.trackingCode).trim() || null, state: 'planned', shippingFeeQuote: recordMoney(order.shippingRate).fee ?? null, shippingFeeActual: null, events: []
             });
             order.shipmentIds = [shipment.id];
             touch(order);

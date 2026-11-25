@@ -916,11 +916,21 @@ test('SC-031, SC2-C05, SC2-C06, SC2-C07 and SC2-C08: handoff recovery, manual ca
     const stock = () => db.stockPosition.findUniqueOrThrow({
         where: { shopId_warehouseId_variantId: { shopId, warehouseId: order.warehouseId, variantId: variant.id } },
     });
+    const trackingCode = 'MANUAL-' + randomUUID();
     const create = { orderId: order.id, warehouseId: order.warehouseId, carrierId: null, orderLineIds: [orderLineId] };
     await json(await send('shipments', { ...create, orderLineIds: [] }), 422, 'Problem');
     await json(await send('shipments', { ...create, carrierId: randomUUID() }), 422, 'Problem');
-    const shipment = await json(await send('shipments', create), 201, 'ShipmentResponse');
+    for (const trackingCode of ['   ', 'x'.repeat(161), 'A\nB']) {
+        await json(await send('shipments', { ...create, trackingCode }), 400, 'Problem');
+    }
+    const body = { ...create, trackingCode: '  ' + trackingCode + '  ' };
+    const createKey = randomUUID();
+    const shipment = await json(await send('shipments', body, { key: createKey }), 201, 'ShipmentResponse');
     assert.equal(shipment.state, 'planned');
+    assert.equal(shipment.trackingCode, trackingCode);
+    assert.equal(shipment.carrierId, null);
+    assert.deepEqual(await json(await send('shipments', body, { key: createKey }), 201, 'ShipmentResponse'), shipment);
+    await json(await send('shipments', { ...create, trackingCode: 'OTHER' }, { key: createKey }), 409, 'Problem');
     assert.deepEqual(shipment.shippingFeeQuote, offer.shippingRate.fee);
     assert.deepEqual((await readOrder()).shipmentIds, [shipment.id]);
     assert.equal((await stock()).reserved, 3);

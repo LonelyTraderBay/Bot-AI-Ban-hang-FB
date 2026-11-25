@@ -1439,7 +1439,7 @@ Ghim baseline tại commit `e22bb99d6839df9943308556c94499c04e7b7f85`. Khi ngu�
 
 | Nguồn | Số mục | SHA-256 |
 |---|---:|---|
-| [openapi.json](../botsales-kit/contracts/openapi.json) | 260 thao tác / 384 schema | `25731c3f995c660630a78d9755d4f34be63af9ad5a1d31163c93a9cb534d49da` |
+| [openapi.json](../botsales-kit/contracts/openapi.json) | 260 thao tác / 384 schema | `7bf7d94093b27c9aed01f7fc9adad9cf252785b21145512d3e33852c5da3a549` |
 | [operation-index.json](../botsales-kit/contracts/operation-index.json) | 260 thao tác | `5b05395589c0c0e3c94cd5fa775f2a2debbc12c74b62bc6712b46890fd76d3e8` |
 | [route-manifest.json](../botsales-kit/contracts/route-manifest.json) | 67 màn / 16 module | `48005a97b71bd7b1931e0ec54ec173a37ab4ff63437d1503042ee473866633a1` |
 | [feature-catalog.json](../botsales-kit/contracts/feature-catalog.json) | 64 tính năng | `0b3f6c8a1fa8739d7ecd53937d40bfe54559c4d8e274e27bb7c4542171b654b0` |

@@ -29669,6 +29669,12 @@ components:
           anyOf:
           - $ref: '#/components/schemas/Id'
           - type: 'null'
+        trackingCode:
+          type: string
+          minLength: 1
+          maxLength: 160
+          pattern: ^(?=.*\S)[^\u0000-\u001f\u007f]+$
+          description: Optional tracking code entered from a manual carrier label.
         orderLineIds:
           type: array
           items:
