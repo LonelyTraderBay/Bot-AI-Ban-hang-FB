@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Alert, Button, MenuItem, TextField, Typography } from '@mui/material';
 import type { Promotion, PromotionDraft } from '@botsales/contracts';
 import { useApi, useCommand, usePagedApi } from '@/shared/api/hooks';
-import { useCan, useScope } from '@/shared/model/scope';
+import { useCan, useCanWrite, useScope } from '@/shared/model/scope';
 import { useListQuery } from '@/shared/model/filters';
 import { codePointLength, dateOnlyInTimezone, formatDateOnly, isValidDateOnly } from '@/shared/model/format';
 import { ActionGroup, FieldGroup, FormFields } from '@/shared/ui/composition';
@@ -98,7 +98,7 @@ function PromotionEditor({ initial, today, onClose }: { initial?: Promotion; tod
         && /^(0|[1-9][0-9]{0,11})(\.[0-9]{1,4})?$/.test(discountAmount.trim()) && Number(discountAmount) > 0
         && /^\d{1,2}$/.test(margin) && lines.length >= 2 && new Set(lines.map(line => line.variantId)).size === lines.length
         && lines.every(line => line.variantId && /^(?:[1-9][0-9]{0,5}|1000000)$/.test(line.quantity));
-    const canWrite = useCan('catalog.write');
+    const canWrite = useCanWrite('catalog.write');
     const submit = async () => {
         setSubmitted(true);
         if (!valid || busy || !online || !canWrite) return;

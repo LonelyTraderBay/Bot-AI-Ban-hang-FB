@@ -10,7 +10,7 @@ import type { Conversation, Message, MessageAttachment } from '@botsales/contrac
 import { colors } from '@botsales/tokens';
 import { request } from '@/shared/api/client';
 import { useApi, useCommand } from '@/shared/api/hooks';
-import { useCan, useScope } from '@/shared/model/scope';
+import { useCan, useCanWrite, useScope } from '@/shared/model/scope';
 import { limitCodePoints, dateTime } from '@/shared/model/format';
 import { DetailLine, EditDialog, ErrorNotice, MutationButton, Panel, RouteLink, Status } from '@/shared/ui/components';
 import { FormFields } from '@/shared/ui/composition';
@@ -34,7 +34,7 @@ export function ConversationComposer({ conversation }: {
     conversation: Conversation;
 }) {
     const { session, online } = useScope();
-    const canReply = useCan('conversations.reply');
+    const canReply = useCanWrite('conversations.reply');
     const send = useCommand('sendMessage', ['listMessages', 'getConversation', 'listConversations']);
     const note = useCommand('addInternalNote', ['listMessages']);
     const upload = useCommand('uploadFile', []);
@@ -406,7 +406,7 @@ export function ConversationContextPanel({ conversation, children }: {
 }) {
     const { shop, session } = useScope();
     const canReadCustomers = useCan('customers.read');
-    const canCreateOrders = useCan('orders.write');
+    const canCreateOrders = useCanWrite('orders.write');
     const metadata = useApi('getInboxMetadata');
     const assign = useCommand('assignConversation', ['getConversation', 'listConversations']);
     const [assignee, setAssignee] = useState('');

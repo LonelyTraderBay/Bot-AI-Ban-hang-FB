@@ -1,5 +1,9 @@
 # Báo cáo Frontend — nguồn kết quả hiện hành
 
+## Đóng và mở lại cửa hàng · 25/11/2026
+
+Luồng chọn shop, xác nhận của chủ shop, nhóm công việc cản trở và xử lý tab cũ đã chạy trên hai trình duyệt với bản demo dựng cục bộ. Các phép kiểm, kích thước trang đầu và giới hạn nghiệm thu được ghi trong [kết quả đóng cửa hàng](shop-closure-20261125.md).
+
 ## Nhập mã vận đơn thủ công C05 · 25/11/2026
 
 Ứng viên R55 từ `a44f8f77` dùng ô mã vận đơn trong hộp thoại R42. Hợp đồng nhận mã tùy chọn khi tạo vận đơn. Giao diện bỏ khoảng trắng ở hai đầu, giữ chế độ giao thủ công và hiện mã đã lưu trong bảng. [Form R42](../apps/web/src/modules/fulfillment/index.tsx) · [Phép kiểm FE013](../tests/fe013.spec.ts)

@@ -5,7 +5,7 @@ import {zodResolver} from '@hookform/resolvers/zod';
 import {z} from 'zod';
 import type {FinanceEntry,FinanceEntryWrite} from '@botsales/contracts';
 import {useApi,useCommand} from '@/shared/api/hooks';
-import {useScope,useCan} from '@/shared/model/scope';
+import {useScope,useCanWrite} from '@/shared/model/scope';
 import {useVersionedDraft,draftEqual} from '@/shared/model/versioned-draft';
 import {useDraftForm,markDraftClean} from '@/shared/model/dirty-drafts';
 import {codePointLength} from '@/shared/model/format';
@@ -29,7 +29,7 @@ const schema = z.object({
     {path: ['sourceRef'], message: 'Nhập mã chứng từ gồm chữ, số, gạch nối hoặc gạch dưới.'});
 const snapshot=(r:FinanceEntry)=>({version:r.version,values:{kind:r.kind,classification:r.classification,amount:r.amount,occurredAt:r.occurredAt,description:r.description,sourceRef:r.sourceRef}});
 export function FinanceEntryEditor({initial,onClose,onSaved}:{initial:FinanceEntry|null;onClose:()=>void;onSaved:()=>void}) {
-    const {shop}=useScope(),can=useCan('finance.post');
+    const {shop}=useScope(),can=useCanWrite('finance.post');
     const empty:FinanceEntryWrite={kind:'disbursement',classification:'operating_expense',amount:{amount:'',currency:shop.currency},occurredAt:new Date().toISOString(),description:'',sourceRef:null};
     const initialEmpty=useRef(empty).current;
     const form=useForm<FinanceEntryWrite>({defaultValues:initial?snapshot(initial).values:initialEmpty,resolver:zodResolver(schema)});useWatch({control:form.control});

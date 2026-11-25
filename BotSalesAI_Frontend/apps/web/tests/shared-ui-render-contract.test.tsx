@@ -29,7 +29,7 @@ function renderWithTheme(ui: ReactNode) {
 }
 
 function renderWithScope(ui: ReactNode, online = true, permissions: string[] = ['products.write']) {
-    const scope = { online, membership: { permissions } } as unknown as Scope;
+    const scope = { online, shop: { status: 'active' }, membership: { permissions } } as unknown as Scope;
     return renderWithTheme(<ScopeContext.Provider value={scope}>{ui}</ScopeContext.Provider>);
 }
 
@@ -205,16 +205,16 @@ describe('S10 shared component rendered-slot contract', () => {
     it('MutationButton respects permission, action allowlist, online and busy states', () => {
         const { rerender } = renderWithScope(<MutationButton permission="products.write">Lưu sản phẩm</MutationButton>, true, []);
         expect(screen.queryByRole('button', { name: 'Lưu sản phẩm' })).not.toBeInTheDocument();
-        rerender(<ThemeProvider theme={theme}><CssBaseline /><ScopeContext.Provider value={{ online: true, membership: { permissions: ['products.write'] } } as unknown as Scope}><MutationButton permission="products.write" allowedActions={['edit']} action="publish">Lưu sản phẩm</MutationButton></ScopeContext.Provider></ThemeProvider>);
+        rerender(<ThemeProvider theme={theme}><CssBaseline /><ScopeContext.Provider value={{ online: true, shop: { status: 'active' }, membership: { permissions: ['products.write'] } } as unknown as Scope}><MutationButton permission="products.write" allowedActions={['edit']} action="publish">Lưu sản phẩm</MutationButton></ScopeContext.Provider></ThemeProvider>);
         expect(screen.queryByRole('button', { name: 'Lưu sản phẩm' })).not.toBeInTheDocument();
-        rerender(<ThemeProvider theme={theme}><CssBaseline /><ScopeContext.Provider value={{ online: false, membership: { permissions: ['products.write'] } } as unknown as Scope}><MutationButton permission="products.write">Lưu sản phẩm</MutationButton></ScopeContext.Provider></ThemeProvider>);
+        rerender(<ThemeProvider theme={theme}><CssBaseline /><ScopeContext.Provider value={{ online: false, shop: { status: 'active' }, membership: { permissions: ['products.write'] } } as unknown as Scope}><MutationButton permission="products.write">Lưu sản phẩm</MutationButton></ScopeContext.Provider></ThemeProvider>);
         expect(screen.getByRole('button', { name: 'Lưu sản phẩm' })).toBeDisabled();
-        rerender(<ThemeProvider theme={theme}><CssBaseline /><ScopeContext.Provider value={{ online: true, membership: { permissions: ['products.write'] } } as unknown as Scope}><MutationButton permission="products.write" busy>Lưu sản phẩm</MutationButton></ScopeContext.Provider></ThemeProvider>);
+        rerender(<ThemeProvider theme={theme}><CssBaseline /><ScopeContext.Provider value={{ online: true, shop: { status: 'active' }, membership: { permissions: ['products.write'] } } as unknown as Scope}><MutationButton permission="products.write" busy>Lưu sản phẩm</MutationButton></ScopeContext.Provider></ThemeProvider>);
         const button = screen.getByRole('button', { name: /Lưu sản phẩm/ });
         expect(button).toBeDisabled();
         expect(button).toHaveTextContent('Lưu sản phẩm');
         expect(button.querySelector('.MuiCircularProgress-root')).toBeInTheDocument();
-        rerender(<ThemeProvider theme={theme}><CssBaseline /><ScopeContext.Provider value={{ online: true, membership: { permissions: ['products.write'] } } as unknown as Scope}><MutationButton permission="products.write">Lưu sản phẩm</MutationButton></ScopeContext.Provider></ThemeProvider>);
+        rerender(<ThemeProvider theme={theme}><CssBaseline /><ScopeContext.Provider value={{ online: true, shop: { status: 'active' }, membership: { permissions: ['products.write'] } } as unknown as Scope}><MutationButton permission="products.write">Lưu sản phẩm</MutationButton></ScopeContext.Provider></ThemeProvider>);
         expect(screen.getByRole('button', { name: 'Lưu sản phẩm' })).toBeEnabled();
     });
 

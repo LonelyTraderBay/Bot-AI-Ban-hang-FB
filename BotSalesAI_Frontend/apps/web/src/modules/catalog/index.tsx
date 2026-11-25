@@ -14,7 +14,7 @@ import DeleteOutlineRounded from '@mui/icons-material/DeleteOutlineRounded';
 import type { Category, Product, ProductWritePatch } from '@botsales/contracts';
 export { PromotionsPage } from './promotions';
 import { useApi, useCommand, usePagedApi } from '@/shared/api/hooks';
-import { useScope, useCan } from '@/shared/model/scope';
+import { useScope, useCanWrite } from '@/shared/model/scope';
 import { currentSearchParams, useListQuery } from '@/shared/model/filters';
 import { PRODUCT_IMAGE_MAX_BYTES, productImageFileError } from './import-file';
 import { ApiError } from '@/shared/api/errors';
@@ -87,7 +87,7 @@ export function ProductEditorPage() {
     const listPath = `/s/${shop.id}/products`;
     const listHref = useListReturn(listPath);
     const navigate = useNavigate();
-    const canWrite = useCan('catalog.write');
+    const canWrite = useCanWrite('catalog.write');
     const product = useApi('getProduct', { path: { productId: productId || 'new' } }, !!productId);
     const [categorySearch, setCategorySearch] = useState('');
     const [categoryQuery, setCategoryQuery] = useState('');

@@ -67,7 +67,7 @@ function PrivacyApproval({ row, returning, onClose }: { row: PrivacyRequest; ret
         }
     };
     return <EditDialog open title="Phê duyệt yêu cầu dữ liệu" onClose={onClose} busy={busy}
-        actions={<MutationButton permission="privacy.manage" variant="contained" busy={busy} disabled={!valid || approve.unresolved}
+        actions={<MutationButton permission="privacy.manage" action="approvePrivacyRequest" variant="contained" busy={busy} disabled={!valid || approve.unresolved}
             onClick={() => void submit()}>{confirming ? 'Phê duyệt yêu cầu' : 'Xác minh qua tài khoản công ty'}</MutationButton>}>
         <FormFields>
             <DetailLine label="Loại yêu cầu">{businessLabel(row.kind)}</DetailLine>
@@ -161,7 +161,7 @@ export function PrivacyPage() {
                     </FormFields>
                 </QueryState>
             </Panel>
-            <Panel title="Yêu cầu của khách" action={<MutationButton permission="privacy.manage" onClick={() => setOpen(true)}>Tạo yêu cầu</MutationButton>}>
+            <Panel title="Yêu cầu của khách" action={<MutationButton permission="privacy.manage" action="createPrivacyRequest" onClick={() => setOpen(true)}>Tạo yêu cầu</MutationButton>}>
                 <QueryState query={requests} pendingProfile="section">
                     {requests.data && <>
                         <DataTable label="Yêu cầu quyền riêng tư" rows={requests.data.data} rowKey={r => r.id} columns={[
@@ -173,7 +173,7 @@ export function PrivacyPage() {
                                 key: 'action', label: 'Thao tác', render: (r: PrivacyRequest) => r.jobId
                                     ? <RouteLink to={`/s/${shop.id}/jobs/${r.jobId}`}>Theo dõi công việc</RouteLink>
                                     : canApprove && r.status === 'pending_approval'
-                                        ? <MutationButton permission="privacy.manage" onClick={() => setSelectedRequest(r)}>Phê duyệt</MutationButton>
+                                        ? <MutationButton permission="privacy.manage" action="approvePrivacyRequest" onClick={() => setSelectedRequest(r)}>Phê duyệt</MutationButton>
                                         : null,
                             }] : []),
                         ]}/>

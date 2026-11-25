@@ -9,7 +9,7 @@ import DeleteOutlineRounded from '@mui/icons-material/DeleteOutlineRounded';
 import AddRounded from '@mui/icons-material/AddRounded';
 import type { Order } from '@botsales/contracts';
 import { useApi, useCommand, usePagedApi } from '@/shared/api/hooks';
-import { useScope, useCan } from '@/shared/model/scope';
+import { useScope, useCan, useCanWrite } from '@/shared/model/scope';
 import { codePointLength, limitCodePoints } from '@/shared/model/format';
 import { Panel, MutationButton, ErrorNotice, LookupLoadMore } from '@/shared/ui/components';
 
@@ -25,7 +25,7 @@ export function DraftForm({ initial, onSaved, onBusyChange }: {
     const canReadCustomers = useCan('customers.read');
     const canReadProducts = useCan('catalog.read');
     const canReadConversations = useCan('conversations.read');
-    const canWriteOrders = useCan('orders.write');
+    const canWriteOrders = useCanWrite('orders.write');
     const [customerSearch, setCustomerSearch] = useState('');
     const [productSearch, setProductSearch] = useState('');
     const customers = usePagedApi('listCustomers', { query: { q: customerSearch.trim() || undefined, limit: 20 } }, canReadCustomers);

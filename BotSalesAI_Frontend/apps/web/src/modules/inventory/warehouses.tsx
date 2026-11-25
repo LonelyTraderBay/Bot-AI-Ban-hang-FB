@@ -5,7 +5,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import type { Warehouse } from '@botsales/contracts';
 import { useApi, useCommand } from '@/shared/api/hooks';
-import { useScope, useCan } from '@/shared/model/scope';
+import { useScope, useCanWrite } from '@/shared/model/scope';
 import { useListQuery } from '@/shared/model/filters';
 import { useVersionedDraft, draftEqual } from '@/shared/model/versioned-draft';
 import { useDraftForm, markDraftClean } from '@/shared/model/dirty-drafts';
@@ -20,7 +20,7 @@ const empty:Fields={code:'',name:'',addressLine:''};
 const snapshot=(warehouse:Warehouse)=>({version:warehouse.version,values:{code:warehouse.code,name:warehouse.name,addressLine:warehouse.addressLine}});
 
 export function WarehousesPage() {
-    const {shop}=useScope(),canEdit=useCan("warehouses.manage");
+    const {shop}=useScope(),canEdit=useCanWrite("warehouses.manage");
     const list=useApi('listWarehouses',{query:useListQuery('listWarehouses')});
     const [open,setOpen]=useState(false),[selected,setSelected]=useState<Warehouse|null>(null),[archive,setArchive]=useState<Warehouse|null>(null),[success,setSuccess]=useState('');
     const detail=useApi('getWarehouse',{path:{warehouseId:selected?.id||''}},open&&Boolean(selected));

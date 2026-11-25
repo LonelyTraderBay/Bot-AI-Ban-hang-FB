@@ -1,4 +1,5 @@
 import { expect, test } from '@playwright/test';
+import { openDemoControls, waitForDemoMenu } from './session/demo-controls';
 import { startDemoServer } from './session/demo-server.mjs';
 
 let demoUrl = '';
@@ -89,5 +90,98 @@ test('team invite and privacy request dialogs remain usable without submitting',
         await page.keyboard.press('Escape');
     }
     expect(apiWrites).toEqual([]);
+    expect(pageErrors).toEqual([]);
+});
+
+test('shop closure preserves history and settings across both workspace lists', async ({ page }) => {
+    await openRoute(page, routes[2]);
+    await page.getByRole('textbox', { name: 'Tên cửa hàng' }).fill('Shop lưu trữ');
+    await page.getByRole('button', { name: 'Tạo cửa hàng' }).click();
+    await expect(page).toHaveURL(/\/s\/shop-\d+\/overview/);
+    const shopId = new URL(page.url()).pathname.split('/')[2];
+    const settings = page.locator('a[href="/s/' + shopId + '/settings/shop"]').first();
+    await settings.click();
+    const close = page.getByRole('button', { name: 'Đóng cửa hàng', exact: true });
+    await close.focus();
+    await page.keyboard.press('Enter');
+    const dialog = page.getByRole('dialog', { name: 'Đóng cửa hàng' });
+    await expect(dialog).toContainText('Shop lưu trữ');
+    await page.keyboard.press('Escape');
+    await expect(close).toBeFocused();
+    await close.click();
+    await dialog.getByRole('button', { name: 'Đóng cửa hàng', exact: true }).click();
+    await expect(page.getByRole('textbox', { name: 'Tên cửa hàng' })).toBeDisabled();
+    await expect(page.getByRole('button', { name: 'Mở lại cửa hàng' })).toBeVisible();
+    await page.locator('header a[href="/workspaces"]').click();
+    await expect(page.getByRole('heading', { name: 'Joker Studio · Shop mẫu' })).toBeVisible();
+    await expect(page.getByRole('heading', { name: 'Shop lưu trữ' })).toHaveCount(0);
+    await page.getByRole('button', { name: 'Đã đóng', exact: true }).click();
+    await expect(page.getByRole('heading', { name: 'Shop lưu trữ' })).toBeVisible();
+    await page.getByRole('link', { name: 'Xem cửa hàng' }).click();
+    await page.locator('a[href="/s/' + shopId + '/settings/audit"]').first().click();
+    await expect(page.getByRole('heading', { name: 'Nhật ký hoạt động' })).toBeVisible();
+    await expect(page.getByText('closeShop', { exact: true }).first()).toBeVisible();
+    await settings.click();
+    await page.getByRole('button', { name: 'Mở lại cửa hàng' }).click();
+    await page.getByRole('dialog').getByRole('button', { name: 'Mở lại cửa hàng' }).click();
+    await expect(close).toBeVisible();
+    await expect(page.getByRole('textbox', { name: 'Tên cửa hàng' })).toBeEnabled();
+    await page.locator('header a[href="/workspaces"]').click();
+    await expect(page.getByRole('heading', { name: 'Shop lưu trữ' })).toBeVisible();
+    expect(pageErrors).toEqual([]);
+});
+
+test('shop closure lists blockers in the dialog and restricts controls to owners', async ({ page }) => {
+    await page.setViewportSize({ width: 390, height: 844 });
+    await openRoute(page, routes[4]);
+    await page.getByRole('button', { name: 'Đóng cửa hàng', exact: true }).click();
+    const dialog = page.getByRole('dialog', { name: 'Đóng cửa hàng' });
+    await expectDialogFits(page, 390, 844);
+    await dialog.getByRole('button', { name: 'Đóng cửa hàng', exact: true }).click();
+    await expect(dialog.getByRole('alert')).toContainText(/đối soát/i);
+    await expect(dialog.getByRole('alert')).toBeFocused();
+    await page.keyboard.press('Escape');
+    await expect(dialog).toBeHidden();
+    await openDemoControls(page);
+    await page.getByRole('combobox', { name: 'Vai trò mô phỏng' }).click();
+    await waitForDemoMenu(page, 'Vai trò mô phỏng');
+    await page.getByRole('option', { name: 'manager', exact: true }).click();
+    await expect(page.getByRole('button', { name: 'Đóng cửa hàng', exact: true })).toHaveCount(0);
+    expect(pageErrors).toEqual([]);
+});
+
+test('shop closure reconciles version conflicts and writes from a stale tab', async ({ page }) => {
+    // The tab misses live events while another session changes its shop.
+    await page.addInitScript(() => Object.defineProperty(window, 'EventSource', { value: class { close() {} } }));
+    await openRoute(page, routes[2]);
+    await page.getByRole('textbox', { name: 'Tên cửa hàng' }).fill('Cửa hàng kiểm phiên bản');
+    await page.getByRole('button', { name: 'Tạo cửa hàng' }).click();
+    await expect(page).toHaveURL(/\/s\/shop-\d+\/overview/);
+    const shopId = new URL(page.url()).pathname.split('/')[2];
+    await page.locator('a[href="/s/' + shopId + '/settings/shop"]').first().click();
+    await page.getByRole('button', { name: 'Đóng cửa hàng', exact: true }).click();
+    const externalChange = (close: boolean, version: number) => page.evaluate(async ({ shopId, close, version }) => {
+        const { data: { csrfToken } } = await (await fetch('/api/v2/session')).json();
+        const response = await fetch('/api/v2/shops/' + shopId + (close ? '/close' : ''), {
+            method: close ? 'POST' : 'PATCH',
+            headers: { 'X-CSRF-Token': csrfToken, 'Idempotency-Key': crypto.randomUUID(), 'If-Match': '"' + version + '"',
+                ...(!close ? { 'Content-Type': 'application/json' } : {}) },
+            body: close ? undefined : JSON.stringify({ name: 'Tên phiên mới' }),
+        });
+        return { status: response.status, etag: response.headers.get('ETag') };
+    }, { shopId, close, version });
+    expect(await externalChange(false, 1)).toEqual({ status: 200, etag: '"2"' });
+    const dialog = page.getByRole('dialog', { name: 'Đóng cửa hàng' });
+    await dialog.getByRole('button', { name: 'Đóng cửa hàng', exact: true }).click();
+    await expect(dialog.getByRole('alert')).toContainText('Dữ liệu đã đổi');
+    await dialog.getByRole('button', { name: 'Hủy', exact: true }).click();
+    const name = page.getByRole('textbox', { name: 'Tên cửa hàng' });
+    await expect(name).toHaveValue('Tên phiên mới');
+    await name.fill('Bản sửa từ tab cũ');
+    expect(await externalChange(true, 2)).toEqual({ status: 200, etag: '"3"' });
+    await page.getByRole('button', { name: 'Lưu cấu hình' }).click();
+    await expect(name).toBeDisabled();
+    await expect(page.getByRole('button', { name: 'Mở lại cửa hàng' })).toBeVisible();
+    await expect(page.getByRole('alert').filter({ hasText: 'Cửa hàng đã đóng' }).first()).toBeVisible();
     expect(pageErrors).toEqual([]);
 });

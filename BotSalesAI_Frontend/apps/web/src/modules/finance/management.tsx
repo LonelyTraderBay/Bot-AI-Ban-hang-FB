@@ -6,7 +6,7 @@ import {zodResolver} from '@hookform/resolvers/zod';
 import {z} from 'zod';
 import type {OpeningBalance,OpeningBalanceWrite} from '@botsales/contracts';
 import {useApi,useCommand,usePagedApi} from '@/shared/api/hooks';
-import {useScope,useCan} from '@/shared/model/scope';
+import {useScope,useCanWrite} from '@/shared/model/scope';
 import {useListQuery} from '@/shared/model/filters';
 import {useDraftForm,markDraftClean} from '@/shared/model/dirty-drafts';
 import {useVersionedDraft,draftEqual} from '@/shared/model/versioned-draft';
@@ -85,7 +85,7 @@ const openingSchema=z.object({effectiveDate:z.string().refine(isValidDateOnly,'C
 const snapshot=(r:OpeningBalance)=>({version:r.version,values:{effectiveDate:r.effectiveDate,policyVersion:r.policyVersion as 'synthetic-policy-1',reason:r.reason,lines:r.lines,inventory:r.inventory}});
 type OpeningFields=z.infer<typeof openingSchema>;
 export function OpeningBalancesPage() {
-    const {shop}=useScope(),can=useCan('finance.post');const list=useApi('listOpeningBalances',{query:useListQuery('listOpeningBalances')});
+    const {shop}=useScope(),can=useCanWrite('finance.post');const list=useApi('listOpeningBalances',{query:useListQuery('listOpeningBalances')});
     const [open,setOpen]=useState(false),[selected,setSelected]=useState<OpeningBalance|null>(null),[postRow,setPostRow]=useState<OpeningBalance|null>(null),[success,setSuccess]=useState('');
     const detail=useApi('getOpeningBalance',{path:{openingId:selected?.id||''}},open&&Boolean(selected));
     const accounts=usePagedApi('listAccounts',{query:{status:'active'}}),warehouses=usePagedApi('listWarehouses',{query:{status:'active'}}),products=usePagedApi('listProducts',{query:{status:'active'}});

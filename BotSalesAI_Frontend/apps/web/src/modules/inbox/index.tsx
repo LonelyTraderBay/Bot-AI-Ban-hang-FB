@@ -7,7 +7,7 @@ import ArrowBackRounded from '@mui/icons-material/ArrowBackRounded';
 import type { Message, Product, StockSnapshot } from '@botsales/contracts';
 import { colors, tokens } from '@botsales/tokens';
 import { useApi, useCommand, usePagedApi } from '@/shared/api/hooks';
-import { useScope, useCan } from '@/shared/model/scope';
+import { useScope, useCan, useCanWrite } from '@/shared/model/scope';
 import { dateTime } from '@/shared/model/format';
 import { PageHeader, Panel, QueryState, Toolbar, Pager, Status, MutationButton, EditDialog, ErrorNotice, ConfirmDialog, RouteLink, Empty, DataTable, Amount } from '@/shared/ui/components';
 import { layoutSx } from '@/shared/ui/layout';
@@ -334,7 +334,7 @@ type SalesSourceRow = {
 };
 function KnowledgeScriptLink() {
     const { shop } = useScope();
-    const canWrite = useCan('knowledge.write');
+    const canWrite = useCanWrite('knowledge.write');
     return canWrite ? <RouteLink to={`/s/${shop.id}/knowledge?template=sales_script`}>Soạn kịch bản tư vấn theo ngành</RouteLink> : null;
 }
 
@@ -360,6 +360,7 @@ function MockSalesFlowPreview({ customerId, conversationId }: { customerId: stri
     const { shop } = useScope();
     const canReadCatalog = useCan('catalog.read');
     const canReadInventory = useCan('inventory.read');
+    const canCreateOrder = useCanWrite('orders.write');
     const products = useApi('listProducts', { query: { limit: 100 } }, canReadCatalog);
     const stock = useApi('listStockSnapshots', { query: { limit: 100 } }, canReadInventory);
     const [tab, setTab] = useState<SalesPreviewTab>('script');
@@ -406,7 +407,7 @@ function MockSalesFlowPreview({ customerId, conversationId }: { customerId: stri
             </SurfaceContent>}
             {tab === 'order' && <SurfaceContent  role="tabpanel" aria-label="Tạo đơn từ hội thoại">
                 <Typography variant="body2">Chuyển sang biểu mẫu đơn để nhân viên kiểm tra khách, sản phẩm, số lượng và báo giá.</Typography>
-                <RouteLink to={`/s/${shop.id}/orders/new?customerId=${customerId}&conversationId=${conversationId}`}>Mở biểu mẫu tạo đơn từ hội thoại</RouteLink>
+                {canCreateOrder && <RouteLink to={`/s/${shop.id}/orders/new?customerId=${customerId}&conversationId=${conversationId}`}>Mở biểu mẫu tạo đơn từ hội thoại</RouteLink>}
                 <Alert severity="info">Đơn trong demo được lưu vào MSW cục bộ của tab; đây không phải đơn trên máy chủ.</Alert>
             </SurfaceContent>}
             {tab === 'confirmation' && <SurfaceContent  role="tabpanel" aria-label="Điều kiện xác nhận đơn">
@@ -421,7 +422,7 @@ function MockSalesFlowPreview({ customerId, conversationId }: { customerId: stri
 function ConversationPromotions({ customerId, conversationId }: { customerId: string; conversationId: string }) {
     const { shop } = useScope();
     const canRead = useCan('catalog.read');
-    const canWrite = useCan('orders.write');
+    const canWrite = useCanWrite('orders.write');
     const result = useApi('listPromotions', { query: { effective: 'yes', limit: 3 } }, canRead);
     if (!canRead) return null;
     const items = result.data?.data ?? [];

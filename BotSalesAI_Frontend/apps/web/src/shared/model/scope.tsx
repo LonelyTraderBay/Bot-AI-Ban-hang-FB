@@ -14,6 +14,12 @@ export function useScope() {
         throw new Error('Shop scope chưa khởi tạo');
     return scope;
 }
+export function useCanWrite(permission: string) {
+    const allowed = useCan(permission);
+    const { shop } = useScope();
+    return allowed && shop.status !== 'closed';
+}
+
 export function useCan(permission: string | null, actions?: string[], action?: string) {
     const { membership } = useScope();
     return (permission === null || membership.permissions.includes(permission as Membership['permissions'][number])) && (!actions || !action || actions.includes(action));

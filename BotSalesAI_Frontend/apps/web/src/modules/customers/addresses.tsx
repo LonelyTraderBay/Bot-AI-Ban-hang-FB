@@ -5,7 +5,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import type { Customer, CustomerAddress, CustomerAddressWrite, CustomerAddressWritePatch } from '@botsales/contracts';
 import { useApi, useCommand } from '@/shared/api/hooks';
-import { useScope, useCan } from '@/shared/model/scope';
+import { useScope, useCanWrite } from '@/shared/model/scope';
 import { useVersionedDraft, draftEqual } from '@/shared/model/versioned-draft';
 import { useDraftForm, markDraftClean } from '@/shared/model/dirty-drafts';
 import { codePointLength } from '@/shared/model/format';
@@ -37,7 +37,7 @@ function schemaFor(hidden:readonly string[]) {
 }
 
 export function AddressesPanel({customer}:{customer:Customer}) {
-    const {shop}=useScope(),canEdit=useCan('customers.write');
+    const {shop}=useScope(),canEdit=useCanWrite('customers.write');
     const list=usePagedApi('listCustomerAddresses',{path:{customerId:customer.id},query:{limit:20}});
     const [open,setOpen]=useState(false),[selected,setSelected]=useState<CustomerAddress|null>(null),[archive,setArchive]=useState<CustomerAddress|null>(null),[success,setSuccess]=useState('');
     const detail=useApi('getCustomerAddress',{path:{customerId:customer.id,addressId:selected?.id||''}},open&&Boolean(selected));

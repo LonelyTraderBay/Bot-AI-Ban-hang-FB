@@ -13,7 +13,7 @@ import { intentSnapshot, resolveObservedIntent } from '../src/shared/api/intents
 const membership: Scope['membership'] = { id: 'member-1', userId: 'user-1', shopId: 'shop-1', roles: ['owner'], permissions: [], permissionVersion: 1, status: 'active' };
 const initial: Scope = {
     membership, online: true, refreshSession: async () => undefined,
-    shop: { id: 'shop-1', name: 'Synthetic scope', currency: 'VND', timezone: 'Asia/Vientiane', locale: 'vi-VN', defaultWarehouseId: 'warehouse-1', version: 1, policyVersion: 'policy-1' },
+    shop: { id: 'shop-1', name: 'Synthetic scope', currency: 'VND', timezone: 'Asia/Vientiane', locale: 'vi-VN', status: 'active', closedAt: null, defaultWarehouseId: 'warehouse-1', version: 1, policyVersion: 'policy-1' },
     session: { user: { id: 'user-1', displayName: 'Synthetic user', email: 'test@example.test' }, memberships: [membership], csrfToken: 'csrf-fixture-123456', expiresAt: '2030-12-31T00:00:00Z' },
 };
 let scope = initial;

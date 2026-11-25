@@ -49,12 +49,42 @@ export function LoginPage() {
 }
 export function WorkspacesPage() {
     const { session, loading, error: sessionError } = useSession();
-    const shops = useQuery({ queryKey: ['shops', session?.user.id], queryFn: ({ signal }) => request('listShops', { signal }), enabled: !!session, retry: false });
+    const [params, setParams] = useSearchParams();
+    const status = params.get('status') === 'closed' ? 'closed' : 'active';
+    const cursor = params.get('cursor') || undefined;
+    const shops = useQuery({
+        queryKey: ['shops', session?.user.id, status, cursor],
+        queryFn: ({ signal }) => request('listShops', { signal, query: { status, cursor } }),
+        enabled: !!session, retry: false,
+    });
     const isEmpty = !shops.isError && shops.data?.data.length === 0;
     const createShopButton = <Button component={RouterLink} to="/onboarding" variant="contained">Tạo cửa hàng</Button>;
     if (!loading && !session && sessionError instanceof ApiError && sessionError.status === 401)
         return <Navigate to="/login" replace/>;
-    return <Box component="main" id="main-content" tabIndex={-1} sx={[layoutSx.shell.pageFallbackInset, { maxWidth: 1100, mx: 'auto', outline: 'none' }]}><PageHeader title="Chọn cửa hàng" subtitle="Mỗi cửa hàng là một vùng dữ liệu và quyền độc lập." actions={!isEmpty && createShopButton}/><ErrorNotice error={sessionError}/><QueryState query={shops} pendingProfile="section">{isEmpty ? <Empty text="Chưa có cửa hàng." action={createShopButton}/> : <SectionGrid columns={{ xs: 'minmax(0, 1fr)', md: shops.data?.data.length === 1 ? 'minmax(0, 1fr)' : 'repeat(2, minmax(0, 1fr))' }}>{shops.data?.data.map(s => <Paper variant="outlined" key={s.id} sx={[layoutSx.surface.inset, { borderRadius: visualSx.radius.card }]}><Avatar sx={{ bgcolor: colors.selected, color: 'primary.main' }}>{s.name[0]}</Avatar><SurfaceContent beforeGap="surface"><Typography component="h2" variant="h5">{s.name}</Typography><Typography color="text.secondary">{s.currency} · {s.timezone}</Typography><Typography variant="caption" color="text.secondary">Quyền: {session?.memberships.find(m => m.shopId === s.id)?.roles.map(role => businessLabel(role)).join(', ') || 'Chưa có quyền'}</Typography></SurfaceContent><Button component={RouterLink} to={`/s/${s.id}/overview`} fullWidth variant="outlined" endIcon={<ArrowForwardRounded />} sx={layoutSx.page.sectionBefore}>Mở cửa hàng</Button></Paper>)}</SectionGrid>}</QueryState></Box>;
+    return <Box component="main" id="main-content" tabIndex={-1} sx={[layoutSx.shell.pageFallbackInset, { maxWidth: 1100, mx: 'auto', outline: 'none' }]}>
+        <PageHeader title="Chọn cửa hàng" subtitle="Mỗi cửa hàng là một vùng dữ liệu và quyền độc lập." actions={(!isEmpty || status === 'closed') && createShopButton}/>
+        <SurfaceContent>
+            <ActionGroup direction="row">
+                <Button aria-pressed={status === 'active'} variant={status === 'active' ? 'contained' : 'outlined'} onClick={() => setParams({})}>Đang hoạt động</Button>
+                <Button aria-pressed={status === 'closed'} variant={status === 'closed' ? 'contained' : 'outlined'} onClick={() => setParams({ status: 'closed' })}>Đã đóng</Button>
+            </ActionGroup>
+            <ErrorNotice error={sessionError}/>
+            <QueryState query={shops} pendingProfile="section">
+                {isEmpty ? <Empty text={status === 'closed' ? 'Chưa có cửa hàng đã đóng.' : 'Chưa có cửa hàng.'} action={status === 'active' && createShopButton}/>
+                    : <SectionGrid columns={{ xs: 'minmax(0, 1fr)', md: shops.data?.data.length === 1 ? 'minmax(0, 1fr)' : 'repeat(2, minmax(0, 1fr))' }}>
+                        {shops.data?.data.map(s => <Paper variant="outlined" key={s.id} sx={[layoutSx.surface.inset, { borderRadius: visualSx.radius.card }]}>
+                            <Avatar sx={{ bgcolor: colors.selected, color: 'primary.main' }}>{s.name[0]}</Avatar>
+                            <SurfaceContent beforeGap="surface"><Typography component="h2" variant="h5">{s.name}</Typography>
+                                <Typography color="text.secondary">{s.currency} · {s.timezone}</Typography>
+                                <Typography variant="caption" color="text.secondary">Quyền: {session?.memberships.find(m => m.shopId === s.id)?.roles.map(role => businessLabel(role)).join(', ') || 'Chưa có quyền'}</Typography>
+                            </SurfaceContent>
+                            <Button component={RouterLink} to={`/s/${s.id}/overview`} fullWidth variant="outlined" endIcon={<ArrowForwardRounded />} sx={layoutSx.page.sectionBefore}>{s.status === 'closed' ? 'Xem cửa hàng' : 'Mở cửa hàng'}</Button>
+                        </Paper>)}
+                    </SectionGrid>}
+                {(cursor || shops.data?.page.hasMore) && <Pager page={shops.data?.page}/>}
+            </QueryState>
+        </SurfaceContent>
+    </Box>;
 }
 export function OnboardingPage() {
     const navigate = useNavigate();

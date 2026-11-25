@@ -4,7 +4,7 @@ import type { StockTransfer, StockTransferLine } from '@botsales/contracts';
 import { useApi, useCommand } from '@/shared/api/hooks';
 import { useListQuery } from '@/shared/model/filters';
 import { codePointLength, dateTime } from '@/shared/model/format';
-import { useCan, useScope } from '@/shared/model/scope';
+import { useCanWrite, useScope } from '@/shared/model/scope';
 import { ActionGroup, FieldGroup, FormFields } from '@/shared/ui/composition';
 import { ConfirmDialog, DataTable, DetailLine, EditDialog, ErrorNotice, MutationButton, PageHeader, Pager, Panel, QueryState, RouteLink, Toolbar } from '@/shared/ui/components';
 import { StockPositionPicker, WarehouseLookupStatus, WarehousePicker, stockReads, useActiveWarehouses } from './warehouse-forms';
@@ -18,7 +18,7 @@ type TransferTask = 'detail' | 'dispatch' | 'receive' | 'close_short' | 'cancel'
 export function StockTransfersPage() {
     const { shop } = useScope();
     const warehouses = useActiveWarehouses();
-    const canAdjust = useCan('inventory.adjust');
+    const canAdjust = useCanWrite('inventory.adjust');
     const query = useApi('listStockTransfers', { query: useListQuery('listStockTransfers') });
     const change = useCommand('updateStockTransfer', reads);
     const [creating, setCreating] = useState(false);

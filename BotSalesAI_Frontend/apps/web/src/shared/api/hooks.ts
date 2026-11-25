@@ -6,6 +6,7 @@ import { operations } from '@botsales/contracts';
 import { request, subscribeScopeCancellation } from './client';
 import type { ApiArguments, ApiOptions, MutationOperationId, QueryApiOptions, QueryOperationId } from './client';
 import { ApiError, UnknownResultError } from './errors';
+import { permitsClosedShopWrite } from '../model/shop-lifecycle';
 import { useScope } from '../model/scope';
 import {
     rememberUnknown, hasUnknownIntent, subscribeIntents, intentSnapshot, intentInScope,
@@ -88,6 +89,11 @@ export function useCommand<K extends MutationOperationId>(op: K, invalidate: rea
             throw new DOMException('Màn hình hoặc phạm vi đã đóng.', 'AbortError');
         if (inFlight.current || hasUnknownIntent(scope.shop.id, op, scope.session.user.id))
             throw new ApiError(409, 'IN_FLIGHT', 'Thao tác đang xử lý hoặc chưa xác minh kết quả.');
+        if (scope.shop.status === 'closed' && !permitsClosedShopWrite(op)) {
+            const closed = new ApiError(409, 'SHOP_CLOSED', 'Cửa hàng đã đóng. Chỉ có thể xem dữ liệu nghiệp vụ.');
+            setError(closed);
+            throw closed;
+        }
         if (!scope.online)
             throw new ApiError(0, 'OFFLINE', 'Đang ngoại tuyến. Không gửi thay đổi.');
         inFlight.current = true;
@@ -151,7 +157,16 @@ export function useCommand<K extends MutationOperationId>(op: K, invalidate: rea
         }
         catch (e) {
             const error = e instanceof Error ? e : new Error('Yêu cầu thất bại');
-            if (alive()) setError(error);
+            if (alive()) {
+                setError(error);
+                if (error instanceof ApiError && error.code === 'SHOP_CLOSED') {
+                    await Promise.all([
+                        cache.invalidateQueries({ queryKey: ['shop', scope.session.user.id, scope.shop.id] }),
+                        cache.invalidateQueries({ queryKey: ['shops', scope.session.user.id] }),
+                        cache.invalidateQueries({ queryKey: ['scope', scope.session.user.id, scope.shop.id, scope.membership.permissionVersion, 'getShop'] }),
+                    ]);
+                }
+            }
             if (recovery && (error instanceof UnknownResultError || unsettled)) {
                 retainRecovery = true;
                 rememberUnknown({ ...recovery, commandId: (error instanceof UnknownResultError ? error.commandId : commandId) || null });

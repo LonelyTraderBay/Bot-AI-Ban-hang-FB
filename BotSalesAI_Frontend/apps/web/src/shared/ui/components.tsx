@@ -18,6 +18,7 @@ import { ApiError, UnknownResultError, errorMessage } from '../api/errors';
 import { codePointLength, formatMoney } from '../model/format';
 import { label, type LabelDomain } from '../model/labels';
 import { listReturnState } from '../model/list-return';
+import { permitsClosedShopWrite } from '../model/shop-lifecycle';
 import { useScope, useCan } from '../model/scope';
 export function PageHeader({ title, subtitle, actions, eyebrow }: {
     title: string;
@@ -186,6 +187,7 @@ export function ErrorNotice({ error, fieldLabels }: {
     const alertRef = useRef<HTMLDivElement>(null);
     const validationFields = error instanceof ApiError && error.status === 422 ? error.problem?.errors : undefined;
     useEffect(() => {
+        if (error instanceof ApiError && error.code === 'SHOP_CLOSE_BLOCKED') alertRef.current?.focus();
         if (!validationFields?.length || !alertRef.current)
             return;
         const scope = alertRef.current.closest('[role="dialog"]') || alertRef.current.closest('form') || alertRef.current.closest('main') || document;
@@ -209,7 +211,7 @@ export function ErrorNotice({ error, fieldLabels }: {
     const versionConflict = status === 412 || status === 428 || (status === 409 && error instanceof ApiError && ['STALE_VERSION', 'VERSION_CONFLICT', 'VERSION_MISMATCH'].includes(error.code));
     const title = error instanceof UnknownResultError ? t('state.unknownTitle') : status === 403 ? t('state.forbiddenTitle') : status === 404 ? t('state.notFoundTitle') : versionConflict ? (status === 428 ? t('state.versionRequiredTitle') : t('state.conflictTitle')) : status === 422 ? t('state.validationTitle') : t('state.requestErrorTitle');
     const guidance = versionConflict ? (status === 428 ? t('state.versionRequiredHelp') : t('state.conflictHelp')) : status === 422 ? t('state.validationHelp') : undefined;
-    return <Alert ref={alertRef} severity={error instanceof UnknownResultError || status === 403 || versionConflict ? 'warning' : 'error'} sx={layoutSx.notice.afterGap} role="alert"><AlertTitle>{title}</AlertTitle>{errorMessage(error)}{guidance && <Typography component="div" variant="body2" sx={layoutSx.notice.contentGap}>{guidance}</Typography>}{validationFields?.map(field => {
+    return <Alert ref={alertRef} tabIndex={-1} severity={error instanceof UnknownResultError || status === 403 || versionConflict ? 'warning' : 'error'} sx={layoutSx.notice.afterGap} role="alert"><AlertTitle>{title}</AlertTitle>{errorMessage(error)}{error instanceof ApiError && error.code === 'SHOP_CLOSE_BLOCKED' && error.problem?.errors?.map(group => <div key={group.code}>{group.message}</div>)}{guidance && <Typography component="div" variant="body2" sx={layoutSx.notice.contentGap}>{guidance}</Typography>}{validationFields?.map(field => {
         const normalized = field.path.replace(/^\//, '').replace(/~1/g, '/').replace(/~0/g, '~');
         const lastSegment = normalized.split(/[./]/).flatMap(segment => segment.split('[').flatMap(part => part.split(']'))).filter(Boolean).at(-1) || normalized;
         const label = fieldLabels?.[normalized] || fieldLabels?.[lastSegment] || field.path;
@@ -345,10 +347,11 @@ export function MutationButton({ permission, allowedActions, action, busy, child
     type?: 'button' | 'submit';
 }) {
     const can = useCan(permission, allowedActions, action);
-    const { online } = useScope();
+    const { online, shop } = useScope();
+    const readOnly = shop.status === 'closed' && !permitsClosedShopWrite(action);
     if (!can)
         return null;
-    return <Button onClick={props.onClick} variant={props.variant} color={props.color} type={props.type} disabled={props.disabled || busy || !online} startIcon={busy ? <CircularProgress size={16}/> : undefined}>{children}</Button>;
+    return <Button onClick={props.onClick} variant={props.variant} color={props.color} type={props.type} disabled={props.disabled || busy || !online || readOnly} startIcon={busy ? <CircularProgress size={16}/> : undefined}>{children}</Button>;
 }
 function draftControlValue(control: HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement) {
     if (control instanceof HTMLInputElement && (control.type === 'checkbox' || control.type === 'radio'))

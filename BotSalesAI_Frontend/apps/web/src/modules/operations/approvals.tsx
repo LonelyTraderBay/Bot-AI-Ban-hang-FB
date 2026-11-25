@@ -8,7 +8,7 @@ import { Alert, Box, Button, Checkbox, MenuItem, Stack, TextField, Typography } 
 import { layoutSx } from '../../shared/ui/layout';
 import type { Approval, BudgetPolicy, PurchaseDelegation, PurchaseDelegationReservation, SupplierOffer } from '@botsales/contracts';
 import { useApi, usePagedApi, useCommand } from '@/shared/api/hooks';
-import { useScope, useCan } from '@/shared/model/scope';
+import { useScope, useCan, useCanWrite } from '@/shared/model/scope';
 import { useListQuery } from '@/shared/model/filters';
 import { codePointLength, dateTime } from '@/shared/model/format';
 import { PageHeader, Panel, DataTable, QueryState, Toolbar, Pager, Status, MutationButton, EditDialog, ErrorNotice, Amount, DetailLine, ConfirmDialog } from '@/shared/ui/components';
@@ -23,7 +23,7 @@ export function ApprovalsPage() {
 
 function ApprovalQueue({ toolbar }: { toolbar: ReactNode }) {
     const { shop } = useScope();
-    const canDecide = useCan('approvals.decide');
+    const canDecide = useCanWrite('approvals.decide');
     const list = useApi('listApprovals', { query: useListQuery('listApprovals') });
     const [approvalId, setApprovalId] = useState<string | null>(null);
     const detail = useApi('getApproval', { path: { resourceId: approvalId || '' } }, Boolean(approvalId));

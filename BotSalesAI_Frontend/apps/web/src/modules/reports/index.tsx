@@ -8,7 +8,7 @@ import { Bar, BarChart, CartesianGrid, Legend, ResponsiveContainer, Text, Toolti
 import type { ExportRequest, Job, MarketingBucket } from '@botsales/contracts';
 import { colors, tokens } from '@botsales/tokens';
 import { useApi, useCommand } from '../../shared/api/hooks';
-import { useScope, useCan } from '../../shared/model/scope';
+import { useScope, useCan, useCanWrite } from '../../shared/model/scope';
 import { dateTime, formatDateOnly, isValidDateOnly } from '../../shared/model/format';
 import { Amount, DataTable, DetailLine, ErrorNotice, PageHeader, Panel, Pager, QueryState, RouteLink, Stat, Stats, Status } from '../../shared/ui/components';
 import { layoutSx } from '../../shared/ui/layout';
@@ -76,7 +76,7 @@ export function ReportsPage() {
     };
     const [rangeError, setRangeError] = useState('');
     const [lastExport, setLastExport] = useState<{ job: Job; type: ExportRequest['reportType']; from: string; to: string } | null>(null);
-    const canExportReports = useCan('reports.export');
+    const canExportReports = useCanWrite('reports.export');
     const canExportSource = useCan(sourcePermissions[type]);
     const availableReports = summary.data?.data.availableReports || [];
     const reportAvailable = availableReports.includes(type);

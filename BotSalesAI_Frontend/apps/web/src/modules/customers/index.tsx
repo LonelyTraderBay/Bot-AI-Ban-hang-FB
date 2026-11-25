@@ -14,7 +14,7 @@ import type { Customer, ServiceCase, CustomerWritePatch } from '@botsales/contra
 import { useVersionedDraft } from '@/shared/model/versioned-draft';
 import { DraftConflict } from '@/shared/ui/draft-conflict';
 import { useApi, useCommand, usePagedApi } from '@/shared/api/hooks';
-import { useScope, useCan } from '@/shared/model/scope';
+import { useScope, useCan, useCanWrite } from '@/shared/model/scope';
 import { useListQuery } from '@/shared/model/filters';
 import { limitCodePoints, codePointLength, dateTime } from '@/shared/model/format';
 import { Amount, PageHeader, Panel, DataTable, QueryState, Toolbar, Pager, Status, MutationButton, EditDialog, ErrorNotice, RouteLink, DetailLine, LookupLoadMore } from '@/shared/ui/components';
@@ -82,7 +82,7 @@ export function CustomerPage() {
     const { customerId = '' } = useParams();
     const { shop } = useScope();
     const listHref=useListReturn(`/s/${shop.id}/customers`);
-    const canEdit = useCan('customers.write');
+    const canEdit = useCanWrite('customers.write');
     const canReadOrders = useCan('orders.read');
     const canReadShipments = useCan('fulfillment.read');
     const customer = useApi('getCustomer', { path: { customerId } });

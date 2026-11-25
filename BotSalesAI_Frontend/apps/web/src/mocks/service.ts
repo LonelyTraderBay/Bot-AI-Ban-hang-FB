@@ -1,4 +1,5 @@
 import operationIndex from '../../../../packages/contracts/src/operations.json';
+import { permitsClosedShopWrite } from '../shared/model/shop-lifecycle';
 import collections from './collections.json';
 import { db, all, first, find, insert, resetDb, restoreDb, ensure, str, num, record, rows, id, now, future, grantedPermissions, audit, MockFailure } from './database';
 import type { Row, Input } from './database';
@@ -10,7 +11,6 @@ import { allTimeReportWindow, finance, cashflow, profitLoss } from './finance';
 import { auxiliary } from './auxiliary';
 import { clearFileState, files, upload } from './files';
 import { masters, visibleOrderAddress } from './masters';
-import { privacy as privacyOperations, safeConsentChallenge } from './privacy';
 import { shippingPolicyOperations } from './shipping-policy';
 import { promotionCurrent, promotionDate, promotionOperations } from './promotions';
 import { stocktakeOperations } from './stocktakes';
@@ -215,8 +215,10 @@ async function read(op: string, input: Input): Promise<unknown> {
             data = data.filter(r => JSON.stringify(r).toLocaleLowerCase('vi').includes(search));
         if (collection === 'stock' && !grantedPermissions(role).includes('finance.read'))
             data = data.map(s => ({ ...s, unitCost: null, carryingValue: null }));
-        if (collection === 'consentChallenges')
+        if (collection === 'consentChallenges') {
+            const { safeConsentChallenge } = await import('./privacy');
             data = data.map(safeConsentChallenge);
+        }
         return collection === 'orders' ? data.map(order => visibleOrderAddress(order,shopId)) : data;
     }
     const found = find(collection, input.id, shopId);
@@ -264,10 +266,15 @@ async function execute(request: MockRequest): Promise<MockResult> {
     }
     if (!['exchangeConsentChallenge', 'confirmConsentChallenge'].includes(request.op))
         currentSession();
-    if (request.op === 'listShops')
-        return { status: 200, data: db.shops || [] };
+    if (request.op === 'listShops') {
+        const status = input.query.get('status') ?? 'active';
+        ensure(['active', 'closed'].includes(status), 'Trạng thái cửa hàng không hợp lệ.', 422);
+        const visible = new Set((db.members || []).filter(m => m.userId === input.userId && m.status === 'active').map(m => m.shopId));
+        const keyword = input.query.get('q')?.trim().toLocaleLowerCase('vi') || '';
+        return { status: 200, data: (db.shops || []).filter(shop => visible.has(shop.id) && shop.status === status && str(shop.name).toLocaleLowerCase('vi').includes(keyword)) };
+    }
     if (request.op === 'createShop') {
-        const created = insert('shops', 'Shop', '', { ...body, id: id('shop'), defaultWarehouseId: id('warehouse'), policyVersion: 'unconfigured' });
+        const created = insert('shops', 'Shop', '', { ...body, status: 'active', closedAt: null, id: id('shop'), defaultWarehouseId: id('warehouse'), policyVersion: 'unconfigured' });
         const newShop = str(created.id);
         insert('warehouses','Warehouse',newShop,{id:created.defaultWarehouseId,code:'MAIN',name:'Kho chính',addressLine:'Chưa thiết lập địa điểm kho',status:'active'});
         for (const account of all('accounts','shop-demo'))
@@ -286,12 +293,21 @@ async function execute(request: MockRequest): Promise<MockResult> {
         }
         return { status: 201, data: created };
     }
-    if (shopId) {
-        find('shops', shopId, shopId);
-        ensure((db.members || []).some(m => m.shopId === shopId && m.userId === input.userId && m.status === 'active'), 'Bạn không thuộc cửa hàng.', 403);
+    const currentShop = shopId ? find('shops', shopId, shopId) : undefined;
+    const member = (db.members || []).find(m => m.shopId === shopId && m.userId === input.userId && m.status === 'active');
+    if (shopId && !member) {
+        if (['getShop', 'closeShop', 'reopenShop'].includes(request.op))
+            throw new MockFailure(404, 'NOT_FOUND', 'Không tìm thấy cửa hàng.');
+        throw new MockFailure(403, 'FORBIDDEN', 'Bạn không thuộc cửa hàng.');
     }
     if (meta.permission)
         ensure(grantedPermissions(role).includes(meta.permission), 'Bạn không có quyền thực hiện thao tác này.', 403, 'FORBIDDEN');
+    const transition = request.op === 'closeShop' || request.op === 'reopenShop';
+    if (transition) {
+        ensure(role === 'owner' && Array.isArray(member?.roles) && member.roles.includes('owner'), 'Chỉ chủ cửa hàng được thay đổi trạng thái.', 403, 'FORBIDDEN');
+        ensure(headers['idempotency-key'], 'Thiếu khóa chống gửi lặp.', 400, 'REQUIRED_HEADER');
+        ensure(request.body === undefined, 'Thao tác này không nhận nội dung.', 422);
+    }
     if (request.op === 'getFile') {
         const file = find('files', request.path.fileId || '', shopId);
         const purpose = str(file.purpose);
@@ -376,7 +392,7 @@ async function execute(request: MockRequest): Promise<MockResult> {
         }
         else formEntries.push([name, value]);
     }
-    const canonicalBody = JSON.stringify({ path: request.path, body: request.body, form: formEntries });
+    const canonicalBody = JSON.stringify({ path: request.path, body: request.body, form: formEntries, ...(transition ? { version: input.version } : {}) });
     const bodyHash = Array.from(new Uint8Array(await crypto.subtle.digest('SHA-256', new TextEncoder().encode(canonicalBody))), byte => byte.toString(16).padStart(2, '0')).join('');
     if (mutating && headers['idempotency-key']) {
         const previous = seen.get(dedupeKey);
@@ -385,6 +401,9 @@ async function execute(request: MockRequest): Promise<MockResult> {
             return previous.response as MockResult;
         }
     }
+    if (mutating && currentShop?.status === 'closed' && !permitsClosedShopWrite(request.op))
+        throw new MockFailure(409, 'SHOP_CLOSED', 'Cửa hàng đã đóng. Chỉ có thể xem dữ liệu nghiệp vụ.');
+    const previousShopStatus = currentShop?.status;
     const snapshot = structuredClone(db);
     try {
         let data: unknown = masters(request.op,input);
@@ -410,8 +429,10 @@ async function execute(request: MockRequest): Promise<MockResult> {
             data = finance(request.op, input);
         if (data === undefined)
             data = await auxiliary(request.op, input);
-        if (data === undefined)
-            data = await privacyOperations(request.op, input);
+        if (data === undefined) {
+            const { privacy } = await import('./privacy');
+            data = await privacy(request.op, input);
+        }
         if (data === undefined)
             data = files(request.op, input);
         if (meta.method === 'GET' && meta.responseSchema?.endsWith('ListResponse') && Array.isArray(data)
@@ -426,7 +447,7 @@ async function execute(request: MockRequest): Promise<MockResult> {
             purchaseOrderIds: (Array.isArray(record(record(data).result).purchaseOrderIds) ? record(record(data).result).purchaseOrderIds as unknown[] : []).map(str),
             reservationIds: (Array.isArray(record(record(data).result).reservationIds) ? record(record(data).result).reservationIds as unknown[] : []).map(str),
         } : null;
-        if (mutating && !['exchangeConsentChallenge', 'confirmConsentChallenge'].includes(request.op))
+        if (mutating && (!transition || currentShop?.status !== previousShopStatus) && !['exchangeConsentChallenge', 'confirmConsentChallenge'].includes(request.op))
             audit(input, request.op, record(data).id ? { type: meta.responseSchema || 'command', id: record(data).id } : null);
         if (meta.responseSchema === 'OrderResponse') data = visibleOrderAddress(record(data),shopId);
         if (meta.responseSchema === 'OrderQuoteResponse') {
