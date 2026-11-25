@@ -1,3 +1,4 @@
+import { lockShopClosure, requireOpenShop } from '../../platform/database/shop-lifecycle.js';
 import { Body, ConflictException, Controller, Get, HttpCode, Module, NotFoundException, Param, Post, Query, Req, Res,
     UnprocessableEntityException, type DynamicModule } from '@nestjs/common';
 import { createHmac, timingSafeEqual } from 'node:crypto';
@@ -66,6 +67,7 @@ export async function resolveMetaInboundChannel(tx: Prisma.TransactionClient, pa
     const [channel] = bindings;
     if (channel) return channel.status === 'connected' && channel.policyVersion === metaInboundPolicy ? channel : undefined;
     if (!await tx.shop.findUnique({ where: { id: shopId }, select: { id: true } })) return undefined;
+    await lockShopClosure(tx, shopId);
     return tx.channelConnection.create({ data: {
         shopId, provider, pageId, status: 'connected', policyVersion: metaInboundPolicy, policyVerifiedAt: new Date(),
     } });
@@ -160,6 +162,7 @@ class Channels {
             const scope = await requireShopAccess(tx, await sessionPrincipal(tx, token), shopId, manage);
             const intent = await tx.channelAuthorization.findUnique({ where: key(shopId, intentId) });
             if (!intent || intent.actorId !== scope.userId || !timingSafeEqual(signedState(config, intent), Buffer.from(state, 'hex'))) throw new NotFoundException();
+            await requireOpenShop(tx, shopId);
             if (intent.usedAt || intent.expiresAt <= new Date()) throw new ConflictException();
             const used = await tx.channelAuthorization.updateMany({
                 where: { shopId, id: intentId, usedAt: null, expiresAt: { gt: new Date() } }, data: { usedAt: new Date() },

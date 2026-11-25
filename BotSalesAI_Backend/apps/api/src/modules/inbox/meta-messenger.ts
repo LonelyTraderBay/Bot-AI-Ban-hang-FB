@@ -65,8 +65,8 @@ export class MetaMessenger {
                     await serializable(this.db, async tx => {
                         const channel = await resolveMetaInboundChannel(tx, pageId, scope.shopId);
                         if (!channel) return;
-                        await recordMessengerEvent(tx, channel, { externalId: message.messageId, occurredAt, contentHash }, () =>
-                            receiveMessengerMessage(tx, channel, message, occurredAt, 'provider', undefined, this.ai));
+                        await recordMessengerEvent(tx, channel, { externalId: message.messageId, occurredAt, contentHash }, closedAt =>
+                            receiveMessengerMessage(tx, channel, message, occurredAt, 'provider', closedAt, undefined, this.ai));
                     }, true);
                 } catch (error) {
                     if (!(error instanceof ErasedChannelContact)) throw error;

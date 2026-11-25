@@ -1,3 +1,4 @@
+import { lockShopClosure } from '../../platform/database/shop-lifecycle.js';
 import { ForbiddenException, NotFoundException } from '@nestjs/common';
 import type { BotInboundTask, ChannelConnection, ChannelConversation, ChannelMessage, Prisma, PrismaClient } from '../../generated/prisma/client.js';
 import { recordAudit } from '../../platform/audit/index.js';
@@ -98,11 +99,13 @@ export async function processStagedBotInbound(db: PrismaClient, auth: AuthConfig
     const now = new Date();
     const cutoff = new Date(now.getTime() - recoveryMs);
     const key = await db.botInboundTask.findFirst({ where: { finishedAt: null, providerRunId: { not: null },
+        message: { conversation: { channel: { shop: { closedAt: null } } } },
         OR: [{ externalStartedAt: null }, { externalStartedAt: { lte: cutoff } }] },
     select: { shopId: true, messageId: true }, orderBy: [{ createdAt: 'asc' }, { messageId: 'asc' }] });
     if (!key) return;
 
     const prepared = await serializable(db, async tx => {
+        if (await lockShopClosure(tx, key.shopId)) return null;
         const row = await readTask(tx, key);
         if (!row?.providerRunId || row.finishedAt) return null;
         if (row.externalStartedAt) {
@@ -135,6 +138,7 @@ export async function processStagedBotInbound(db: PrismaClient, auth: AuthConfig
     let outcome = 'provider_failed';
     try {
         const result = await evaluateStagingDraft(prepared.plan, prepared.key, prepared.runId, entry => serializable(db, async tx => {
+            if (await lockShopClosure(tx, key.shopId)) throw new StagingAiError('STAGING_SCOPE_CHANGED');
             const row = await readTask(tx, key);
             if (!row || row.finishedAt) throw new StagingAiError('STAGING_SCOPE_CHANGED');
             const current = await eligible(tx, row, auth, provider);
@@ -152,6 +156,7 @@ export async function processStagedBotInbound(db: PrismaClient, auth: AuthConfig
     }
 
     await serializable(db, async tx => {
+        if (await lockShopClosure(tx, key.shopId)) return;
         const row = await readTask(tx, key);
         if (!row || row.finishedAt) return;
         if (outcome !== 'draft_proposal') return finish(tx, row, outcome);

@@ -1,3 +1,4 @@
+import { lockShopClosure } from '../../platform/database/shop-lifecycle.js';
 import { Body, ConflictException, Controller, Get, HttpCode, NotFoundException, Param, Post, Put, Query, Req, Res, UnprocessableEntityException } from '@nestjs/common';
 import type { IncomingHttpHeaders, IncomingMessage, ServerResponse } from 'node:http';
 import type { Prisma, PrismaClient, ReorderMode } from '../../generated/prisma/client.js';
@@ -132,9 +133,11 @@ async function evaluate(tx: Prisma.TransactionClient, shopId: string, at: Date, 
 export async function evaluateAutomaticReorder(db: PrismaClient, auth?: AuthConfig, now = new Date()) {
     if (!purchaseFixtureEnabled(auth)) return;
     const threshold = new Date(now.getTime() - 60000);
-    const shops = await db.reorderRule.findMany({ where: { enabled: true, mode: 'auto_send', suggestions: { none: { sourceAsOf: { gt: threshold } } } },
+    const shops = await db.reorderRule.findMany({ where: { enabled: true, mode: 'auto_send', warehouse: { shop: { closedAt: null } }, suggestions: { none: { sourceAsOf: { gt: threshold } } } },
         select: { shopId: true }, distinct: ['shopId'], orderBy: { shopId: 'asc' }, take: 20 });
-    for (const { shopId } of shops) await serializable(db, tx => evaluate(tx, shopId, now, auth, true), true);
+    for (const { shopId } of shops) await serializable(db, async tx => {
+        if (!await lockShopClosure(tx, shopId)) await evaluate(tx, shopId, now, auth, true);
+    }, true);
 }
 
 export class ReorderService extends ProcurementAccess {

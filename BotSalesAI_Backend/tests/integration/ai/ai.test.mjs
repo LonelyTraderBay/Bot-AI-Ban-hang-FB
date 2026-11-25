@@ -1173,6 +1173,18 @@ test('SC-033 and T072 Messenger: discard a late result after takeover and handle
                 await db.customer.update({ where: { shopId_id: { shopId, id: customerId } }, data: { notes: privateNote } });
             }
             if (outcome === 'draft_proposal') {
+                const closedMessage = webhook(stagingDraftCase.input);
+                await db.shop.update({ where: { id: shopId }, data: { closedAt: new Date() } });
+                try {
+                    await receive(closedMessage);
+                    await receive(closedMessage);
+                    assert.equal(await db.channelMessage.count({ where: { shopId, conversationId, text: stagingDraftCase.input } }), 1);
+                    assert.equal(await db.botInboundTask.count({ where: { providerRunId: runtime.runId } }), 0);
+                } finally {
+                    await db.shop.update({ where: { id: shopId }, data: { closedAt: null } });
+                }
+                await receive(closedMessage);
+                assert.equal(await db.botInboundTask.count({ where: { providerRunId: runtime.runId } }), 0);
                 await receive(webhook('Tin khởi tạo khác', otherSender));
                 await releaseToBot(otherSender);
                 await receive(webhook(stagingDraftCase.input, otherSender));

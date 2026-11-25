@@ -1,3 +1,4 @@
+import { lockShopClosure } from '../../platform/database/shop-lifecycle.js';
 import { NotFoundException, ServiceUnavailableException } from '@nestjs/common';
 import { randomUUID } from 'node:crypto';
 import type { FileObject, FileStorageState, Prisma, PrismaClient } from '../../generated/prisma/client.js';
@@ -68,6 +69,7 @@ function availableForTransfer(targetId: string, now: Date) {
 
 async function claim(db: PrismaClient, targetId: string, shopId: string, fileId: string, purgeOnly: boolean) {
     return serializable(db, async tx => {
+        const closedAt = await lockShopClosure(tx, shopId);
         const now = new Date();
         const file = await tx.fileObject.findUnique({
             where: { shopId_id: { shopId, id: fileId } }, include: { ...fileContents, storage: true },
@@ -77,7 +79,7 @@ async function claim(db: PrismaClient, targetId: string, shopId: string, fileId:
         if (storage && (storage.targetId !== targetId || storage.state === 'purged' ||
             (storage.leaseUntil && storage.leaseUntil > now) || (storage.dueAt && storage.dueAt > now))) return undefined;
         const remove = expired(file, now);
-        if (purgeOnly && !remove) return undefined;
+        if (!remove && (purgeOnly || (closedAt && file.purpose !== 'privacy_export'))) return undefined;
         if (remove ? !storage && !blob : file.status !== 'ready' || !blob || storage?.state === 'stored') return undefined;
         const leaseUntil = new Date(now.getTime() + leaseMs);
         const key = keyFor(shopId, fileId);
@@ -115,17 +117,22 @@ export async function transferFileObjects(db: PrismaClient, store: FileObjectSto
         { storage: null, blob: { isNot: null } }, { storage: { ...due, state: { in: unpurgedStates } } },
     ] }] } satisfies Prisma.FileObjectWhereInput;
     const files = await db.fileObject.findMany({
-        where: purgeOnly ? { ...purgeScope, ...purge } : { OR: [stagedFiles(now, due), purge] },
+        where: purgeOnly ? { ...purgeScope, ...purge } : { OR: [
+            { ...stagedFiles(now, due), OR: [{ purpose: 'privacy_export' }, { uploader: { shop: { closedAt: null } } }] }, purge,
+        ] },
         select: { shopId: true, id: true }, orderBy: [{ createdAt: 'asc' }, { shopId: 'asc' }, { id: 'asc' }], take: 8,
     });
-    if (!files.length) return 0;
-    await store.checkBucket();
+    let bucketChecked = false;
     let failed = false;
     let completed = 0;
     for (const candidate of files) {
         const work = await claim(db, store.id, candidate.shopId, candidate.id, purgeOnly);
         if (!work) continue;
         try {
+            if (!bucketChecked) {
+                await store.checkBucket();
+                bucketChecked = true;
+            }
             if (work.remove) await store.remove(work.file);
             else await store.write(work.file, work.file.blob!.bytes);
             if (await settle(db, work, store.id)) completed++;

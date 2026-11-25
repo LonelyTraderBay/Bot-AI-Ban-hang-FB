@@ -1,3 +1,4 @@
+import { lockShopClosure } from '../../platform/database/shop-lifecycle.js';
 import { Body, ConflictException, Controller, Get, HttpCode, HttpException, NotFoundException, Param, Post, Query, Req, Res,
     ServiceUnavailableException, UnprocessableEntityException } from '@nestjs/common';
 import type { IncomingHttpHeaders, IncomingMessage, ServerResponse } from 'node:http';
@@ -93,11 +94,12 @@ export async function createPurchaseDraft(tx: Prisma.TransactionClient, shopId: 
 
 export async function dispatchPurchases(db: PrismaClient, auth?: AuthConfig) {
     const due = await db.purchaseDispatch.findMany({
-        where: { dueAt: { lte: new Date() } }, orderBy: [{ dueAt: 'asc' }, { purchaseOrderId: 'asc' }], take: 50,
+        where: { dueAt: { lte: new Date() }, command: { actor: { shop: { closedAt: null } } } }, orderBy: [{ dueAt: 'asc' }, { purchaseOrderId: 'asc' }], take: 50,
         select: { shopId: true, purchaseOrderId: true },
     });
     for (const key of due) {
         await serializable(db, async tx => {
+            if (await lockShopClosure(tx, key.shopId)) return;
             const where = { shopId_purchaseOrderId: key };
             const job = await tx.purchaseDispatch.findUnique({ where, include: { command: { include: { purchaseBudgetReservation: true } } } });
             if (!job?.dueAt || job.dueAt > new Date()) return;

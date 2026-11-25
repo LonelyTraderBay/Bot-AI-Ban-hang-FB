@@ -1,3 +1,4 @@
+import { lockShopClosure } from '../../platform/database/shop-lifecycle.js';
 import { randomUUID } from 'node:crypto';
 import type { PrismaClient } from '../../generated/prisma/client.js';
 import { recordAudit } from '../../platform/audit/index.js';
@@ -11,12 +12,13 @@ const expirable = { orderState: 'confirmed', fulfillmentState: 'reserved', payme
 
 export async function expireOrdersWithReservations(db: PrismaClient, now = new Date()) {
     const due = await db.salesOrder.findMany({
-        where: { ...expirable, reservation: { status: 'active', expiresAt: { lte: now } } },
+        where: { ...expirable, warehouse: { shop: { closedAt: null } }, reservation: { status: 'active', expiresAt: { lte: now } } },
         orderBy: [{ createdAt: 'asc' }, { id: 'asc' }], take: 50,
         select: { shopId: true, id: true },
     });
     for (const { shopId, id } of due) {
         await serializable(db, async tx => {
+            if (await lockShopClosure(tx, shopId)) return;
             const order = await tx.salesOrder.findFirst({
                 where: { ...expirable, shopId, id, reservation: { status: 'active', expiresAt: { lte: now } } },
                 include: { reservation: { select: { id: true, actorId: true, version: true } } },

@@ -11,6 +11,7 @@ import { dispatchMessengerMessages } from '../../../apps/api/dist/modules/inbox/
 import { signMessengerFixtureEvent } from '../../../apps/api/dist/modules/inbox/messenger-fixture.js';
 import { recordStockMovement } from '../../../apps/api/dist/modules/inventory/index.js';
 import { assignedKnowledge, knowledgeIndexHandler, publishedKnowledge } from '../../../apps/api/dist/modules/knowledge/index.js';
+import { refreshOperationExceptions } from '../../../apps/api/dist/modules/operations/index.js';
 import { erasedIdentityKey } from '../../../apps/api/dist/modules/privacy/index.js';
 import { readAuthConfig, requireShopAccess } from '../../../apps/api/dist/modules/workspace/index.js';
 import { recordCommand } from '../../../apps/api/dist/platform/commands/index.js';
@@ -266,6 +267,15 @@ test('T069 Meta: text replies honor scope, handoff and the window at queue and d
     const queued = await send(path + '/messages', payload, 'CommandResponse', { key, expected: 202 });
     assert.equal((await send(path + '/messages', payload, 'CommandResponse', { key, expected: 202 })).id, queued.id);
     let calls = 0;
+    await db.shop.update({ where: { id: shopA.id }, data: { closedAt: new Date() } });
+    try {
+        await dispatchMessengerMessages(db, config, meta, async () => { calls++; throw new Error('Closed shop contacted Graph'); });
+        assert.equal(calls, 0);
+        const dispatch = await db.messageDispatch.findUniqueOrThrow({ where: { shopId_commandId: { shopId: shopA.id, commandId: queued.id } } });
+        assert.equal(dispatch.startedAt, null);
+    } finally {
+        await db.shop.update({ where: { id: shopA.id }, data: { closedAt: null } });
+    }
     const accepted = async (url, init) => {
         calls += 1;
         assert.equal(url, 'https://graph.facebook.com/v27.0/' + replyPage + '/messages');
@@ -381,8 +391,9 @@ test('T069 Meta: explicit rejections and uncertain outcomes are recorded without
     const interruptedClient = {
         messageDispatch: db.messageDispatch,
         $transaction: (action, options) => db.$transaction(async tx => {
-            await action(tx);
-            throw new Error('Worker terminated before final commit');
+            const result = await action(tx);
+            if (calls) throw new Error('Worker terminated before final commit');
+            return result;
         }, options),
     };
     let calls = 0;
@@ -509,6 +520,49 @@ function upload(purpose, bytes, name, type, resourceId, options = {}) {
     form.set('file', new globalThis.Blob([bytes], { type }), name);
     return send('uploads', form, options.schema ?? 'FileObjectResponse', { ...options, expected: options.expected ?? 201 });
 }
+
+test('closed shops retain signed inbound messages once while only the active shop queues bot work', async t => {
+    const oldFlag = process.env.AI_FIXTURE_ADAPTER;
+    process.env.AI_FIXTURE_ADAPTER = '1';
+    t.after(() => { if (oldFlag === undefined) delete process.env.AI_FIXTURE_ADAPTER; else process.env.AI_FIXTURE_ADAPTER = oldFlag; });
+    const samples = [];
+    for (const { id: shopId } of [shopA, shopB]) {
+        const channel = await writer.channelConnection.create({ data: { shopId, provider: 'messenger', pageId: randomUUID(),
+            status: 'connected', policyVersion: 'messenger-fixture-v1', policyVerifiedAt: new Date() } });
+        const initial = inbound(channel, { occurredAt: new Date(Date.now() - 2000).toISOString() });
+        await event(initial);
+        const conversation = await conversationFor(channel, initial.conversationId);
+        await db.channelConversation.update({ where: { shopId_id: { shopId, id: conversation.id } }, data: { mode: 'bot' } });
+        const before = await db.botConfig.findUnique({ where: { shopId }, select: { status: true, liveRevision: true, publishedAt: true } });
+        const enabled = { status: 'active', liveRevision: 1, publishedAt: new Date() };
+        await db.botConfig.upsert({ where: { shopId }, create: { shopId, ...enabled }, update: enabled });
+        t.after(() => before ? db.botConfig.update({ where: { shopId }, data: before }) : writer.botConfig.delete({ where: { shopId } }));
+        samples.push({ shopId, conversationId: conversation.id, input: inbound(channel, { senderId: initial.senderId, conversationId: initial.conversationId }) });
+    }
+    const [closed, active] = samples;
+    const setClosed = closedAt => db.shop.update({ where: { id: closed.shopId }, data: { closedAt } });
+    await setClosed(new Date());
+    try {
+        const first = await event(closed.input);
+        assert.equal(first.duplicate, false);
+        assert.equal((await event(closed.input)).duplicate, true);
+        const peer = await event(active.input);
+        assert.equal(await db.channelMessage.count({ where: { shopId: closed.shopId, conversationId: closed.conversationId,
+            externalId: closed.input.messageId } }), 1);
+        const queued = (shopId, messageId) => db.botInboundTask.count({ where: { shopId, messageId } });
+        assert.equal(await queued(active.shopId, peer.messageId), 1);
+        assert.equal(await queued(closed.shopId, first.messageId), 0);
+        await refreshOperationExceptions(db, new Date(Date.now() + 16 * 60_000));
+        const handoffs = row => db.workItem.count({ where: { shopId: row.shopId, sourceId: row.conversationId, kind: 'customer_handoff' } });
+        assert.equal(await handoffs(closed), 0);
+        assert.equal(await handoffs(active), 1);
+        await setClosed(null);
+        assert.equal((await event({ ...closed.input, eventId: randomUUID() })).duplicate, true);
+        assert.equal(await queued(closed.shopId, first.messageId), 0);
+    } finally {
+        await setClosed(null);
+    }
+});
 
 test('SC-033 SC-047 SC-048 SC-049 SC-050: fixture channel authorization is one-time and signed input is scoped by page and shop', async () => {
     await send('integrations/channels/connect', { returnPath: '/s/' + shopB.id + '/integrations/channels', channelKind: 'facebook_messenger' },

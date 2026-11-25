@@ -11,7 +11,7 @@ import { readDatabaseUrl } from '../../../apps/api/dist/config.js';
 import { createContractValidator, schemaFromContract } from '../../../apps/api/dist/http/contracts.js';
 import { readAuthConfig } from '../../../apps/api/dist/modules/workspace/index.js';
 import { Database } from '../../../apps/api/dist/platform/database/client.js';
-import { runJob, scheduleJob } from '../../../apps/api/dist/platform/jobs/index.js';
+import { dueJobs, runJob, scheduleJob } from '../../../apps/api/dist/platform/jobs/index.js';
 import { fixtureShops } from '../../../apps/api/prisma/p0-fixture.mjs';
 import { assertFixtureDatabase, fixtureSession } from '../workspace/session-fixture.mjs';
 
@@ -101,6 +101,29 @@ async function jobFixture(shop, actor, scenario, dueAt = new Date()) {
 function loadJob(job) {
     return db.job.findUniqueOrThrow({ where: { shopId_id: { shopId: job.shopId, id: job.id } } });
 }
+
+test('a stale queue delivery cannot start a closed shop job and the peer job still runs', async () => {
+    const first = await jobFixture(shopA, ownerA, 'closed-shop');
+    const second = await jobFixture(shopB, ownerB, 'active-shop');
+    const calls = [];
+    const perform = job => runJob(db, { shopId: job.shopId, id: job.id, sourceOperation }, async claimed => {
+        calls.push(claimed.shopId);
+        return { status: 'succeeded', completed: 1, total: 1, errorCount: 0 };
+    }, async () => true);
+    await db.shop.update({ where: { id: shopA.id }, data: { closedAt: new Date() } });
+    try {
+        const listed = await dueJobs(db, [sourceOperation]);
+        assert.ok(!listed.some(job => job.id === first.id));
+        assert.ok(listed.some(job => job.id === second.id));
+        await perform(first);
+        await perform(second);
+        assert.deepEqual(calls, [shopB.id]);
+        assert.equal((await loadJob(first)).attempts, 0);
+    } finally {
+        await db.shop.update({ where: { id: shopA.id }, data: { closedAt: null } });
+        await perform(first);
+    }
+});
 
 async function expireClaim(job) {
     const { count } = await db.job.updateMany({

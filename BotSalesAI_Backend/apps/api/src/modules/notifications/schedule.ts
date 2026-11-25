@@ -1,3 +1,4 @@
+import { lockShopClosure } from '../../platform/database/shop-lifecycle.js';
 import type { NotificationPolicy, Prisma, PrismaClient, WorkItem } from '../../generated/prisma/client.js';
 import { serializable } from '../../platform/database/transactions.js';
 import { createWorkItem, lockAutomationFence, notificationBudgetAvailable, setWorkState } from '../operations/index.js';
@@ -72,11 +73,12 @@ export function queuedDelivery(device: { id: string; version: number }, policyVe
 export async function dispatchPreparationNotifications(db: PrismaClient, config?: AuthConfig, now = new Date(), providers: NotificationProviders = {}) {
     const { webPush, telegram, appOrigin } = providers;
     const due = await db.workNotificationSchedule.findMany({
-        where: { nextDueAt: { lte: now } }, orderBy: [{ nextDueAt: 'asc' }, { shopId: 'asc' }, { workItemId: 'asc' }], take: 50,
+        where: { nextDueAt: { lte: now }, workItem: { shop: { closedAt: null } } }, orderBy: [{ nextDueAt: 'asc' }, { shopId: 'asc' }, { workItemId: 'asc' }], take: 50,
         select: { shopId: true, workItemId: true },
     });
     for (const key of due) {
         await serializable(db, async tx => {
+            if (await lockShopClosure(tx, key.shopId)) return;
             if ((await lockAutomationFence(tx, key.shopId)).paused) return;
             const where = { shopId_workItemId: key };
             const schedule = await tx.workNotificationSchedule.findUnique({ where, include: { workItem: true } });

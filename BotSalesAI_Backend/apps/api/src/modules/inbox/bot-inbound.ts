@@ -1,3 +1,4 @@
+import { lockShopClosure } from '../../platform/database/shop-lifecycle.js';
 import type { BotInboundTask, ChannelConnection, ChannelConversation, Prisma, PrismaClient } from '../../generated/prisma/client.js';
 import { recordAudit } from '../../platform/audit/index.js';
 import { recordCommand } from '../../platform/commands/index.js';
@@ -25,6 +26,7 @@ export async function queueBotInbound(tx: Prisma.TransactionClient, conversation
 
 async function executeTask(tx: Prisma.TransactionClient, config: AuthConfig, key: TaskKey) {
     const { shopId, messageId } = key;
+    if (await lockShopClosure(tx, shopId)) return;
     const where = { shopId_messageId: key };
     const row = await tx.botInboundTask.findUnique({ where, include: { message: { include: { conversation: { include: { channel: true } } } } } });
     if (!row || row.finishedAt || row.providerRunId) return;
@@ -96,7 +98,8 @@ async function executeTask(tx: Prisma.TransactionClient, config: AuthConfig, key
 export async function processBotInbound(db: PrismaClient, config?: AuthConfig, provider?: ApprovedEvaluationConfig, request = fetch) {
     if (config) await processStagedBotInbound(db, config, provider, request);
     if (!aiFixtureEnabled(config) || !messengerFixtureEnabled(config)) return;
-    const due = await db.botInboundTask.findMany({ where: { finishedAt: null, providerRunId: null }, select: { shopId: true, messageId: true },
+    const due = await db.botInboundTask.findMany({ where: { finishedAt: null, providerRunId: null,
+        message: { conversation: { channel: { shop: { closedAt: null } } } } }, select: { shopId: true, messageId: true },
         orderBy: [{ createdAt: 'asc' }, { messageId: 'asc' }], take: 50 });
     for (const key of due) await serializable(db, tx => executeTask(tx, config, key), true);
 }

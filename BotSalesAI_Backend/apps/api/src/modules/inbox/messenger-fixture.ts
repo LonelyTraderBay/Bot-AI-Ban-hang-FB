@@ -87,8 +87,8 @@ export class MessengerFixture {
                 provider: 'messenger', pageId: input.pageId, status: 'connected', generation: input.generation, policyVersion: messengerFixturePolicy,
             } });
             if (!channel) throw new NotFoundException();
-            return recordMessengerEvent(tx, channel, { externalId: input.eventId, occurredAt, contentHash }, () =>
-                input.type === 'message' ? receiveMessengerMessage(tx, channel, input, occurredAt, 'fixture', config) : receiveStatus(tx, channel, input));
+            return recordMessengerEvent(tx, channel, { externalId: input.eventId, occurredAt, contentHash }, closedAt =>
+                input.type === 'message' ? receiveMessengerMessage(tx, channel, input, occurredAt, 'fixture', closedAt, config) : receiveStatus(tx, channel, input));
         }, true);
     }
 }
