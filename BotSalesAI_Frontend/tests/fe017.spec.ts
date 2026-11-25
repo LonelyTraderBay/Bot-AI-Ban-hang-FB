@@ -62,7 +62,9 @@ test('FE017.AC01 demo publishing uses the approved permission and lifecycle subs
     const evaluation = (await evaluationResponse.json()).data;
     expect(evaluation).toMatchObject({ status: 'passed', knowledgeRevisionId: initial.draftRevisionId, mockOnly: true });
 
-    await page.getByRole('dialog', { name: 'Chi tiết đánh giá' }).getByText('Đóng', { exact: true }).click();
+    const evaluationDetails = page.getByRole('dialog', { name: 'Chi tiết đánh giá' });
+    await evaluationDetails.getByRole('button', { name: 'Đóng', exact: true }).click();
+    await expect(evaluationDetails).toBeHidden();
     await page.getByRole('navigation', { name: 'Điều hướng chính' }).getByRole('link', { name: 'Kiến thức cửa hàng' }).click();
     await page.getByRole('link', { name: 'Chính sách đổi hàng' }).click();
     await expect(page.getByText('Chờ duyệt', { exact: true })).toBeVisible();
