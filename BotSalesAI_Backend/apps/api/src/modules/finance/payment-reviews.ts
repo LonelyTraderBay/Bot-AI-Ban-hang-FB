@@ -14,17 +14,19 @@ type ReviewRow = {
 };
 const unique = (values: (string | null | undefined)[]) => [...new Set(values.filter((value): value is string => Boolean(value)))].sort();
 
-function reviewFacts(shopId: string, currency: string) {
+function paymentFacts(shopId: string, currency: string) {
     return Prisma.sql`
         WITH facts AS (
             SELECT o.id AS "orderId", o.order_state, o.payment_state, o.payment_method,
                    o.fulfillment_state, (o.fulfillment_state IN ('delivered','part_returned','returned')
-                     OR EXISTS (SELECT 1 FROM shipments s WHERE s.shop_id=o.shop_id AND s.order_id=o.id AND s.delivered_at IS NOT NULL)) AS delivered,
+                     OR shipment.delivered_at IS NOT NULL) AS delivered,
+                   coalesce(o.fulfillment_state='returned' AND shipment.state='returned' AND shipment.delivered_at IS NULL, false) AS returned_undelivered,
                    greatest(o.updated_at, payments.latest, allocations.latest, returns.latest) AS "createdAt",
                    greatest(0, o.total-returns.credit) AS expected, payments.receipts + allocations.applied - allocations.overlap AS verified,
                    payments.banked + allocations.applied AS banked, returns.obligation + payments.early_refunds AS refund_due,
-                   payments.refunds AS refunded
+                   payments.refunds AS refunded, payments.early_refunds
             FROM sales_orders o
+            LEFT JOIN shipments shipment ON shipment.shop_id=o.shop_id AND shipment.order_id=o.id
             CROSS JOIN LATERAL (
                 SELECT coalesce(sum(e.amount) FILTER (WHERE e.kind='receipt'),0) AS receipts,
                        coalesce(sum(e.amount) FILTER (WHERE e.kind='receipt' AND e.journal_id IS NOT NULL),0) AS banked,
@@ -46,7 +48,13 @@ function reviewFacts(shopId: string, currency: string) {
                 FROM order_returns r WHERE r.shop_id=o.shop_id AND r.order_id=o.id AND r.state='inspected'
             ) returns
             WHERE o.shop_id=${shopId}::uuid AND o.currency=${currency}
-        ), reviews AS (
+        )
+    `;
+}
+
+function reviewFacts(shopId: string, currency: string) {
+    return Prisma.sql`
+        ${paymentFacts(shopId, currency)}, reviews AS (
             SELECT md5("orderId"::text || '/collection')::uuid AS id, "orderId", order_state, 'collection' AS kind, "createdAt", expected, verified,
                    CASE WHEN verified > expected OR verified < 0 OR (payment_state='settled' AND verified <> expected) THEN 'needs_check'
                         WHEN payment_method='cod' AND delivered AND banked < expected AND verified IN (0, expected) THEN 'cod_pending'
@@ -64,9 +72,17 @@ function reviewFacts(shopId: string, currency: string) {
 
 export async function hasUnsettledPayments(tx: Prisma.TransactionClient, shopId: string, currency: string) {
     const [row] = await tx.$queryRaw<{ open: boolean }[]>`
-        ${reviewFacts(shopId, currency)}
-        SELECT EXISTS (SELECT 1 FROM reviews WHERE status <> 'settled'
-            AND (order_state <> 'draft' OR verified <> 0 OR kind = 'refund')) AS open
+        ${paymentFacts(shopId, currency)}
+        -- Drafts and undelivered returns carry only the outstanding customer deposit.
+        -- For a sale, pre-handover refunds reduce collections, while return payouts settle a separate obligation.
+        SELECT EXISTS (
+            SELECT 1 FROM facts WHERE refund_due <> refunded OR
+                CASE WHEN order_state IN ('draft','cancelled') OR returned_undelivered
+                     THEN verified <> refunded
+                     ELSE verified - early_refunds <> expected
+                          OR (payment_method='cod' AND delivered AND banked - early_refunds < expected)
+                END
+        ) AS open
     `;
     return row.open;
 }

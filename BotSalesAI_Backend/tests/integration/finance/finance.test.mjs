@@ -1026,3 +1026,57 @@ test('SC2-E06-TERMS: due dates and dispute decisions use local dates, versions a
         });
     }
 });
+
+async function postClosurePayment(shop, orderId, refund, amount) {
+    const resource = 'orders/' + orderId;
+    const now = new Date();
+    const evidence = await admin.paymentEvidence.create({ data: { shopId: shop.id, orderId,
+        kind: refund ? 'observed_refund' : 'cash_receipt', amount, currency: shop.currency, reference: randomUUID(), observedAt: now, verifiedAt: now } });
+    const current = await json(await request(path(resource, shop)), 200, 'OrderResponse');
+    return json(await send(resource + (refund ? '/refund' : '/pay'), {
+        expectedVersion: current.version, reason: 'Ghi nhận giao dịch theo chứng từ', amount: money(amount, shop), evidenceRef: evidence.id,
+        ...(refund ? { paymentReference: evidence.reference } : { method: 'cash', reference: evidence.reference }),
+    }, { shop }), 202, 'CommandResponse');
+}
+
+test('SHOP-FINANCE: an undelivered returned COD order can close once its deposit is refunded', async () => {
+    const shop = await openingShop();
+    const shopId = shop.id;
+    await ensurePeriod(shop, localAccountingDate(new Date(), shop.timezone));
+    const { draft } = await paymentFixtures(shop);
+    const order = await json(await send('orders', { ...draft, paymentMethod: 'cod' }, { shop }), 201, 'OrderResponse');
+    await postClosurePayment(shop, order.id, false, '2000');
+    await admin.salesOrder.update({ where: { shopId_id: { shopId, id: order.id } },
+        data: { orderState: 'completed', fulfillmentState: 'returned' } });
+    const shipment = await admin.shipment.create({ data: { shopId, orderId: order.id, warehouseId: shop.defaultWarehouseId,
+        state: 'returned', handedOverAt: new Date(), lastEventAt: new Date(), currency: shop.currency } });
+    await admin.orderReturn.create({ data: { shopId, orderId: order.id, shipmentId: shipment.id, reason: 'Chưa giao được',
+        state: 'inspected', refundObligation: '2000', receivableCredit: '0' } });
+    const close = () => send('close', undefined, { shop, version: 1 });
+    assert.deepEqual((await json(await close(), 409, 'Problem')).errors.map(e => e.code), ['RECONCILIATION']);
+    await postClosurePayment(shop, order.id, true, '2000');
+    await json(await close(), 200, 'ShopResponse');
+});
+
+for (const paymentMethod of ['prepay', 'cod']) {
+    test('SHOP-FINANCE: ' + paymentMethod + ' deposit, full refund and repayment follow the net posted balance', async () => {
+        const shop = await openingShop();
+        const options = { shop };
+        await ensurePeriod(shop, localAccountingDate(new Date(), shop.timezone));
+        const { draft } = await paymentFixtures(shop);
+        const order = await json(await send('orders', { ...draft, paymentMethod }, options), 201, 'OrderResponse');
+        const resource = 'orders/' + order.id;
+        const close = version => send('close', undefined, { shop, version });
+        await postClosurePayment(shop, order.id, false, '5000');
+        assert.deepEqual((await json(await close(1), 409, 'Problem')).errors.map(error => error.code), ['RECONCILIATION']);
+        await postClosurePayment(shop, order.id, true, '5000');
+        const first = await json(await close(1), 200, 'ShopResponse');
+        const open = await json(await send('reopen', undefined, { shop, version: first.version }), 200, 'ShopResponse');
+        await postClosurePayment(shop, order.id, false, '15000.01');
+        assert.equal((await json(await close(open.version), 409, 'Problem')).errors[0].code, 'RECONCILIATION');
+        await admin.salesOrder.update({ where: { shopId_id: { shopId: shop.id, id: order.id } },
+            data: { orderState: 'completed', fulfillmentState: 'delivered' } });
+        assert.equal((await json(await request(path(resource, shop)), 200, 'OrderResponse')).amountDue.amount, '0');
+        await json(await close(open.version), 200, 'ShopResponse');
+    });
+}

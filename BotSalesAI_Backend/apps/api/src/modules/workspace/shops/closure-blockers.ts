@@ -1,6 +1,9 @@
-import type { Prisma } from '../../../generated/prisma/client.js';
+import { type Prisma, Role } from '../../../generated/prisma/client.js';
 import { DomainConflict } from '../../../http/contracts.js';
 import { findDebts, hasUnsettledPayments } from '../../finance/index.js';
+import { permissionsFor } from '../policy/access.js';
+
+const acknowledgingRoles = Object.values(Role).filter(role => permissionsFor([role]).includes('operations.claim'));
 
 const groups = {
     ORDER_PROCESSING: 'Hoàn tất hoặc hủy đơn bán đã xác nhận.',
@@ -18,6 +21,8 @@ export async function requireCloseableShop(tx: Prisma.TransactionClient, shopId:
     const [blocked] = await tx.$queryRaw<Record<keyof typeof groups, boolean>[]>`
         WITH scope AS (SELECT ${shopId}::uuid AS shop_id), business_jobs AS (
             SELECT j.* FROM jobs j, scope WHERE j.shop_id = scope.shop_id AND j.kind <> 'privacy'
+              -- A finished diagnostic probe has no pending business action.
+              AND NOT (j.kind='connection_test' AND j.status='awaiting_confirmation')
               AND NOT EXISTS (SELECT 1 FROM product_import_previews p WHERE p.shop_id=j.shop_id AND p.job_id=j.id
                               AND (p.commit_job_id IS NOT NULL OR p.expires_at <= now()))
         ), standalone_commands AS (
@@ -48,10 +53,13 @@ export async function requireCloseableShop(tx: Prisma.TransactionClient, shopId:
             ) AS "RECONCILIATION",
             (EXISTS (SELECT 1 FROM standalone_commands WHERE status='unknown')
              OR EXISTS (SELECT 1 FROM business_jobs WHERE status='awaiting_confirmation' AND external_started_at IS NOT NULL)
-             OR EXISTS (SELECT 1 FROM bot_inbound_tasks WHERE shop_id=scope.shop_id AND outcome='provider_unknown')
              OR EXISTS (SELECT 1 FROM channel_messages WHERE shop_id=scope.shop_id AND direction='outbound' AND status='unknown')
              OR EXISTS (SELECT 1 FROM purchase_orders WHERE shop_id=scope.shop_id AND status='unknown')
-             OR EXISTS (SELECT 1 FROM app_notifications WHERE shop_id=scope.shop_id AND channel <> 'in_app' AND delivery_status='unknown')
+             OR EXISTS (SELECT 1 FROM app_notifications n
+                        JOIN memberships m ON m.shop_id=n.shop_id AND m.user_id=n.recipient_user_id
+                        WHERE n.shop_id=scope.shop_id AND n.channel <> 'in_app' AND n.delivery_status='unknown'
+                          AND n.work_item_id IS NOT NULL AND n.acknowledged_at IS NULL
+                          AND m.status='active' AND m.roles && ${acknowledgingRoles}::membership_role[])
             ) AS "EXTERNAL_UNKNOWN"
         FROM scope
     `;

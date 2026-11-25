@@ -13,6 +13,7 @@ import { Database } from '../../../apps/api/dist/platform/database/client.js';
 import { recordAudit } from '../../../apps/api/dist/platform/audit/index.js';
 import { recordCommand } from '../../../apps/api/dist/platform/commands/index.js';
 import { fixtureIssuer, fixtureShops } from '../../../apps/api/prisma/p0-fixture.mjs';
+import { orderConversation } from '../orders/fixtures.mjs';
 import { assertFixtureDatabase, fixtureSession, restoreReader } from './session-fixture.mjs';
 
 const { components } = JSON.parse(readFileSync(new URL('../../../../botsales-kit/contracts/openapi.json', import.meta.url)));
@@ -674,4 +675,48 @@ test('P0-05 SHOP-LIFECYCLE: a file that expires during an external write still b
     assert.deepEqual(blocked.errors.map(item => item.code), ['BACKGROUND_WORK']);
     await db.fileStorage.update({ where: { shopId_fileId: key }, data: { state: 'purged', leaseUntil: null } });
     await json(await change('close'), 200, 'ShopResponse');
+});
+
+test('P0-05 SHOP-LIFECYCLE: resolving a handoff and acknowledging its notification clears the blockers while preserving unknown outcomes', async t => {
+    const { shop, owner, path, headers, change } = await closureFixture(t);
+    const shopId = shop.id;
+    const customer = await db.customer.create({ data: { shopId, displayName: 'Khách được bàn giao' } });
+    const { conversation } = await orderConversation(db, shopId, customer.id);
+    const message = await db.channelMessage.create({ data: { shopId, conversationId: conversation.id, direction: 'inbound', origin: 'provider',
+        senderKind: 'customer', externalId: randomUUID(), text: 'Hỗ trợ từ nhân viên' } });
+    const work = await db.workItem.create({ data: { shopId, kind: 'customer_handoff', sourceType: 'conversation', sourceId: conversation.id,
+        state: 'working', assigneeUserId: owner.userId } });
+    await db.botInboundTask.create({ data: { shopId, messageId: message.id, channelGeneration: 1, conversationGeneration: 1, botGeneration: 1,
+        providerRunId: randomUUID(), externalStartedAt: new Date(), finishedAt: new Date(), outcome: 'provider_unknown' } });
+    const notice = await db.appNotification.create({ data: { shopId, workItemId: work.id, sourceType: 'work_item', sourceId: work.id,
+        recipientUserId: owner.userId, channel: 'telegram', title: 'Chuyển cho nhân viên', safeBody: 'Kiểm tra yêu cầu',
+        deliveryStatus: 'unknown', deliveryIntent: digest(randomUUID()) } });
+    const former = await db.membership.create({ data: { shopId, userId: reader.userId, roles: ['manager'] } });
+    await db.appNotification.create({ data: { shopId, workItemId: work.id, sourceType: 'work_item', sourceId: work.id, recipientUserId: reader.userId,
+        channel: 'telegram', title: 'Hỗ trợ khách', safeBody: 'Nhắc công việc', deliveryStatus: 'unknown', deliveryIntent: digest(randomUUID()) } });
+    assert.equal((await revoke(owner, shopId, former.id, headers(former.permissionVersion))).status, 204);
+    const blocked = async () => (await json(await change('close'), 409, 'Problem')).errors.map(e => e.code);
+    assert.ok((await blocked()).includes('BACKGROUND_WORK'));
+    const post = (resource, input) => sendMemberWrite(owner, path + '/' + resource, 'POST', input, headers());
+    await json(await post('conversations/' + conversation.id + '/resolve', { expectedVersion: conversation.version, reason: 'Đã hỗ trợ khách' }), 202, 'CommandResponse');
+    await json(await post('work-items/' + work.id + '/actions', { action: 'complete', expectedVersion: work.version, reason: 'Xác nhận bàn giao đã hoàn tất' }), 200, 'WorkItemResponse');
+    assert.deepEqual(await blocked(), ['EXTERNAL_UNKNOWN']);
+    await json(await post('notifications/' + notice.id + '/acknowledge', { expectedVersion: notice.version }), 200, 'NotificationResponse');
+    await json(await change('close'), 200, 'ShopResponse');
+    assert.equal((await db.appNotification.findUniqueOrThrow({ where: { shopId_id: { shopId, id: notice.id } } })).deliveryStatus, 'unknown');
+    assert.equal((await db.botInboundTask.findUniqueOrThrow({ where: { shopId_messageId: { shopId, messageId: message.id } } })).outcome, 'provider_unknown');
+    assert.equal(await db.auditEntry.count({ where: { shopId, actorId: owner.userId, action: 'acknowledgeNotification', resourceId: notice.id } }), 1);
+    assert.equal(await db.auditEntry.count({ where: { shopId, actorId: owner.userId, action: 'updateWorkItem', resourceId: work.id } }), 1);
+});
+
+test('P0-05 SHOP-LIFECYCLE: an active device probe blocks closure and a finished inconclusive probe remains available for diagnostics', async t => {
+    const { shop, owner, change } = await closureFixture(t);
+    const shopId = shop.id;
+    const job = await db.job.create({ data: { shopId, actorId: owner.userId, sourceOperation: 'testDevice', kind: 'connection_test', input: {} } });
+    assert.deepEqual((await json(await change('close'), 409, 'Problem')).errors.map(e => e.code), ['BACKGROUND_WORK']);
+    await db.job.update({ where: { shopId_id: { shopId, id: job.id } }, data: { status: 'awaiting_confirmation', externalStartedAt: new Date() } });
+    const notice = await db.appNotification.create({ data: { shopId, sourceType: 'job', sourceId: job.id, recipientUserId: owner.userId,
+        channel: 'telegram', title: 'Kiểm tra thiết bị', safeBody: 'Chưa xác minh kết quả', deliveryStatus: 'unknown', deliveryIntent: digest(randomUUID()) } });
+    await json(await change('close'), 200, 'ShopResponse');
+    assert.equal((await db.appNotification.findUniqueOrThrow({ where: { shopId_id: { shopId, id: notice.id } } })).deliveryStatus, 'unknown');
 });
