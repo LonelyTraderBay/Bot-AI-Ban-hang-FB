@@ -8,7 +8,7 @@ import { MembershipStatus } from '../../../generated/prisma/enums.js';
 import { requireIfMatch, requireVersion } from '../../../http/response.js';
 import { listQuery, paging, validUuid } from '../../../http/query.js';
 import { recordAudit } from '../../../platform/audit/index.js';
-import { recordCommand } from '../../../platform/commands/index.js';
+import { IdempotencyMismatch, recordCommand } from '../../../platform/commands/index.js';
 import { provisionFixtureShopAccounts } from '../../finance/index.js';
 import { usesLocalOidcFixture, type AuthConfig } from '../auth/config.js';
 import type { CommandSource } from '../activity/activity-service.js';
@@ -121,7 +121,7 @@ export class ShopsService {
             const stored = await tx.shopCreationIntent.findUnique({ where: { actorId_idempotencyKey: { actorId: userId, idempotencyKey } } });
             if (stored) {
                 await requireShopAccess(tx, userId, stored.shopId, 'shop.manage');
-                if (stored.requestHash !== requestHash) throw new ConflictException();
+                if (stored.requestHash !== requestHash) throw new IdempotencyMismatch();
                 return shopDto(await tx.shop.findUniqueOrThrow({ where: { id: stored.shopId }, select: shopFields }));
             }
             const id = randomUUID();

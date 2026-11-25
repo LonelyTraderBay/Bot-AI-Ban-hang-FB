@@ -1,0 +1,9 @@
+Chromium and Firefox loaded a valid statement preview, blocked submission while offline, sent no import POST after reconnect, and showed no imported row.
+The separate retained traces show that reconnect closes the editor during scope refresh. That unfinished behavior remains tracked as F-60.
+The earlier full runs passed 22 existing finance cases. Their two diagnostic failures are preserved in the audit plan.
+Source SHA-256 fcc4c0619453a06d4e35fe98c5da642b709fcd1b5735be249c2cfef22156a37b
+AUD-07-r41-finance-fe-final.txt SHA-256 45241c4aa2df0fe72ee9057ed9e91738b84f0398d2fc4418766f99992a9e0afb
+AUD-07-r41-finance-fe-rechecked.txt SHA-256 c036813854cb1eaea1aa030878428bc2d067c2884ff5ddfd461c75d95befedd5
+AUD-07-r41-offline-targeted.txt SHA-256 188cc21deaf88c698e9ed0334261c0d1dd1c4d43bb21bdf6f79e07862ea18cf0
+ok 1 [chromium] › tests\fe015.spec.ts:279:1 › FE015.E04 offline statement import sends no write and reconnect does not replay it (2.8s)
+ok 2 [firefox] › tests\fe015.spec.ts:279:1 › FE015.E04 offline statement import sends no write and reconnect does not replay it (3.0s)

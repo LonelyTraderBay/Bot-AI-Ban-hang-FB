@@ -235,6 +235,28 @@ test('SC2-H01: a running worker resumes due work after losing its Redis connecti
     }
 });
 
+test('SC2-H04: a repeatedly failing job stops at the retry limit while another shop completes', async () => {
+    const failing = await jobFixture(shopA, ownerA, 'persistent-failure');
+    const peer = await jobFixture(shopB, ownerB, 'normal');
+    try {
+        await startWorker('normal');
+        await until(async () => (await loadJob(peer)).status === 'succeeded');
+        await until(async () => (await loadJob(failing)).status === 'failed');
+        const failed = await loadJob(failing);
+        const succeeded = await loadJob(peer);
+        assert.equal(failed.attempts, 3);
+        assert.equal(failed.leaseToken, null);
+        assert.equal(succeeded.attempts, 1);
+        const command = await read('/shops/' + shopA.id + '/commands/' + failing.commandId, ownerA, 200, 'CommandResponse');
+        assert.equal(command.status, 'failed');
+        console.log(JSON.stringify({ status: 'SC2_H04_BOUNDED_FAILURE', failedAttempts: failed.attempts,
+            leaseReleased: true, peerAttempts: succeeded.attempts }));
+        await stopWorker(true);
+    } finally {
+        await stopWorker();
+    }
+});
+
 test('T076: a blocked provider dispatch leaves job relay available and shutdown drains the active dispatch', async () => {
     try {
         const observed = await startWorker('dispatch');

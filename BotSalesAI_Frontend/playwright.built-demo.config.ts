@@ -2,6 +2,7 @@ import { randomUUID } from 'node:crypto';
 import { devices, defineConfig } from '@playwright/test';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { frontendTestOutput } from './scripts/test-output.mjs';
 
 const projectRoot = path.dirname(fileURLToPath(import.meta.url));
 const webRoot = path.join(projectRoot, 'apps/web');
@@ -14,7 +15,7 @@ process.env.BOTSALES_BUILT_DEMO_RUN_ID = runId;
 
 export default defineConfig({
     testDir: './tests',
-    outputDir: path.join(projectRoot, 'test-results', runId),
+    outputDir: path.join(frontendTestOutput(projectRoot), runId),
     testMatch: '**/built-demo-regression.spec.ts',
     fullyParallel: false,
     forbidOnly: !!process.env.CI,

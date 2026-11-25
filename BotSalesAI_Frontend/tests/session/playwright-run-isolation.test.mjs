@@ -6,7 +6,7 @@ import { execFileSync } from 'node:child_process';
 
 const root = path.resolve(import.meta.dirname, '../..');
 const initialEnv = { ...process.env };
-for (const key of ['BOTSALES_PLAYWRIGHT_RUN_ID', 'BOTSALES_BUILT_DEMO_RUN_ID', 'BOTSALES_VITE_CACHE_RUN_ID']) delete initialEnv[key];
+for (const key of ['BOTSALES_PLAYWRIGHT_RUN_ID', 'BOTSALES_BUILT_DEMO_RUN_ID', 'BOTSALES_VITE_CACHE_RUN_ID', 'BOTSALES_ARTIFACT_ROOT']) delete initialEnv[key];
 function load(file, env = initialEnv) {
     const source = `const {default:config}=await import(${JSON.stringify(pathToFileURL(path.join(root, file)).href)});console.log(JSON.stringify({outputDir:config.outputDir,cacheDir:process.env.BOTSALES_VITE_CACHE_DIR,runId:process.env.BOTSALES_PLAYWRIGHT_RUN_ID,builtRunId:process.env.BOTSALES_BUILT_DEMO_RUN_ID,workers:config.workers,forbidOnly:config.forbidOnly,trace:config.use.trace}));`;
     return JSON.parse(execFileSync(process.execPath, ['--input-type=module', '-e', source], { cwd: root, env, encoding: 'utf8', windowsHide: true }));
@@ -31,6 +31,13 @@ test('built-demo artifacts use a stable private run directory instead of cleanin
 });
 test('built-demo rejects an inherited output ID that could escape the artifact root', () => {
     assert.throws(() => load('playwright.built-demo.config.ts', { ...initialEnv, BOTSALES_BUILT_DEMO_RUN_ID: '../sibling' }), /Invalid built-demo run ID/);
+});
+
+test('both configurations direct new output to the configured artifact root', () => {
+    const artifactRoot = path.join(root, 'local-artifacts');
+    const env = { ...initialEnv, BOTSALES_ARTIFACT_ROOT: artifactRoot };
+    for (const file of ['playwright.config.ts', 'playwright.built-demo.config.ts'])
+        assert.equal(path.dirname(load(file, env).outputDir), path.join(artifactRoot, 'frontend'));
 });
 
 test('worker overrides stay bounded while local runs keep one worker and complete traces', () => {

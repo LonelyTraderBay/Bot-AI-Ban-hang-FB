@@ -5,6 +5,7 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { spawnSync } from 'node:child_process';
 import { collectedTests, independentTestFiles, partitionTests, requireExactTests, testList } from '../scripts/ci-partitions.mjs';
+import { frontendTestOutput } from '../scripts/test-output.mjs';
 
 const row = (id, file, title = id) => ({ id, file, title, key: `${file} › ${title}` });
 const timing = { files: { 'slow.spec.ts': 90, 'medium.spec.ts': 60 }, tests: {} };
@@ -155,7 +156,7 @@ test('multi-project discovery keeps both built engines and rejects any unlisted 
 
 test('real Playwright selectors cover the current Chrome/Firefox inventories exactly once', { timeout: 60_000 }, () => {
     const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
-    const outputRoot = path.join(root, 'test-results');
+    const outputRoot = frontendTestOutput(root);
     fs.mkdirSync(outputRoot, { recursive: true });
     const output = fs.mkdtempSync(path.join(outputRoot, 'ci-discovery-'));
     const timings = JSON.parse(fs.readFileSync(new URL('../scripts/ci-timings.json', import.meta.url), 'utf8'));

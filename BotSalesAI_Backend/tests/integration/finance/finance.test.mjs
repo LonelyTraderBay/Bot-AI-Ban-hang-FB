@@ -6,8 +6,9 @@ import { URLSearchParams } from 'node:url';
 import { createApp } from '../../../apps/api/dist/app.js';
 import { readDatabaseUrl } from '../../../apps/api/dist/config.js';
 import { createContractValidator, schemaFromContract } from '../../../apps/api/dist/http/contracts.js';
+import { reserveAiUsage } from '../../../apps/api/dist/modules/ai/engine.js';
 import { fixtureAccounts } from '../../../apps/api/dist/modules/finance/account-policy.js';
-import { bookInspectedReturn, financeJobHandlers, localAccountingDate } from '../../../apps/api/dist/modules/finance/index.js';
+import { bookInspectedReturn, financeJobHandlers, localAccountingDate, reportExportHandler } from '../../../apps/api/dist/modules/finance/index.js';
 import { manualCarrierId } from '../../../apps/api/dist/modules/finance/debts.js';
 import { periodIntent } from '../../../apps/api/dist/modules/finance/period-data.js';
 import { refreshOperationExceptions } from '../../../apps/api/dist/modules/operations/index.js';
@@ -19,6 +20,7 @@ import { fixtureShops } from '../../../apps/api/prisma/p0-fixture.mjs';
 import { assertFixtureDatabase, fixtureSession } from '../workspace/session-fixture.mjs';
 import { fixtureWriter, orderConversation, quoteEvidenceFixture } from '../orders/fixtures.mjs';
 import { deliveredDebt, independentReceipt } from './fixtures.mjs';
+import { reviewedEvidenceFixture } from '../helpers/reviewed-evidence-fixture.mjs';
 
 const { components } = JSON.parse(readFileSync(new URL('../../../../botsales-kit/contracts/openapi.json', import.meta.url)));
 const validator = createContractValidator(components.schemas);
@@ -245,6 +247,9 @@ test('SC2-E01 and SC-020: adjustment and finance entries obey period and journal
         warehouseId: shopA.defaultWarehouseId, variantId: variant.id, quantityDelta: 2,
         expectedVersion: position.version, unitCost: money('10.01'), reason: 'Kiểm chứng đối ứng tồn kho',
     };
+    const missingCost = await json(await send('inventory/adjustments', { ...adjustment, unitCost: null }), 422, 'Problem');
+    assert.deepEqual(missingCost.errors?.map(({ path, code }) => [path, code]), [['/unitCost', 'UNIT_COST_REQUIRED']]);
+    assert.equal(await db.stockMovement.count({ where: { shopId, variantId: variant.id } }), 0);
     const asset = await fixedAccount('inventory_gain');
     await admin.financeAccount.update({ where: { shopId_id: { shopId, id: asset.id } }, data: { status: 'archived' } });
     try {
@@ -311,7 +316,7 @@ async function observation(orderId, amount, kind = 'bank_receipt') {
     } });
 }
 
-test('SC2-E05: prepay uses verified observations, partial totals and one receipt, while carrier collection changes no bank journal', async () => {
+test('SC2-E04 SC2-E05 SC2-E06: prepay needs verified observations, deposits stay outside revenue, and carrier collection changes no bank journal', async () => {
     const { draft, conversation } = await paymentFixtures();
     const prepay = await json(await send('orders', draft), 201, 'OrderResponse');
     const resource = 'orders/' + prepay.id;
@@ -326,6 +331,22 @@ test('SC2-E05: prepay uses verified observations, partial totals and one receipt
     const initial = { expectedVersion: prepay.version, amount: money('5000'), method: 'bank_transfer', reference: first.reference,
         reason: 'Xác minh khoản thu thử', evidenceRef: first.id };
     await json(await send(resource + '/pay', { ...initial, evidenceRef: randomUUID() }), 422, 'Problem');
+    await json(await send(resource + '/pay', { ...initial, amount: money('5000', shopB) }), 422, 'Problem');
+    const bank = await fixedAccount('bank');
+    const image = new globalThis.FormData();
+    image.set('purpose', 'bank_statement');
+    image.set('resourceId', bank.id);
+    const pixel = Buffer.from('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+jqakAAAAASUVORK5CYII=', 'base64');
+    image.set('file', new globalThis.Blob([pixel], { type: 'image/png' }), 'transfer.png');
+    const attachment = await json(await request(path('uploads'), owner, { method: 'POST', body: image,
+        headers: { origin, 'x-csrf-token': owner.csrf, 'idempotency-key': randomUUID() } }), 201, 'FileObjectResponse');
+    assert.equal(attachment.status, 'quarantined');
+    await json(await send(resource + '/pay', { ...initial, evidenceRef: attachment.id }), 422, 'Problem');
+    assert.equal((await json(await request(path(resource)), 200, 'OrderResponse')).paymentState, 'unpaid');
+    const window = new URLSearchParams({ timezone: shopA.timezone, from: new Date(Date.now() - 86400000).toISOString(),
+        to: new Date(Date.now() + 86400000).toISOString() });
+    const profit = () => request(path('finance/profit-loss?' + window)).then(response => json(response, 200, 'ProfitLossResponse'));
+    const beforePrepay = await profit();
     const key = randomUUID();
     const received = await json(await send(resource + '/pay', initial, { key }), 202, 'CommandResponse');
     assert.equal((await json(await send(resource + '/pay', initial, { key }), 202, 'CommandResponse')).id, received.id);
@@ -342,6 +363,15 @@ test('SC2-E05: prepay uses verified observations, partial totals and one receipt
     assert.deepEqual(paid.amountDue, money('0'));
     await json(await send(resource + '/confirm', await proofFor()), 202, 'CommandResponse');
     assert.equal(await db.financeJournal.count({ where: { shopId, sourceType: 'order_payment', sourceId: { in: [first.id, rest.id] } } }), 2);
+    const deposit = await fixedAccount('customer_deposit');
+    const recordedDeposit = await db.financeJournalLine.aggregate({
+        where: { shopId, accountId: deposit.id, journal: { sourceType: 'order_payment', sourceId: { in: [first.id, rest.id] } } },
+        _sum: { credit: true },
+    });
+    assert.equal(recordedDeposit._sum.credit.toFixed(), '15000.01');
+    assert.deepEqual((await profit()).netSales, beforePrepay.netSales);
+    console.log(JSON.stringify({ status: 'SC2_E04_E06_PAYMENT_EVIDENCE', unverifiedImageRejected: true,
+        crossCurrencyRejected: true, customerDeposit: recordedDeposit._sum.credit.toFixed(), netSalesUnchanged: true }));
     const confirmed = await json(await request(path(resource)), 200, 'OrderResponse');
     const refund = await observation(prepay.id, '5000', 'observed_refund');
     const refusal = { expectedVersion: confirmed.version, amount: money('5001'), paymentReference: refund.reference, evidenceRef: refund.id,
@@ -389,8 +419,8 @@ test('SC2-C06-FINANCE and SC2-E07: reports use posted sources, and versioned clo
     assert.deepEqual(pending.blockingIssues, ['Còn bút toán nháp.']);
     await json(await send(closePath, { expectedVersion: period.version }, { shop }), 409, 'Problem');
     await post(postDraft);
-    const deposit = await draft(bank, sales, '249000');
-    await post(deposit);
+    const sale = await draft(bank, sales, '249000');
+    await post(sale);
     await post(await draft(costs, inventory, '169000'));
     const from = new Date(Date.now() - 86400000).toISOString();
     const to = new Date(Date.now() + 86400000).toISOString();
@@ -398,7 +428,7 @@ test('SC2-C06-FINANCE and SC2-E07: reports use posted sources, and versioned clo
     const read = (resource, schema) => request(path(resource, shop)).then(response => json(response, 200, schema));
     const profit = await read('finance/profit-loss' + window, 'ProfitLossResponse');
     assert.deepEqual(profit.grossProfit, money('80000', shop));
-    assert.ok(profit.sourceJournalIds.includes(deposit.id));
+    assert.ok(profit.sourceJournalIds.includes(sale.id));
     await post(await draft(expenses, bank, '50000'));
     const transfer = await draft(cash, bank, '12000');
     await post(transfer);
@@ -423,6 +453,21 @@ test('SC2-C06-FINANCE and SC2-E07: reports use posted sources, and versioned clo
     await json(await send('journals', { sourceType: 'manual', sourceId: randomUUID(), effectiveDate: today,
         reason: 'Kiểm ghi lùi ngày', lines: lines(bank, capital, '100', shop) }, { shop }), 409, 'Problem');
     const current = await db.accountingPeriod.findUniqueOrThrow({ where: { shopId_id: { shopId, id: period.id } } });
+    const sourceJournals = () => db.financeJournal.findMany({ where: { shopId }, include: { lines: { orderBy: { id: 'asc' } } },
+        orderBy: { id: 'asc' } });
+    const lockedJournals = await sourceJournals();
+    const snapshot = await read('finance/profit-loss' + window, 'ProfitLossResponse');
+    const exportJob = await json(await send('exports', { reportType: 'profit_loss', format: 'csv', from, to, timezone: shop.timezone,
+        snapshotAsOf: snapshot.asOf }, { shop }), 202, 'JobResponse');
+    await runJob(db, { shopId, id: exportJob.id, sourceOperation: 'createExport' }, reportExportHandler,
+        async (tx, job, permission) => Boolean(await requireShopAccess(tx, job.actorId, job.shopId, permission)));
+    const exported = await read('jobs/' + exportJob.id, 'JobResponse');
+    assert.equal(exported.status, 'succeeded');
+    assert.ok(exported.downloadUrl);
+    assert.deepEqual(await sourceJournals(), lockedJournals);
+    assert.equal((await read('periods/' + period.id, 'AccountingPeriodResponse')).state, 'closed');
+    console.log(JSON.stringify({ status: 'SC2_E07_LOCKED_EXPORT', blockedBackdated: true, exported: true,
+        journalsUnchanged: true, periodRemainedClosed: true }));
     const approval = await json(await send('approvals', { action: 'finance.period.reopen', resource: { type: 'accounting_period', id: period.id },
         resourceVersion: current.version, intentHash: periodIntent(current), reason: 'Cần bổ sung bút toán kỳ đã khóa' }, { shop }), 201, 'ApprovalResponse');
     const reopenPath = 'periods/' + period.id + '/reopen';
@@ -434,6 +479,184 @@ test('SC2-C06-FINANCE and SC2-E07: reports use posted sources, and versioned clo
     assert.equal((await read('approvals/' + approval.id, 'ApprovalResponse')).status, 'consumed');
     assert.equal((await read('periods/' + period.id, 'AccountingPeriodResponse')).state, 'open');
     assert.equal(await db.auditEntry.count({ where: { shopId, action: 'closeAccountingPeriod', resourceId: period.id } }), 1);
+});
+
+test('SC2-E03: AI estimates stay outside the ledger and posted charges can be traced and reversed once', async () => {
+    const at = new Date();
+    const scopes = [[shopA, owner], [shopB, other]];
+    for (const [shop, actor] of scopes) {
+        const date = localAccountingDate(at, shop.timezone);
+        await ensurePeriod(shop, date, actor);
+        const window = '?' + new URLSearchParams({ timezone: shop.timezone,
+            from: new Date(at.getTime() - 86400000).toISOString(), to: new Date(at.getTime() + 86400000).toISOString() });
+        const report = () => request(path('finance/profit-loss' + window, shop), actor).then(response => json(response, 200, 'ProfitLossResponse'));
+        const before = await report();
+        const reserved = await db.$transaction(tx => reserveAiUsage(tx, shop, new ExactDecimal('1000'), at, new ExactDecimal('217')));
+        assert.equal(reserved, true);
+        const afterEstimate = await report();
+        assert.deepEqual(afterEstimate.aiExpense, before.aiExpense);
+        assert.deepEqual(afterEstimate.sourceJournalIds, before.sourceJournalIds);
+
+        const sourceRef = { type: 'manual_ai_invoice', id: randomUUID() };
+        const charge = { kind: 'disbursement', classification: 'ai_expense', amount: money('321.04', shop),
+            occurredAt: at.toISOString(), description: 'Hóa đơn AI tổng hợp đã kiểm', sourceRef };
+        const draft = await json(await send('finance/entries', charge, { shop, actor }), 201, 'FinanceEntryResponse');
+        assert.deepEqual((await report()).aiExpense, before.aiExpense);
+        const entry = 'finance/entries/' + draft.id;
+        const key = randomUUID();
+        const post = () => send(entry + '/post', { expectedVersion: draft.version, reason: 'Ghi hóa đơn thử' }, { shop, actor, key });
+        const posted = await json(await post(), 202, 'CommandResponse');
+        assert.equal((await json(await post(), 202, 'CommandResponse')).id, posted.id);
+        const record = await db.financeEntry.findUniqueOrThrow({ where: { shopId_id: { shopId: shop.id, id: draft.id } } });
+        const actual = await report();
+        assert.equal(new ExactDecimal(actual.aiExpense.amount).minus(before.aiExpense.amount).toFixed(), '321.04');
+        assert.ok(actual.sourceJournalIds.includes(record.journalId));
+
+        const peer = actor === owner ? other : owner;
+        await json(await request(path(entry, shop), peer), 404, 'Problem');
+        const reverseKey = randomUUID();
+        const reverse = () => send(entry + '/reverse', { expectedVersion: record.version, reason: 'Điều chỉnh hóa đơn thử' },
+            { shop, actor, key: reverseKey });
+        const reversed = await json(await reverse(), 202, 'CommandResponse');
+        assert.equal((await json(await reverse(), 202, 'CommandResponse')).id, reversed.id);
+        const corrected = await report();
+        assert.deepEqual(corrected.aiExpense, before.aiExpense);
+        assert.equal(corrected.sourceJournalIds.length, before.sourceJournalIds.length + 2);
+        assert.ok(corrected.sourceJournalIds.includes(record.journalId));
+        assert.equal(await db.financeJournal.count({ where: { shopId: shop.id, reversalOf: record.journalId } }), 1);
+    }
+    console.log(JSON.stringify({ status: 'SC2_E03_AI_ESTIMATE_ACTUAL', shops: ['VND', 'LAK'], budgetEstimate: '217',
+        reportChangeOnEstimate: '0', postedCharge: '321.04', postReplays: 2, reversalReplays: 2, crossShopStatus: 404 }));
+});
+
+test('SC2-E03: advertising and packaging are distinct posted costs with cited source and reversible totals', async () => {
+    const at = new Date();
+    const scopes = [[shopA, owner], [shopB, other]];
+    for (const [shop, actor] of scopes) {
+        const date = localAccountingDate(at, shop.timezone);
+        await ensurePeriod(shop, date, actor);
+        const reportQuery = '?' + new URLSearchParams({ timezone: shop.timezone,
+            from: new Date(at.getTime() - 86400000).toISOString(), to: new Date(at.getTime() + 86400000).toISOString() });
+        const marketingQuery = '?' + new URLSearchParams({ fromDate: date, toDate: date, bucket: 'week' });
+        const read = (resource, schema) => request(path(resource, shop), actor).then(response => json(response, 200, schema));
+        const profit = () => read('finance/profit-loss' + reportQuery, 'ProfitLossResponse');
+        const marketing = () => read('marketing-summary' + marketingQuery, 'MarketingSummaryResponse');
+        const before = await profit();
+        assert.equal((await marketing()).actualSpend, null);
+        const invoice = { kind: 'disbursement', classification: 'advertising_expense', amount: money('37.5', shop),
+            occurredAt: at.toISOString(), description: 'Chứng từ quảng cáo tổng hợp', sourceRef: { type: 'manual', id: randomUUID() } };
+        await json(await send('finance/entries', { ...invoice, sourceRef: null }, { shop, actor }), 422, 'Problem');
+        const created = await send('finance/entries', invoice, { shop, actor });
+        assert.equal(created.status, 201, 'Advertising has a supported expense classification');
+        const adDraft = await json(created, 201, 'FinanceEntryResponse');
+        const draft = input => send('finance/entries', input, { shop, actor }).then(response => json(response, 201, 'FinanceEntryResponse'));
+        const packageDraft = await draft({ ...invoice, classification: 'packaging_expense', amount: money('8.25', shop),
+            sourceRef: { type: 'manual', id: randomUUID() } });
+        assert.equal((await marketing()).actualSpend, null);
+        const posted = (row, key = randomUUID()) => send('finance/entries/' + row.id + '/post',
+            { expectedVersion: row.version, reason: 'Chứng từ chi đã đối chiếu' }, { shop, actor, key });
+        const key = randomUUID();
+        const command = await json(await posted(adDraft, key), 202, 'CommandResponse');
+        assert.equal((await json(await posted(adDraft, key), 202, 'CommandResponse')).id, command.id);
+        await json(await posted(packageDraft), 202, 'CommandResponse');
+        const conflict = await draft({ ...invoice, classification: 'packaging_expense' });
+        await json(await posted(conflict), 409, 'Problem');
+
+        const actual = await profit();
+        assert.deepEqual(actual.advertisingExpense, money('37.5', shop));
+        assert.deepEqual(actual.packagingExpense, money('8.25', shop));
+        assert.deepEqual(actual.otherOperatingExpenses, before.otherOperatingExpenses);
+        assert.equal(new ExactDecimal(before.operatingProfit.amount).minus(actual.operatingProfit.amount).toFixed(), '45.75');
+        const observed = await marketing();
+        assert.deepEqual(observed.actualSpend, actual.advertisingExpense);
+        assert.deepEqual(observed.trend.map(point => point.actualSpend), [observed.actualSpend]);
+        assert.equal(observed.estimatedSpend, null);
+        const stored = await db.financeEntry.findUniqueOrThrow({ where: { shopId_id: { shopId: shop.id, id: adDraft.id } } });
+        assert.ok(actual.sourceJournalIds.includes(stored.journalId));
+        await json(await request(path('finance/entries/' + adDraft.id, shop), actor === owner ? other : owner), 404, 'Problem');
+        await json(await send('finance/entries/' + adDraft.id + '/reverse', { expectedVersion: stored.version,
+            reason: 'Đảo hóa đơn nguồn thử' }, { shop, actor }), 202, 'CommandResponse');
+        assert.deepEqual((await marketing()).actualSpend, money('0', shop));
+        const corrected = await profit();
+        assert.deepEqual(corrected.advertisingExpense, money('0', shop));
+        assert.deepEqual(corrected.packagingExpense, money('8.25', shop));
+        assert.equal(new ExactDecimal(before.operatingProfit.amount).minus(corrected.operatingProfit.amount).toFixed(), '8.25');
+    }
+    console.log(JSON.stringify({ status: 'SC2_E03_CLASSIFIED_EXPENSES', shops: ['VND', 'LAK'], advertising: '37.5', packaging: '8.25',
+        initialNetExpense: '45.75', netAfterReversal: '8.25', duplicateSourceStatus: 409, foreignAccess: 404, unknownEstimate: true }));
+});
+
+test('SC2-E03: reviewed advertising estimates keep daily revisions and remain independent of actual spend', async () => {
+    const fromDate = '2020-01-30', missingDay = '2020-01-31', toDate = '2020-02-01';
+    const estimates = await reviewedEvidenceFixture('advertising-estimate', { cwd: process.cwd(),
+        env: { ...process.env, ADVERTISING_ESTIMATE_SHOPS: [shopA.id, shopB.id].join(',') }, document: 'Dự trù tổng hợp đã được kiểm' });
+    const scopes = [[shopA, owner, other, '25.15'], [shopB, other, owner, '42.25']];
+    try {
+        for (const [shop, actor, foreign, revisedAmount] of scopes) {
+            const { id: shopId } = shop;
+            const query = (first, last, bucket = 'day') => 'marketing-summary?' + new URLSearchParams({ fromDate: first, toDate: last, bucket });
+            const get = (first = fromDate, last = toDate, bucket = 'day') => request(path(query(first, last, bucket), shop), actor)
+                .then(response => json(response, 200, 'MarketingSummaryResponse'));
+            const manifest = { shopId, reviewerId: actor.userId, date: fromDate, expectedRevision: 0, amount: money('10', shop) };
+            const record = async input => {
+                const hash = await estimates.prepare(input);
+                const { stdout } = await estimates.execute(hash);
+                return JSON.parse(stdout).evidenceId;
+            };
+            const journals = () => db.financeJournal.count({ where: { shopId } });
+            const before = await journals();
+            assert.equal((await get()).estimatedSpend, null);
+            await assert.rejects(record({ ...manifest, reviewerId: foreign.userId }), { stderr: /rejected \(404\)/ });
+            await assert.rejects(record({ ...manifest, amount: money('10', shop === shopA ? shopB : shopA) }), { stderr: /rejected \(422\)/ });
+            const hash = await estimates.prepare(manifest);
+            const [first, replay] = await Promise.all([estimates.execute(hash), estimates.execute(hash)]);
+            const original = JSON.parse(first.stdout).evidenceId;
+            assert.equal(JSON.parse(replay.stdout).evidenceId, original);
+            assert.deepEqual((await get()).estimatedSpend, money('10', shop));
+            const revised = await record({ ...manifest, expectedRevision: 1, amount: money(revisedAmount, shop) });
+            assert.notEqual(revised, original);
+            await assert.rejects(record({ ...manifest, expectedRevision: 1, amount: money('99', shop) }), { stderr: /rejected \(412\)/ });
+            assert.equal(await record(manifest), original);
+            await record({ ...manifest, date: toDate, amount: money('0', shop) });
+            const projection = await get();
+            assert.deepEqual(projection.estimatedSpend, money(revisedAmount, shop));
+            assert.equal(projection.actualSpend, null);
+            assert.deepEqual(projection.trend.map(row => row.estimatedSpend), [money(revisedAmount, shop), null, money('0', shop)]);
+            assert.deepEqual((await get(fromDate, toDate, 'month')).trend.map(row => row.estimatedSpend), [money(revisedAmount, shop), money('0', shop)]);
+            assert.equal((await get(missingDay, missingDay)).estimatedSpend, null);
+            assert.equal((await get(missingDay, missingDay)).estimateCoverage, undefined);
+
+            const rows = await db.advertisingEstimate.findMany({ where: { shopId }, orderBy: [{ accountingDate: 'asc' }, { revision: 'asc' }] });
+            assert.deepEqual(rows.map(row => [row.revision, row.amount.toFixed()]), [[1, '10'], [2, revisedAmount], [1, '0']]);
+            assert.deepEqual(projection.estimateCoverage, { daysWithEstimate: 2, daysInPeriod: 3, lastRecordedAt: rows[2].recordedAt.toISOString() });
+            const audits = await db.auditEntry.findMany({ where: { shopId, action: 'recordAdvertisingEstimate' } });
+            assert.deepEqual(new Set(audits.map(row => row.resourceId)), new Set(rows.map(row => row.id)));
+            assert.equal(audits.length, 3);
+            assert.ok(audits.every(row => row.actorId === actor.userId && Number.isInteger(row.metadata.permissionVersion)));
+            assert.equal(await journals(), before);
+            await json(await request(path(query(fromDate, toDate), shop), foreign), 404, 'Problem');
+
+            await ensurePeriod(shop, fromDate, actor);
+            const actual = await json(await send('finance/entries', { kind: 'disbursement', classification: 'advertising_expense', amount: money('8', shop),
+                occurredAt: fromDate + 'T12:00:00Z', description: 'Chứng từ quảng cáo đã chi', sourceRef: { type: 'manual', id: randomUUID() } },
+            { shop, actor }), 201, 'FinanceEntryResponse');
+            await json(await send('finance/entries/' + actual.id + '/post', { expectedVersion: actual.version, reason: 'Ghi chi thực tế' },
+                { shop, actor }), 202, 'CommandResponse');
+            assert.equal(await journals(), before + 1);
+            const withActual = await get();
+            assert.deepEqual(withActual.actualSpend, money('8', shop));
+            assert.deepEqual(withActual.estimatedSpend, projection.estimatedSpend);
+            assert.deepEqual(withActual.estimateCoverage, projection.estimateCoverage);
+        }
+        const [privileges] = await db.$queryRaw`SELECT has_table_privilege(current_user, 'advertising_estimates', 'UPDATE') AS update,
+            has_table_privilege(current_user, 'advertising_estimates', 'DELETE') AS delete`;
+        assert.deepEqual(privileges, { update: false, delete: false });
+        console.log(JSON.stringify({ status: 'SC2_E03_REVIEWED_DAILY_ESTIMATES', shops: ['VND', 'LAK'], historyRowsPerShop: 3,
+            daysWithEstimate: 2, daysInPeriod: 3, staleRevision: 412, crossShop: 404, unknownDay: null, zeroIsKnown: true,
+            estimateJournals: 0, actualJournals: 1, estimateUnchangedAfterActual: true, runtimeCannotRewrite: true }));
+    } finally {
+        await estimates.close();
+    }
 });
 
 test('SC2-E04 SC2-E05 SC2-E06 R65: private statement preview, durable import, partial allocation and actual COD fee preserve source identity', async () => {

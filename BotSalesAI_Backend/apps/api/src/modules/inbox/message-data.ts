@@ -21,7 +21,7 @@ export type Conversation = Prisma.ChannelConversationGetPayload<{ include: typeo
 type Message = Prisma.ChannelMessageGetPayload<{ include: typeof messageDetails }>;
 
 const evidencePermissions: Readonly<Record<string, string>> = {
-    variant: 'catalog.read', knowledge_revision: 'knowledge.read', order: 'orders.read',
+    variant: 'catalog.read', knowledge_revision: 'knowledge.read', order: 'orders.read', shipment: 'fulfillment.read', service_case: 'customers.read',
     voice_transcript_file: 'conversations.read', voice_transcript_message: 'conversations.read',
 };
 
@@ -92,7 +92,7 @@ export async function updateConversation(tx: Prisma.TransactionClient, conversat
 
 export async function queueMessengerMessage(tx: Prisma.TransactionClient, conversation: Pick<Conversation, 'shopId' | 'id' | 'generation' | 'channel'>,
     input: { commandId: string; clientMessageId: string; text: string; fileIds?: string[]; botGeneration?: number; sources?: ResourceRef[];
-        origin?: 'fixture' | 'provider' }) {
+        origin?: 'fixture' | 'provider'; afterSalesRequestId?: string }) {
     const { shopId, id: conversationId } = conversation;
     const { commandId, clientMessageId, text, fileIds = [], botGeneration, sources, origin = 'fixture' } = input;
     const message = await tx.channelMessage.create({ data: { shopId, conversationId, text, direction: 'outbound', origin,
@@ -101,6 +101,7 @@ export async function queueMessengerMessage(tx: Prisma.TransactionClient, conver
     } });
     if (fileIds.length) await tx.channelAttachment.createMany({ data: fileIds.map((fileId, position) => ({ shopId, messageId: message.id, fileId, position })) });
     await tx.messageDispatch.create({ data: { shopId, messageId: message.id, commandId, botGeneration,
+        afterSalesRequestId: input.afterSalesRequestId,
         conversationGeneration: conversation.generation, channelGeneration: conversation.channel.generation } });
     await updateConversation(tx, conversation, {});
     await enqueueResourceUpdate(tx, 'message.created', message);

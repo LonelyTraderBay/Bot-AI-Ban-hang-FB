@@ -109,11 +109,22 @@ export default function Shell() {
         void performLogout();
     }
     const membership = session?.memberships.find(m => m.shopId === shopId && m.status === 'active');
+    const scopeUserId = session?.user.id;
+    const permissionVersion = membership?.permissionVersion;
     const shopQuery = useQuery({
         queryKey: ['shop', session?.user.id, shopId, membership?.permissionVersion], queryFn: ({ signal }) => request('getShop', { path: { shopId }, signal }), enabled: !!membership, retry: false
     });
     useEffect(() => { setMobileOpen(false); document.querySelector('main')?.focus(); }, [location.pathname]);
-    useEffect(() => { return () => { cancelScopeRequests(); void cache.cancelQueries({ queryKey: ['scope'] }); cache.removeQueries({ queryKey: ['scope'] }); }; }, [shopId, membership?.permissionVersion, cache]);
+    useEffect(() => {
+        if (!scopeUserId || !shopId || permissionVersion === undefined) return;
+        const queryKey = ['scope', scopeUserId, shopId, permissionVersion];
+        return () => {
+            cancelScopeRequests();
+            void cache.cancelQueries({ queryKey });
+            // Let child observers unsubscribe before removing their queries and GC timers.
+            queueMicrotask(() => cache.removeQueries({ queryKey, type: 'inactive' }));
+        };
+    }, [cache, scopeUserId, shopId, permissionVersion]);
     if (loading)
         return <LinearProgress aria-label="Đang tải phiên làm việc" />;
     if (!session) {

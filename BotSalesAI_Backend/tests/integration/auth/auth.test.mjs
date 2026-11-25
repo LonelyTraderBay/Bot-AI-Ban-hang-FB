@@ -381,6 +381,25 @@ test('P0-04: mutation CSRF, exact origin, key conflict and safe return path', as
     assert.equal((await logout(browser, session.csrfToken)).status, 204);
 });
 
+test('SC2-A03: the login callback preserves scoped notification destinations', async () => {
+    const shop = '/s/' + shopA.id;
+    const order = shop + '/orders/' + randomUUID();
+    for (const [destination, expected] of [
+        [order, order],
+        [shop + '/notifications', shop + '/notifications'],
+        [shop + '/orders/invalid-id', '/workspaces'],
+        [order + '?tab=other', '/workspaces'],
+    ]) {
+        const browser = new HttpsClient();
+        const start = await begin(browser, destination);
+        const response = await browser.request((await browser.followAuthorization(start.authorizationUrl)).href);
+        assert.equal(response.status, 302);
+        assert.equal(response.headers.get('location'), expected);
+        const session = await json(await browser.request(sessionPath), 200, 'SessionResponse');
+        assert.equal((await logout(browser, session.csrfToken)).status, 204);
+    }
+});
+
 test('P0-04: one callback claim and one session despite concurrent retry', async () => {
     const browser = new HttpsClient();
     const start = await begin(browser);

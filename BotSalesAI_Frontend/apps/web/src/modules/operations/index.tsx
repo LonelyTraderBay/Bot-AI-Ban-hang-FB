@@ -163,13 +163,15 @@ export function ApprovalsPage() { return <ApprovalsView />; }
 
 export function DigestsPage() {
     const { shop } = useScope();
+    const canReadEvaluations = useCan('bot.read');
     const list = useApi('listDigests', { query: useListQuery('listDigests') });
     const health = useApi('getOperationsSummary');
     const control = useCommand('controlAutomation', ['listAgentRoles', 'getBotConfig', 'getOperationsSummary']);
     const [stop, setStop] = useState<{ role: AgentRole; action: 'pause' | 'resume' } | null>(null);
 
     return <>
-        <PageHeader title="Bản tin & sức khỏe hệ thống" subtitle="Những việc quan trọng cần chủ shop quyết định; không thay thế người trực thực tế." />
+        <PageHeader title="Bản tin & sức khỏe hệ thống" subtitle="Những việc quan trọng cần chủ shop quyết định; không thay thế người trực thực tế."
+            actions={canReadEvaluations && <RouteLink to={`/s/${shop.id}/bot/evaluations`}>Đánh giá chất lượng AI</RouteLink>} />
         {__MOCK__ && <Alert severity="info" sx={layoutSx.notice.afterGap}>Đây là dữ liệu mô phỏng. Trạng thái “chưa xác minh” không chứng minh backend, provider hoặc worker đã sẵn sàng.</Alert>}
         <SectionGrid columns={{ xs: '1fr', lg: '1.5fr 1fr' }}>
             <Panel title="Bản tin điều hành" bodyMode="inset">

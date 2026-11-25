@@ -2,6 +2,7 @@ import { ConflictException, NotFoundException, UnprocessableEntityException } fr
 import type { IncomingHttpHeaders } from 'node:http';
 import { Prisma, type PrismaClient, type OrderState, type SalesOrder } from '../../generated/prisma/client.js';
 import { OrderState as States } from '../../generated/prisma/enums.js';
+import { DomainConflict } from '../../http/contracts.js';
 import { listQuery, paging, validUuid } from '../../http/query.js';
 import { requireIfMatch, requireVersion } from '../../http/response.js';
 import { recordAudit } from '../../platform/audit/index.js';
@@ -43,12 +44,24 @@ async function quoteForOrder(tx: Prisma.TransactionClient, order: OrderDetails, 
     return quote;
 }
 
+function requireShippingZone(priced: { outsideConfiguredRegions: boolean }) {
+    if (priced.outsideConfiguredRegions) {
+        throw new DomainConflict('SHIPPING_ZONE_UNAVAILABLE', 'Địa chỉ nằm ngoài vùng giao hàng đã cấu hình. Cập nhật địa chỉ hoặc biểu phí trước khi tiếp tục.');
+    }
+}
+
 async function currentQuote(tx: Prisma.TransactionClient, order: OrderDetails, id: string, now: Date) {
     requireDraft(order);
     const quote = await quoteForOrder(tx, order, id);
-    if (quote.orderVersion !== order.version || quote.customerId !== order.customerId || quote.expiresAt <= now) throw new ConflictException();
+    if (quote.orderVersion !== order.version || quote.customerId !== order.customerId) throw new ConflictException();
+    if (quote.expiresAt <= now) {
+        throw new DomainConflict('QUOTE_EXPIRED', 'Báo giá đã hết hạn. Lấy báo giá mới và xác nhận lại với khách trước khi chốt.');
+    }
     const priced = await priceOrder(tx, order.shopId, draftDetails(order), lineIndex(order), now);
-    if (quote.quoteHash !== orderQuoteHash(order.id, order.version, priced.termsHash)) throw new ConflictException();
+    requireShippingZone(priced);
+    if (quote.quoteHash !== orderQuoteHash(order.id, order.version, priced.termsHash)) {
+        throw new DomainConflict('PRICE_CHANGED', 'Điều kiện báo giá đã thay đổi. Lấy báo giá mới và xác nhận lại với khách trước khi chốt.');
+    }
     return { quote, priced };
 }
 
@@ -140,6 +153,7 @@ export class OrdersService {
             requireDraft(current);
             const now = new Date();
             const priced = await priceOrder(tx, shopId, draftDetails(current), lineIndex(current), now);
+            requireShippingZone(priced);
             const warnings = await quoteWarnings(tx, shopId, current.warehouseId, priced.lines);
             if (priced.promotion && !['unpaid', 'refunded'].includes(current.paymentState) && !current.total.eq(priced.total)) {
                 throw new ConflictException();

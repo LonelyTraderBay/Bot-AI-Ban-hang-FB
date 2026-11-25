@@ -1,0 +1,11 @@
+SC-047 · R26/R30 · Firefox demo 390 and 1440 px
+Expected: unsupported capabilities disable publication when tool steps are positive. The same connection stays selectable for a text-only draft.
+The PostgreSQL fixture API refused the incompatible configuration with HTTP 409 and left its revision and publication jobs unchanged.
+AUD-07-r35-capability-before.txt SHA-256 abe3bc45ea113d6c13e6a2122c87fdfa51db47830f9f710e06c173182d12920b
+{"status":"R35_BASELINE","width":1440,"capability":"unsupported","configuredToolSteps":2,"publishEnabled":true,"dialogOpened":true}
+{"status":"R35_BASELINE","width":390,"capability":"unsupported","configuredToolSteps":2,"publishEnabled":true,"dialogOpened":true}
+AUD-07-r35-capability-after.txt SHA-256 b93d83029b09fd736ced04fd94fbda13746a2bd3a0d07fcab99cd9e2ceb91637
+{"status":"R35_AFTER","width":1440,"capability":"unsupported","configuredToolSteps":2,"publishDisabled":true,"reasonVisible":true,"textOnlyUnblocked":true}
+{"status":"R35_AFTER","width":390,"capability":"unsupported","configuredToolSteps":2,"publishDisabled":true,"reasonVisible":true,"textOnlyUnblocked":true}
+AUD-06-r35-test-ai.txt SHA-256 5ce4795d84ce817f873bd6af51dd61297fc52577629b183528e630292b7f3257
+✔ SC-047 refuses tool workflows for the capability declared by the selected adapter model (120.637ms)

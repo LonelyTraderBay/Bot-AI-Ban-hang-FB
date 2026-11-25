@@ -3,7 +3,7 @@ import { useState } from 'react';
 import { Alert, Box, Button, Chip, MenuItem, Stack, TextField, Typography } from '@mui/material';
 import type { AgentRole, BotConfig, BotRevision, BudgetPolicy, Evaluation, PlaygroundResult } from '@botsales/contracts';
 import { useApi, useCommand } from '../../shared/api/hooks';
-import { useScope } from '../../shared/model/scope';
+import { useCan, useScope } from '../../shared/model/scope';
 import { useListQuery } from '../../shared/model/filters';
 import { codePointLength, dateTime } from '@/shared/model/format';
 import { layoutSx } from '../../shared/ui/layout';
@@ -20,8 +20,15 @@ export function BotConfigPage() {
     const [revisionId, setRevisionId] = useState('');
     const revision = useApi('getBotRevision', { path: { revisionId } }, Boolean(revisionId));
     const b = get.data?.data;
+    const canReadConnections = useCan('integrations.read');
+    const selectedConnectionId = b?.connectionId || '';
+    const checkToolCapability = Boolean(selectedConnectionId && b && b.maxToolSteps > 0 && canReadConnections);
+    const selectedConnection = useApi('getAIConnection', { path: { connectionId: selectedConnectionId } }, checkToolCapability);
+    const toolCallingUnsupported = checkToolCapability && selectedConnection.data?.data.capabilities.toolCalling === 'unsupported';
+    const publicationBlocked = toolCallingUnsupported || (checkToolCapability && selectedConnection.isPending);
+    const unsupportedReason = 'Kết nối đang chọn không hỗ trợ gọi công cụ cho cấu hình này.';
     const [editing, setEdit] = useState<BotConfig | null>(null), [instructions, setInstructions] = useState(''), [connection, setConnection] = useState(''), [budget, setBudget] = useState(''), [steps, setSteps] = useState('4'), [knowledge, setKnowledge] = useState(''), [action, setAction] = useState<'publish' | 'pause' | null>(null), [evalId, setEval] = useState(''), [reason, setReason] = useState(''), [restoreVersion, setRestore] = useState<BotRevision | null>(null);
-    return <><PageHeader title="Điều khiển Admin AI" subtitle="Tách cấu hình đang chạy và cấu hình đang soạn. Không bật tự động chỉ vì lưu prompt." actions={<RouteLink to={`/s/${shop.id}/bot/playground`}>Thử bot</RouteLink>}/><QueryState query={get} pendingProfile="section">{b && <Panel title="Cấu hình hiện hành" action={<ActionGroup><Status value={b.status}/></ActionGroup>} bodyMode="inset"><Box><DetailLine label="Bản nháp">{b.draftRevision}</DetailLine><DetailLine label="Bản đang chạy">{b.liveRevision || 'Chưa có'}</DetailLine><DetailLine label="Mã kết nối AI">{b.connectionId || 'Chưa chọn'}</DetailLine><DetailLine label="Giới hạn chi phí mỗi ngày"><Amount wrap value={b.dailyBudget}/></DetailLine><DetailLine label="Giới hạn bước công cụ">{b.maxToolSteps}</DetailLine><DetailLine label="Xuất bản lúc">{dateTime(b.publishedAt, shop.timezone)}</DetailLine><Typography sx={[layoutSx.page.sectionBefore, layoutSx.page.sectionAfter, { whiteSpace: 'pre-wrap' }]}>{b.instructions || 'Chưa có chỉ dẫn.'}</Typography><Alert severity="info">Đơn do AI đề xuất vẫn cần người có quyền kiểm tra và xác nhận. Lưu bản nháp không thay đổi cấu hình đang chạy hoặc tự chốt đơn.</Alert>{connections.data?.data.length === 0 && <Alert severity="info" role="status">Không có kết nối AI trong danh sách hiện tại; mã kết nối cấu hình đang giữ {b.connectionId || 'chưa chọn'} chưa được đối chiếu.</Alert>}<ActionGroup direction="row" beforeGap="form"><MutationButton permission="bot.configure" onClick={() => { setEdit(b); setInstructions(b.instructions); setConnection(b.connectionId || ''); setBudget(b.dailyBudget?.amount || ''); setSteps(String(b.maxToolSteps)); setKnowledge(b.knowledgeRevisionIds.join('\n')); }}>Sửa bản nháp</MutationButton><MutationButton permission="bot.publish" variant="contained" onClick={() => setAction('publish')}>Duyệt & xuất bản</MutationButton><MutationButton permission="bot.publish" color="error" onClick={() => setAction('pause')}>Tạm dừng bot</MutationButton></ActionGroup></Box></Panel>}</QueryState><Panel title="Các phiên bản" beforeGap={"section"}><QueryState query={versions} pendingProfile="section"><DataTable label="Lịch sử cấu hình AI" rows={versions.data?.data || []} rowKey={r => `${r.id}-${r.revision}`} columns={[
+    return <><PageHeader title="Điều khiển Admin AI" subtitle="Tách cấu hình đang chạy và cấu hình đang soạn. Không bật tự động chỉ vì lưu prompt." actions={<RouteLink to={`/s/${shop.id}/bot/playground`}>Thử bot</RouteLink>}/><QueryState query={get} pendingProfile="section">{b && <Panel title="Cấu hình hiện hành" action={<ActionGroup><Status value={b.status}/></ActionGroup>} bodyMode="inset"><Box><DetailLine label="Bản nháp">{b.draftRevision}</DetailLine><DetailLine label="Bản đang chạy">{b.liveRevision || 'Chưa có'}</DetailLine><DetailLine label="Mã kết nối AI">{b.connectionId || 'Chưa chọn'}</DetailLine><DetailLine label="Giới hạn chi phí mỗi ngày"><Amount wrap value={b.dailyBudget}/></DetailLine><DetailLine label="Giới hạn bước công cụ">{b.maxToolSteps}</DetailLine><DetailLine label="Xuất bản lúc">{dateTime(b.publishedAt, shop.timezone)}</DetailLine><Typography sx={[layoutSx.page.sectionBefore, layoutSx.page.sectionAfter, { whiteSpace: 'pre-wrap' }]}>{b.instructions || 'Chưa có chỉ dẫn.'}</Typography><Alert severity="info">Đơn do AI đề xuất vẫn cần người có quyền kiểm tra và xác nhận. Lưu bản nháp không thay đổi cấu hình đang chạy hoặc tự chốt đơn.</Alert>{connections.data?.data.length === 0 && <Alert severity="info" role="status">Không có kết nối AI trong danh sách hiện tại; mã kết nối cấu hình đang giữ {b.connectionId || 'chưa chọn'} chưa được đối chiếu.</Alert>}{toolCallingUnsupported && <Alert severity="warning" role="status" sx={layoutSx.page.sectionBefore}>{unsupportedReason}</Alert>}<ActionGroup direction="row" beforeGap="form"><MutationButton permission="bot.configure" onClick={() => { setEdit(b); setInstructions(b.instructions); setConnection(b.connectionId || ''); setBudget(b.dailyBudget?.amount || ''); setSteps(String(b.maxToolSteps)); setKnowledge(b.knowledgeRevisionIds.join('\n')); }}>Sửa bản nháp</MutationButton><MutationButton permission="bot.publish" variant="contained" disabled={publicationBlocked} onClick={() => setAction('publish')}>Duyệt & xuất bản</MutationButton><MutationButton permission="bot.publish" color="error" onClick={() => setAction('pause')}>Tạm dừng bot</MutationButton></ActionGroup></Box></Panel>}</QueryState><Panel title="Các phiên bản" beforeGap={"section"}><QueryState query={versions} pendingProfile="section"><DataTable label="Lịch sử cấu hình AI" rows={versions.data?.data || []} rowKey={r => `${r.id}-${r.revision}`} columns={[
         { key: 'revision', label: 'Phiên bản', render: r => `#${r.revision}` }, { key: 'state', label: 'Trạng thái', render: r => <Status value={r.status}/> }, { key: 'updated', label: 'Cập nhật', render: r => dateTime(r.updatedAt, shop.timezone) },
         {
             key: 'action', label: 'Thao tác', render: r => <ActionGroup direction="row"><Button onClick={() => setRevisionId(r.id)}>Xem phiên bản</Button><MutationButton permission="bot.configure" onClick={() => setRestore(r)}>Khôi phục vào nháp</MutationButton></ActionGroup>
@@ -48,7 +55,7 @@ export function BotConfigPage() {
         setEdit(null);
     }
     catch { /* visible */ } }}>Lưu nháp</Button>}><ErrorNotice error={update.error}/><FormFields ><TextField label="Kết nối AI" select value={connection} onChange={e => setConnection(e.target.value)}>{connections.data?.data.map(c => <MenuItem key={c.id} value={c.id}>{c.name} · {c.status}</MenuItem>)}</TextField><TextField label="Chỉ dẫn tư vấn đã duyệt" multiline minRows={8} value={instructions} onChange={e => setInstructions(e.target.value)}/><TextField label="Mã phiên bản kiến thức (mỗi dòng một mã)" multiline minRows={3} value={knowledge} onChange={e => setKnowledge(e.target.value)}/><TextField label={`Ngân sách ngày (${shop.currency})`} value={budget} onChange={e => setBudget(e.target.value)}/><TextField type="number" label="Số bước công cụ tối đa" value={steps} inputProps={{ min: 0, max: 20 }} onChange={e => setSteps(e.target.value)}/></FormFields></EditDialog>
- <EditDialog open={action === 'publish'} title="Xuất bản cấu hình đã đánh giá" onClose={() => setAction(null)} busy={publish.pending} actions={<Button variant="contained" disabled={!evalId || codePointLength(reason) < 5 || publish.pending} onClick={async () => { try {
+ <EditDialog open={action === 'publish'} title="Xuất bản cấu hình đã đánh giá" description={toolCallingUnsupported ? unsupportedReason : undefined} onClose={() => setAction(null)} busy={publish.pending} actions={<Button variant="contained" disabled={publicationBlocked || !evalId || codePointLength(reason) < 5 || publish.pending} onClick={async () => { try {
         await publish.execute({ body: { expectedVersion: b?.version || 1, draftRevision: b?.draftRevision || 1, evaluationRunId: evalId, reason } });
         setAction(null);
     }
@@ -73,15 +80,47 @@ export function EvaluationsPage() {
     const [open, setOpen] = useState(false), [dataset, setDataset] = useState(''), [knowledge, setKnowledge] = useState(''), [selected, setSelected] = useState<Evaluation | null>(null);
     const detail = useApi('getEvaluation', { path: { evaluationId: selected?.id || '' } }, Boolean(selected));
     return <><PageHeader title="Đánh giá AI" subtitle="Kết quả gắn cấu hình, dữ liệu kiểm thử và phiên bản kiến thức." actions={<MutationButton permission="bot.configure" variant="contained" onClick={() => setOpen(true)}>Chạy đánh giá</MutationButton>}/>{__MOCK__ && <Alert severity="warning" sx={layoutSx.notice.afterGap}>Chế độ mô phỏng chỉ kiểm quy trình, không đánh giá chất lượng mô hình AI thật.</Alert>}<Panel><Toolbar operation="listEvaluations" /><QueryState query={list} pendingProfile="section"><DataTable label="Lịch sử đánh giá AI" rows={list.data?.data || []} rowKey={r => r.id} empty="Chưa có lần đánh giá nào. Có thể chạy đánh giá cấu hình nháp từ nút phía trên." columns={[
-        { key: 'id', label: 'Lần đánh giá', render: r => <Button onClick={() => setSelected(r)}>{r.id}</Button> }, { key: 'config', label: 'Bản cấu hình', render: r => r.configRevision }, { key: 'dataset', label: 'Bộ kiểm thử', render: r => r.datasetVersion }, { key: 'count', label: 'Đạt / tổng', render: r => `${r.passedCases} / ${r.totalCases}` }, { key: 'critical', label: 'Lỗi trọng yếu', render: r => r.criticalFailures }, { key: 'state', label: 'Trạng thái', render: r => <Status value={r.status}/> }
+        { key: 'id', label: 'Lần đánh giá', render: r => <Button onClick={() => setSelected(r)}>{r.id}</Button> }, { key: 'config', label: 'Bản cấu hình', render: r => r.configRevision }, { key: 'dataset', label: 'Bộ kiểm thử', render: r => r.datasetVersion }, { key: 'count', label: 'Đạt / đã chạy', render: r => `${r.passedCases} / ${r.totalCases}` }, { key: 'critical', label: 'Lỗi trọng yếu', render: r => r.criticalFailures }, { key: 'state', label: 'Trạng thái', render: r => <Status value={r.status}/> }
     ]}/></QueryState><Pager page={list.data?.page}/></Panel>
  <EditDialog open={open} title="Đánh giá cấu hình nháp" onClose={() => setOpen(false)} busy={create.pending} actions={<Button variant="contained" disabled={!dataset || !bot.data || create.pending} onClick={async () => { try {
         const r = await create.execute({ body: { configRevision: bot.data?.data.draftRevision || 1, datasetVersion: dataset, knowledgeRevisionId: knowledge || null } });
         setSelected(r.data);
         setOpen(false);
     }
-    catch { /* visible */ } }}>Bắt đầu</Button>}><ErrorNotice error={create.error}/><FormFields ><TextField label="Phiên bản bộ kiểm thử đã đăng ký" value={dataset} onChange={e => setDataset(e.target.value)}/><TextField label="Mã bản kiến thức (tùy chọn)" value={knowledge} onChange={e => setKnowledge(e.target.value)}/><Alert severity="info">Mã bộ kiểm thử phải do backend xác minh. Không tự gọi tỷ lệ 100% là chứng nhận chất lượng.</Alert></FormFields></EditDialog><EditDialog open={!!selected} title="Chi tiết đánh giá" onClose={() => setSelected(null)} actions={<ActionGroup direction="row"><Button disabled={detail.isFetching} onClick={() => void detail.refetch()}>Cập nhật kết quả</Button><Button onClick={() => setSelected(null)}>Đóng</Button></ActionGroup>}><QueryState query={detail}>{detail.data && <SurfaceContent><DetailLine label="Mã">{detail.data.data.id}</DetailLine><DetailLine label="Bộ dữ liệu">{detail.data.data.datasetVersion}</DetailLine><DetailLine label="Bản cấu hình">{detail.data.data.configRevision}</DetailLine><DetailLine label="Kết quả"><Status value={detail.data.data.status}/></DetailLine><DetailLine label="Số ca">{detail.data.data.passedCases} / {detail.data.data.totalCases}</DetailLine><DetailLine label="Lỗi trọng yếu">{detail.data.data.criticalFailures}</DetailLine>{detail.data.data.reportJobId && <RouteLink to={`/s/${shop.id}/jobs/${detail.data.data.reportJobId}`}>Báo cáo chi tiết</RouteLink>}</SurfaceContent>}</QueryState></EditDialog></>;
+    catch { /* visible */ } }}>Bắt đầu</Button>}><ErrorNotice error={create.error}/><FormFields ><TextField label="Phiên bản bộ kiểm thử đã đăng ký" value={dataset} onChange={e => setDataset(e.target.value)}/><TextField label="Mã bản kiến thức (tùy chọn)" value={knowledge} onChange={e => setKnowledge(e.target.value)}/><Alert severity="info">Mã bộ kiểm thử phải do backend xác minh. Không tự gọi tỷ lệ 100% là chứng nhận chất lượng.</Alert></FormFields></EditDialog>
+    <EditDialog open={!!selected} title="Chi tiết đánh giá" onClose={() => setSelected(null)}
+        actions={<Button disabled={detail.isFetching} onClick={() => void detail.refetch()}>Cập nhật kết quả</Button>}>
+        <QueryState query={detail}>{detail.data && <EvaluationReport report={detail.data.data} shopId={shop.id} />}</QueryState>
+    </EditDialog></>;
 }
+
+function EvaluationReport({ report, shopId }: { report: Evaluation; shopId: string }) {
+    const canReadJob = useCan('jobs.read');
+    const sources = { local_fixture: 'Kiểm thử cục bộ', approved_synthetic: 'Bộ thử tổng hợp được duyệt' };
+    const { id, datasetVersion, configRevision, source, knowledgeRevisionId, humanCorrection, status, plannedCases,
+        totalCases, passedCases, criticalFailures, reportJobId, cases } = report;
+    return <SurfaceContent>
+        <DetailLine label="Mã">{id}</DetailLine>
+        <DetailLine label="Bộ dữ liệu">{datasetVersion}</DetailLine>
+        <DetailLine label="Bản cấu hình">{configRevision}</DetailLine>
+        <DetailLine label="Nguồn đánh giá">{source ? sources[source] : 'Chưa có thông tin'}</DetailLine>
+        {knowledgeRevisionId && <DetailLine label="Bản tri thức">{knowledgeRevisionId}</DetailLine>}
+        {humanCorrection && <DetailLine label="Nguồn tri thức">Phản hồi của nhân viên đã được duyệt</DetailLine>}
+        <DetailLine label="Kết quả"><Status value={status}/></DetailLine>
+        <DetailLine label="Số ca đăng ký">{plannedCases ?? 'Chưa có thông tin'}</DetailLine>
+        <DetailLine label="Số ca đạt / đã chạy">{passedCases} / {totalCases}</DetailLine>
+        <DetailLine label="Lỗi trọng yếu">{criticalFailures}</DetailLine>
+        {reportJobId && canReadJob && <RouteLink to={`/s/${shopId}/jobs/${reportJobId}`}>Báo cáo chi tiết</RouteLink>}
+        <DataTable label="Kết quả từng ca" rows={cases ?? []} rowKey={item => item.id} reflowOnMobile
+            empty="Chưa có kết quả từng ca." columns={[
+                { key: 'case', label: 'Mã ca', render: item => item.id },
+                { key: 'status', label: 'Kết quả', render: item => <Status value={item.passed ? 'passed' : 'failed'} /> },
+                { key: 'latency', label: 'Thời gian phản hồi', render: item => item.latencyMs === undefined ? 'Chưa đo' : item.latencyMs + ' ms' },
+                { key: 'cost', label: 'Chi phí ước tính', render: item => item.estimatedCostUsd === undefined ? 'Chưa có' : item.estimatedCostUsd + ' USD' },
+            ]} />
+    </SurfaceContent>;
+}
+
 const roleNames = { sales_admin: 'Admin bán hàng', accountant: 'Kế toán', warehouse_buyer: 'Kho & mua hàng', supervisor: 'Trưởng nhóm' };
 export function AgentTeamPage() {
     const { shop } = useScope();

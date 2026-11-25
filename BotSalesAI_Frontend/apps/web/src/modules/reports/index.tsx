@@ -138,7 +138,7 @@ export function ReportsPage() {
         : null;
 
     return <>
-        <PageHeader title="Báo cáo & xuất dữ liệu" subtitle="Xuất snapshot do API tạo; số liệu tổng hợp không được tính từ một trang danh sách." />
+        <PageHeader title="Báo cáo & xuất dữ liệu" subtitle="Chọn loại báo cáo và khoảng ngày để xuất CSV." />
         <SectionGrid data-testid="reports-main-layout" columns={{ xs: 'minmax(0, 1fr)', xl: 'minmax(0, 1.2fr) minmax(0, .8fr)' }} alignItems={'start'} geometry={{minWidth: 0}}>
             <PageSections data-testid="reports-page-sections" >
                 <QueryState query={summary} pendingProfile="section">
@@ -159,7 +159,8 @@ export function ReportsPage() {
                                 <TextField label="Đến ngày" type="date" value={to} onChange={event => setReportParam('toDate', event.target.value)} slotProps={{ inputLabel: { shrink: true } }} helperText={isValidDateOnly(to) ? `Ngày kết thúc: ${formatDateOnly(to)}` : undefined} fullWidth />
                             </FormFields>
                             <DetailLine label="Múi giờ">{shop.timezone}</DetailLine>
-                            <DetailLine label="Thời điểm dữ liệu">{snapshotAsOf ? dateTime(snapshotAsOf, shop.timezone) : 'Chưa có snapshot'}</DetailLine>
+                            <DetailLine label="Mốc xem báo cáo">{snapshotAsOf ? dateTime(snapshotAsOf, shop.timezone) : 'Chưa có mốc xem'}</DetailLine>
+                            {summary.data.data.warnings.map((warning, index) => <Alert key={`${index}-${warning}`} severity="info">{warning}</Alert>)}
                             {!canExportReports && <Alert severity="warning">Vai trò hiện tại không có quyền reports.export.</Alert>}
                             {canExportReports && !canExportSource && <Alert severity="warning">Quyền xuất không thay thế quyền đọc nguồn {sourcePermissions[type]}; loại báo cáo này chưa thể xuất.</Alert>}
                             {canExportReports && canExportSource && !reportAvailable && availableReports.length > 0 && <Alert severity="warning">API không liệt kê loại báo cáo này cho vai trò hiện tại.</Alert>}
@@ -172,8 +173,6 @@ export function ReportsPage() {
                                 {lastExport.job.status !== 'succeeded' && <Alert severity={lastExport.job.status === 'partial' || lastExport.job.status === 'failed' ? 'warning' : 'info'}>Tệp chỉ được tải khi công việc xác nhận succeeded.</Alert>}
                                 {lastExport.job.status === 'succeeded' && lastExport.job.downloadUrl && !lastDownload && <Alert severity="warning">URL tải không hợp lệ hoặc chưa thuộc HTTPS/nguồn hiện tại.</Alert>}
                             </ActionGroup>}
-                            {summary.data.data.warnings.map((warning, index) => <Alert key={`${index}-${warning}`} severity="info">{warning}</Alert>)}
-                            <Alert severity="info">API hiện chỉ trả danh sách loại báo cáo và thời điểm snapshot; bộ lọc ngày áp dụng cho lệnh xuất. Không có series hoặc tổng số liệu để giao diện tự suy ra.</Alert>
                         </FormFields>
                     </Panel>}
                 </QueryState>
@@ -289,7 +288,9 @@ export function MarketingPage() {
                 <Stat title="Đơn có nguồn xác định" value={m.knownAttributedOrders} note="Được API tổng hợp trong kỳ" />
                 <Stat title="Đơn chưa rõ nguồn" value={m.unknownAttributionOrders} note="Giữ riêng, không tự gán nguồn" />
                 <Stat title="Chi quảng cáo thực tế" value={<Amount wrap value={m.actualSpend} />} note={m.actualSpend ? 'API cung cấp số thực tế' : 'Kỳ này chưa có số thực tế từ API'} />
-                <Stat title="Chi quảng cáo ước tính" value={<Amount wrap value={m.estimatedSpend} />} note="Ước tính không phải số ghi sổ" />
+                <Stat title="Chi quảng cáo ước tính" value={<Amount wrap value={m.estimatedSpend} />} note={m.estimateCoverage
+                    ? `Đã có dự trù cho ${m.estimateCoverage.daysWithEstimate}/${m.estimateCoverage.daysInPeriod} ngày. Lần ghi gần nhất ${dateTime(m.estimateCoverage.lastRecordedAt, m.period?.timezone || shop.timezone)}.`
+                    : 'Ước tính không phải số ghi sổ'} />
             </Stats>
             <Stack data-testid="marketing-as-of" sx={[layoutSx.report.contextGap, layoutSx.page.sectionAfter]}>
                 {m.period && <Typography variant="body2">Kỳ {formatDateOnly(m.period.fromDate)} – {formatDateOnly(m.period.toDate)} · gộp theo {m.period.bucket === 'day' ? 'ngày' : m.period.bucket === 'week' ? 'tuần' : 'tháng'}</Typography>}

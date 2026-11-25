@@ -3,10 +3,11 @@ import { useRef, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { Alert, Box, Button, MenuItem, TextField, Typography } from '@mui/material';
 import type { ColumnMapping } from '@botsales/contracts';
+import { ApiError } from '../../shared/api/errors';
 import { useApi, useCommand } from '../../shared/api/hooks';
 import { useScope } from '../../shared/model/scope';
 
-import { PRODUCT_IMPORT_MAX_BYTES, productImportFileError } from './import-file';
+import { PRODUCT_IMPORT_MAX_BYTES, productImportFileError, productImportRejectionMessage } from './import-file';
 import { dateTime } from '../../shared/model/format';
 import { label } from '../../shared/model/labels';
 import { ConfirmDialog, DataTable, DetailLine, ErrorNotice, MutationButton, PageHeader, Pager, Panel, QueryState, RouteLink, Status } from '../../shared/ui/components';
@@ -28,18 +29,19 @@ export function ImportsPage() {
         { sourceColumn: 'currency', targetField: 'currency' },
     ]);
     const targets: ColumnMapping['targetField'][] = ['sku', 'name', 'description', 'category', 'price', 'currency', 'variantName'];
+    const uploadTooLarge = upload.error instanceof ApiError && upload.error.status === 413;
 
     return <>
         <PageHeader title="Nhập dữ liệu sản phẩm" subtitle="Tải tệp → ánh xạ cột → kiểm tra trước → xác nhận các dòng hợp lệ." />
         <Panel title="Tệp & ánh xạ" bodyMode="inset">
             <Box sx={{ width: '100%', minWidth: 0 }}>
-                <ErrorNotice error={upload.error || dry.error} />
+                <ErrorNotice error={(!uploadTooLarge && upload.error) || dry.error} />
                 <FormFields >
                     {__MOCK__ && <Alert severity="info">Trong demo mô phỏng: CSV UTF-8 tối đa 5 MB và 1.000 dòng dữ liệu. Khi nối backend thật, giới hạn được lấy từ API.</Alert>}
-                    <Button variant="outlined" onClick={() => fileInput.current?.click()}>
+                    <Button variant="outlined" aria-describedby={fileError ? 'product-import-file-error' : undefined} onClick={() => fileInput.current?.click()}>
                         {file ? file.name : __MOCK__ ? 'Chọn CSV UTF-8' : 'Chọn CSV hoặc XLSX'}
                     </Button>
-                        <input ref={fileInput} hidden type="file" accept={__MOCK__ ? '.csv,text/csv' : '.csv,.xlsx'} aria-describedby={fileError ? 'product-import-file-error' : undefined} onChange={event => {
+                        <input ref={fileInput} hidden type="file" accept={__MOCK__ ? '.csv,text/csv' : '.csv,.xlsx'} onChange={event => {
                             const input = event.currentTarget;
                             const next = input.files?.[0] || null;
                             const error = productImportFileError(next, __MOCK__ ? PRODUCT_IMPORT_MAX_BYTES : undefined, !__MOCK__);
@@ -80,15 +82,17 @@ export function ImportsPage() {
                             form.append('file', file);
                             form.append('purpose', 'product_import');
                             const uploaded = await upload.execute({ form });
-                            if (!__MOCK__ && uploaded.data.status !== 'ready') {
-                                setFileError('Máy chủ chưa chấp nhận tệp này. Kiểm tra định dạng và chọn lại tệp.');
+                            if (uploaded.data.status !== 'ready') {
+                                setFileError(productImportRejectionMessage(uploaded.data.rejectionReason));
                                 return;
                             }
                             const result = await dry.execute({ body: { fileId: uploaded.data.id, mapping, duplicateStrategy: strategy, dryRun: true } });
                             nav('/s/' + shop.id + '/imports/' + result.data.id);
                         }
-                        catch {
-                            // ErrorNotice keeps the upload and validation failure visible.
+                        catch (error) {
+                            if (error instanceof ApiError && error.status === 413) {
+                                setFileError('Tệp quá lớn. Hãy chọn tệp tối đa 5 MB hoặc chia thành nhiều tệp nhỏ.');
+                            }
                         }
                     }}>Kiểm tra trước khi nhập</MutationButton>
                 </FormFields>

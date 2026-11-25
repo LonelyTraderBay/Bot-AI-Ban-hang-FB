@@ -67,6 +67,9 @@ export async function requireWarehouseClear(tx: Prisma.TransactionClient, shopId
     if (await tx.salesOrder.findFirst({
         where: { shopId, warehouseId, orderState: { in: ['draft', 'confirmed'] } }, select: { id: true },
     })) throw new ConflictException();
+    if (await tx.purchaseOrder.findFirst({
+        where: { shopId, warehouseId, status: { notIn: ['received', 'cancelled'] } }, select: { id: true },
+    })) throw new ConflictException();
     if (await tx.stockTransfer.findFirst({
         where: { shopId, toWarehouseId: warehouseId, status: 'in_transit' }, select: { id: true },
     })) throw new ConflictException();

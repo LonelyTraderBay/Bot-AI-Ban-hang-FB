@@ -1,11 +1,12 @@
 import { label as businessLabel } from '@/shared/model/labels';
 import { ActionGroup, FormFields, SectionGrid, SurfaceContent } from '../../shared/ui/composition';
 import { useEffect, useRef, useState } from 'react';
+import { tabletAndUpQuery } from '@/shared/ui/theme';
 import { visualSx } from '@/shared/ui/visual';
 import type { ReactNode } from 'react';
 import { Link as RouterLink, Navigate, useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
-import { Alert, Avatar, Box, Button, Checkbox, FormControlLabel, MenuItem, Paper, Stack, TextField, Typography } from '@mui/material';
+import { Alert, Avatar, Box, Button, Checkbox, FormControlLabel, MenuItem, Paper, Stack, TextField, Typography, useMediaQuery } from '@mui/material';
 import SmartToyRounded from '@mui/icons-material/SmartToyRounded';
 import ArrowForwardRounded from '@mui/icons-material/ArrowForwardRounded';
 import type { Membership, Role } from '@botsales/contracts';
@@ -103,6 +104,7 @@ function teamMemberActions(member: Membership): string[] | undefined {
         ? member.allowedActions.filter((action): action is string => typeof action === 'string') : [];
 }
 export function TeamPage() {
+    const showDetailActions = !useMediaQuery(tabletAndUpQuery);
     const { session, shop } = useScope();
     const list = useApi('listMembers', { query: useListQuery('listMembers') });
     const canReadConversations = useCan('conversations.read');
@@ -125,7 +127,7 @@ export function TeamPage() {
             key: 'actions', label: 'Thao tác', render: m => <ActionGroup direction="row"><Button onClick={() => setMemberId(m.id)}>Chi tiết nhân sự</Button><MutationButton permission="members.manage" allowedActions={teamMemberActions(m)} action="updateMemberRoles" onClick={() => open(m)}>Sửa quyền</MutationButton><MutationButton permission="members.manage" allowedActions={teamMemberActions(m)} action="revokeMembership" color="error" disabled={m.userId === session.user.id || m.status === 'revoked'} onClick={() => setRemove(m)}>Thu hồi</MutationButton></ActionGroup>
         }
     ]}/><Pager page={list.data.page}/></>}</QueryState></Panel>
- <EditDialog open={!!memberId} title="Chi tiết nhân sự" onClose={() => setMemberId('')} actions={<><Button onClick={() => setMemberId('')}>Đóng</Button>{detail.data && <Box sx={{ display: { xs: 'block', md: 'none' } }}><ActionGroup direction="row"><MutationButton permission="members.manage" allowedActions={teamMemberActions(detail.data.data)} action="updateMemberRoles" onClick={() => { setMemberId(''); open(detail.data!.data); }}>Sửa quyền</MutationButton><MutationButton permission="members.manage" allowedActions={teamMemberActions(detail.data.data)} action="revokeMembership" color="error" disabled={detail.data.data.userId === session.user.id || detail.data.data.status === 'revoked'} onClick={() => { setMemberId(''); setRemove(detail.data!.data); }}>Thu hồi</MutationButton></ActionGroup></Box>}</>}>
+ <EditDialog open={!!memberId} title="Chi tiết nhân sự" onClose={() => setMemberId('')} actions={<><Button onClick={() => setMemberId('')}>Đóng</Button>{showDetailActions && detail.data && <ActionGroup direction="row"><MutationButton permission="members.manage" allowedActions={teamMemberActions(detail.data.data)} action="updateMemberRoles" onClick={() => { setMemberId(''); open(detail.data!.data); }}>Sửa quyền</MutationButton><MutationButton permission="members.manage" allowedActions={teamMemberActions(detail.data.data)} action="revokeMembership" color="error" disabled={detail.data.data.userId === session.user.id || detail.data.data.status === 'revoked'} onClick={() => { setMemberId(''); setRemove(detail.data!.data); }}>Thu hồi</MutationButton></ActionGroup>}</>}>
     <QueryState query={detail}>{detail.data && <SurfaceContent>
         <DetailLine label="Nhân viên">{memberName(detail.data.data.userId)}</DetailLine>
         <DetailLine label="Mã thành viên">{detail.data.data.id}</DetailLine><DetailLine label="Trạng thái"><Status value={detail.data.data.status}/></DetailLine>

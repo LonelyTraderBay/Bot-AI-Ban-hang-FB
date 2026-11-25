@@ -251,6 +251,8 @@ test('FE021 export uses inclusive shop-local boundaries, safe CSV, API jobs and 
     await setDemoRole(page, 'owner');
     await gotoDemo(page, '/s/shop-demo/reports');
     await expect(page.getByRole('heading', { name: 'Tạo tệp báo cáo' })).toBeVisible();
+    await expect(page.getByText('Mốc xem báo cáo', { exact: true })).toBeVisible();
+    await expect(page.getByText(/Hệ thống chưa hỗ trợ xuất theo mốc xem báo cáo/)).toBeVisible();
     await page.getByLabel('Từ ngày').fill('2026-09-29');
     await page.getByLabel('Đến ngày').fill('2026-09-29');
 

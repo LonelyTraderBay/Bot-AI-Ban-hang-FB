@@ -1,5 +1,10 @@
 # BotSales AI — Bối cảnh dự án
 
+<!-- BEGIN RELEASE META -->
+**Bộ chuẩn 2.1.1 · 2026-09-29 · Graphite Gold: ĐÃ DUYỆT · Token 2.1 · API 2.6.1 · Baseline nghiệp vụ 2.0.**
+Nguồn phiên bản: `release.json`; quyết định màu: `design/decision.json`. Phạm vi kiểm chứng là tài liệu/demo, không chứng nhận vận hành sản phẩm.
+<!-- END RELEASE META -->
+
 Cập nhật: 2026-10-11 17:39 UTC. Tài liệu này mô tả snapshot local, không phải xác nhận release.
 
 ## Phạm vi và thẩm quyền

@@ -6,6 +6,7 @@ import { readDatabaseUrl } from '../../../apps/api/dist/config.js';
 import { openapi } from '../../../apps/api/dist/http/contract-source.js';
 import { createContractValidator, schemaFromContract } from '../../../apps/api/dist/http/contracts.js';
 import { reportExportHandler } from '../../../apps/api/dist/modules/finance/index.js';
+import { assignedKnowledge } from '../../../apps/api/dist/modules/knowledge/index.js';
 import { currentMarketingConsent } from '../../../apps/api/dist/modules/privacy/consent.js';
 import { privacyRequestHandler, runPrivacyMaintenance } from '../../../apps/api/dist/modules/privacy/index.js';
 import { canInShop, readAuthConfig } from '../../../apps/api/dist/modules/workspace/index.js';
@@ -32,7 +33,7 @@ async function checked(response, status, schema) {
     return body;
 }
 
-async function call(path, schema, { method = 'GET', body, status = 200, actor = owner, idem = randomUUID(), version, requestOrigin } = {}) {
+async function call(path, schema, { method = 'GET', body, status = 200, actor = owner, idem = randomUUID(), version, requestOrigin, includeMeta = false } = {}) {
     const res = await fetch(root + path, { method, headers: {
         ...(actor?.cookie ? { cookie: actor.cookie } : {}),
         ...(method !== 'GET' ? { origin: requestOrigin ?? auth.appOrigin, 'x-csrf-token': actor?.csrf ?? '',
@@ -43,7 +44,8 @@ async function call(path, schema, { method = 'GET', body, status = 200, actor = 
         const result = await res.json();
         assert.fail(path + ' expected ' + status + ', got ' + res.status + ' (' + result.title + ' ' + result.code + ')');
     }
-    return (await checked(res, status, schema)).data;
+    const result = await checked(res, status, schema);
+    return schema === 'Problem' || includeMeta ? result : result.data;
 }
 
 const shopPath = suffix => '/shops/' + shopId + '/' + suffix;
@@ -106,7 +108,9 @@ test('SC2-G01: onboarding provisions one shop, owner, warehouse, controls and re
     assert.equal(await db.budgetPolicy.count({ where: { shopId } }), 3);
     assert.equal(await db.auditEntry.count({ where: { shopId, action: 'createShop', resourceId: shopId } }), 1);
     assert.equal(await db.command.count({ where: { shopId, operationId: 'createShop', status: 'succeeded' } }), 1);
-    await create({ ...shopInput, name: 'Đổi ý định' }, { status: 409, schema: 'Problem' });
+    const mismatch = await create({ ...shopInput, name: 'Đổi ý định' }, { status: 409, schema: 'Problem' });
+    assert.equal(mismatch.code, 'IDEMPOTENCY_MISMATCH');
+    assert.equal(await db.shop.count({ where: { name: 'Đổi ý định' } }), 0);
     await post('/shops', { ...shopInput, timezone: 'Fake/Timezone' }, 'Problem', { status: 422 });
     await call('/shops/' + shopId, 'Problem', { actor: foreign, status: 404 });
     await patch('/shops/' + shopId, { name: 'Khác quyền' }, 'Problem', { actor: foreign, status: 404, version: first.version });
@@ -169,12 +173,22 @@ test('SC2-C07-CONSENT: scope, replay, content, expiry and opt-out check current 
 test('SC2-G05: step-up is session bound and single use; export, hold, erasure and retention are scoped', async () => {
     const subject = await subjectRow('erasable');
     const held = await subjectRow('hold');
+    const linked = await subjectRow('knowledge-hold');
     const foreignSubject = await subjectRow('should-not-export', secondShop);
     const heldCase = await db.serviceCase.create({ data: { shopId, customerId: held.id, kind: 'question', summary: 'Chứng từ cần lưu' } });
     const conversation = await orderConversation(db, shopId, subject.id);
     const old = new Date(Date.now() - 3 * oneDay);
     const msg = await db.channelMessage.create({ data: { shopId, conversationId: conversation.conversation.id, externalId: randomUUID(),
         text: 'Dữ liệu tổng hợp ' + ns, origin: 'fixture', direction: 'inbound', createdAt: old } });
+    const linkedConversationId = (await orderConversation(db, shopId, linked.id)).conversation.id;
+    const linkedMessage = await db.channelMessage.create({ data: { shopId, conversationId: linkedConversationId, externalId: randomUUID(),
+        text: 'Câu hỏi chính sách tổng hợp', origin: 'fixture', direction: 'inbound' } });
+    const linkedFeedback = await post(shopPath('feedback'), { conversationId: linkedConversationId, messageId: linkedMessage.id,
+        rating: 'negative', correction: 'Đề xuất làm rõ thời gian đổi hàng.' }, 'FeedbackResponse', { status: 201 });
+    const reviewed = 'Thời hạn đổi hàng được mô tả trong chính sách.';
+    await post(shopPath('feedback/' + linkedFeedback.id + '/review'), { expectedVersion: linkedFeedback.version,
+        decision: 'approve', reason: 'Đã rà soát nội dung tổng hợp', redactedCorrection: reviewed }, 'FeedbackResponse', { status: 200 });
+    const linkedSource = await db.knowledgeDocument.findUniqueOrThrow({ where: { shopId_feedbackId: { shopId, feedbackId: linkedFeedback.id } } });
     const policy = await call(shopPath('privacy/policy'), 'PrivacyPolicyResponse');
     assert.equal(policy.status, 'unconfigured');
     const saved = await patch(shopPath('privacy/policy'), { chatRetentionDays: 2, jurisdictionNote: 'Chính sách tổng hợp chỉ kiểm thử' },
@@ -186,6 +200,7 @@ test('SC2-G05: step-up is session bound and single use; export, hold, erasure an
     const exporting = await requestFor(subject.id, 'export');
     const deletion = await requestFor(subject.id, 'delete');
     const hold = await requestFor(held.id, 'delete');
+    const linkedHold = await requestFor(linked.id, 'delete');
     await post(shopPath('privacy/requests'), { kind: 'delete', customerId: held.id, reason: 'Kiểm trùng yêu cầu' }, 'Problem', { status: 409 });
     for (let i = 0; i < 5; i++) await post('/auth/step-up', { password: 'Sai mật khẩu' }, 'Problem', { actor: secondSession, status: 403 });
     await post('/auth/step-up', { password }, 'Problem', { actor: secondSession, status: 429 });
@@ -217,6 +232,14 @@ test('SC2-G05: step-up is session bound and single use; export, hold, erasure an
     await perform(holdJob, 'approvePrivacyRequest', privacyRequestHandler(auth));
     assert.equal((await privacyRow(hold.id)).status, 'legal_hold');
     assert.ok(await db.serviceCase.findUniqueOrThrow({ where: key(heldCase.id) }));
+    const linkedProof = await stepUp();
+    await approve(linkedHold, approval(linkedHold, linkedProof.reauthToken));
+    await perform((await privacyRow(linkedHold.id)).jobId, 'approvePrivacyRequest', privacyRequestHandler(auth));
+    assert.equal((await privacyRow(linkedHold.id)).status, 'legal_hold');
+    assert.equal(await db.auditEntry.count({ where: { shopId, action: 'privacy.request.processed', resourceId: linkedHold.id } }), 1);
+    assert.equal((await db.customer.findUniqueOrThrow({ where: key(linked.id) })).privacyErasedAt, null);
+    assert.equal((await db.knowledgeRevision.findUniqueOrThrow({ where: key(linkedSource.draftRevisionId) })).content, reviewed);
+    assert.deepEqual(await db.$transaction(tx => assignedKnowledge(tx, shopId, [linkedSource.draftRevisionId])), []);
     const latest = await stepUp();
     await approve(deletion, approval(deletion, latest.reauthToken));
     const deleteJob = (await privacyRow(deletion.id)).jobId;
@@ -235,15 +258,22 @@ test('SC2-G05: step-up is session bound and single use; export, hold, erasure an
     assert.deepEqual(new Set(completed.map(row => row.id)), new Set([exporting.id, deletion.id]));
 });
 
-test('SC2-G07: generated reports freeze the snapshot, enforce source rights and revoke expired links', async () => {
+test('SC2-G07 / SC-052: report scope is enforced and exports disclose when the snapshot was captured', async () => {
+    const summary = await call(shopPath('reports'), 'ReportSummaryResponse');
+    assert.match(summary.warnings.join(' '), /chưa hỗ trợ xuất theo mốc xem báo cáo/);
     const until = new Date();
     const report = { reportType: 'profit_loss', format: 'csv', from: new Date(until - oneDay).toISOString(), to: until.toISOString(),
-        timezone: 'Asia/Vientiane', snapshotAsOf: until.toISOString() };
+        timezone: 'Asia/Vientiane', snapshotAsOf: summary.asOf };
     const path = shopPath('exports');
     const idem = randomUUID();
-    const queued = await post(path, report, 'JobResponse', { status: 202, idem });
+    const { data: queued, meta } = await post(path, report, 'JobResponse', { status: 202, idem, includeMeta: true });
     assert.equal(queued.status, 'queued');
-    assert.equal((await post(path, report, 'JobResponse', { status: 202, idem })).id, queued.id);
+    assert.deepEqual(meta.warnings, summary.warnings);
+    assert.equal(meta.reportSnapshot.requestedAsOf, summary.asOf);
+    assert.ok(Date.parse(meta.reportSnapshot.capturedAt) >= Date.parse(summary.asOf));
+    const replay = await post(path, report, 'JobResponse', { status: 202, idem, includeMeta: true });
+    assert.equal(replay.data.id, queued.id);
+    assert.deepEqual(replay.meta.reportSnapshot, meta.reportSnapshot);
     await post(path, { ...report, reportType: 'cashflow' }, 'Problem', { status: 409, idem });
     await post(path, { ...report, timezone: 'UTC' }, 'Problem', { status: 422 });
     await post(path, report, 'Problem', { status: 404, actor: foreign });
@@ -259,7 +289,51 @@ test('SC2-G07: generated reports freeze the snapshot, enforce source rights and 
     const actual = Buffer.from(await response.arrayBuffer());
     assert.deepEqual(actual, Buffer.from(frozen.bytes));
     assert.match(actual.toString('utf8'), /snapshot_captured_at.*source_view_as_of/);
+    const provenance = [meta.reportSnapshot.capturedAt, summary.asOf, report.from, report.to, report.timezone];
+    assert.ok(actual.toString('utf8').split('\r\n').slice(1).every(row => row.endsWith(provenance.map(value => '"' + value + '"').join(','))));
     const member = { shopId_userId: { shopId, userId: owner.userId } };
+    const inventoryRequest = { ...report, reportType: 'inventory' };
+    const inventoryIdem = randomUUID();
+    const inventory = await post(path, inventoryRequest, 'JobResponse', { status: 202, idem: inventoryIdem });
+    await perform(inventory.id, 'createExport', reportExportHandler);
+    const inventoryDone = await call(shopPath('jobs/' + inventory.id), 'JobResponse');
+    assert.ok(inventoryDone.downloadUrl);
+    const { commandId } = await db.job.findUniqueOrThrow({ where: key(inventory.id) });
+    assert.ok(commandId);
+    await call(shopPath('commands/' + commandId), 'CommandResponse');
+    const { roles } = await db.membership.findUniqueOrThrow({ where: member });
+    await db.membership.update({ where: member, data: { roles: ['accountant'], permissionVersion: { increment: 1 } } });
+    try {
+        const inventoryJobHttp = (await fetch(root + shopPath('jobs/' + inventory.id), { headers: { cookie: owner.cookie } })).status;
+        const inventoryDownloadHttp = (await fetch(origin + inventoryDone.downloadUrl, { headers: { cookie: owner.cookie } })).status;
+        const exportJobs = await call(shopPath('jobs?kind=export'), 'JobListResponse');
+        const inventoryListed = exportJobs.some(job => job.id === inventory.id);
+        const commandHttp = (await fetch(root + shopPath('commands/' + commandId), { headers: { cookie: owner.cookie } })).status;
+        const replayHttp = (await fetch(root + path, { method: 'POST', headers: { cookie: owner.cookie, origin: auth.appOrigin,
+            'x-csrf-token': owner.csrf, 'idempotency-key': inventoryIdem, 'content-type': 'application/json' },
+        body: JSON.stringify(inventoryRequest) })).status;
+        console.log(JSON.stringify({ status: 'SC051_SOURCE_REVOKED_JOB_OBSERVED',
+            inventoryJobHttp, inventoryListed, inventoryDownloadHttp, commandHttp, replayHttp }));
+        assert.equal(inventoryJobHttp, 404);
+        assert.equal(inventoryListed, false);
+        assert.equal(inventoryDownloadHttp, 404);
+        assert.equal(commandHttp, 404);
+        assert.equal(replayHttp, 403);
+        await post(path, inventoryRequest, 'Problem', { status: 403 });
+        assert.ok(exportJobs.some(job => job.id === queued.id));
+        assert.equal((await fetch(origin + done.downloadUrl, { headers: { cookie: owner.cookie } })).status, 200);
+        for (const reportType of ['cashflow', 'orders']) {
+            const job = await post(path, { ...report, reportType }, 'JobResponse', { status: 202 });
+            await perform(job.id, 'createExport', reportExportHandler);
+            const ready = await call(shopPath('jobs/' + job.id), 'JobResponse');
+            assert.equal(ready.status, 'succeeded');
+            assert.equal((await fetch(origin + ready.downloadUrl, { headers: { cookie: owner.cookie } })).status, 200);
+            await call(shopPath('jobs/' + job.id), 'Problem', { status: 404, actor: foreign });
+            assert.equal((await fetch(origin + ready.downloadUrl, { headers: { cookie: foreign.cookie } })).status, 404);
+        }
+    } finally {
+        await db.membership.update({ where: member, data: { roles, permissionVersion: { increment: 1 } } });
+    }
     await db.membership.update({ where: member, data: { status: 'revoked', permissionVersion: { increment: 1 } } });
     try { assert.equal((await fetch(origin + done.downloadUrl, { headers: { cookie: owner.cookie } })).status, 404); }
     finally { await db.membership.update({ where: member, data: { status: 'active', permissionVersion: { increment: 1 } } }); }

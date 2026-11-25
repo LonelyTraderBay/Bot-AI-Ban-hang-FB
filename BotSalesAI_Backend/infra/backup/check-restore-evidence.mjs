@@ -6,6 +6,15 @@ const hashes = { core: /^[a-f0-9]{32}$/, external: /^[a-f0-9]{64}$/ };
 const core = ['stock_positions', 'stock_movements', 'finance_journals', 'finance_lines', 'file_objects', 'file_blobs', 'outbox',
     'consents', 'customer_tombstones', 'migration_checksums'];
 const tenantState = ['shops', 'memberships', 'products', 'variants', 'customers', 'sales_orders', 'audit_entries'];
+const orderState = [...core, ...tenantState, 'order_lines'];
+const fulfillmentState = [...orderState, 'shipments', 'shipment_lines'];
+const requiredByFormat = new Map([
+    [2, core],
+    [3, [...core, ...tenantState]],
+    [4, orderState],
+    [5, fulfillmentState],
+    [6, [...fulfillmentState, 'work_items', 'work_notification_schedules', 'service_cases', 'evaluations', 'advertising_estimates']],
+]);
 const external = ['messenger_receipts', 'messenger_dispatches', 'ai_approvals', 'ai_inbound_runs', 'ai_daily_usage',
     'purchase_dispatches', 'purchase_evidence', 'notification_deliveries', 'notification_devices', 'telegram_pairings', 'carrier_events']
     .map(component => 'external/' + component);
@@ -29,9 +38,9 @@ function observations(rows, required, hash, optional = () => false) {
 function parse(bytes) {
     if (bytes.length > 65536) throw new Error();
     const report = JSON.parse(bytes.toString('utf8'));
-    if (![2, 3].includes(report?.format) || typeof report.databaseFingerprint !== 'string' || !hashes.external.test(report.databaseFingerprint) ||
+    const required = requiredByFormat.get(report?.format);
+    if (!required || typeof report.databaseFingerprint !== 'string' || !hashes.external.test(report.databaseFingerprint) ||
         !integrity.every(key => count(report[key]))) throw new Error();
-    const required = report.format === 3 ? [...core, ...tenantState] : core;
     const rows = new Map([
         ...observations(report.observations, required, hashes.core, component => ledgerStatus.test(component)),
         ...observations(report.externalEffects, external, hashes.external),
@@ -61,6 +70,6 @@ try {
         sourceIntegrityIssues: source.integrity, restoredIntegrityIssues: restored.integrity }));
     if (attention) process.exitCode = 2;
 } catch {
-    console.log(JSON.stringify({ status: 'UNAVAILABLE', reason: 'Provide two reports of the same supported format (2 or 3) from separate database instances and the verified source report SHA-256.' }));
+    console.log(JSON.stringify({ status: 'UNAVAILABLE', reason: 'Provide two reports of the same supported format (2 through 6) from separate database instances and the verified source report SHA-256.' }));
     process.exitCode = 1;
 }

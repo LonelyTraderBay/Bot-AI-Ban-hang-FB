@@ -18,10 +18,10 @@ async function gotoDemo(page: import('@playwright/test').Page, route: string) {
     await page.goto(new URL(route, demoUrl).toString());
 }
 
-async function seedInboxCursorFixture(page: import('@playwright/test').Page) {
+async function seedInboxCursorFixture(page: import('@playwright/test').Page, newestFirst = false) {
     await gotoDemo(page, '/s/shop-demo/inbox');
     await expect(page.getByRole('heading', { name: 'Hộp thư khách hàng', exact: true })).toBeVisible();
-    return page.evaluate(async () => {
+    return page.evaluate(async (newestFirst) => {
         const { db } = await import('/src/mocks/database.ts');
         const conversation = db.conversations.find(item => item.shopId === 'shop-demo');
         const message = db.messages.find(item => item.shopId === 'shop-demo');
@@ -51,14 +51,14 @@ async function seedInboxCursorFixture(page: import('@playwright/test').Page) {
             createdAt: new Date(Date.parse('2026-09-29T10:00:00Z') + index * 1000).toISOString(),
         }));
         db.conversations = db.conversations.filter(item => item.shopId !== 'shop-demo').concat(conversations);
-        db.messages = db.messages.filter(item => item.shopId !== 'shop-demo').concat(messages);
+        db.messages = db.messages.filter(item => item.shopId !== 'shop-demo').concat(newestFirst ? messages.reverse() : messages);
         return {
             conversationCount,
             messageCount,
             targetConversationId,
             seededConversationCount: db.conversations.filter(item => item.shopId === 'shop-demo').length,
         };
-    });
+    }, newestFirst);
 }
 
 async function chooseOption(page: import('@playwright/test').Page, label: string, value: string | RegExp) {
@@ -405,6 +405,53 @@ test('UI002 inbox list and message cursors stay independent through paging, conv
         body: JSON.stringify({ fixture, requests, invalidCursorResponses, assertions: ['45 conversations paged independently from 105 messages', 'list cursor retained through message page and conversation change', 'shop-second Inbox has no shop-demo cursor or data'] }, null, 2),
         contentType: 'application/json',
     });
+});
+
+test('SC-036 prepends older messages without moving the reading position or announcing them as new', async ({ page }, info) => {
+    await page.setViewportSize({ width: info.project.name === 'firefox' ? 390 : 1440, height: 900 });
+    await seedInboxCursorFixture(page, true);
+    await page.getByRole('textbox', { name: 'Tìm kiếm' }).fill('UI002 Conversation 41');
+    await page.getByRole('button', { name: 'Tìm kiếm', exact: true }).click();
+    await page.getByRole('link', { name: /UI002 Conversation 41/ }).click();
+    const messages = page.getByTestId('inbox-message-list');
+    let anchor = messages.getByText('UI002 message 6', { exact: true });
+    await expect(messages.getByTestId('inbox-message-bubble')).toHaveCount(100);
+    const older = messages.getByRole('button', { name: 'Tải tin cũ hơn', exact: true });
+    await expect(older).toBeVisible();
+    await older.scrollIntoViewIfNeeded();
+    const position = () => anchor.evaluate(element => element.getBoundingClientRect().top
+        - element.closest('[data-testid="inbox-message-list"]')!.getBoundingClientRect().top);
+    let before = await position();
+    if (info.project.name === 'firefox') {
+        await page.evaluate(async () => {
+            const { setOperationDelay } = await import('/src/mocks/service.ts');
+            setOperationDelay('listMessages', 1500);
+        });
+    }
+    const response = page.waitForResponse(reply => {
+        const url = new URL(reply.url());
+        return url.pathname.endsWith('/ui002-conversation-41/messages') && url.searchParams.get('cursor') === 'ui002-message-006';
+    });
+    await older.focus();
+    await older.press('Enter');
+    if (info.project.name === 'firefox') {
+        await expect(older).toBeDisabled();
+        anchor = messages.getByText('UI002 message 12', { exact: true });
+        await anchor.evaluate(element => {
+            const region = element.closest<HTMLElement>('[data-testid="inbox-message-list"]')!;
+            region.scrollTop += element.getBoundingClientRect().top - region.getBoundingClientRect().top - 45;
+            region.dispatchEvent(new Event('scroll', { bubbles: true }));
+        });
+        before = await position();
+    }
+    expect((await response).status()).toBe(200);
+    await expect(messages.getByTestId('inbox-message-bubble')).toHaveCount(105);
+    await expect(messages.getByText('UI002 message 1', { exact: true })).toHaveCount(1);
+    await expect(messages.getByText('UI002 message 105', { exact: true })).toHaveCount(1);
+    expect(Math.abs(await position() - before)).toBeLessThanOrEqual(1);
+    expect(new URL(page.url()).searchParams.has('cursor')).toBe(false);
+    await expect(page.getByRole('button', { name: 'Có tin nhắn mới', exact: true })).toHaveCount(0);
+    await expect(messages).toBeFocused();
 });
 
 test('UI002 mobile keeps the list page while messages page and Back restores it', async ({ page }) => {

@@ -13,7 +13,7 @@ Giải nén cả folder, đặt tên `botsales-kit` cạnh workspace `BotSalesAI
 7. Chạy generate/check/validator của gói và test ứng dụng đúng phạm vi; sinh lại báo cáo, xác minh tiến độ không tăng nhờ demo. Cập nhật root loader tới một nguồn hiện hành; cất bộ cũ ở archive rõ ràng, không để AI tự chọn giữa hai bộ cùng hiệu lực.
 
 ## Các phiên bản cố ý không cùng số
-Gói 2.1.1; token/palette 2.1 không đổi; API 2.0.0; baseline nghiệp vụ/kế hoạch 2.0; Universal 3.1. Đây không phải lệch tài liệu: `release.json` là bảng ánh xạ phiên bản. Lịch sử/reference và báo cáo chạy ở bản cũ được giữ nguyên, không sửa ngày/version để giả như vừa chạy.
+Phiên bản gói, token, API, baseline nghiệp vụ và Universal được ghi riêng trong `release.json`. API hiện hành phải khớp `info.version` trong OpenAPI. Giữ phiên bản và ngày của các bằng chứng lịch sử theo mốc đã chạy.
 
 ## Kiểm tra tại thư mục kit
 ```bash
@@ -21,6 +21,8 @@ python scripts/generate-theme.py --check
 python scripts/sync-release.py --check
 node scripts/progress.mjs validate
 node scripts/validate-kit.mjs
-python scripts/validate-release.py
+python scripts/validate-release.py --no-write --historical-contracts <thư_mục_contracts_Kit_2.1>
 ```
 Các kiểm tra này không kết nối Meta/AI, gửi thông báo hay triển khai hosting. Chúng không thay test sản phẩm hoặc cấp quyền phát hành.
+
+Với Kit đang dùng trong repository này, lấy đúng byte của các tệp hợp đồng lịch sử từ commit `61fb29eb` vào thư mục kiểm riêng. Dùng bản đó cho `--historical-contracts`. Validator so SHA-256 từng tệp với baseline 2.1 và kiểm tài liệu sinh ở Kit hiện hành. Khi kiểm một bản phân phối lịch sử nguyên vẹn, chạy validator trong chính bản đó.

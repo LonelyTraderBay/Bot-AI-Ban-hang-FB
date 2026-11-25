@@ -9,7 +9,7 @@ import { idPipe, listQuery, paging, validUuid } from '../../http/query.js';
 import { envelope, noStore, requireVersion, versionedEnvelope } from '../../http/response.js';
 import { recordAudit } from '../../platform/audit/index.js';
 import { enqueueResourceUpdate } from '../../platform/outbox/index.js';
-import { notifyPreparation } from '../notifications/index.js';
+import { cancelPreparationReminders, notifyPreparation } from '../notifications/index.js';
 import { createWorkItem, setWorkState } from '../operations/index.js';
 import { readAsSession, requireShopAccess, writeShopCommand, type AuthConfig, type ShopScope } from '../workspace/index.js';
 
@@ -38,6 +38,7 @@ export async function cancelPreparation(tx: Prisma.TransactionClient, shopId: st
     if (current.state === 'handed_over') throw new ConflictException();
     await tx.prepJob.update({ where: key(shopId, current.id), data: { state: 'cancelled', version: { increment: 1 } } });
     await setWorkState(tx, shopId, current.workItemId, 'cancelled');
+    await cancelPreparationReminders(tx, shopId, current.workItemId);
 }
 
 const prepDetails = {

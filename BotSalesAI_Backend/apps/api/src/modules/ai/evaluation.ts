@@ -9,21 +9,28 @@ import { botRevisionAt, botShop, modelContext } from './bot-data.js';
 import { aiKey } from './connections.js';
 import { runFixtureTools } from './engine.js';
 import { aiFixtureEnabled } from './fixture-provider.js';
-import { evaluateStagingAi, StagingAiError } from './staging-evaluation.js';
+import { evaluateStagingAi, stagingAiDataset, StagingAiError } from './staging-evaluation.js';
 
 export type EvaluationInput = { configRevision: number; datasetVersion: string; knowledgeRevisionId: string | null };
 export const datasetVersion = 'botsales-fixture-v1';
-const project = { reportJob: { select: { status: true } } } satisfies Prisma.EvaluationInclude;
-export const evaluationDetails = project;
+const knowledgeCheckCount = 4;
+const fixtureCheckCount = 5;
+export const evaluationDetails = {
+    reportJob: { select: { status: true } },
+    knowledge: { select: { sourceKind: true } },
+} satisfies Prisma.EvaluationInclude;
 export const unavailableEvaluationJobStates: JobStatus[] = ['failed', 'cancelled', 'awaiting_confirmation'];
 
-export function evaluationView(row: Evaluation & { reportJob?: Pick<Job, 'status'> | null }) {
-    const { id, shopId, version, createdAt, updatedAt, configRevision, datasetVersion, totalCases, passedCases, criticalFailures, reportJobId, cases, knowledgeRevisionId, configHash } = row;
+export function evaluationView(row: Prisma.EvaluationGetPayload<{ include: typeof evaluationDetails }>) {
+    const { id, shopId, version, createdAt, updatedAt, configRevision, datasetVersion, plannedCases, totalCases, passedCases,
+        criticalFailures, reportJobId, cases, knowledgeRevisionId, configHash } = row;
     const status = row.status === 'queued' && row.reportJob
         ? row.reportJob.status === 'running' ? 'running' : unavailableEvaluationJobStates.includes(row.reportJob.status) ? 'error' : row.status
         : row.status;
-    return { id, shopId, version, createdAt, updatedAt, configRevision, datasetVersion, status, totalCases, passedCases, criticalFailures,
-        reportJobId, cases, knowledgeRevisionId, configHash };
+    return { id, shopId, version, createdAt, updatedAt, configRevision, datasetVersion, status, plannedCases, totalCases, passedCases, criticalFailures,
+        reportJobId, cases, knowledgeRevisionId, configHash,
+        source: row.fixture ? 'local_fixture' : row.approvalRunId ? 'approved_synthetic' : null,
+        humanCorrection: row.knowledge ? row.knowledge.sourceKind === 'feedback' : null };
 }
 
 export async function evaluationInShop(tx: Prisma.TransactionClient, shopId: string, id: string) {
@@ -51,6 +58,7 @@ export async function evaluationSnapshot(tx: Prisma.TransactionClient, shopId: s
             throw new ConflictException('Phê duyệt này đã dùng để tạo lần đánh giá.');
         }
         return { policyVersion: binding.policyVersion, configHash: binding.configHash, knowledgeHash: null,
+            plannedCases: stagingAiDataset().cases.length + fixtureCheckCount,
             fixture: false, approvalRunId: runId, approvalHash: approval.approvedHash };
     }
     if (!aiFixtureEnabled(config) || input.datasetVersion !== datasetVersion) throw new UnprocessableEntityException('Bộ ca thử nghiệm chưa được hỗ trợ.');
@@ -58,13 +66,13 @@ export async function evaluationSnapshot(tx: Prisma.TransactionClient, shopId: s
     if (input.knowledgeRevisionId) {
         const source = await reviewableKnowledge(tx, shopId, input.knowledgeRevisionId);
         if (input.configRevision !== 1 && !await botRevisionAt(tx, shopId, input.configRevision)) throw new NotFoundException();
-        return { policyVersion: shop.policyVersion, configHash: null, knowledgeHash: source.contentHash, fixture: true };
+        return { policyVersion: shop.policyVersion, configHash: null, knowledgeHash: source.contentHash, plannedCases: knowledgeCheckCount, fixture: true };
     }
     const revision = await botRevisionAt(tx, shopId, input.configRevision);
     if (!revision) throw new NotFoundException();
     const snapshot = await modelContext(tx, shop, revision, config);
     if (!snapshot.current) throw new ConflictException('Cấu hình cần kết nối đã kiểm và nguồn hợp lệ.');
-    return { policyVersion: shop.policyVersion, configHash: snapshot.contentHash, knowledgeHash: null, fixture: true };
+    return { policyVersion: shop.policyVersion, configHash: snapshot.contentHash, knowledgeHash: null, plannedCases: fixtureCheckCount, fixture: true };
 }
 
 async function evaluationCases(tx: Prisma.TransactionClient, row: Evaluation, actorId: string) {
@@ -95,7 +103,13 @@ async function evaluationCases(tx: Prisma.TransactionClient, row: Evaluation, ac
 }
 
 type EvaluationServices = ApprovedEvaluationConfig & { db: PrismaClient; request?: typeof fetch };
-type EvaluationCase = { id: string; passed: boolean; critical: boolean };
+type EvaluationCase = {
+    id: string;
+    passed: boolean;
+    critical: boolean;
+    latencyMs?: number;
+    estimatedCostUsd?: string;
+};
 type Controls = Parameters<JobHandler>[1];
 
 async function providerEvaluation(job: Job, services: EvaluationServices | undefined, controls: Controls, approvalHash: string) {
@@ -131,7 +145,9 @@ async function providerEvaluation(job: Job, services: EvaluationServices | undef
         let started = false;
         const { conservativeObservedUsd } = await evaluateStagingAi(prepared.approval.plan, prepared.key, async entry => {
             if (entry.phase === 'case_observed') {
-                cases.push({ id: String(entry.caseId), passed: entry.passed === true, critical: true });
+                cases.push({ id: String(entry.caseId), passed: entry.passed === true, critical: true,
+                    ...(typeof entry.latencyMs === 'number' ? { latencyMs: entry.latencyMs } : {}),
+                    ...(typeof entry.conservativeObservedUsd === 'string' ? { estimatedCostUsd: entry.conservativeObservedUsd } : {}) });
                 await audit(services.db, { ...entry, approvalRunId: prepared.runId });
             }
             if (entry.phase === 'count_started' || entry.phase === 'generation_started') {
@@ -159,6 +175,7 @@ async function providerEvaluation(job: Job, services: EvaluationServices | undef
                 await check(tx);
                 checked.push(...await evaluationCases(tx, row, job.actorId));
             } catch (error) { code = diagnostic(error); }
+            if (!code && row.plannedCases !== null && checked.length !== row.plannedCases) code = 'AI_EVALUATION_SAMPLE_SET_CHANGED';
         }
         const passedCases = checked.filter(test => test.passed).length;
         const failures = checked.length - passedCases;
@@ -187,14 +204,16 @@ export function aiEvaluationHandler(config?: AuthConfig, services?: EvaluationSe
             let current = false;
             try {
                 const snapshot = await evaluationSnapshot(tx, job.shopId, row, config);
-                current = row.policyVersion === snapshot.policyVersion && row.knowledgeHash === snapshot.knowledgeHash && row.configHash === snapshot.configHash;
+                current = row.policyVersion === snapshot.policyVersion && row.knowledgeHash === snapshot.knowledgeHash && row.configHash === snapshot.configHash &&
+                    (row.plannedCases === null || row.plannedCases === snapshot.plannedCases);
                 if (current) cases = await evaluationCases(tx, row, job.actorId);
             } catch (error) {
                 if (!(error instanceof ConflictException || error instanceof NotFoundException || error instanceof UnprocessableEntityException)) throw error;
             }
             const passedCases = cases.filter(check => check.passed).length;
             const criticalFailures = cases.filter(check => check.critical && !check.passed).length;
-            const status = current && cases.length ? criticalFailures || passedCases !== cases.length ? 'failed' : 'passed' : 'error';
+            const complete = current && cases.length > 0 && (row.plannedCases === null || row.plannedCases === cases.length);
+            const status = complete ? criticalFailures || passedCases !== cases.length ? 'failed' : 'passed' : 'error';
             await tx.evaluation.update({ where: aiKey(job.shopId, id), data: {
                 status, totalCases: cases.length, passedCases, criticalFailures, cases, version: { increment: 1 },
             } });

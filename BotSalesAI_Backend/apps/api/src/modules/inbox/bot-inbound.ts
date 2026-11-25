@@ -5,6 +5,7 @@ import { serializable } from '../../platform/database/transactions.js';
 import { aiFixtureEnabled, budgetHandoff, liveBotSnapshot, reserveAiUsage, runFixtureTools, type ApprovedEvaluationConfig } from '../ai/index.js';
 import { messengerFixtureEnabled } from '../channels/index.js';
 import { requireShopAccess, type AuthConfig } from '../workspace/index.js';
+import { afterSalesRequest, authorizedAfterSales, recordReturnIntake } from './after-sales.js';
 import { inboundIntentKey, recordInboundDraft, workForHandoff } from './bot-drafts.js';
 import { queueMessengerMessage, sendEligibility } from './message-data.js';
 import { processStagedBotInbound } from './staged-bot-inbound.js';
@@ -46,14 +47,25 @@ async function executeTask(tx: Prisma.TransactionClient, config: AuthConfig, key
         throw error;
     }
     if (sendEligibility(conversation, scope, messengerFixtureEnabled(config), 'bot').state !== 'allowed') return handoff('send_ineligible');
-    const result = await reserveAiUsage(tx, bot.shop, bot.revision.dailyBudget, new Date())
-        ? await runFixtureTools(tx, bot.shop, bot.revision, bot.context.knowledge, scope.permissions, { text: row.message.text, customerContextId: null })
-        : budgetHandoff();
-    if (!['catalog', 'inventory', 'knowledge', 'draft_proposal'].includes(result.code)) return handoff(result.code);
+    const request = afterSalesRequest(row.message.text);
+    const afterSales = request ? await authorizedAfterSales(tx, { shopId, conversationId: conversation.id, messageId }, scope.permissions) : null;
+    if (request && !afterSales) return handoff('after_sales_handoff');
+    if (afterSales && bot.revision.maxToolSteps < (afterSales.kind === 'tracking' ? 1 : 2)) return handoff('tool_limit');
+    if (!await reserveAiUsage(tx, bot.shop, bot.revision.dailyBudget, new Date())) return handoff(budgetHandoff().code);
+    const result = afterSales
+        ? { ...afterSales, code: afterSales.kind === 'tracking' ? 'order_tracking' : 'return_intake', draft: undefined }
+        : await runFixtureTools(tx, bot.shop, bot.revision, bot.context.knowledge, scope.permissions, { text: row.message.text, customerContextId: null });
+    if (!afterSales && !['catalog', 'inventory', 'knowledge', 'draft_proposal'].includes(result.code)) return handoff(result.code);
     const sources = [...result.sources];
+    const auditContext = { ...bot.auditContext, permissionVersion: scope.permissionVersion };
+    if (afterSales?.kind === 'return_request') {
+        const created = await recordReturnIntake(tx, config, { actorId: bot.actorId, messageId, conversation, orderId: afterSales.orderId, auditContext });
+        if (!created) return handoff('after_sales_handoff');
+        sources.push(created);
+    }
     if (result.draft && bot.shop.defaultWarehouseId) {
         const order = await recordInboundDraft(tx, config, { actorId: bot.actorId, messageId, conversation, warehouseId: bot.shop.defaultWarehouseId,
-            configHash: bot.context.contentHash, configRevision: bot.revision.revision, proposal: result.draft });
+            auditContext, proposal: result.draft });
         sources.push(order);
         await workForHandoff(tx, conversation, false);
     }
@@ -62,9 +74,11 @@ async function executeTask(tx: Prisma.TransactionClient, config: AuthConfig, key
         async command => {
             const message = await queueMessengerMessage(tx, conversation, {
                 commandId: command.id, clientMessageId: 'bot-' + messageId, text: result.text, botGeneration: row.botGeneration, sources,
+                afterSalesRequestId: afterSales ? messageId : undefined,
             });
             await recordAudit(tx, { shopId, actorId: bot.actorId, requestId: messageId, action: 'sendMessage', resourceType: 'message', resourceId: message.id,
-                metadata: { origin: 'bot_fixture', sourceMessageId: messageId, configRevision: bot.revision.revision, configHash: bot.context.contentHash } });
+                metadata: { ...auditContext, origin: 'bot_fixture', sourceMessageId: messageId,
+                    resourceVersion: message.version, result: 'queued' } });
             return { type: 'message', id: message.id };
         }, true);
     await finish(result.code);

@@ -6,7 +6,7 @@ import { validator } from '../../http/contract-source.js';
 import { SchemaPipe } from '../../http/contracts.js';
 import { envelope, noStore } from '../../http/response.js';
 import { serializable } from '../../platform/database/transactions.js';
-import { enqueueResourceUpdate } from '../../platform/outbox/index.js';
+import { enqueueCommandUpdate, enqueueResourceUpdate } from '../../platform/outbox/index.js';
 import { messengerFixtureEnabled, messengerFixturePolicy } from '../channels/index.js';
 import type { AuthConfig } from '../workspace/index.js';
 import { recordMessengerEvent, receiveMessengerMessage } from './messenger-inbound.js';
@@ -54,11 +54,17 @@ async function receiveStatus(tx: Prisma.TransactionClient, channel: ChannelConne
     if (!conversation) throw new NotFoundException();
     const message = await tx.channelMessage.findUnique({ where: { shopId_conversationId_externalId: {
         shopId: channel.shopId, conversationId: conversation.id, externalId: input.messageId,
-    } }, include: { dispatch: { select: { channelGeneration: true } } } });
+    } }, include: { dispatch: { select: { channelGeneration: true, commandId: true } } } });
     if (!message || message.direction !== 'outbound' || message.dispatch?.channelGeneration !== channel.generation) throw new NotFoundException();
     if (!markAllowed(message, input.status)) return { duplicate: false, messageId: message.id };
     const updated = await tx.channelMessage.update({ where: inboxKey(channel.shopId, message.id),
         data: { status: input.status, version: { increment: 1 } } });
+    if (message.status === 'unknown' && input.status !== 'unknown') {
+        const command = { shopId: channel.shopId, id: message.dispatch.commandId };
+        const settled = await tx.command.updateMany({ where: { ...command, status: 'unknown' },
+            data: { status: input.status === 'failed' ? 'failed' : 'succeeded' } });
+        if (settled.count) await enqueueCommandUpdate(tx, command);
+    }
     await enqueueResourceUpdate(tx, 'message.created', updated);
     return { duplicate: false, messageId: message.id };
 }

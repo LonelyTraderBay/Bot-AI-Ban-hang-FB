@@ -1,4 +1,4 @@
-import { Body, Controller, HttpCode, Param, Post, Req, Res, UnprocessableEntityException } from '@nestjs/common';
+import { Body, Controller, ForbiddenException, HttpCode, Param, Post, Req, Res, UnprocessableEntityException } from '@nestjs/common';
 import type { IncomingHttpHeaders, IncomingMessage, ServerResponse } from 'node:http';
 import type { Prisma, PrismaClient } from '../../generated/prisma/client.js';
 import { validator } from '../../http/contract-source.js';
@@ -8,11 +8,12 @@ import { idPipe } from '../../http/query.js';
 import { envelope, noStore } from '../../http/response.js';
 import { recordAudit } from '../../platform/audit/index.js';
 import { scheduleJob, type JobHandler } from '../../platform/jobs/index.js';
+import { reportSourcePermissions } from '../../platform/jobs/sources.js';
 import { jobDetails, jobDto } from '../../platform/jobs/view.js';
-import { reportSourcePermissions, storeGeneratedFile } from '../files/index.js';
+import { storeGeneratedFile } from '../files/index.js';
 import { requireShopAccess, writeShopCommand, type AuthConfig } from '../workspace/index.js';
 import { financeShop } from './journal.js';
-import { reportWindow } from './report-data.js';
+import { reportExportSnapshotNotice, reportWindow } from './report-data.js';
 import { cashflowProjection, profitLossProjection } from './reports.js';
 
 type ReportType = keyof typeof reportSourcePermissions;
@@ -73,9 +74,10 @@ export class ReportExports {
 
     create(headers: IncomingHttpHeaders, shopId: string, request: SnapshotRequest, requestId: string) {
         const { operationId, resourceType } = reportExportCommand;
+        const sourcePermission = reportSourcePermissions[request.reportType];
         return writeShopCommand(this.db, this.config, { headers, shopId, permission: 'reports.export', operationId, payload: request, deferred: true },
             async (tx, scope, _config, command) => {
-                await requireShopAccess(tx, scope.userId, shopId, reportSourcePermissions[request.reportType]);
+                if (!scope.permissions.includes(sourcePermission)) throw new ForbiddenException();
                 const { timezone } = await financeShop(tx, shopId);
                 reportWindow(request, timezone);
                 const capturedAt = new Date().toISOString();
@@ -91,7 +93,12 @@ export class ReportExports {
                 await recordAudit(tx, { shopId, actorId: scope.userId, requestId, action: operationId, resourceType, resourceId: job.id,
                     metadata: { reportType: request.reportType, capturedAt, rowCount: output.rows.length } });
                 return { type: resourceType, id: job.id };
-            }, async (tx, _scope, result) => jobDto(await tx.job.findUniqueOrThrow({ where: { shopId_id: { shopId, id: result.id } }, include: jobDetails })));
+            }, async (tx, scope, result) => {
+                if (!scope.permissions.includes(sourcePermission)) throw new ForbiddenException();
+                const job = await tx.job.findUniqueOrThrow({ where: { shopId_id: { shopId, id: result.id } }, include: jobDetails });
+                const snapshot = job.input as SnapshotRequest & { capturedAt: string };
+                return { job: jobDto(job), reportSnapshot: { capturedAt: snapshot.capturedAt, requestedAsOf: snapshot.snapshotAsOf } };
+            });
     }
 }
 
@@ -119,6 +126,8 @@ export class ReportExportsController {
     async create(@Param('shopId', idPipe) shopId: string, @Body(input) body: SnapshotRequest,
         @Req() request: IncomingMessage, @Res({ passthrough: true }) response: ServerResponse) {
         noStore(response);
-        return envelope(response, await this.reports.create(request.headers, shopId, body, String(response.getHeader('X-Request-Id'))));
+        const { job, reportSnapshot } = await this.reports.create(request.headers, shopId, body, String(response.getHeader('X-Request-Id')));
+        const result = envelope(response, job);
+        return { ...result, meta: { ...result.meta, reportSnapshot, warnings: [reportExportSnapshotNotice] } };
     }
 }

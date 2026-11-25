@@ -17,11 +17,14 @@ const nullableMetrics = [
     ['Phí nền tảng', 'platformFees'],
     ['Phí thanh toán', 'paymentFees'],
     ['Chi phí AI', 'aiExpense'],
+    ['Chi phí quảng cáo', 'advertisingExpense'],
+    ['Chi phí đóng gói', 'packagingExpense'],
     ['Chi phí vận hành khác', 'otherOperatingExpenses'],
 ] as const;
 
 export function explainProfitLoss(report: ProfitLoss, question: ProfitLossQuestionId) {
-    const missing = nullableMetrics.filter(([, key]) => report[key] === null).map(([label]) => label);
+    const hasValue = (key: (typeof nullableMetrics)[number][1]) => report[key] !== null && report[key] !== undefined;
+    const missing = nullableMetrics.filter(([, key]) => !hasValue(key)).map(([label]) => label);
     const answer = question === 'summary'
         ? `Snapshot báo cáo ghi nhận doanh thu thuần ${formatMoney(report.netSales)}, lãi gộp ${formatMoney(report.grossProfit)} và lợi nhuận vận hành ${formatMoney(report.operatingProfit)}. Đây là các giá trị API trả về; giao diện không cộng lại giao dịch trong các trang danh sách.`
         : missing.length
@@ -35,7 +38,7 @@ export function explainProfitLoss(report: ProfitLoss, question: ProfitLossQuesti
             { label: 'Snapshot lúc', value: report.asOf },
             { label: 'Phiên bản chính sách', value: report.policyVersion },
             { label: 'Mức đầy đủ', value: report.completeness },
-            ...nullableMetrics.filter(([, key]) => report[key] !== null).map(([label, key]) => ({ label, value: formatMoney(report[key]) })),
+            ...nullableMetrics.filter(([, key]) => hasValue(key)).map(([label, key]) => ({ label, value: formatMoney(report[key]) })),
         ],
         warnings: report.warnings,
     };

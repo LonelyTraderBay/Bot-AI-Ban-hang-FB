@@ -3,6 +3,7 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { defineConfig, devices } from '@playwright/test';
 import { isolatedViteCacheDir } from './scripts/vite-cache.mjs';
+import { frontendTestOutput } from './scripts/test-output.mjs';
 
 const projectRoot = path.dirname(fileURLToPath(import.meta.url));
 const runId = process.env.BOTSALES_PLAYWRIGHT_RUN_ID || `playwright-${process.pid}-${randomUUID()}`;
@@ -20,7 +21,7 @@ export default defineConfig({
     testDir: './tests',
     testMatch: ['**/*.spec.ts'],
     testIgnore: ['**/built-demo-regression.spec.ts'],
-    outputDir: path.join(projectRoot, 'test-results', runId),
+    outputDir: path.join(frontendTestOutput(projectRoot), runId),
     fullyParallel: false,
     forbidOnly: !!process.env.CI,
     workers: Number(workers),

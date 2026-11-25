@@ -135,12 +135,12 @@ export function InventoryPage() {
             <Pager page={list.data.page}/>
         </>}</QueryState></Panel>
         <EditDialog open={!!item} title={`Điều chỉnh ${item?.sku || ''}`} description="Nhập phần tăng hoặc giảm của vị trí này. Số tồn chỉ đổi sau khi lệnh được xác nhận." onClose={close} busy={submitting} actions={<MutationButton permission="inventory.adjust" variant="contained" busy={submitting} type="button" onClick={() => void handleSubmit(submitAdjustment)()}>Xác nhận điều chỉnh</MutationButton>}>
-            <ErrorNotice error={adjust.error}/>
+            <ErrorNotice error={adjust.error} fieldLabels={{ unitCost: 'Giá vốn đơn vị' }}/>
             <FormFields component="form" id="inventory-adjustment-form" noValidate  onSubmit={event => { event.preventDefault(); void handleSubmit(submitAdjustment)(event); }}>
                 <Alert severity="warning">API kiểm tra lại phiên bản và lượng đang giữ. Không nhập tổng tồn; không thể giảm thấp hơn lượng đã giữ.</Alert>
                 <TextField label="Thay đổi số lượng" inputProps={{ inputMode: 'numeric' }} {...register('quantityDelta')} error={!!errors.quantityDelta} helperText={errors.quantityDelta?.message}/>
                 <TextField label="Lý do điều chỉnh" multiline minRows={2} {...register('reason')} error={!!errors.reason} helperText={errors.reason?.message}/>
-                {canFinance && <Controller name="unitCost" control={control} render={({ field }) => <TextField {...field} label={`Giá vốn đơn vị (${shop.currency})`} inputProps={{ inputMode: 'decimal' }} error={!!errors.unitCost} helperText={errors.unitCost?.message || 'Để trống nếu không cập nhật giá vốn.'}/>}/>}
+                {canFinance && <Controller name="unitCost" control={control} render={({ field }) => <TextField {...field} label={`Giá vốn đơn vị (${shop.currency})`} inputProps={{ inputMode: 'decimal' }} error={!!errors.unitCost} helperText={errors.unitCost?.message || 'Bắt buộc khi tăng tồn từ vị trí trống. Có thể để trống nếu vị trí còn hàng hoặc khi giảm tồn.'}/>}/>}
             </FormFields>
         </EditDialog>
     </>;

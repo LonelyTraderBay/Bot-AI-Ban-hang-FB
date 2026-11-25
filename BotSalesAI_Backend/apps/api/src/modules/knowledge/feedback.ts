@@ -3,7 +3,7 @@ import { Body, ConflictException, Controller, Get, HttpCode, NotFoundException, 
 import type { IncomingHttpHeaders, IncomingMessage, ServerResponse } from 'node:http';
 import { FeedbackStatus, type ConversationFeedback, type FeedbackRating, type PrismaClient } from '../../generated/prisma/client.js';
 import { validator } from '../../http/contract-source.js';
-import { schemaFromContract, SchemaPipe } from '../../http/contracts.js';
+import { schemaFromContract, SchemaPipe, UnprocessableInput } from '../../http/contracts.js';
 import { ContractOperation } from '../../http/operations.js';
 import { idPipe, listQuery, paging, validUuid } from '../../http/query.js';
 import { envelope, noStore, requireVersion, versionedEnvelope } from '../../http/response.js';
@@ -16,6 +16,9 @@ type Review = { expectedVersion: number; decision: 'approve' | 'reject'; reason:
 const writePipe = new SchemaPipe(validator.compile(schemaFromContract('FeedbackWrite')));
 const reviewPipe = new SchemaPipe(validator.compile(schemaFromContract('FeedbackReview')));
 export const feedbackCommands = ['createFeedback', 'reviewFeedback'].map(operationId => ({ operationId, resourceType: 'feedback' }));
+
+const contactEmail = /[\p{L}\p{N}._%+-]+@[\p{L}\p{N}.-]+\.[\p{L}]{2,}/u;
+const contactPhone = /(?<![\p{L}\p{N}_])(?:\+(?:[.() -]{0,3}\d){8,15}|0(?:[. -]?\d){8,10}|\(?\d{3}\)?[ .-]\d{3}[ .-]\d{4})(?![\p{L}\p{N}_])/u;
 
 function feedbackView(feedback: ConversationFeedback, moderator: boolean) {
     const { id, shopId, conversationId, messageId, version, rating, status, reviewReason, createdAt, updatedAt, correction, redactedCorrection } = feedback;
@@ -75,6 +78,14 @@ export class FeedbackService {
                 if (!record) throw new NotFoundException();
                 requireVersion(record.version, input.expectedVersion);
                 if (record.status !== 'pending') throw new ConflictException();
+                if (redactedCorrection) {
+                    const candidate = redactedCorrection.normalize('NFKC');
+                    if (contactEmail.test(candidate) || contactPhone.test(candidate)) {
+                        throw new UnprocessableInput([{
+                            path: '/redactedCorrection', code: 'PRIVATE_CONTACT_DETAILS', message: 'Loại số điện thoại hoặc email trước khi duyệt nội dung.',
+                        }]);
+                    }
+                }
                 const changed = await tx.conversationFeedback.update({ where: knowledgeKey(shopId, id), data: {
                     status: approve ? 'approved' : 'rejected', reviewReason: reason, reviewedBy: scope.userId, redactedCorrection, version: { increment: 1 },
                 } });

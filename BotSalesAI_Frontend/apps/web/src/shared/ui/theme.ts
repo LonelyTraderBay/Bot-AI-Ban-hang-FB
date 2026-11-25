@@ -59,3 +59,5 @@ export const theme = createTheme({
         MuiTab: { styleOverrides: { root: { textTransform: 'none', minHeight: tokens.space.xxxl } } },
     },
 });
+
+export const tabletAndUpQuery = theme.breakpoints.up('md');

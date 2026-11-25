@@ -21,7 +21,7 @@ export const labels: Record<string, string> = {
     prepare_order: 'Chuẩn bị đơn', purchase_review: 'Duyệt nhập hàng', payment_mismatch: 'Tiền chưa khớp', customer_handoff: 'Khách cần hỗ trợ', late_shipment: 'Đơn giao chậm', low_stock: 'Tồn dưới ngưỡng', unmatched_bank: 'Giao dịch chưa đối soát', recovery: 'Kiểm tra phục hồi',
     voice_transcript_file: 'Tệp âm thanh nguồn', voice_transcript_message: 'Tin nhắn nguồn',
     draft_for_approval: 'Lập đơn chờ duyệt', notify_only: 'Chỉ cảnh báo', auto_send: 'Tự gửi có hạn mức',
-    sales_receipt: 'Thu bán hàng', inventory_purchase: 'Mua hàng nhập kho', shipping: 'Giao hàng', platform_fee: 'Phí nền tảng', payment_fee: 'Phí thanh toán', ai_expense: 'Chi phí AI', operating_expense: 'Chi phí vận hành', capital: 'Vốn góp', loan_principal: 'Gốc khoản vay', transfer: 'Chuyển nội bộ', other: 'Khác',
+    sales_receipt: 'Thu bán hàng', inventory_purchase: 'Mua hàng nhập kho', shipping: 'Giao hàng', platform_fee: 'Phí nền tảng', payment_fee: 'Phí thanh toán', ai_expense: 'Chi phí AI', advertising_expense: 'Chi phí quảng cáo', packaging_expense: 'Chi phí đóng gói', operating_expense: 'Chi phí vận hành', capital: 'Vốn góp', loan_principal: 'Gốc khoản vay', transfer: 'Chuyển nội bộ', other: 'Khác',
     owner: 'Chủ shop', manager: 'Quản lý', sales: 'Bán hàng', warehouse: 'Kho hàng', accountant: 'Kế toán', bot_admin: 'Quản trị AI', viewer: 'Chỉ xem',
     cod: 'Thu hộ COD', bank: 'Ngân hàng', prepay: 'Trả trước', manual: 'Thủ công', approved_adapter: 'Kết nối được duyệt', passed: 'Đạt', error: 'Lỗi',
     sales_admin: 'Admin bán hàng', inventory_agent: 'Kho & mua hàng', finance_agent: 'Kế toán', supervisor: 'Trưởng nhóm',

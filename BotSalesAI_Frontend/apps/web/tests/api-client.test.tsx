@@ -5,7 +5,7 @@ import type { PropsWithChildren } from 'react';
 import type { CommandResponse, CustomerResponse, CustomerWrite, Meta, Membership, Session, Shop, User } from '@botsales/contracts';
 import { ScopeContext } from '../src/shared/model/scope';
 import type { Scope } from '../src/shared/model/scope';
-import { operationUrl, request, setCsrfToken } from '../src/shared/api/client';
+import { operationUrl, request, setCsrfToken, subscribeSessionInvalidation } from '../src/shared/api/client';
 import { useCommand } from '../src/shared/api/hooks';
 import { ApiError, UnknownResultError } from '../src/shared/api/errors';
 import { resolveObservedIntent } from '../src/shared/api/intents';
@@ -92,6 +92,25 @@ describe('typed HTTP boundary', () => {
         expect(url).toBe('/api/v2/auth/csrf');
         expect(init).toMatchObject({ method: 'GET', credentials: 'same-origin', cache: 'no-store' });
         expect(init?.headers).toMatchObject({ Accept: 'application/json' });
+    });
+
+    it('invalidates the session on a protected API 401 and preserves it on a public 401', async () => {
+        const invalidated = vi.fn();
+        const unsubscribe = subscribeSessionInvalidation(invalidated);
+        const rejected = () => jsonResponse(401, {
+            type: 'about:blank', title: 'Unauthenticated', status: 401, code: 'UNAUTHENTICATED', requestId: meta.requestId,
+        });
+        try {
+            fetchMock.mockResolvedValueOnce(rejected());
+            await expect(request('getCsrfToken')).rejects.toMatchObject({ status: 401 });
+            expect(invalidated).not.toHaveBeenCalled();
+
+            fetchMock.mockResolvedValueOnce(rejected());
+            await expect(request('getShop', { path: { shopId: shop.id } })).rejects.toMatchObject({ status: 401 });
+            expect(invalidated).toHaveBeenCalledTimes(1);
+        } finally {
+            unsubscribe();
+        }
     });
 
     it('preserves contract nulls, adds CSRF and idempotency headers, and validates the response DTO', async () => {

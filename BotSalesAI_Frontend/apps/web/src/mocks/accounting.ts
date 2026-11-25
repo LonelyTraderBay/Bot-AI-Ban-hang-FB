@@ -48,6 +48,22 @@ export function dispatchCost(stock:Row,quantity:number) {
 export type ReportWindow={from:string;to:string;timezone:string;start:number;end:number};
 export function journalInstant(shopId:string,journal:Row) {return Date.parse(dateOnlyStartOfDayToISOString(str(journal.effectiveDate),str(find('shops',shopId,shopId).timezone)));}
 export function postedJournals(shopId:string) {return all('journals',shopId).filter(j=>['posted','reversed'].includes(str(j.status))).sort((a,b)=>str(a.effectiveDate).localeCompare(str(b.effectiveDate))||str(a.id).localeCompare(str(b.id)));}
+
+export function classifiedExpenses(shopId: string, journals = postedJournals(shopId)) {
+    const expenseAccount = all('accounts', shopId).find(account => account.code === '642');
+    if (!expenseAccount) return [];
+    const entries = new Map(all('financeEntries', shopId).map(entry => [str(entry.id), entry]));
+    const results = [];
+    for (const journal of journals) {
+        if (journal.sourceType !== 'finance_entry' && journal.sourceType !== 'reversal') continue;
+        const category = entries.get(str(journal.sourceId))?.classification;
+        if (category !== 'advertising_expense' && category !== 'packaging_expense') continue;
+        const total = rows(journal.lines).filter(line => line.accountId === expenseAccount.id)
+            .reduce((amount, line) => amount + units(line.debit) - units(line.credit), 0n);
+        results.push({ category, day: str(journal.effectiveDate), total });
+    }
+    return results;
+}
 export function bookSnapshot(shopId:string) {
     const journals=postedJournals(shopId),warnings:string[]=[];
     if(!all('openingBalances',shopId).some(o=>o.status==='posted'))warnings.push('Chưa có mở sổ được kiểm và ghi; số liệu chỉ bao gồm chứng từ đã có.');
@@ -127,5 +143,8 @@ export function journalReports(shopId:string,window:ReportWindow,kind:'cashflow'
     }
     const revenue=-amount('511'),returns=amount('521'),otherIncome=accounts.filter(a=>a.group==='income'&&!['511','521'].includes(str(a.code))).reduce((n,a)=>{const v=balances.get(str(a.id));return n+(v?v.credit-v.debit:0n);},0n),cogs=amount('632'),operating=accounts.filter(a=>a.group==='expense'&&a.code!=='632').reduce((n,a)=>{const v=balances.get(str(a.id));return n+(v?v.debit-v.credit:0n);},0n);
     const incomplete=snapshot.completeness==='incomplete';
-    return {...base,grossSales:money(revenue,currency),discounts:money(0n,currency),salesReturns:money(returns,currency),netSales:money(revenue-returns,currency),cogs:incomplete?null:money(cogs,currency),grossProfit:incomplete?null:money(revenue-returns-cogs,currency),operatingProfit:incomplete?null:money(revenue-returns+otherIncome-cogs-operating,currency),shippingIncome:money(0n,currency),shippingExpense:money(amount('64101'),currency),platformFees:money(amount('64102'),currency),paymentFees:money(amount('64103'),currency),aiExpense:money(amount('64201'),currency),otherOperatingExpenses:money(operating-amount('64101')-amount('64102')-amount('64103')-amount('64201'),currency)};
+    const charges = classifiedExpenses(shopId, selected);
+    const expense = (category: string) => charges.filter(row => row.category === category).reduce((total, row) => total + row.total, 0n);
+    const advertising = expense('advertising_expense'), packaging = expense('packaging_expense');
+    return {...base,grossSales:money(revenue,currency),discounts:money(0n,currency),salesReturns:money(returns,currency),netSales:money(revenue-returns,currency),cogs:incomplete?null:money(cogs,currency),grossProfit:incomplete?null:money(revenue-returns-cogs,currency),operatingProfit:incomplete?null:money(revenue-returns+otherIncome-cogs-operating,currency),shippingIncome:money(0n,currency),shippingExpense:money(amount('64101'),currency),platformFees:money(amount('64102'),currency),paymentFees:money(amount('64103'),currency),aiExpense:money(amount('64201'),currency),advertisingExpense:money(advertising,currency),packagingExpense:money(packaging,currency),otherOperatingExpenses:money(operating-amount('64101')-amount('64102')-amount('64103')-amount('64201')-advertising-packaging,currency)};
 }

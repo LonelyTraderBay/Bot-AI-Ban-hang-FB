@@ -203,7 +203,7 @@ class Channels {
             async (tx, scope, _config, command) => {
                 const channel = await channelInShop(tx, shopId, id);
                 const verifyMetaInbound = Boolean(metaInboundPage(this.meta, channel));
-                if (channel.policyVersion === metaInboundPolicy && !verifyMetaInbound) throw new UnprocessableEntityException();
+                if (channel.status === 'connected' && channel.policyVersion === metaInboundPolicy && !verifyMetaInbound) throw new UnprocessableEntityException();
                 const job = await scheduleJob(tx, { shopId, actorId: scope.userId, sourceOperation: checkOperation, kind: 'connection_test',
                     input: { channelId: channel.id, generation: channel.generation, ...(verifyMetaInbound ? { verifyMetaInbound } : {}) }, commandId: command.id });
                 await recordAudit(tx, { shopId, actorId: scope.userId, action: checkOperation, requestId, resourceType: 'job', resourceId: job.id,

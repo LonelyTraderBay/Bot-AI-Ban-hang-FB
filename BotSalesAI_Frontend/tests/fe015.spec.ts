@@ -28,17 +28,22 @@ async function chooseOption(page: import('@playwright/test').Page, label: string
         await expect(page.getByRole('status').filter({ hasText: /^Đã (tải|khôi phục)/ })).toBeVisible();
 }
 
-async function importCsv(page: import('@playwright/test').Page, kind: 'bank' | 'cod', accountOrCarrier: string, batch: string, contents: string) {
+async function previewCsv(page: import('@playwright/test').Page, kind: 'bank' | 'cod', accountOrCarrier: string, batch: string, contents: string) {
     await page.getByRole('button', { name: 'Nhập bảng đối soát', exact: true }).click();
     const dialog = page.getByRole('dialog', { name: 'Nhập bảng đối soát' });
     if (kind === 'cod') await chooseOption(page, 'Loại bảng', 'COD', dialog);
     await dialog.locator('input[type="file"]').setInputFiles({ name: `${kind}-${batch}.csv`, mimeType: 'text/csv', buffer: Buffer.from(contents, 'utf8') });
     await chooseOption(page, 'Tài khoản / đơn vị vận chuyển', accountOrCarrier==='carrier-demo'?/Đơn vị carrier-demo/:'112 · Tiền ngân hàng', dialog);
     await dialog.getByRole('textbox', { name: 'Mã đợt nhập duy nhất' }).fill(batch);
-    const importPath = kind === 'bank' ? '/bank-transactions/import' : '/cod-settlements/import';
     const previewWait=page.waitForResponse(r=>r.request().method()==='POST'&&new URL(r.url()).pathname.endsWith('/finance/statement-import-preview'),{timeout:5000});
     await dialog.getByRole('button', { name: 'Xem trước bảng đối soát' }).click();
     const previewResponse=await previewWait.catch(async error=>{throw new Error(`${String(error)}\n${await dialog.innerText()}`);}),previewPayload=await previewResponse.json();expect(previewResponse.status()).toBe(200);
+    return { dialog, previewResponse, previewPayload };
+}
+
+async function importCsv(page: import('@playwright/test').Page, kind: 'bank' | 'cod', accountOrCarrier: string, batch: string, contents: string) {
+    const { dialog, previewResponse, previewPayload } = await previewCsv(page, kind, accountOrCarrier, batch, contents);
+    const importPath = kind === 'bank' ? '/bank-transactions/import' : '/cod-settlements/import';
     if(previewPayload.data.validRows===0){await expect(dialog.getByRole('button',{name:'Nhập các dòng hợp lệ'})).toBeDisabled();await discardDialogChanges(page,dialog);return {response:previewResponse,payload:previewPayload,previewOnly:true};}
     const responseWait = page.waitForResponse(response => response.request().method() === 'POST' && new URL(response.url()).pathname.endsWith(importPath));
     await dialog.getByRole('button', { name: 'Nhập các dòng hợp lệ' }).click();
@@ -269,6 +274,37 @@ test('FE015.AC02 closed accounting period is visible and disables journal draft 
     await journal.getByRole('textbox', { name: 'Ngày hiệu lực' }).fill('2026-09-29');
     await expect(journal.getByRole('alert').filter({ hasText: 'đã khóa.' })).toBeVisible();
     const calls:string[]=[];page.on('request',r=>{if(r.method()==='POST'&&new URL(r.url()).pathname.endsWith('/journals'))calls.push(r.postData()||'');});await journal.getByRole('button',{name:'Lưu nháp'}).click();expect(calls).toEqual([]);
+});
+
+test('FE015.E04 offline statement import sends no write and reconnect does not replay it', async ({ page }) => {
+    let submissions = 0;
+    page.on('request', request => {
+        if (request.method() === 'POST' && new URL(request.url()).pathname.endsWith('/bank-transactions/import')) submissions++;
+    });
+    await gotoDemo(page, '/s/shop-demo/finance/reconciliation');
+    const csv = [
+        'externalTransactionId,amount,currency,direction,occurredAt,referenceText',
+        'FE015-OFFLINE-ITEM,100000,VND,credit,2026-09-29T12:00:00Z,Payment sample',
+    ].join('\n');
+    const { dialog, previewPayload } = await previewCsv(page, 'bank', 'bank', 'FE015-OFFLINE-BATCH', csv);
+    expect(previewPayload.data.validRows).toBe(1);
+    const submit = dialog.getByRole('button', { name: 'Nhập các dòng hợp lệ' });
+    await expect(submit).toBeVisible();
+    const offline = page.getByText(/^Đang ngoại tuyến\. Dữ liệu đang xem/);
+    try {
+        await page.context().setOffline(true);
+        await expect(offline).toBeVisible();
+        if (await submit.isEnabled()) await submit.click();
+        await expect(dialog.getByRole('textbox', { name: 'Mã đợt nhập duy nhất' })).toHaveValue('FE015-OFFLINE-BATCH');
+        await expect(dialog.getByRole('link', { name: /Xem kết quả nhập/ })).toHaveCount(0);
+        expect(submissions).toBe(0);
+    } finally {
+        await page.context().setOffline(false);
+    }
+    await expect(offline).toHaveCount(0);
+    await expect(page.getByRole('heading', { name: 'Đối soát ngân hàng & COD' })).toBeVisible();
+    await expect(page.getByRole('row').filter({ hasText: 'FE015-OFFLINE-ITEM' })).toHaveCount(0);
+    expect(submissions).toBe(0);
 });
 
 test('FE015.AC03 CSV import keeps partial row failures visible and deduplicates external transactions', async ({ page }) => {

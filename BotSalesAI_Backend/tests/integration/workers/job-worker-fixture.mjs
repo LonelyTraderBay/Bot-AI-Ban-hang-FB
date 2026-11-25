@@ -5,6 +5,7 @@ const scenario = process.env.BE10_JOB_PAUSE;
 let releaseJobs;
 const heldJobs = scenario === 'tenant-burst' ? new Promise(resolve => { releaseJobs = resolve; }) : undefined;
 const handlers = new Map([['createProductImport', async (job, { beginExternalEffect }) => {
+    if (job.input.scenario === 'persistent-failure') throw new Error('Fixture job failure');
     if (heldJobs && job.input.scenario === 'held') {
         console.log('fixture tenant job waiting');
         await heldJobs;

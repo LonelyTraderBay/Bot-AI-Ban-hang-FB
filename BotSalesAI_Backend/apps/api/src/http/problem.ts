@@ -1,7 +1,7 @@
 import { Catch, HttpException, type ArgumentsHost, type ExceptionFilter, Logger } from '@nestjs/common';
 import { randomUUID } from 'node:crypto';
 import { STATUS_CODES, type IncomingMessage, type ServerResponse } from 'node:http';
-import { InvalidInput } from './contracts.js';
+import { DomainConflict, FieldConflict, InvalidInput, UnprocessableInput } from './contracts.js';
 
 type TracedRequest = IncomingMessage & { requestId?: string };
 const errorCodes: Readonly<Record<number, string>> = {
@@ -39,7 +39,8 @@ export class ProblemFilter implements ExceptionFilter {
         const response = http.getResponse<ServerResponse>();
         const status = problemStatus(error);
         const requestId = request.requestId ?? randomUUID();
-        const code = error instanceof InvalidInput ? 'VALIDATION_FAILED' : (errorCodes[status] ?? 'HTTP_ERROR');
+        const code = error instanceof DomainConflict ? error.problemCode
+            : error instanceof InvalidInput ? 'VALIDATION_FAILED' : (errorCodes[status] ?? 'HTTP_ERROR');
         if (status === 500) this.logger.error({ requestId, code });
         if (response.headersSent) {
             response.end();
@@ -54,7 +55,8 @@ export class ProblemFilter implements ExceptionFilter {
             status,
             code,
             requestId,
-            ...(error instanceof InvalidInput ? { errors: error.errors } : {}),
+            ...(error instanceof DomainConflict ? { detail: error.detail } : {}),
+            ...(error instanceof InvalidInput || error instanceof FieldConflict || error instanceof UnprocessableInput ? { errors: error.errors } : {}),
         }));
     }
 }

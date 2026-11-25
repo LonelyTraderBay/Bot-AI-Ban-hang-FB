@@ -8,13 +8,14 @@ import type { IncomingHttpHeaders, IncomingMessage, ServerResponse } from 'node:
 import { extname } from 'node:path';
 import { Worker } from 'node:worker_threads';
 import sharp from 'sharp';
-import type { FileObject, FilePurpose, Prisma, PrismaClient } from '../../generated/prisma/client.js';
+import type { FileObject, FilePurpose, FileRejectionReason, Prisma, PrismaClient } from '../../generated/prisma/client.js';
 import { validator } from '../../http/contract-source.js';
 import { schemaFromContract, SchemaPipe } from '../../http/contracts.js';
 import { API_PREFIX, ContractOperation } from '../../http/operations.js';
 import { idPipe, validUuid } from '../../http/query.js';
 import { envelope, noStore } from '../../http/response.js';
 import { recordAudit } from '../../platform/audit/index.js';
+import { reportSourcePermissions } from '../../platform/jobs/sources.js';
 import { channelMediaPolicy, messengerFixtureEnabled } from '../channels/index.js';
 import { readAsSession, requireIdempotencyKey, requireMutationCsrf, requireSessionToken, requireShopAccess,
     usesLocalOidcFixture, writeShopCommand, type AuthConfig, type ShopScope } from '../workspace/index.js';
@@ -80,10 +81,6 @@ export async function storeGeneratedFile(tx: Prisma.TransactionClient, input: {
     return file;
 }
 
-export const reportSourcePermissions = {
-    inventory: 'inventory.read', orders: 'orders.read', cashflow: 'finance.read', profit_loss: 'finance.read',
-} as const;
-
 async function generatedFileAccessible(tx: Prisma.TransactionClient, file: FileObject, scope: ShopScope) {
     if (!file.resourceId || file.status !== 'ready' || !file.expiresAt || file.expiresAt <= new Date() || file.uploaderId !== scope.userId ||
         !scope.permissions.includes(permissionByPurpose[file.purpose])) return false;
@@ -135,40 +132,42 @@ function pcmWave(bytes: Buffer) {
         bytes.readUInt16LE(32) === frame && bytes.readUInt32LE(28) === sampleRate * frame && (bytes.length - 44) % frame === 0;
 }
 
-async function inspect(file: UploadPart, name: string, purpose: FilePurpose) {
+async function inspect(file: UploadPart, name: string, purpose: FilePurpose): Promise<{ bytes: Buffer; mimeType: string } | FileRejectionReason> {
     try {
         if (purpose === 'conversation_media' && file.mimetype === 'audio/wav') {
-            return extname(name).toLowerCase() === '.wav' && pcmWave(file.buffer) ? { bytes: file.buffer, mimeType: file.mimetype } : null;
+            return extname(name).toLowerCase() === '.wav' && pcmWave(file.buffer) ? { bytes: file.buffer, mimeType: file.mimetype } : 'invalid_format';
         }
         if (purpose === 'product_image' || purpose === 'conversation_media') {
-            if (!Array.from(rasterMime.values()).includes(file.mimetype)) return null;
+            if (!Array.from(rasterMime.values()).includes(file.mimetype)) return 'invalid_format';
             const image = sharp(file.buffer, { limitInputPixels: 8_000_000, failOn: 'warning' });
             const { format, pages } = await image.metadata();
-            if (!rasterMime.has(format) || rasterMime.get(format) !== file.mimetype || (pages ?? 1) !== 1) return null;
+            if (!rasterMime.has(format) || rasterMime.get(format) !== file.mimetype || (pages ?? 1) !== 1) return 'invalid_format';
             const bytes = await image.toBuffer();
-            if (bytes.length > maxBytes) return null;
+            if (bytes.length > maxBytes) return 'validation_failed';
             return { bytes, mimeType: file.mimetype };
         }
         const extension = extname(name).toLowerCase();
         if (purpose === 'knowledge_source' && extension === '.txt') {
             if (!['text/plain', 'application/octet-stream'].includes(file.mimetype) ||
-                plainText.decode(file.buffer).includes(String.fromCharCode(0))) return null;
+                plainText.decode(file.buffer).includes(String.fromCharCode(0))) return 'invalid_format';
             return { bytes: file.buffer, mimeType: 'text/plain' };
         }
         if (purpose === 'knowledge_source' && extension === '.pdf') {
-            if (!['application/pdf', 'application/octet-stream'].includes(file.mimetype) || file.buffer.subarray(0, 5).toString() !== '%PDF-') return null;
+            if (!['application/pdf', 'application/octet-stream'].includes(file.mimetype) || file.buffer.subarray(0, 5).toString() !== '%PDF-') return 'invalid_format';
             await extractKnowledgeText(file.buffer, 'application/pdf');
             return { bytes: file.buffer, mimeType: 'application/pdf' };
         }
         const mimeType = extension === '.csv' ? csvType : extension === '.xlsx' ? xlsxType : null;
-        if (!mimeType) return null;
-        if (purpose !== 'product_import' && mimeType !== csvType) return null;
+        if (!mimeType) return 'invalid_format';
+        if (purpose !== 'product_import' && mimeType !== csvType) return 'invalid_format';
         const compatible = mimeType === csvType ? [csvType, 'text/plain', 'application/vnd.ms-excel'] : [xlsxType];
-        if (!compatible.includes(file.mimetype) && file.mimetype !== 'application/octet-stream') return null;
-        if (await scanFile(new URL('./spreadsheet-scan.js', import.meta.url), { bytes: file.buffer, mimeType }) !== true) return null;
-        return { bytes: file.buffer, mimeType };
+        if (!compatible.includes(file.mimetype) && file.mimetype !== 'application/octet-stream') return 'invalid_format';
+        const result = await scanFile(new URL('./spreadsheet-scan.js', import.meta.url), { bytes: file.buffer, mimeType });
+        if (result === true) return { bytes: file.buffer, mimeType };
+        if (result === 'invalid_format' || result === 'unsupported_content' || result === 'spreadsheet_limit') return result;
+        return 'validation_failed';
     } catch {
-        return null;
+        return 'invalid_format';
     }
 }
 
@@ -187,6 +186,7 @@ function fileView(file: FileObject, config: AuthConfig | undefined, userId: stri
     const token = file.status === 'ready' && config ? expires + '.' + signedRead(config.signingKey, file, userId, expires).toString('hex') : null;
     return {
         id: file.id, shopId: file.shopId, name: file.name, mimeType: file.mimeType, sizeBytes: file.sizeBytes, status: file.status,
+        ...(file.rejectionReason ? { rejectionReason: file.rejectionReason } : {}),
         ...(file.purpose === 'report_export' || file.purpose === 'privacy_export' ? {} : { purpose: file.purpose }), resourceId: file.resourceId,
         readUrl: token ? API_PREFIX + '/shops/' + file.shopId + '/uploads/' + file.id + '?content=' + token : null,
     };
@@ -219,7 +219,9 @@ class FilesService {
         const digest = createHash('sha256').update(file.buffer).digest('hex');
         const scan = this.scanner ? await this.scanner.scan(file.buffer)
             : usesLocalOidcFixture(this.config) ? 'fixture' : 'unavailable';
-        const inspected = scan === 'clean' || scan === 'fixture' ? await inspect(file, name, input.purpose) : null;
+        const inspection = scan === 'clean' || scan === 'fixture' ? await inspect(file, name, input.purpose) : null;
+        const inspected = inspection && typeof inspection !== 'string' ? inspection : null;
+        const rejectionReason = scan === 'blocked' ? 'unsafe_file' : typeof inspection === 'string' ? inspection : null;
         const { operationId } = fileCommand;
         return writeShopCommand(this.db, this.config, {
             headers, shopId, permission, operationId,
@@ -244,13 +246,14 @@ class FilesService {
                 data: {
                     shopId, uploaderId: scope.userId, name, mimeType: inspected?.mimeType ?? 'application/octet-stream',
                     sizeBytes: bytes?.length ?? file.buffer.length, sha256: bytes ? createHash('sha256').update(bytes).digest('hex') : digest,
-                    purpose: input.purpose, resourceId: input.resourceId, status: bytes ? 'ready' : 'quarantined',
+                    purpose: input.purpose, resourceId: input.resourceId, status: bytes ? 'ready' : 'quarantined', rejectionReason,
                 },
             });
             if (bytes) await tx.fileBlob.create({ data: { shopId, fileId: stored.id, bytes: Uint8Array.from(bytes) } });
             await recordAudit(tx, {
                 shopId, actorId: scope.userId, action: operationId, requestId, resourceType: 'file', resourceId: stored.id,
-                metadata: { purpose: input.purpose, status: stored.status, sizeBytes: stored.sizeBytes, scan },
+                metadata: { purpose: input.purpose, status: stored.status, sizeBytes: stored.sizeBytes, scan,
+                    ...(rejectionReason ? { rejectionReason } : {}) },
             });
             return { type: 'file', id: stored.id, scope: input.purpose };
         }, async (tx, scope, result) => {

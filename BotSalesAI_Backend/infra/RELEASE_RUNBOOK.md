@@ -186,6 +186,13 @@ Ca hồi quy gói dùng `npm run test:release:browser -- <extracted-dir> <manife
 
 Ca hồi quy gói dùng `npm run test:release:browser -- <extracted-dir> <manifest-sha256> --procurement-manual` với PostgreSQL, Redis và IdP loopback. Ca này tạo nhà cung cấp và chứng từ tổng hợp trong dữ liệu thử.
 
+#### Nhập dự trù quảng cáo theo ngày · R53
+
+1. Đối chiếu số tiền và ngày hạch toán với chứng từ dự trù đã duyệt. Đặt `ADVERTISING_ESTIMATE_SHOPS` là các UUID shop được nhập, cách nhau bằng dấu phẩy. Người ghi cần quyền `finance.post` đang hiệu lực trong shop.
+2. Hồ sơ JSON có `format` bằng 1, `database` dạng `host:port/database`, `shopId`, `reviewerId`, `date` dạng `YYYY-MM-DD` theo shop, `amount` gồm `amount` dạng chuỗi và `currency` đúng đồng tiền của shop, `expectedRevision` là phiên bản đang áp dụng và `documentSha256` của tài liệu. Dùng `expectedRevision: 0` cho ngày nhập lần đầu. Lấy checksum JSON từ hồ sơ phê duyệt và giữ tài liệu gốc tại kho chứng từ.
+3. Dùng role `botsales_runtime` và chạy `npm run record:advertising-estimate -- <review.json> <approved-sha256> <document>`. Công cụ trả `evidenceId`. Nhập lại cùng hồ sơ trả cùng ID. Yêu cầu sửa với phiên bản đã cũ trả 412. Tra thao tác `recordAdvertisingEstimate` ở R34 để đối chiếu ID và người ghi.
+4. Mở lại R53 theo kỳ cần đối chiếu. Báo cáo lấy bản gần nhất của từng ngày, hiện số ngày có dự trù và lần nhập gần nhất. Ngày thiếu nguồn được hiển thị là chưa có dữ liệu. Chi thực tế tiếp tục lấy từ bút toán và chứng từ dự trù vẫn truy được sau khi ghi chi thực tế.
+
 ### Smoke xuyên hệ thống · T072
 
 Sau khi kiểm xong T069–T071, chọn một khách tổng hợp và một shop đã được cấp quyền trên staging. Ghi môi trường, digest gói, mốc thời gian và phạm vi nghiệp vụ. Dùng cùng đơn, hội thoại và công việc chuẩn bị từ đầu đến cuối để đối chiếu bằng chứng.
@@ -291,7 +298,7 @@ psql -XAtq 'service=botsales_restore_target' -f infra/backup/verify-restore.sql 
 npm run --silent check:restore-evidence -- source.json restored.json "$APPROVED_SOURCE_REPORT_SHA256"
 ```
 
-`SNAPSHOT_MATCHED` và mã thoát 0 xác nhận dấu vân tay và số lượng khớp, ba phép đối chiếu toàn vẹn đều đạt. `ATTENTION` và mã 2 chỉ tên nhóm lệch hoặc chỉ số có lỗi. `UNAVAILABLE` và mã 1 báo tệp thiếu, sai định dạng, sai digest nguồn hoặc cùng dấu vân tay database. Báo cáo định dạng 3 thêm dấu vân tay shop, membership, sản phẩm, SKU, khách hàng, đơn bán và audit vào các nhóm của định dạng 2. Có thể so lại hai báo cáo lịch sử cùng định dạng 2. Khi so snapshot mới, xuất cả hai báo cáo bằng cùng bản SQL. Tệp còn hiệu lực và chưa có trạng thái lưu ở kho S3 phải còn blob trong PostgreSQL. Đối chiếu byte thực trong S3 dùng `check:object-storage`.
+`SNAPSHOT_MATCHED` và mã thoát 0 xác nhận dấu vân tay và số lượng khớp, ba phép đối chiếu toàn vẹn đều đạt. `ATTENTION` và mã 2 chỉ tên nhóm lệch hoặc chỉ số có lỗi. `UNAVAILABLE` và mã 1 báo tệp thiếu, sai định dạng, sai digest nguồn hoặc cùng dấu vân tay database. Định dạng 5 thêm vận đơn và từng dòng vận đơn, gồm số lượng, giá vốn khi bàn giao và liên kết dòng đơn. Định dạng 4 đã bao gồm vị trí, số lượng và giá của dòng đơn. Có thể so lại hai báo cáo lịch sử cùng định dạng 2, 3 hoặc 4. Khi so snapshot mới, xuất cả hai báo cáo bằng cùng bản SQL và lưu riêng bằng chứng về hai cụm và nơi lưu dữ liệu nguồn/đích. Tệp còn hiệu lực và chưa có trạng thái lưu ở kho S3 phải còn blob trong PostgreSQL. Đối chiếu byte thực trong S3 dùng `check:object-storage`.
 
 ### Diễn tập PostgreSQL với hai shop mẫu
 

@@ -1,12 +1,12 @@
 import { ActionGroup, FieldGroup, FormFields, SectionGrid, SurfaceContent } from '../../shared/ui/composition';
-import { useEffect, useRef, useState } from 'react';
+import { useLayoutEffect, useRef, useState } from 'react';
 import { visualSx } from '@/shared/ui/visual';
 import { Link as RouterLink, useParams, useSearchParams } from 'react-router-dom';
 import { Alert, Avatar, Box, Button, List, ListItem, ListItemButton, MenuItem, Stack, Tab, Tabs, TextField, Typography } from '@mui/material';
 import ArrowBackRounded from '@mui/icons-material/ArrowBackRounded';
 import type { Message, Product, StockSnapshot } from '@botsales/contracts';
 import { colors, tokens } from '@botsales/tokens';
-import { useApi, useCommand } from '@/shared/api/hooks';
+import { useApi, useCommand, usePagedApi } from '@/shared/api/hooks';
 import { useScope, useCan } from '@/shared/model/scope';
 import { dateTime } from '@/shared/model/format';
 import { PageHeader, Panel, QueryState, Toolbar, Pager, Status, MutationButton, EditDialog, ErrorNotice, ConfirmDialog, RouteLink, Empty, DataTable, Amount } from '@/shared/ui/components';
@@ -95,7 +95,9 @@ function ConversationPanel({ conversationId }: {
     const [params] = useSearchParams();
     const c = useApi('getConversation', { path: { conversationId } });
     const messageCursor = params.get('cursor') || undefined;
-    const messages = useApi('listMessages', { path: { conversationId }, query: { cursor: messageCursor, limit: 100 } });
+    const history = usePagedApi('listMessages', { path: { conversationId }, query: { limit: 100 } }, !messageCursor);
+    const bookmarked = useApi('listMessages', { path: { conversationId }, query: { cursor: messageCursor, limit: 100 } }, Boolean(messageCursor));
+    const messages = messageCursor ? bookmarked : history;
     const takeover = useCommand('takeoverConversation', ['getConversation', 'listConversations']);
     const release = useCommand('releaseConversation', ['getConversation', 'listConversations']);
     const resolve = useCommand('resolveConversation', ['getConversation', 'listConversations', 'getDashboard']);
@@ -105,14 +107,74 @@ function ConversationPanel({ conversationId }: {
     const [correction, setCorrection] = useState('');
     const [rating, setRating] = useState<'positive' | 'negative'>('negative');
     const messageList = useRef<HTMLDivElement>(null);
+    const latestMessageIds = useRef<Set<string> | null>(null);
+    const followingLatest = useRef(true);
+    const previousScrollTop = useRef(0);
+    const prependAnchor = useRef<{ bubble: HTMLElement; top: number } | null>(null);
+    const [jumpAvailable, setJumpAvailable] = useState(false);
+    const [announcementId, setAnnouncementId] = useState<string>();
     const conversationReady = Boolean(c.data);
 
-    useEffect(() => {
-        const list = messageList.current;
-        if (!messageCursor && list && list.scrollHeight > list.clientHeight) {
-            list.scrollTo({ top: list.scrollHeight, behavior: 'auto' });
+    useLayoutEffect(() => {
+        if (messageCursor) {
+            prependAnchor.current = null;
+            latestMessageIds.current = null;
+            followingLatest.current = true;
+            setJumpAvailable(false);
+            setAnnouncementId(undefined);
+            return;
         }
-    }, [messages.data, messageCursor, conversationReady]);
+        const list = messageList.current;
+        if (!list || !history.firstPage) return;
+        const current = history.firstPage.data;
+        const previous = latestMessageIds.current;
+        latestMessageIds.current = new Set(current.map(message => message.id));
+        const arrived = previous && current.find(message => message.direction === 'inbound' && !previous.has(message.id));
+        if (arrived) {
+            setAnnouncementId(arrived.id);
+            if (!followingLatest.current) setJumpAvailable(true);
+        }
+        if (followingLatest.current) {
+            list.scrollTop = list.scrollHeight;
+            previousScrollTop.current = list.scrollTop;
+        }
+    }, [history.firstPage, messageCursor, conversationReady]);
+
+    useLayoutEffect(() => {
+        if (history.isLoadingMore) return;
+        const anchor = prependAnchor.current;
+        prependAnchor.current = null;
+        const list = messageList.current;
+        if (!list || !anchor || !list.contains(anchor.bubble)) return;
+        list.scrollTop += anchor.bubble.getBoundingClientRect().top - list.getBoundingClientRect().top - anchor.top;
+        previousScrollTop.current = list.scrollTop;
+    }, [history.isLoadingMore, history.loadedCount]);
+
+    const rememberReadingPosition = (list: HTMLDivElement) => {
+        const viewportTop = list.getBoundingClientRect().top;
+        const bubble = Array.from(list.querySelectorAll<HTMLElement>('[data-testid="inbox-message-bubble"]'))
+            .find(element => element.getBoundingClientRect().bottom > viewportTop);
+        prependAnchor.current = bubble ? { bubble, top: bubble.getBoundingClientRect().top - viewportTop } : null;
+    };
+
+    const loadOlderMessages = () => {
+        const list = messageList.current;
+        if (!list || history.isFetching) return;
+        rememberReadingPosition(list);
+        followingLatest.current = false;
+        list.focus({ preventScroll: true });
+        void history.loadMore();
+    };
+
+    const jumpToLatest = () => {
+        const list = messageList.current;
+        if (!list) return;
+        list.focus({ preventScroll: true });
+        list.scrollTop = list.scrollHeight;
+        previousScrollTop.current = list.scrollTop;
+        followingLatest.current = true;
+        setJumpAvailable(false);
+    };
 
     const inboxHref = () => {
         const next = new URLSearchParams(params);
@@ -160,9 +222,25 @@ function ConversationPanel({ conversationId }: {
                                     </Alert>
                                 </Box>
                             )}
-                            <Box ref={messageList} data-testid="inbox-message-list" sx={[layoutSx.inbox.paneInset, { flex: 1, minHeight: { xs: 350, xl: '6em' }, maxHeight: 550, overflowY: 'auto', background: colors.canvas }]}>
+                            <Box ref={messageList} data-testid="inbox-message-list" role="region" aria-label="Lịch sử tin nhắn" tabIndex={0}
+                                onScroll={({ currentTarget }) => {
+                                    if (messageCursor) return;
+                                    const { scrollTop, scrollHeight, clientHeight } = currentTarget;
+                                    if (history.isLoadingMore && scrollTop !== previousScrollTop.current)
+                                        rememberReadingPosition(currentTarget);
+                                    if (scrollHeight - scrollTop - clientHeight <= 2) {
+                                        followingLatest.current = true;
+                                        setJumpAvailable(false);
+                                    } else if (scrollTop < previousScrollTop.current) {
+                                        followingLatest.current = false;
+                                    }
+                                    previousScrollTop.current = scrollTop;
+                                }}
+                                sx={[layoutSx.inbox.paneInset, { flex: 1, minHeight: { xs: 350, xl: '6em' }, maxHeight: 550, overflowY: 'auto', background: colors.canvas }]}>
                                 <QueryState query={messages}>
                                     <Stack data-testid="inbox-message-groups" sx={layoutSx.inbox.messageGroupGap}>
+                                        {!messageCursor && history.hasMore && <Button size="small" sx={{ alignSelf: 'start' }}
+                                            disabled={history.isFetching} onClick={loadOlderMessages}>Tải tin cũ hơn</Button>}
                                         <ConversationMessageList
                                             key={conversation.id}
                                             messages={messages.data?.data || []}
@@ -174,9 +252,14 @@ function ConversationPanel({ conversationId }: {
                                         />
                                     </Stack>
                                     {!messages.data?.data.length && <Empty text="Chưa có tin nhắn." />}
-                                    <Pager page={messages.data?.page} />
+                                    <Pager page={messageCursor ? bookmarked.data?.page : history.firstPage?.page} />
                                 </QueryState>
                             </Box>
+                            <Box role="status" aria-live="polite" aria-atomic="true"
+                                sx={{ position: 'absolute', width: '1px', height: '1px', overflow: 'hidden', clipPath: 'inset(50%)' }}>
+                                {announcementId && <span key={announcementId}>Có tin nhắn mới.</span>}
+                            </Box>
+                            {jumpAvailable && <Button size="small" onClick={jumpToLatest}>Có tin nhắn mới</Button>}
                             <ConversationComposer conversation={conversation} />
                         </Panel>
                     </Box>

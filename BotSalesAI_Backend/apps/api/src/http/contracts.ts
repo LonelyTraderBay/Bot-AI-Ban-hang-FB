@@ -1,4 +1,4 @@
-import { BadRequestException, type PipeTransform } from '@nestjs/common';
+import { BadRequestException, ConflictException, UnprocessableEntityException, type PipeTransform } from '@nestjs/common';
 import { Ajv2020, type AnySchema, type ValidateFunction } from 'ajv/dist/2020.js';
 import formats from 'ajv-formats';
 
@@ -22,6 +22,24 @@ export function schemaFromContract(name: string): AnySchema {
 }
 
 export class InvalidInput extends BadRequestException {
+    constructor(readonly errors: FieldError[]) {
+        super();
+    }
+}
+
+export class FieldConflict extends ConflictException {
+    constructor(readonly errors: FieldError[]) {
+        super();
+    }
+}
+
+export class DomainConflict extends ConflictException {
+    constructor(readonly problemCode: string, readonly detail: string) {
+        super(detail);
+    }
+}
+
+export class UnprocessableInput extends UnprocessableEntityException {
     constructor(readonly errors: FieldError[]) {
         super();
     }

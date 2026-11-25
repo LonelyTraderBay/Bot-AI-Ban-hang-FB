@@ -12,7 +12,7 @@ import { recordStockMovement } from '../../../apps/api/dist/modules/inventory/in
 import { dispatchPreparationNotifications, notifyPreparation, publishOperationNotices } from '../../../apps/api/dist/modules/notifications/index.js';
 import { publishOwnerDigests } from '../../../apps/api/dist/modules/operations/index.js';
 import { refreshOperationExceptions } from '../../../apps/api/dist/modules/operations/exception-rules.js';
-import { dispatchPurchases } from '../../../apps/api/dist/modules/procurement/index.js';
+import { dispatchPurchases, evaluateAutomaticReorder } from '../../../apps/api/dist/modules/procurement/index.js';
 import { readAuthConfig, requireShopAccess } from '../../../apps/api/dist/modules/workspace/index.js';
 import { Database } from '../../../apps/api/dist/platform/database/client.js';
 import { runJob } from '../../../apps/api/dist/platform/jobs/index.js';
@@ -194,7 +194,10 @@ test('SC2-F03 derives exceptions from recurring sources without double opening a
 test('SC2-F01 SC2-F04 SC2-H02 SC2-H03 -- role fences, immutable approved amount and expiry', async () => {
     const roles = await request('agent-roles?limit=100', 'AgentRoleListResponse');
     assert.equal(roles.length, 4);
-    for (const role of roles) assert.ok(!role.allowedToolIds.includes('members.manage'));
+    for (const role of roles) {
+        assert.ok(!role.allowedToolIds.includes('members.manage'));
+        assert.ok(!role.allowedToolIds.includes('payment.transfer'));
+    }
     const proposed = roles.find(row => row.kind === 'warehouse_buyer');
     const modelConnectionId = await connectedAi();
     const roleRoute = 'agent-roles/' + proposed.id;
@@ -230,12 +233,12 @@ test('SC2-F01 SC2-F04 SC2-H02 SC2-H03 -- role fences, immutable approved amount 
     const selfAmount = '999.' + BigInt('0x' + randomUUID().replaceAll('-', '').slice(0, 8)).toString() + '1';
     const selfRequested = await askBudget(budget, selfAmount, 'per_order');
     await decide(selfRequested, owner, { status: 409, schema: 'Problem' });
-    const waiting = await askBudget(budget, '1000', 'per_order', { actor: reviewer });
-    assert.deepEqual(waiting.amount, money('1000'));
+    const waiting = await askBudget(budget, '240', 'daily', { actor: reviewer });
+    assert.deepEqual(waiting.amount, money('240'));
     const approved = await decide(waiting);
     assert.notEqual(approved.requestedBy, approved.decidedBy);
-    const update = { expectedVersion: budget.version, approvalId: approved.id, limitAmount: money('1000'), period: 'per_order' };
-    await put('budget-policies/' + budget.id, { ...update, limitAmount: money('1001') }, 'Problem', { status: 409 });
+    const update = { expectedVersion: budget.version, approvalId: approved.id, limitAmount: money('240'), period: 'daily' };
+    await put('budget-policies/' + budget.id, { ...update, limitAmount: money('241') }, 'Problem', { status: 409 });
     const idem = randomUUID();
     procurementBudget = await put('budget-policies/' + budget.id, update, 'BudgetPolicyResponse', { idem });
     assert.equal(procurementBudget.enabled, true);
@@ -286,22 +289,59 @@ async function byGrant(id) {
     return db.purchaseDelegationReservation.findMany({ where: { shopId, delegationId: id } });
 }
 
-test('SC2-D06 SC2-F05 SC2-H02 SC2-H04 -- balances stay reserved until supplier truth is known', async () => {
+test('SC2-D06 SC2-D07 SC2-F05 SC2-H02 SC2-H04 SC2-H06 -- delegated purchase outcomes preserve budget and authorization audit', async t => {
     const first = await grantAutoPurchase('unknown');
     const second = await grantAutoPurchase('accepted');
     const third = await grantAutoPurchase('accepted', '30');
     assert.ok((await request('purchase-delegations?limit=100', 'PurchaseDelegationListResponse')).some(row => row.id === first.current.id));
-    await evaluateReorder();
+    const financialEffects = () => Promise.all([
+        db.financeJournal.count({ where: { shopId } }),
+        db.paymentEvidence.count({ where: { shopId } }),
+    ]);
+    const accountingBefore = await financialEffects();
+    const at = new Date();
+    await Promise.all([evaluateAutomaticReorder(db, auth, at), evaluateAutomaticReorder(db, auth, at)]);
     await evaluateReorder();
     const [a] = await byGrant(first.current.id);
     const [b] = await byGrant(second.current.id);
     assert.equal((await byGrant(first.current.id)).length, 1);
+    assert.equal((await byGrant(second.current.id)).length, 1);
     assert.equal(a.status, 'reserved');
     assert.equal(b.status, 'reserved');
     assert.equal(a.amount.toFixed(), '120');
     assert.equal((await byGrant(third.current.id)).length, 0);
     const blocked = await db.purchaseSuggestion.findFirstOrThrow({ where: { shopId, ruleId: third.rule.id } });
     assert.ok(blocked.autoSendReason);
+
+    const auditRows = (grant, action) => db.auditEntry.findMany({
+        where: { shopId, action, requestId: grant.commandId, resourceType: 'purchase_order', resourceId: grant.purchaseOrderId },
+    });
+    const queued = await auditRows(a, 'sendPurchaseOrder');
+    assert.equal(queued.length, 1);
+    assert.equal(queued[0].actorId, owner.userId);
+    assert.equal(queued[0].metadata.actorKind, 'agent', 'Delegated purchase audit identifies the agent separately from the responsible user');
+    const [agent, shop, membership, rule, budget, sending] = await Promise.all([
+        db.agentRole.findUniqueOrThrow({ where: key(warehouseRole.id) }),
+        db.shop.findUniqueOrThrow({ where: { id: shopId } }),
+        db.membership.findUniqueOrThrow({ where: { shopId_userId: { shopId, userId: owner.userId } } }),
+        db.reorderRule.findUniqueOrThrow({ where: key(first.rule.id), include: { offer: true } }),
+        db.budgetPolicy.findUniqueOrThrow({ where: key(a.budgetPolicyId) }),
+        db.purchaseOrder.findUniqueOrThrow({ where: key(a.purchaseOrderId), include: { lines: true } }),
+    ]);
+    assert.deepEqual(queued[0].metadata, {
+        origin: 'delegation', actorKind: 'agent', agentId: agent.id, agentKind: 'warehouse_buyer', agentVersion: agent.version,
+        permissionVersion: membership.permissionVersion, policyVersion: shop.policyVersion, shopGeneration: a.shopGeneration,
+        agentGeneration: a.agentGeneration, delegationId: a.delegationId, delegationVersion: first.current.version,
+        delegationGeneration: a.delegationGeneration, reservationId: a.id, budgetPolicyId: a.budgetPolicyId,
+        budgetPolicyVersion: a.budgetPolicyVersion, budgetApprovalId: budget.approvalId,
+        ruleId: rule.id, ruleVersion: rule.version, offerId: rule.supplierOfferId, offerVersion: rule.offer.version,
+        suggestion: { id: sending.suggestionId, available: 0, confirmedInbound: 0, openProposalQuantity: 0,
+            quantity: sending.lines[0].quantity, reorderPoint: rule.reorderPoint, safetyStock: rule.safetyStock, targetQuantity: rule.targetQuantity,
+            sourceAsOf: a.createdAt.toISOString() },
+        intentHash: a.intentHash, resourceVersion: sending.version, amount: sending.total.toFixed(), currency: sending.currency, result: 'queued',
+    });
+    const pausedSubmission = await auditRows(b, 'sendPurchaseOrder');
+    assert.equal(pausedSubmission.length, 1);
     await patch('purchase-delegations/' + second.current.id, { expectedVersion: second.current.version, status: 'paused',
         reason: 'Tạm dừng trước khi adapter nhận lệnh' }, 'PurchaseDelegationResponse');
     await dispatchPurchases(db, auth);
@@ -333,13 +373,26 @@ test('SC2-D06 SC2-F05 SC2-H02 SC2-H04 -- balances stay reserved until supplier t
     const reference = 'BE20-PROOF-' + randomUUID();
     const proof = await admin.procurementEvidence.create({ data: { shopId, purchaseOrderId: unknownOrder.id, kind: 'supplier_confirmation',
         externalRef: reference, occurredAt: new Date() } });
-    await post('purchase-orders/' + unknownOrder.id + '/confirm', { expectedVersion: unknownOrder.version, externalReference: reference,
+    const confirmed = await post('purchase-orders/' + unknownOrder.id + '/confirm', { expectedVersion: unknownOrder.version, externalReference: reference,
         supplierConfirmationRef: proof.id }, 'PurchaseOrderResponse');
     reservation = await db.purchaseDelegationReservation.findUniqueOrThrow({ where: key(a.id) });
     assert.equal(reservation.status, 'consumed');
     assert.equal((await request('commands/' + a.commandId, 'CommandResponse')).status, 'succeeded');
     assert.equal((await request('work-items/' + work.id, 'WorkItemResponse')).state, 'completed');
     assert.deepEqual(await request(path, 'WorkItemListResponse'), []);
+
+    assert.deepEqual(await auditRows(a, 'sendPurchaseOrder'), queued);
+    const [confirmAudit] = await db.auditEntry.findMany({ where: { shopId, action: 'confirmPurchaseOrder', resourceId: unknownOrder.id } });
+    assert.equal(confirmAudit.actorId, owner.userId);
+    assert.equal(confirmAudit.metadata.actorKind, 'user');
+    assert.equal(confirmAudit.metadata.permissionVersion, membership.permissionVersion);
+    assert.equal(confirmAudit.metadata.version, confirmed.version);
+    const auditPath = 'audit?q=' + a.commandId;
+    const publicAudit = await request(auditPath, 'AuditEventListResponse');
+    assert.deepEqual(publicAudit.map(row => row.action).sort(), ['dispatchPurchaseFixture', 'sendPurchaseOrder']);
+    assert.ok(publicAudit.every(row => row.resource.id === a.purchaseOrderId && !Object.hasOwn(row, 'metadata')));
+    assert.deepEqual(await request(auditPath, 'AuditEventListResponse', { actor: foreign, shop: shopB.id }), []);
+    await request(auditPath, 'Problem', { actor: foreign, status: 404 });
 
     const fourth = await grantAutoPurchase('accepted');
     await evaluateReorder();
@@ -355,18 +408,111 @@ test('SC2-D06 SC2-F05 SC2-H02 SC2-H04 -- balances stay reserved until supplier t
     await dispatchPurchases(db, auth);
     assert.equal((await db.purchaseDelegationReservation.findUniqueOrThrow({ where: key(oldGeneration.id) })).status, 'released');
     assert.equal((await request('commands/' + oldGeneration.commandId, 'CommandResponse')).status, 'failed');
+
+    const revoked = await grantAutoPurchase('accepted');
+    await evaluateReorder();
+    const [beforeRevocation] = await byGrant(revoked.current.id);
+    assert.equal(beforeRevocation.status, 'reserved');
+    await patch('purchase-delegations/' + revoked.current.id, { expectedVersion: revoked.current.version, status: 'revoked',
+        reason: 'Thu hồi trước khi adapter nhận lệnh' }, 'PurchaseDelegationResponse');
+    await dispatchPurchases(db, auth);
+    const [afterRevocation] = await byGrant(revoked.current.id);
+    assert.equal(afterRevocation.status, 'released');
+    assert.equal((await request('commands/' + beforeRevocation.commandId, 'CommandResponse')).status, 'failed');
+
+    const fifth = await grantAutoPurchase('accepted');
+    await evaluateReorder();
+    const [accepted] = await byGrant(fifth.current.id);
+    await dispatchPurchases(db, auth);
+    await dispatchPurchases(db, auth);
+    assert.equal((await request('commands/' + accepted.commandId, 'CommandResponse')).status, 'succeeded');
+    const sixth = await grantAutoPurchase('accepted');
+    await evaluateReorder();
+    assert.equal((await byGrant(sixth.current.id)).length, 0);
+    const blockedByDay = await db.purchaseSuggestion.findFirstOrThrow({ where: { shopId, ruleId: sixth.rule.id } });
+    assert.match(blockedByDay.autoSendReason, /hạn mức|ngân sách/i);
+    const { _sum } = await db.purchaseDelegationReservation.aggregate({
+        where: { shopId, budgetPolicyId: procurementBudget.id, status: { in: ['reserved', 'unknown', 'consumed'] } },
+        _sum: { amount: true },
+    });
+    assert.equal(_sum.amount.toFixed(), '240');
+    assert.deepEqual(await financialEffects(), accountingBefore);
+    console.log(JSON.stringify({ status: 'SC2_D07_CONCURRENT_REORDER', workerCycles: 2, firstReservations: 1,
+        secondReservations: 1, usedDailyBudget: _sum.amount.toFixed(), furtherReservations: 0,
+        revokedBeforeDispatch: true, financialEffectsUnchanged: true }));
+    assert.deepEqual(await auditRows(b, 'sendPurchaseOrder'), pausedSubmission);
+    for (const [grant, status] of [[a, 'unknown'], [b, 'failed'], [oldGeneration, 'failed'], [accepted, 'succeeded']]) {
+        const [submission, observation] = await Promise.all([auditRows(grant, 'sendPurchaseOrder'), auditRows(grant, 'dispatchPurchaseFixture')]);
+        assert.equal(submission.length, 1);
+        assert.equal(observation.length, 1);
+        assert.deepEqual(observation[0].metadata, { actorKind: 'system', version: submission[0].metadata.resourceVersion + 1, status, origin: 'delegation',
+            delegationId: grant.delegationId, reservationId: grant.id });
+    }
+    const recoveryWork = sourceId => db.workItem.findUniqueOrThrow({ where: { shopId_kind_sourceType_sourceId: {
+        shopId, kind: 'recovery', sourceType: 'purchase_order', sourceId,
+    } } });
+    await t.test('SC2-F02: a draft after failed dispatch is not supplier confirmation', async () => {
+        const order = await request('purchase-orders/' + b.purchaseOrderId, 'PurchaseOrderResponse');
+        assert.equal(order.status, 'draft');
+        const queued = await recoveryWork(order.id);
+        const path = 'work-items/' + queued.id;
+        const claimed = await post(path + '/claim', { expectedVersion: queued.version }, 'WorkItemResponse');
+        const working = await post(path + '/actions', { expectedVersion: claimed.version, action: 'begin', reason: 'Đối chiếu phản hồi nhà cung cấp' },
+            'WorkItemResponse');
+        await post(path + '/actions', { expectedVersion: working.version, action: 'complete', reason: 'Chưa có xác nhận nhà cung cấp' },
+            'Problem', { status: 409 });
+        assert.equal((await recoveryWork(order.id)).state, 'working');
+    });
+    await t.test('SC2-F02: cancelling a failed purchase closes the same recovery task once', async () => {
+        const order = await request('purchase-orders/' + oldGeneration.purchaseOrderId, 'PurchaseOrderResponse');
+        assert.equal(order.status, 'draft');
+        const queued = await recoveryWork(order.id);
+        const path = 'work-items/' + queued.id;
+        const claimed = await post(path + '/claim', { expectedVersion: queued.version }, 'WorkItemResponse');
+        const payload = { expectedVersion: order.version, reason: 'Dừng đơn nháp sau khi quyền gửi đã đổi' };
+        const cancelPath = 'purchase-orders/' + order.id + '/cancel';
+        const options = { status: 202, idem: randomUUID() };
+        const cancellation = await post(cancelPath, payload, 'CommandResponse', options);
+        assert.equal((await post(cancelPath, payload, 'CommandResponse', options)).id, cancellation.id);
+        assert.equal((await request('purchase-orders/' + order.id, 'PurchaseOrderResponse')).status, 'cancelled');
+        const cancelled = await request(path, 'WorkItemResponse');
+        assert.equal(cancelled.state, 'cancelled', 'Cancelling the source must close the recovery task');
+        assert.equal(cancelled.version, claimed.version + 1);
+        assert.equal(cancelled.assigneeUserId, owner.userId);
+        assert.equal(cancelled.dueAt, claimed.dueAt);
+        assert.equal((await recoveryWork(order.id)).id, queued.id);
+        await request(path, 'Problem', { actor: foreign, shop: shopB.id, status: 404 });
+        await post(path + '/actions', { expectedVersion: cancelled.version, action: 'begin', reason: 'Việc đã hủy không mở lại' },
+            'Problem', { status: 409 });
+        const eventCount = await db.outboxEvent.count({ where: {
+            shopId, eventType: 'work_item.updated', AND: [
+                { payload: { path: ['resourceId'], equals: cancelled.id } },
+                { payload: { path: ['resourceVersion'], equals: cancelled.version } },
+            ],
+        } });
+        assert.equal(eventCount, 1);
+        console.log(JSON.stringify({ status: 'SC2_F02_PURCHASE_CANCELLATION', state: cancelled.state, versionIncrement: 1,
+            sameWorkItem: true, replayedCommand: true, updateEvents: eventCount, foreignAccess: 404 }));
+    });
+    console.log(JSON.stringify({ status: 'SC2_H06_PROCUREMENT_AUDIT', agentSnapshot: true, immutable: true, humanConfirmation: true,
+        workerOutcomes: ['unknown', 'failed', 'failed', 'succeeded'], duplicateResults: 0, privateMetadataReturned: false, foreignAccess: 404 }));
 });
 
 test('SC2-F06 SC2-F07 -- digest preserves local period and worker health expires', async () => {
     const previous = await request('notification-policy', 'NotificationPolicyResponse');
-    const changed = await put('notification-policy', {
+    const input = {
         expectedVersion: previous.version, enabled: true, timezone: shopA.timezone, quietHours: null,
         remindAfterMinutes: 30, maxReminders: 0, primaryUserIds: [owner.userId], fallbackUserIds: [], fallbackChannel: 'none',
         urgentMayBypassQuietHours: false,
-    }, 'NotificationPolicyResponse');
+    };
+    await put('notification-policy', { ...input, primaryUserIds: [] }, 'Problem', { status: 422 });
+    const changed = await put('notification-policy', input, 'NotificationPolicyResponse');
     try {
         const last = await db.ownerDigest.findFirst({ where: { shopId }, orderBy: { periodDay: 'desc' }, select: { periodDay: true } });
         const marker = new Date(Math.max(Date.now(), last?.periodDay.getTime() ?? 0) + 48 * 3600000);
+        const initialDigestCount = await db.ownerDigest.count({ where: { shopId } });
+        await publishOwnerDigests(db, marker, '');
+        assert.equal(await db.ownerDigest.count({ where: { shopId } }), initialDigestCount);
         await Promise.all([publishOwnerDigests(db, marker, '0'), publishOwnerDigests(db, marker, '0')]);
         const rows = await request('digests?limit=100', 'DigestListResponse');
         const period = new Date(marker.getTime() - 86400000);
@@ -375,10 +521,23 @@ test('SC2-F06 SC2-F07 -- digest preserves local period and worker health expires
         assert.equal((await request('digests/' + current[0].id, 'DigestResponse')).status, 'accepted');
         assert.equal(await db.appNotification.count({ where: { shopId, sourceId: current[0].id, recipientUserId: owner.userId } }), 1);
         await request('digests/' + current[0].id, 'Problem', { actor: foreign, shop: shopB.id, status: 404 });
-        const heartbeat = { checkedAt: new Date(Date.now() - 120000), lagMs: 0 };
-        await db.workerHealth.upsert({ where: { component: 'jobs' }, update: heartbeat, create: { component: 'jobs', ...heartbeat } });
-        const summary = await request('operations-summary', 'OperationsSummaryResponse');
-        assert.equal(summary.health.find(row => row.component === 'worker').status, 'unknown');
+        const unrelayed = await db.outboxEvent.findFirstOrThrow({ where: { shopId, sequence: null } });
+        const workerState = async () => (await request('operations-summary', 'OperationsSummaryResponse')).health
+            .find(row => row.component === 'worker').status;
+        const setHeartbeat = (checkedAt) => db.workerHealth.upsert({ where: { component: 'jobs' },
+            update: { checkedAt, lagMs: 0 }, create: { component: 'jobs', checkedAt, lagMs: 0 } });
+        const old = new Date(Date.now() - 120000);
+        await db.outboxEvent.update({ where: key(unrelayed.id), data: { availableAt: old } });
+        try {
+            await setHeartbeat(new Date());
+            assert.equal(await workerState(), 'degraded');
+            await setHeartbeat(old);
+            assert.equal(await workerState(), 'unknown');
+        } finally {
+            await db.outboxEvent.update({ where: key(unrelayed.id), data: { availableAt: unrelayed.availableAt } });
+        }
+        console.log(JSON.stringify({ status: 'SC2_F06_F07_DIGEST_HEALTH', missingRecipientRejected: true, missingHourPublished: 0,
+            digestRows: current.length, notificationsPerOwner: 1, freshBacklog: 'degraded', staleHeartbeat: 'unknown' }));
     } finally {
         const { enabled, timezone, quietHours, remindAfterMinutes, maxReminders, primaryUserIds, fallbackUserIds, fallbackChannel, urgentMayBypassQuietHours } = previous;
         await put('notification-policy', { expectedVersion: changed.version, enabled, timezone, quietHours, remindAfterMinutes, maxReminders,

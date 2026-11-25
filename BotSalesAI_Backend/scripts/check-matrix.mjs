@@ -6,10 +6,11 @@ import { createApp } from '../apps/api/dist/app.js';
 import { API_PREFIX, registeredRoutes } from '../apps/api/dist/http/operations.js';
 import { checkSource, readInputs } from './matrix-source.mjs';
 import { checkRegistration } from './matrix-runtime.mjs';
+import { backendArtifacts } from './artifact-paths.mjs';
 
 const workspace = fileURLToPath(new URL('..', import.meta.url));
 const repository = resolve(workspace, '..');
-const reportFile = resolve(workspace, 'test-results/backend/matrix.json');
+const reportFile = resolve(backendArtifacts(workspace), 'matrix.json');
 const result = { status: 'FAIL', issues: [] };
 try {
     const git = args => execFileSync('git', args, { cwd: repository, encoding: 'utf8', maxBuffer: 8 * 1024 * 1024 }).trim();

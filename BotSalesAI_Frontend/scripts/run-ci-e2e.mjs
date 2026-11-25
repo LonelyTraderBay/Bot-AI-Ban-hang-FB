@@ -4,6 +4,7 @@ import { randomUUID } from 'node:crypto';
 import { spawnSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 import { collectedTests, partitionTests, requireExactTests, testList } from './ci-partitions.mjs';
+import { frontendTestOutput } from './test-output.mjs';
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const [project, shard, listOnly] = process.argv.slice(2);
@@ -11,7 +12,7 @@ if (!['chromium', 'firefox'].includes(project) || !/^[1-9]\/9$/.test(shard ?? ''
     || (listOnly !== undefined && listOnly !== '--list') || process.argv.length > 5)
     throw new Error('Usage: node scripts/run-ci-e2e.mjs <chromium|firefox> <1/9|2/9|3/9|4/9|5/9|6/9|7/9|8/9|9/9> [--list]');
 const runId = `ci-${project}-${shard[0]}-${randomUUID()}`;
-const output = path.join(root, 'test-results', runId);
+const output = path.join(frontendTestOutput(root), runId);
 const env = { ...process.env, BOTSALES_PLAYWRIGHT_RUN_ID: runId };
 const workers = Number(env.BOTSALES_E2E_WORKERS ?? '1');
 const cli = path.join(root, 'node_modules/@playwright/test/cli.js');

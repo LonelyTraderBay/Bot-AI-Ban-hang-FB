@@ -25,6 +25,7 @@ export { financeJobHandlers, statementCommands } from './statements.js';
 export { accountingDate, writeJournal, systemAccounts, financeShop, financeMoney, parseMoney, localAccountingDate, lockOpenPeriod, type Money } from './journal.js';
 export { pairedLines } from './entries.js';
 export { bookBusinessPairs, bookDelivery, bookHandover, bookInspectedReturn } from './order-accounting.js';
+export { recordAdvertisingEstimate } from './advertising-estimates.js';
 export { allocationTotals } from './reconciliation-data.js';
 export { provisionFixtureShopAccounts } from './account-policy.js';
 export { reportExportCommand, reportExportHandler } from './exports.js';

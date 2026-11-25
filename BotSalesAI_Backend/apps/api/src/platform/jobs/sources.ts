@@ -1,5 +1,5 @@
 import { readFileSync } from 'node:fs';
-import type { JobKind } from '../../generated/prisma/client.js';
+import type { JobKind, Prisma } from '../../generated/prisma/client.js';
 import { contractDirectory } from '../../http/contract-source.js';
 
 const operationKinds: Readonly<Record<string, JobKind>> = {
@@ -17,9 +17,20 @@ const sources = operations.flatMap(({ operationId, permission }) => {
     return [{ sourceOperation: operationId, kind: operationKinds[operationId], permission }];
 });
 
-export function visibleJobSources(permissions: readonly string[]) {
-    return sources.filter(source => permissions.includes(source.permission))
-        .map(({ kind, sourceOperation }) => ({ kind, sourceOperation }));
+export const reportSourcePermissions = {
+    inventory: 'inventory.read', orders: 'orders.read', cashflow: 'finance.read', profit_loss: 'finance.read',
+} as const;
+
+export function requiresJobSourceScope(operationId: string) {
+    return operationId === 'createExport';
+}
+
+export function visibleJobSources(permissions: readonly string[]): Prisma.JobWhereInput[] {
+    return sources.filter(source => permissions.includes(source.permission)).flatMap(({ kind, sourceOperation }): Prisma.JobWhereInput[] => {
+        if (!requiresJobSourceScope(sourceOperation)) return [{ kind, sourceOperation }];
+        return Object.entries(reportSourcePermissions).flatMap(([reportType, permission]) => permissions.includes(permission)
+            ? [{ kind, sourceOperation, input: { path: ['reportType'], equals: reportType } }] : []);
+    });
 }
 
 export function jobSourcePermission(kind: JobKind, operation: string) {

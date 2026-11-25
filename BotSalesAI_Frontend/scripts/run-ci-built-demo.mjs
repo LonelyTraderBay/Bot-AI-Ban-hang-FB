@@ -5,6 +5,7 @@ import { randomUUID } from 'node:crypto';
 import { spawnSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 import { collectedTests, requireExactTests } from './ci-partitions.mjs';
+import { frontendTestOutput } from './test-output.mjs';
 
 if (process.argv.length !== 2) throw new Error('Usage: node scripts/run-ci-built-demo.mjs');
 const requested = process.env.BOTSALES_BUILT_DEMO_WORKERS ?? '1';
@@ -12,7 +13,7 @@ const workers = Number(requested), availableCpus = os.availableParallelism();
 if (!/^[12]$/.test(requested) || workers > availableCpus) throw new Error('Unsupported built-demo runner capacity.');
 console.log(JSON.stringify({ kind: 'built-demo-runner-capacity', configuredWorkers: workers, availableCpus }));
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
-const output = path.join(root, 'test-results', 'ci-built-demo-' + randomUUID());
+const output = path.join(frontendTestOutput(root), 'ci-built-demo-' + randomUUID());
 const cli = path.join(root, 'node_modules/@playwright/test/cli.js');
 const projects = ['chromium-built-demo', 'firefox-built-demo'];
 const args = [cli, 'test', '--config=playwright.built-demo.config.ts',

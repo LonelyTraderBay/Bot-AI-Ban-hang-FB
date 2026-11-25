@@ -127,13 +127,19 @@ export async function verifyPrivacyFlow(page, cookie) {
 
         await page.setViewportSize({ width: 1280, height: 900 });
         await page.goto(appOrigin + base + '/reports');
+        await page.getByText('Mốc xem báo cáo', { exact: true }).waitFor();
+        await page.getByText(/Hệ thống chưa hỗ trợ xuất theo mốc xem báo cáo/).waitFor();
         const exportRequest = responseFor(page, 'POST', path + '/exports');
         await page.getByRole('button', { name: 'Tạo tệp báo cáo CSV' }).click();
-        const report = await responseData(await exportRequest, 202);
+        const acceptedReport = await exportRequest;
+        assert.equal(acceptedReport.status(), 202);
+        const { data: report, meta: exportMeta } = await acceptedReport.json();
+        assert.match(exportMeta.warnings.join(' '), /chưa hỗ trợ xuất theo mốc xem báo cáo/);
         const reportHref = await page.getByRole('link', { name: 'Theo dõi công việc ' + report.id }).getAttribute('href');
         const csv = await readDownload(page, reportHref);
         assert.match(csv.type, /text\/csv/);
         assert.match(csv.body, /snapshot_captured_at/);
+        assert.ok(csv.body.includes(exportMeta.reportSnapshot.capturedAt));
         console.log('R31/R14: xuất CSV, worker hoàn tất và tải qua đường dẫn HTTPS có phiên.');
 
         const challengePath = path + '/customers/' + fixtureCustomer.data.id + '/consent-challenges';

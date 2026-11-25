@@ -505,7 +505,7 @@ export function EditDialog({ open, title, description, onClose, children, action
             onClose();
         } } }}>
             <DialogTitle id={`${titleId}-draft-warning`} sx={layoutSx.dialog.inset}>{t('draft.closeTitle')}</DialogTitle>
-            <DialogContent sx={layoutSx.dialog.inset}><DialogContentText id={`${titleId}-draft-description`}>{t('draft.closeDescription')}</DialogContentText></DialogContent>
+            <DialogContent tabIndex={0} role="region" aria-labelledby={`${titleId}-draft-warning`} sx={layoutSx.dialog.inset}><DialogContentText id={`${titleId}-draft-description`}>{t('draft.closeDescription')}</DialogContentText></DialogContent>
             <DialogActions disableSpacing sx={[layoutSx.dialog.actionsInset, layoutSx.dialog.actionsGap]}><Button onClick={() => setDiscardOpen(false)}>{t('draft.continueEditing')}</Button><Button color="warning" variant="contained" onClick={discardChanges}>{t('draft.discard')}</Button></DialogActions>
         </Dialog>
     </>;

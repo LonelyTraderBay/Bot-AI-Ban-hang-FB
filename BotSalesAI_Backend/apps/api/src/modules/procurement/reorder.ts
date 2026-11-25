@@ -117,7 +117,7 @@ async function evaluate(tx: Prisma.TransactionClient, shopId: string, at: Date, 
             suggestedQuantity: wanted <= 2147483647 ? wanted : 0, sourceAsOf: at,
             ...(rule.mode !== 'auto_send' || wanted > 0 ? { autoSendReason: null } : {}),
             reason: !validSource ? 'Kho, SKU hoặc báo giá chưa đủ điều kiện' : wanted > 2147483647 ?
-                'Số lượng theo quy cách vượt khả năng ghi nhận' : 'Tính từ tồn khả dụng, lượng đã xác nhận và đơn mua đang mở',
+                'Số lượng theo quy cách vượt khả năng ghi nhận' : 'Quy tắc min-max theo tồn khả dụng, hàng đã xác nhận và đơn mua đang mở.',
         };
         const stored = await tx.purchaseSuggestion.upsert({
             where: { shopId_warehouseId_variantId: { shopId, warehouseId, variantId } },

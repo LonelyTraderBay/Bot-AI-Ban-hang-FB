@@ -1,7 +1,7 @@
 # Bản đồ tài liệu chuẩn 2.1.1
 
 <!-- BEGIN RELEASE META -->
-**Bộ chuẩn 2.1.1 · 2026-09-29 · Graphite Gold: ĐÃ DUYỆT · Token 2.1 · API 2.5.0 · Baseline nghiệp vụ 2.0.**
+**Bộ chuẩn 2.1.1 · 2026-09-29 · Graphite Gold: ĐÃ DUYỆT · Token 2.1 · API 2.6.1 · Baseline nghiệp vụ 2.0.**
 Nguồn phiên bản: `release.json`; quyết định màu: `design/decision.json`. Phạm vi kiểm chứng là tài liệu/demo, không chứng nhận vận hành sản phẩm.
 <!-- END RELEASE META -->
 
@@ -27,7 +27,7 @@ Nguồn phiên bản: `release.json`; quyết định màu: `design/decision.jso
 | Tiếp nhận bản mới | [UPGRADE.md](UPGRADE.md) | Bảo toàn tiến độ repo đang chạy |
 | Kết quả gói | [evidence/DELIVERY_REPORT_VI.md](evidence/DELIVERY_REPORT_VI.md) | Phạm vi kiểm chứng và giới hạn |
 
-## 28 đặc tả nguồn
+## Đặc tả và tài liệu ngữ cảnh
 
 | File | Nội dung |
 |---|---|
@@ -59,6 +59,7 @@ Nguồn phiên bản: `release.json`; quyết định màu: `design/decision.jso
 | [25_OPERATIONS_AI.md](docs/25_OPERATIONS_AI.md) | 25 — Trưởng nhóm và bốn vai trò vận hành |
 | [26_DATA_DICTIONARY.md](docs/26_DATA_DICTIONARY.md) | 26 — Mô hình lưu trữ và ràng buộc triển khai |
 | [27_RUNTIME_POLICY.md](docs/27_RUNTIME_POLICY.md) | 27 — Cấu hình live, an toàn mặc định và quyền được giao |
+| [PROJECT_CONTEXT.md](docs/PROJECT_CONTEXT.md) | BotSales AI — Bối cảnh dự án |
 
 ## Một lộ trình sinh, không nhiều nguồn cạnh tranh
 

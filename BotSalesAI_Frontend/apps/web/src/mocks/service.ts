@@ -135,12 +135,13 @@ function read(op: string, input: Input): unknown {
             asOf: now(), queuedTasks: all('workItems', shopId).filter(t => t.state === 'queued').length, overdueTasks: all('workItems', shopId).filter(t => t.dueAt && Date.parse(str(t.dueAt)) < Date.parse(now()) && !['completed', 'cancelled'].includes(str(t.state))).length, pendingApprovals: all('approvals', shopId).filter(a => a.status === 'pending').length, unknownCommands: all('commands', shopId).filter(c => c.status === 'unknown').length, roles: all('agentRoles', shopId), health: ['Meta', 'AI provider', 'Worker', 'Thông báo điện thoại'].map(component => ({ component, status: 'unknown', checkedAt: null, expiresAt: null, reason: 'Chưa có backend và kiểm tra tích hợp thật.' }))
         };
     if (op === 'getMarketingSummary')
-        return marketingSummary(input);
+        return marketingSummary(input, now(), grantedPermissions(role).includes('finance.read'));
     if (op === 'listPaymentReviews')
         return paymentReviews(input);
     if (op === 'getReportSummary')
         return {
-            shopId, asOf: now(), availableReports: ['inventory', 'orders', 'cashflow', 'profit_loss'].filter(type => grantedPermissions(role).includes(({ inventory: 'inventory.read', orders: 'orders.read', cashflow: 'finance.read', profit_loss: 'finance.read' } as Record<string, string>)[type] || '')), warnings: ['Dữ liệu mô phỏng trong phiên, không có tài khoản quảng cáo thật.']
+            shopId, asOf: now(), availableReports: ['inventory', 'orders', 'cashflow', 'profit_loss'].filter(type => grantedPermissions(role).includes(({ inventory: 'inventory.read', orders: 'orders.read', cashflow: 'finance.read', profit_loss: 'finance.read' } as Record<string, string>)[type] || '')),
+            warnings: ['Dữ liệu trong CSV được chụp khi hệ thống xử lý yêu cầu xuất. Hệ thống chưa hỗ trợ xuất theo mốc xem báo cáo.'],
         };
     // This simulator has one actor (user-demo). Fail closed for command kinds whose
     // originating mutation permission cannot be established from the canonical contract.

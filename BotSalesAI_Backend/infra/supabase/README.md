@@ -24,6 +24,7 @@ Trên máy thử, `activeEnvironmentFile` trong `D:/BotSalesAI/config/windows-pi
 |---|---|
 | `MIGRATION_DATABASE_URL` | Role `botsales_migrator.<project-ref>` qua Session pooler, `sslmode=require`, `sslaccept=strict` và `sslcert` trỏ tới CA Supabase |
 | `DATABASE_URL` | Role `botsales_runtime.<project-ref>` qua Session pooler, `sslmode=verify-full` và `sslrootcert` trỏ tới CA Supabase |
+| `BOTSALES_ARTIFACT_ROOT` | `D:/BotSalesAI/artifacts` |
 
 Khởi động Redis, SeaweedFS và ClamAV theo [hướng dẫn Windows](../windows/README.md#chạy-và-dừng-dịch-vụ). Chạy các lệnh dưới đây từ `BotSalesAI_Backend` ở các cửa sổ PowerShell riêng rồi mở `https://localhost:5173/workspaces`. API readiness kiểm cả kết nối DB và ClamAV khi hồ sơ cấu hình quét tệp.
 

@@ -6,16 +6,20 @@ import { decryptAiCredential, sealAiCredential } from './credentials.js';
 export const aiFixtureEnabled = (config?: AuthConfig): config is AuthConfig =>
     process.env.AI_FIXTURE_ADAPTER === '1' && Boolean(config && usesLocalOidcFixture(config));
 
-export function fixtureCapabilities(lastVerifiedAt: Date | null = null) {
+function fixtureCapabilities(toolCalling: 'supported' | 'unsupported') {
     return {
         text: 'supported', streaming: 'unsupported', vision: 'unsupported', structuredOutput: 'supported',
-        toolCalling: 'supported', embeddings: 'unsupported', usageReporting: 'supported', lastVerifiedAt,
+        toolCalling, embeddings: 'unsupported', usageReporting: 'supported', lastVerifiedAt: null,
     };
 }
 export const fixtureProvider = {
     providerId: 'mock', label: 'Cổng AI thử nghiệm', adapterId: 'mock', adapterVersion: 'fixture-1', endpointEditable: false,
-    models: [{ modelId: 'synthetic-model', label: 'Kịch bản kiểm chứng cục bộ', capabilities: fixtureCapabilities(),
-        contextLimit: 12000, inputPricePerMillion: null, outputPricePerMillion: null, pricingAsOf: null }],
+    models: [
+        { modelId: 'synthetic-model', label: 'Kịch bản kiểm chứng cục bộ', capabilities: fixtureCapabilities('supported'),
+            contextLimit: 12000, inputPricePerMillion: null, outputPricePerMillion: null, pricingAsOf: null },
+        { modelId: 'synthetic-text-only', label: 'Kịch bản văn bản cục bộ', capabilities: fixtureCapabilities('unsupported'),
+            contextLimit: 12000, inputPricePerMillion: null, outputPricePerMillion: null, pricingAsOf: null },
+    ],
 };
 
 const encryptionKey = (config: AuthConfig) => createHmac('sha256', config.signingKey).update('botsales-ai-fixture-credential/v1').digest();

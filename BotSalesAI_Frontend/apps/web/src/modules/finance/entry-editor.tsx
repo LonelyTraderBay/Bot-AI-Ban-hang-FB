@@ -13,8 +13,20 @@ import {DraftConflict} from '@/shared/ui/draft-conflict';
 import {FormFields} from '@/shared/ui/composition';
 import {EditDialog,ErrorNotice} from '@/shared/ui/components';
 
-export const financeEntryClasses:Record<FinanceEntryWrite['classification'],string>={sales_receipt:'Thu bán hàng',inventory_purchase:'Mua tồn kho',shipping:'Vận chuyển',platform_fee:'Phí nền tảng',payment_fee:'Phí thanh toán',ai_expense:'Chi phí AI',operating_expense:'Chi phí vận hành',capital:'Góp vốn',loan_principal:'Gốc vay',transfer:'Chuyển nội bộ',other:'Khác'};
-const schema=z.object({kind:z.enum(['receipt','disbursement']),classification:z.enum(['sales_receipt','inventory_purchase','shipping','platform_fee','payment_fee','ai_expense','operating_expense','capital','loan_principal','transfer','other']),amount:z.object({amount:z.string().regex(/^\d+(\.\d{1,4})?$/,'Nhập số dương, tối đa 4 chữ số thập phân.').refine(v=>/[1-9]/.test(v),'Số tiền phải lớn hơn 0.'),currency:z.string().min(1)}),occurredAt:z.string().datetime({offset:true,message:'Nhập thời điểm ISO 8601 có múi giờ, ví dụ 2026-09-29T14:00:00Z.'}),description:z.string().refine(v=>codePointLength(v)<=2000,'Diễn giải tối đa 2.000 ký tự.').trim().min(5,'Diễn giải cần ít nhất 5 ký tự.'),sourceRef:z.object({type:z.string(),id:z.string()}).nullable()});
+export const financeEntryClasses: Record<FinanceEntryWrite['classification'], string> = {
+    sales_receipt: 'Thu bán hàng', inventory_purchase: 'Mua tồn kho', shipping: 'Vận chuyển', platform_fee: 'Phí nền tảng',
+    payment_fee: 'Phí thanh toán', ai_expense: 'Chi phí AI', advertising_expense: 'Chi phí quảng cáo', packaging_expense: 'Chi phí đóng gói',
+    operating_expense: 'Chi phí vận hành', capital: 'Góp vốn', loan_principal: 'Gốc vay', transfer: 'Chuyển nội bộ', other: 'Khác',
+};
+const needsSource = (category: FinanceEntryWrite['classification']) => category === 'advertising_expense' || category === 'packaging_expense';
+const schema = z.object({
+    kind: z.enum(['receipt', 'disbursement']), classification: z.enum(Object.keys(financeEntryClasses) as [FinanceEntryWrite['classification'], ...FinanceEntryWrite['classification'][]]),
+    amount: z.object({amount:z.string().regex(/^\d+(\.\d{1,4})?$/,'Nhập số dương, tối đa 4 chữ số thập phân.').refine(v=>/[1-9]/.test(v),'Số tiền phải lớn hơn 0.'),currency:z.string().min(1)}),
+    occurredAt:z.string().datetime({offset:true,message:'Nhập thời điểm ISO 8601 có múi giờ, ví dụ 2026-09-29T14:00:00Z.'}),
+    description:z.string().refine(v=>codePointLength(v)<=2000,'Diễn giải tối đa 2.000 ký tự.').trim().min(5,'Diễn giải cần ít nhất 5 ký tự.'),
+    sourceRef: z.object({type:z.string(),id:z.string()}).nullable(),
+}).refine(entry => !needsSource(entry.classification) || /^[A-Za-z0-9_-]{1,160}$/.test(entry.sourceRef?.id ?? ''),
+    {path: ['sourceRef'], message: 'Nhập mã chứng từ gồm chữ, số, gạch nối hoặc gạch dưới.'});
 const snapshot=(r:FinanceEntry)=>({version:r.version,values:{kind:r.kind,classification:r.classification,amount:r.amount,occurredAt:r.occurredAt,description:r.description,sourceRef:r.sourceRef}});
 export function FinanceEntryEditor({initial,onClose,onSaved}:{initial:FinanceEntry|null;onClose:()=>void;onSaved:()=>void}) {
     const {shop}=useScope(),can=useCan('finance.post');
@@ -31,6 +43,10 @@ export function FinanceEntryEditor({initial,onClose,onSaved}:{initial:FinanceEnt
         <FormFields component="form" id="finance-entry-editor" noValidate ref={node=>{ref.current=node;bind(node);}} onSubmit={submit} data-draft-clean={!dirty?'true':undefined}>
             <TextField select label="Loại phiếu" {...form.register('kind')} value={form.watch('kind')}><MenuItem value="receipt">Thu tiền</MenuItem><MenuItem value="disbursement">Chi tiền</MenuItem></TextField>
             <TextField select label="Phân loại" {...form.register('classification')} value={form.watch('classification')}>{Object.entries(financeEntryClasses).map(([value,label])=><MenuItem key={value} value={value}>{label}</MenuItem>)}</TextField>
+            {needsSource(form.watch('classification')) && <TextField label="Mã chứng từ nguồn" required value={form.watch('sourceRef')?.id ?? ''}
+                onChange={event => form.setValue('sourceRef', event.target.value ? {type: form.getValues('sourceRef')?.type ?? 'manual', id: event.target.value} : null,
+                    {shouldDirty: true, shouldValidate: true})} error={Boolean(form.formState.errors.sourceRef)} helperText={form.formState.errors.sourceRef?.message}
+                inputProps={{maxLength:160}}/>}
             <TextField label={`Số tiền (${shop.currency})`} {...form.register('amount.amount')} error={Boolean(form.formState.errors.amount?.amount)} helperText={form.formState.errors.amount?.amount?.message} inputProps={{inputMode:'decimal'}}/>
             <TextField label="Thời điểm ISO 8601" {...form.register('occurredAt')} error={Boolean(form.formState.errors.occurredAt)} helperText={form.formState.errors.occurredAt?.message||'Có múi giờ; không tự suy từ máy.'}/>
             <TextField label="Diễn giải" multiline minRows={2} {...form.register('description')} error={Boolean(form.formState.errors.description)} helperText={form.formState.errors.description?.message}/>

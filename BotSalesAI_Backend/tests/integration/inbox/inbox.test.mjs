@@ -293,6 +293,12 @@ test('T069 Meta: text replies honor scope, handoff and the window at queue and d
     await action('release');
     await dispatchMessengerMessages(db, config, meta, blockedFetch);
     assert.equal((await command(priorGeneration.id)).status, 'failed');
+    assert.deepEqual(await command(queued.id), sent);
+    const retained = (await get(path + '/messages', 'MessageListResponse')).find(message => message.id === stored.id);
+    assert.equal(retained.status, 'sent');
+    assert.equal(calls, 1);
+    console.log(JSON.stringify({ status: 'SC2_H02_PROVIDER_BOUNDARY', pendingGeneration: 'failed',
+        acceptedStillSent: true, acceptedProviderCalls: calls }));
     await action('takeover');
     const expired = await queue('Phản hồi đã quá cửa sổ khi worker chạy');
     await writer.channelConversation.update({ where, data: { lastInboundAt: new Date(Date.now() - 25 * 3600000) } });
@@ -336,7 +342,7 @@ test('T069 Meta: explicit rejections and uncertain outcomes are recorded without
         assert.deepEqual(entries[0].metadata, { commandId: id, status, reason });
     };
     for (const [statusCode, errorCode, delivery, reason] of [
-        [400, 190, 'failed', 'token_rejected'], [429, 613, 'failed', 'rate_limited'],
+        [429, 613, 'failed', 'rate_limited'],
         [500, 2, 'unknown', 'outcome_unconfirmed'], [undefined, undefined, 'unknown', 'outcome_unconfirmed'],
     ]) {
         const item = await queue();
@@ -376,6 +382,37 @@ test('T069 Meta: explicit rejections and uncertain outcomes are recorded without
     await dispatchMessengerMessages(db, config, meta, accepted);
     await check(interrupted.id, 'unknown', 'attempt_interrupted');
     assert.equal(calls, 1);
+
+    const rejected = await queue();
+    const pendingAfterRejection = await queue();
+    const rejectToken = async () => {
+        calls += 1;
+        return new globalThis.Response(JSON.stringify({ error: { code: 190, message: 'Synthetic authorization rejection' } }), { status: 400 });
+    };
+    await dispatchMessengerMessages(db, config, meta, rejectToken);
+    await check(rejected.id, 'failed', 'token_rejected');
+    const expired = await findMetaChannel(replyPage);
+    const blocked = await get(path, 'ConversationResponse');
+    console.log(JSON.stringify({ status: 'SC049_TOKEN_REJECTION_OBSERVED', channel: expired.status,
+        generationChanged: expired.generation === channel.generation + 1, canSend: blocked.sendEligibility.state === 'allowed' }));
+    assert.equal(expired.status, 'expired');
+    assert.equal(expired.generation, channel.generation + 1);
+    assert.equal(expired.version, channel.version + 1);
+    assert.equal(blocked.sendEligibility.reasonCode, 'CHANNEL_NOT_READY');
+    await dispatchMessengerMessages(db, config, meta, rejectToken);
+    await check(pendingAfterRejection.id, 'failed', 'send_ineligible');
+    assert.equal(calls, 2, 'A queued send after the rejection must not contact the provider');
+    await send(path + '/messages', { text: 'Tin thử sau khi hết quyền', clientMessageId: randomUUID(),
+        expectedConversationVersion: blocked.version }, 'Problem', { expected: 409 });
+    const health = await send('integrations/channels/' + channel.id + '/check', undefined, 'JobResponse', { expected: 202 });
+    await runJob(db, { shopId: shopA.id, id: health.id, sourceOperation: 'checkChannelHealth' }, channelTestHandler(config), authorize);
+    assert.equal((await get('jobs/' + health.id, 'JobResponse')).status, 'failed');
+    const view = await get('integrations/channels/' + channel.id, 'ChannelResponse');
+    assert.deepEqual([view.status, view.capabilities], ['expired', []]);
+    await deliverMeta(metaPayload({ id: replyPage, messaging: [metaEvent(replyPage, { sender: errorSender })] }));
+    assert.equal((await findMetaChannel(replyPage)).status, 'expired');
+    console.log(JSON.stringify({ status: 'SC049_EXPIRED_GENERATION_BLOCKED', providerCallsForExpiredPair: 1,
+        oldCommand: 'failed', newSend: 409, health: 'failed', staysExpiredAfterInbound: true }));
 });
 
 after(async () => {
@@ -397,7 +434,7 @@ async function data(response, expected, schema) {
     const check = validator.compile(schemaFromContract(schema));
     assert.equal(check(body), true, JSON.stringify(check.errors));
     assert.equal(body.meta?.requestId ?? body.requestId, response.headers.get('x-request-id'));
-    return body.data;
+    return schema === 'Problem' ? body : body.data;
 }
 
 const get = (res, schema, { shop = shopA, actor = owner, expected = 200 } = {}) =>
@@ -496,9 +533,18 @@ test('SC-034 SC-035 SC-036 SC-037 SC2-B07 SC2-B08: media stays scoped and takeov
     const adopted = await get(resource, 'ConversationResponse');
     assert.equal(adopted.sendEligibility.state, 'allowed');
     assert.equal(adopted.unreadCount, 0);
+    assert.equal(adopted.assignedUserId, owner.userId);
     await send(resource + '/release', { expectedVersion: start.version, reason: 'Kiểm phiên bản tiếp quản cũ' }, 'Problem', { expected: 412 });
-    await send(resource + '/release', { expectedVersion: adopted.version, reason: 'Giao hội thoại về trợ lý' }, 'CommandResponse', { expected: 202 });
+    const releaseReason = 'Giao hội thoại về trợ lý';
+    await send(resource + '/release', { expectedVersion: adopted.version, reason: releaseReason }, 'CommandResponse', { expected: 202 });
     const bot = await db.channelConversation.findUniqueOrThrow({ where: { shopId_id: { shopId: shopA.id, id: conversationId } } });
+    const releaseAudits = await db.auditEntry.findMany({ where: {
+        shopId: shopA.id, resourceId: conversationId, action: 'releaseConversation',
+    } });
+    assert.equal(releaseAudits.length, 1);
+    assert.equal(releaseAudits[0].actorId, owner.userId);
+    assert.deepEqual(releaseAudits[0].metadata, { version: bot.version, mode: 'bot', reason: releaseReason });
+    assert.equal(bot.assignedUserId, null);
     const older = await db.$transaction(tx => recordCommand(tx, { shopId: shopA.id, actorId: owner.userId,
         operationId: 'sendMessage', idempotencyKey: randomUUID() }, { draft: 'fixture bot' }, async command => {
         const message = await tx.channelMessage.create({ data: { shopId: shopA.id, conversationId, externalId: randomUUID(),
@@ -515,11 +561,28 @@ test('SC-034 SC-035 SC-036 SC-037 SC2-B07 SC2-B08: media stays scoped and takeov
     assert.equal(note.direction, 'internal');
     const png = await sharp({ create: { width: 4, height: 4, channels: 3, background: '#1386aa' } }).png().toBuffer();
     await upload('conversation_media', png, 'fake.png', 'image/png', randomUUID(), { expected: 404, schema: 'Problem' });
+    await upload('conversation_media', png, 'other-shop.png', 'image/png', conversationId,
+        { shop: shopB, actor: other, expected: 404, schema: 'Problem' });
+    await upload('conversation_media', png, 'wrong.svg', 'image/svg+xml', conversationId,
+        { expected: 422, schema: 'Problem' });
+    await upload('conversation_media', Buffer.alloc(5 * 1024 * 1024 + 1), 'oversize.png', 'image/png', conversationId,
+        { expected: 413, schema: 'Problem' });
+    const quarantined = await upload('conversation_media', Buffer.from('not a raster image'), 'invalid.png', 'image/png', conversationId);
+    assert.deepEqual([quarantined.status, quarantined.rejectionReason, quarantined.readUrl], ['quarantined', 'invalid_format', null]);
+    const catalogImage = await upload('product_image', png, 'catalog.png', 'image/png', null);
     const image = await upload('conversation_media', png, 'test.png', 'image/png', conversationId);
     assert.equal(image.status, 'ready');
     await get('uploads/' + image.id, 'Problem', { actor: staff, expected: 404 });
     const current = await get(resource, 'ConversationResponse');
     const reply = { clientMessageId: randomUUID(), expectedConversationVersion: current.version, fileIds: [image.id] };
+    const dispatchCount = () => db.messageDispatch.count({ where: { shopId: shopA.id, message: { conversationId } } });
+    const beforeInvalidSends = await dispatchCount();
+    for (const fileId of [catalogImage.id, quarantined.id]) {
+        await send(resource + '/messages', { ...reply, fileIds: [fileId] }, 'Problem', { expected: 409 });
+    }
+    const tooMany = [image.id, ...Array.from({ length: 5 }, () => randomUUID())];
+    await send(resource + '/messages', { ...reply, fileIds: tooMany }, 'Problem', { expected: 400 });
+    assert.equal(await dispatchCount(), beforeInvalidSends);
     const key = randomUUID();
     const queued = await send(resource + '/messages', reply, 'CommandResponse', { expected: 202, key });
     assert.equal(queued.status, 'accepted');
@@ -531,6 +594,9 @@ test('SC-034 SC-035 SC-036 SC-037 SC2-B07 SC2-B08: media stays scoped and takeov
     assert.equal(sent.text, '');
     assert.equal(sent.attachments[0].fileId, image.id);
     assert.equal(sent.id, command.result.id);
+    console.log(JSON.stringify({ status: 'SC2_B07_B08_INBOX_GATES', releaseAudits: 1, releaseClearedAssignee: true,
+        staleDispatch: 'failed', wrongShop: 404, unsupportedMime: 422, oversize: 413, attachmentCount: 400,
+        wrongPurpose: 409, quarantinedFile: 409, validImageSent: true }));
     await send(resource + '/notes', { text: 'Nguồn hình không thể là bản chép lời',
         transcriptSource: { messageId: sent.id, fileId: image.id } }, 'Problem', { expected: 422 });
     const wave = Buffer.from('524946462600000057415645666d74201000000001000100401f0000803e00000200100064617461020000000000', 'hex');
@@ -571,10 +637,21 @@ test('SC-034 SC-035 SC-036 SC-037 SC2-B07 SC2-B08: media stays scoped and takeov
     await send(expiredPath + '/messages', { clientMessageId: randomUUID(), expectedConversationVersion: tooOld.version, text: 'Hết cửa sổ gửi' },
         'Problem', { expected: 409 });
     const providerMessage = await db.channelMessage.findUniqueOrThrow({ where: { shopId_id: { shopId: shopA.id, id: sent.id } } });
+    const dispatch = await db.messageDispatch.findUniqueOrThrow({ where: { shopId_messageId: { shopId: shopA.id, messageId: sent.id } } });
+    const commandKey = { shopId: shopA.id, commandId: dispatch.commandId, eventType: 'command.updated' };
+    const commandEvents = await db.outboxEvent.count({ where: commandKey });
+    await db.$transaction([
+        db.channelMessage.update({ where: { shopId_id: { shopId: shopA.id, id: sent.id } }, data: { status: 'unknown' } }),
+        db.command.update({ where: { shopId_id: { shopId: shopA.id, id: dispatch.commandId } }, data: { status: 'unknown' } }),
+    ]);
     const delivered = { type: 'delivery', pageId: channel.pageId, generation: channel.generation, eventId: randomUUID(),
         occurredAt: new Date().toISOString(), conversationId: input.conversationId, messageId: providerMessage.externalId, status: 'read' };
     await event(delivered);
+    assert.equal((await event(delivered)).duplicate, true);
     await event({ ...delivered, eventId: randomUUID(), status: 'delivered' });
+    const reconciled = await get('commands/' + dispatch.commandId, 'CommandResponse');
+    assert.deepEqual([reconciled.status, reconciled.result?.id], ['succeeded', sent.id]);
+    assert.equal(await db.outboxEvent.count({ where: commandKey }), commandEvents + 1);
     assert.equal((await get(resource + '/messages?status=read', 'MessageListResponse'))[0].id, sent.id);
     const shared = await get('uploads/' + image.id, 'FileObjectResponse', { actor: staff });
     const mine = new URL(image.readUrl, config.appOrigin);
@@ -621,19 +698,37 @@ function textPdf(text) {
 
 test('SC-039 SC-040 SC-041 SC-042 SC2-G03 SC2-G06: knowledge drafts, file indexing, scoped approval and published revision retirement', async () => {
     const { conversationId, messageId } = received;
-    const feedback = await send('feedback', { conversationId, messageId, rating: 'negative', correction: 'Nội dung gốc thử riêng tư' },
+    const original = 'Phản hồi tổng hợp có số thử 202-555-0100.';
+    const feedback = await send('feedback', { conversationId, messageId, rating: 'negative', correction: original },
         'FeedbackResponse', { expected: 201 });
     await send('feedback', { conversationId, messageId, rating: 'positive', correction: '' }, 'Problem',
         { shop: shopB, actor: other, expected: 404 });
     const restricted = (await get('feedback?status=pending', 'FeedbackListResponse', { actor: staff })).find(item => item.id === feedback.id);
     assert.equal(restricted.correction, '');
     const reviewInput = { expectedVersion: feedback.version, decision: 'approve', reason: 'Đã đọc và bỏ nội dung riêng tư',
-        redactedCorrection: 'Hướng dẫn sửa câu trả lời đã loại thông tin khách.' };
-    await send('feedback/' + feedback.id + '/review', reviewInput, 'Problem', { actor: staff, expected: 403 });
-    const approved = await send('feedback/' + feedback.id + '/review', reviewInput, 'FeedbackResponse');
+        redactedCorrection: 'Hướng dẫn đổi hàng trong 30 ngày đối với đơn từ 2500000.' };
+    const reviewPath = 'feedback/' + feedback.id + '/review';
+    await send(reviewPath, reviewInput, 'Problem', { actor: staff, expected: 403 });
+    const reviewScope = { shopId: shopA.id, feedbackId: feedback.id };
+    const reviewAudit = { shopId: shopA.id, resourceId: feedback.id, action: 'reviewFeedback' };
+    for (const contact of [original, 'Liên hệ mẫu: reviewer@example.invalid', 'Số tổng hợp +84 000 000 001', 'Số tổng hợp 020 0000 0001']) {
+        const denied = await send(reviewPath, { ...reviewInput, redactedCorrection: contact }, 'Problem', { expected: 422 });
+        assert.deepEqual([denied.errors[0].path, denied.errors[0].code], ['/redactedCorrection', 'PRIVATE_CONTACT_DETAILS']);
+        assert.ok(!JSON.stringify(denied).includes(contact));
+    }
+    assert.equal(await db.knowledgeDocument.count({ where: reviewScope }), 0);
+    assert.equal(await db.auditEntry.count({ where: reviewAudit }), 0);
+    assert.equal((await db.conversationFeedback.findUniqueOrThrow({ where: { shopId_id: { shopId: shopA.id, id: feedback.id } } })).status, 'pending');
+    const feedbackKey = randomUUID();
+    const approved = await send(reviewPath, reviewInput, 'FeedbackResponse', { key: feedbackKey });
+    assert.equal((await send(reviewPath, reviewInput, 'FeedbackResponse', { key: feedbackKey })).id, approved.id);
     assert.equal(approved.correction, reviewInput.redactedCorrection);
+    assert.equal(await db.knowledgeDocument.count({ where: reviewScope }), 1);
+    assert.equal(await db.auditEntry.count({ where: reviewAudit }), 1);
     const suggestion = await db.knowledgeDocument.findUniqueOrThrow({ where: { shopId_feedbackId: { shopId: shopA.id, feedbackId: feedback.id } } });
-    assert.equal((await get('knowledge/' + suggestion.id, 'KnowledgeResponse')).status, 'draft');
+    const suggestionView = await get('knowledge/' + suggestion.id, 'KnowledgeResponse');
+    assert.deepEqual([suggestionView.status, suggestionView.content, suggestionView.publishedRevisionId], ['draft', reviewInput.redactedCorrection, null]);
+    assert.deepEqual(await db.$transaction(tx => assignedKnowledge(tx, shopA.id, [suggestion.draftRevisionId])), []);
 
     const marker = 'CHINH-SACH-PDF-' + randomUUID().slice(0, 8);
     const invalid = await upload('knowledge_source', Buffer.from('%PDF-invalid'), 'invalid.pdf', 'application/pdf');
@@ -673,6 +768,7 @@ test('SC-039 SC-040 SC-041 SC-042 SC2-G03 SC2-G06: knowledge drafts, file indexi
     assert.equal((await send(path + '/publish', approvedInput, 'CommandResponse', { expected: 202, key })).id, accepted.id);
     const live = await get(path, 'KnowledgeResponse');
     assert.equal(live.publishedRevisionId, indexed.draftRevisionId);
+    const liveRevision = await get(path + '/revisions/' + live.publishedRevisionId, 'KnowledgeRevisionResponse');
     const matched = await db.$transaction(tx => publishedKnowledge(tx, shopA.id, marker));
     assert.equal(matched[0].id, indexed.draftRevisionId);
     assert.match(matched[0].indexedText, new RegExp(marker));
@@ -680,7 +776,20 @@ test('SC-039 SC-040 SC-041 SC-042 SC2-G03 SC2-G06: knowledge drafts, file indexi
     const newDraft = await send(path + '/revisions', { title: 'Phiên bản mới', content: 'Nội dung nháp chưa đánh giá', sourceKind: 'manual', fileId: null },
         'KnowledgeRevisionResponse', { expected: 201 });
     assert.equal(newDraft.revision, 2);
+    const second = await get(path, 'KnowledgeResponse');
+    assert.equal(second.publishedRevisionId, live.publishedRevisionId);
+    const reindex = await send(path + '/submit-review', { expectedVersion: second.version, reason: 'Kiểm bản hai trước khi xuất bản' },
+        'JobResponse', { expected: 202 });
+    await runJob(db, { shopId: shopA.id, id: reindex.id, sourceOperation: 'submitKnowledgeReview' }, knowledgeIndexHandler(db), authorize);
     const document = await get(path, 'KnowledgeResponse');
+    assert.equal(document.status, 'ready_for_review');
+    assert.equal(document.draftRevisionId, newDraft.id);
+    assert.notEqual(document.contentHash, revision.contentHash);
+    await send(path + '/publish', { ...approvedInput, expectedVersion: document.version, revisionId: document.draftRevisionId },
+        'Problem', { expected: 409 });
+    const afterStale = await get(path, 'KnowledgeResponse');
+    assert.deepEqual(afterStale, document);
+    assert.deepEqual(await db.$transaction(tx => assignedKnowledge(tx, shopA.id, [indexed.draftRevisionId, newDraft.id])), matched);
     const restored = await send(path + '/revisions/' + indexed.draftRevisionId + '/restore', {
         expectedVersion: document.version, reason: 'Mở bản cũ thành nháp mới để rà lại' }, 'KnowledgeRevisionResponse', { expected: 201 });
     assert.equal(restored.revision, 3);
@@ -688,9 +797,13 @@ test('SC-039 SC-040 SC-041 SC-042 SC2-G03 SC2-G06: knowledge drafts, file indexi
     assert.equal((await get(path + '/revisions', 'KnowledgeRevisionListResponse')).length, 3);
     const current = await get(path, 'KnowledgeResponse');
     assert.equal(current.publishedRevisionId, indexed.draftRevisionId);
+    assert.deepEqual(await get(path + '/revisions/' + live.publishedRevisionId, 'KnowledgeRevisionResponse'),
+        { ...liveRevision, draftRevisionId: restored.id });
     await send(path + '/retire', { expectedVersion: current.version, reason: 'Ngừng dùng chính sách cũ' }, 'CommandResponse', { expected: 202 });
     assert.deepEqual(await db.$transaction(tx => publishedKnowledge(tx, shopA.id, marker)), []);
+    assert.deepEqual(await db.$transaction(tx => assignedKnowledge(tx, shopA.id, [indexed.draftRevisionId])), []);
     assert.equal((await get(path + '/revisions/' + indexed.draftRevisionId, 'KnowledgeRevisionResponse')).status, 'retired');
+    assert.equal(await db.auditEntry.count({ where: { shopId: shopA.id, resourceId: draft.id, action: 'retireKnowledge' } }), 1);
     await get(path, 'Problem', { shop: shopB, actor: other, expected: 404 });
 });
 

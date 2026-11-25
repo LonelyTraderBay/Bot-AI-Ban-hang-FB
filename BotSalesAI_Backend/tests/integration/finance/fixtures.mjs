@@ -1,4 +1,4 @@
-import { writeJournal, bookDelivery } from '../../../apps/api/dist/modules/finance/index.js';
+import { bookBusinessPairs, writeJournal } from '../../../apps/api/dist/modules/finance/index.js';
 import { ExactDecimal } from '../../../apps/api/dist/platform/money/index.js';
 
 export async function deliveredDebt(writer, ledger, shop, customerId, at) {
@@ -11,7 +11,10 @@ export async function deliveredDebt(writer, ledger, shop, customerId, at) {
         shopId, orderId: order.id, state: 'delivered', currency, warehouseId,
         deliveredAt: at, handedOverAt: at, lastEventAt: at,
     } });
-    await ledger.$transaction(tx => bookDelivery(tx, { shopId, sourceId: shipment.id, at, currency }, order, new ExactDecimal(0)));
+    // Reconciliation starts from an existing COD receivable. Shipment and stock are tested in the orders suite.
+    await ledger.$transaction(tx => bookBusinessPairs(tx, { shopId, sourceId: shipment.id, at, currency }, 'shipment', 'delivery', [{
+        debit: 'carrier_receivable', credit: 'sales', amount: new ExactDecimal(order.total), description: 'Phải thu COD tổng hợp',
+    }]));
     return { order, shipment };
 }
 

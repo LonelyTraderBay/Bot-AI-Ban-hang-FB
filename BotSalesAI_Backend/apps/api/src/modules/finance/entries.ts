@@ -18,6 +18,7 @@ export type EntryWrite = {
 const counterparts: Record<FinanceClassification, string> = {
     sales_receipt: 'customer_deposit', inventory_purchase: 'supplier_prepayment', shipping: 'carrier_fees',
     platform_fee: 'operating_expense', payment_fee: 'operating_expense', ai_expense: 'operating_expense',
+    advertising_expense: 'operating_expense', packaging_expense: 'operating_expense',
     operating_expense: 'operating_expense', capital: 'owner_capital', loan_principal: 'loan', transfer: 'bank', other: 'operating_expense',
 };
 const entryDetails = { journal: { select: { settlementAllocations: { select: { debtLineId: true } } } } } satisfies Prisma.FinanceEntryInclude;
@@ -60,6 +61,9 @@ function entryWriteFrom(row: FinanceEntry): EntryWrite {
 async function normalizeEntry(tx: Prisma.TransactionClient, shopId: string, input: EntryWrite) {
     const { currency } = await financeShop(tx, shopId);
     const occurredAt = new Date(input.occurredAt);
+    if ((input.classification === 'advertising_expense' || input.classification === 'packaging_expense') && input.sourceRef === null) {
+        throw new UnprocessableEntityException('Cần mã chứng từ nguồn để ghi chi phí quảng cáo hoặc đóng gói.');
+    }
     if (!Number.isFinite(occurredAt.getTime()) || occurredAt.getTime() > Date.now() ||
         (input.sourceRef !== null && (!/^manual(?:_[a-z0-9_]{1,45})?$/.test(input.sourceRef.type) ||
             !/^[A-Za-z0-9_-]{1,160}$/.test(input.sourceRef.id)))) throw new UnprocessableEntityException();

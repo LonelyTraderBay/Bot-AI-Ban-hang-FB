@@ -3,7 +3,7 @@
 
 
 <!-- BEGIN RELEASE META -->
-**Bộ chuẩn 2.1.1 · 2026-09-29 · Graphite Gold: ĐÃ DUYỆT · Token 2.1 · API 2.5.0 · Baseline nghiệp vụ 2.0.**
+**Bộ chuẩn 2.1.1 · 2026-09-29 · Graphite Gold: ĐÃ DUYỆT · Token 2.1 · API 2.6.1 · Baseline nghiệp vụ 2.0.**
 Nguồn phiên bản: `release.json`; quyết định màu: `design/decision.json`. Phạm vi kiểm chứng là tài liệu/demo, không chứng nhận vận hành sản phẩm.
 <!-- END RELEASE META -->
 
@@ -22,7 +22,7 @@ Kế hoạch frontend FE001–FE028/140 bước nằm ở IMPLEMENTATION_PLAN.md
 # 00 — Nguồn, phê duyệt và hiệu lực
 
 <!-- BEGIN RELEASE META -->
-**Bộ chuẩn 2.1.1 · 2026-09-29 · Graphite Gold: ĐÃ DUYỆT · Token 2.1 · API 2.5.0 · Baseline nghiệp vụ 2.0.**
+**Bộ chuẩn 2.1.1 · 2026-09-29 · Graphite Gold: ĐÃ DUYỆT · Token 2.1 · API 2.6.1 · Baseline nghiệp vụ 2.0.**
 Nguồn phiên bản: `release.json`; quyết định màu: `design/decision.json`. Phạm vi kiểm chứng là tài liệu/demo, không chứng nhận vận hành sản phẩm.
 <!-- END RELEASE META -->
 
@@ -75,7 +75,7 @@ Khi áp dụng vào repo đã chạy, giữ tracker/evidence/nguồn code riêng
 # 01 — Phạm vi sản phẩm và 64 chức năng
 
 <!-- BEGIN RELEASE META -->
-**Bộ chuẩn 2.1.1 · 2026-09-29 · Graphite Gold: ĐÃ DUYỆT · Token 2.1 · API 2.5.0 · Baseline nghiệp vụ 2.0.**
+**Bộ chuẩn 2.1.1 · 2026-09-29 · Graphite Gold: ĐÃ DUYỆT · Token 2.1 · API 2.6.1 · Baseline nghiệp vụ 2.0.**
 Nguồn phiên bản: `release.json`; quyết định màu: `design/decision.json`. Phạm vi kiểm chứng là tài liệu/demo, không chứng nhận vận hành sản phẩm.
 <!-- END RELEASE META -->
 
@@ -203,7 +203,7 @@ Một route đẹp không đủ. Luồng đã nối API thật, dữ liệu bề
 # 02 — Kiến trúc được chọn và cấu trúc code
 
 <!-- BEGIN RELEASE META -->
-**Bộ chuẩn 2.1.1 · 2026-09-29 · Graphite Gold: ĐÃ DUYỆT · Token 2.1 · API 2.5.0 · Baseline nghiệp vụ 2.0.**
+**Bộ chuẩn 2.1.1 · 2026-09-29 · Graphite Gold: ĐÃ DUYỆT · Token 2.1 · API 2.6.1 · Baseline nghiệp vụ 2.0.**
 Nguồn phiên bản: `release.json`; quyết định màu: `design/decision.json`. Phạm vi kiểm chứng là tài liệu/demo, không chứng nhận vận hành sản phẩm.
 <!-- END RELEASE META -->
 
@@ -277,7 +277,7 @@ Horizontal scale API/worker and partition/index measured tables before sharding.
 # 03 — Design system dark-only và tiêu chuẩn trải nghiệm
 
 <!-- BEGIN RELEASE META -->
-**Bộ chuẩn 2.1.1 · 2026-09-29 · Graphite Gold: ĐÃ DUYỆT · Token 2.1 · API 2.5.0 · Baseline nghiệp vụ 2.0.**
+**Bộ chuẩn 2.1.1 · 2026-09-29 · Graphite Gold: ĐÃ DUYỆT · Token 2.1 · API 2.6.1 · Baseline nghiệp vụ 2.0.**
 Nguồn phiên bản: `release.json`; quyết định màu: `design/decision.json`. Phạm vi kiểm chứng là tài liệu/demo, không chứng nhận vận hành sản phẩm.
 <!-- END RELEASE META -->
 
@@ -392,11 +392,11 @@ Bắt buộc kiểm login, lỗi/loading, menu, modal, inbox, tài chính, đi�
 # 04 — Màn hình và luồng hiện hành
 
 <!-- BEGIN RELEASE META -->
-**Bộ chuẩn 2.1.1 · 2026-09-29 · Graphite Gold: ĐÃ DUYỆT · Token 2.1 · API 2.5.0 · Baseline nghiệp vụ 2.0.**
+**Bộ chuẩn 2.1.1 · 2026-09-29 · Graphite Gold: ĐÃ DUYỆT · Token 2.1 · API 2.6.1 · Baseline nghiệp vụ 2.0.**
 Nguồn phiên bản: `release.json`; quyết định màu: `design/decision.json`. Phạm vi kiểm chứng là tài liệu/demo, không chứng nhận vận hành sản phẩm.
 <!-- END RELEASE META -->
 
-Nguồn chuẩn: contracts/route-manifest.json. File này sinh bởi scripts/generate-reference.py. 61 route là hợp đồng màn hình sản phẩm; prototype có phạm vi riêng tại prototype/PROTOTYPE_SCOPE.json.
+Nguồn chuẩn: contracts/route-manifest.json. File này sinh bởi scripts/generate-reference.py. 67 route là hợp đồng màn hình sản phẩm; prototype có phạm vi riêng tại prototype/PROTOTYPE_SCOPE.json.
 
 Mọi màn hình kế thừa Graphite Gold theo design/decision.json đã duyệt và design/tokens.json, dark-only, session/tenant/permission, lỗi/empty/stale/unknown và navigation keyboard ở docs/03,08,09. Actions phải có backend allowedActions, không chỉ đủ permission string.
 
@@ -520,7 +520,7 @@ Mọi màn hình kế thừa Graphite Gold theo design/decision.json đã duyệ
 
 **Trường hợp cần xử lý:** Policy unknown/blocked disable gửi; takeover race; send timeout unknown; duplicate/out-of-order event; 403 gỡ messages; không tự gửi lại.; policy media thiếu/không hợp lệ thì tắt đính kèm; MIME/size/count/scope/purpose sai hoặc scan chưa ready thì không gửi; send unknown giữ bản nháp và chặn gửi trùng; object URL bị thu hồi khi bỏ tệp/đóng composer.
 
-**API đọc:** getConversation, listMessages, getCommand, getInboxMetadata, getFile
+**API đọc:** getConversation, listMessages, getCommand, getInboxMetadata, getFile, listPromotions
 
 | Hành động | operationId | Quyền |
 |---|---|---|
@@ -797,7 +797,7 @@ Mọi màn hình kế thừa Graphite Gold theo design/decision.json đã duyệ
 
 **Trường hợp cần xử lý:** Variant archived/out of stock; customer/variant khác shop; trùng submit; thiếu quyền xem khách; intent seeded từ inbox vẫn revalidate.
 
-**API đọc:** listCustomers, listProducts, getShop
+**API đọc:** listCustomers, listProducts, getShop, listPromotions
 
 | Hành động | operationId | Quyền |
 |---|---|---|
@@ -815,7 +815,7 @@ Mọi màn hình kế thừa Graphite Gold theo design/decision.json đã duyệ
 
 **Nội dung:** Snapshot dòng hàng, totals, ba state, source customer/conversation, version, các action server cho phép.
 
-**Hành vi:** Quote/consent → reserve → preparation → handover → delivery/control-transfer → payment reconciliation. Return request/inspection is separate from recording an observed refund. No direct v1 fulfill/return bypass.
+**Hành vi:** Quote/consent → reserve → preparation → handover → delivery/control-transfer → payment reconciliation. Return request/inspection is separate from recording an observed refund. No direct v1 fulfill/return bypass. Khi mở Sửa đơn nháp, kiểm quyền catalog.read trước khi gọi listPromotions để chọn ưu đãi.
 
 **Trường hợp cần xử lý:** Double submit, last SKU race, expired quote, unknown delivery outcome, partial returns, COD outstanding and closed period. No real money movement initiated by this UI.
 
@@ -1876,6 +1876,142 @@ Không tự merge cùng tên/số bị che; scope mismatch denied.
 
 **Kịch bản:** SC2-G05, SC2-C07-CONSENT. SC-* tại fixtures/core-acceptance-scenarios.json, SC2-* tại fixtures/acceptance-scenarios.json; đều chưa chạy trên sản phẩm.
 
+## R62 — Cấu hình giao hàng
+
+**Route:** `/s/:shopId/settings/shipping` · **Module:** `fulfillment` · **Đọc:** `shop.manage`
+
+**Mục đích:** Quản lý vùng phục vụ và phí giao dự kiến của cửa hàng.
+
+**Nội dung:** Một biểu phí thủ công theo quốc gia và tỉnh/thành, tên dịch vụ và số tiền theo tiền tệ của shop.
+
+**Hành vi:** Áp dụng biểu phí theo địa chỉ tại bước báo giá đơn. Báo giá lưu phiên bản phí. Đơn giữ nguyên phí đã xác nhận và vận đơn kế thừa phí dự kiến.
+
+**Trường hợp cần xử lý:** Chặn trùng vùng sau chuẩn hóa. Địa chỉ ngoài vùng hoặc chính sách đã đổi cần xử lý trước khi xác nhận đơn. Biểu phí trống chỉ hỗ trợ luồng báo giá thủ công chưa có phí tự động.
+
+**API đọc:** getShippingPolicy
+
+| Hành động | operationId | Quyền |
+|---|---|---|
+| Lưu biểu phí giao hàng | `updateShippingPolicy` | `shop.manage` |
+
+**States:** loading, empty, error, forbidden, stale_or_offline, success, command_unknown, capability_unavailable
+
+**Kịch bản:** SC2-C04. SC-* tại fixtures/core-acceptance-scenarios.json, SC2-* tại fixtures/acceptance-scenarios.json; đều chưa chạy trên sản phẩm.
+
+## R63 — Ngoại lệ và tác vụ nền
+
+**Route:** `/s/:shopId/operations/exceptions` · **Module:** `operations` · **Đọc:** `operations.read`
+
+**Mục đích:** Tìm và xử lý việc cần can thiệp, tác vụ nền lỗi và thao tác chưa rõ kết quả.
+
+**Nội dung:** Ba danh sách theo quyền. Bộ lọc và truy vấn theo mã chạy trước phân trang. Dẫn tới công việc, tác vụ hoặc hồ sơ liên quan.
+
+**Hành vi:** Dùng chung công việc với R37. Tác vụ nền và thao tác yêu cầu jobs.read. Chi tiết thao tác đối chiếu chỉ đọc khi kết quả chưa rõ.
+
+**Trường hợp cần xử lý:** Đổi bộ lọc đặt lại con trỏ. Chặn truy cập chéo shop và chặn phát lại mù quáng.
+
+**API đọc:** listWorkItems, listJobs, getJob, listCommands, getCommand
+
+| Hành động | operationId | Quyền |
+|---|---|---|
+| Nhận công việc | `claimWorkItem` | `operations.claim` |
+
+**States:** loading, empty, error, forbidden, stale_or_offline, success, command_unknown, capability_unavailable
+
+**Kịch bản:** SC2-F02, SC2-F03, SC2-H01, SC2-H04. SC-* tại fixtures/core-acceptance-scenarios.json, SC2-* tại fixtures/acceptance-scenarios.json; đều chưa chạy trên sản phẩm.
+
+## R64 — Ưu đãi và combo
+
+**Route:** `/s/:shopId/products/promotions` · **Module:** `catalog` · **Đọc:** `catalog.read`
+
+**Mục đích:** Tạo và duyệt ưu đãi có quy tắc giá.
+
+**Nội dung:** Combo gồm nhiều SKU, mức giảm theo đơn, biên lợi nhuận tối thiểu và ngày hiệu lực theo múi giờ shop.
+
+**Hành vi:** Một ưu đãi cho mỗi đơn. Duyệt đúng bản nháp rồi dùng ở hội thoại, đơn và báo giá. Lưu phiên bản và mức giảm đã áp dụng.
+
+**Trường hợp cần xử lý:** Chặn thiếu SKU, thiếu tồn, sai phiên bản, hết hiệu lực, giá vốn chưa rõ hoặc biên lợi nhuận thấp. Đổi giá phải báo lại.
+
+**API đọc:** listPromotions, listProducts
+
+| Hành động | operationId | Quyền |
+|---|---|---|
+| Tạo nháp | `createPromotion` | `catalog.write` |
+| Sửa chương trình | `updatePromotion` | `catalog.write` |
+| Duyệt bật hoặc tạm dừng | `decidePromotion` | `shop.manage` |
+
+**States:** loading, empty, error, forbidden, stale_or_offline, success, command_unknown, capability_unavailable
+
+**Kịch bản:** SC2-B05, SC2-G03. SC-* tại fixtures/core-acceptance-scenarios.json, SC2-* tại fixtures/acceptance-scenarios.json; đều chưa chạy trên sản phẩm.
+
+## R65 — Xác minh thu tiền và hoàn tiền
+
+**Route:** `/s/:shopId/finance/payment-reviews` · **Module:** `finance` · **Đọc:** `finance.read`
+
+**Mục đích:** Tập trung khoản cần xác minh hoặc cần hoàn.
+
+**Nội dung:** Số dự kiến, đã xác minh và còn lại, đến hạn, người phụ trách, đơn/phiếu trả, giao dịch, bút toán.
+
+**Hành vi:** Bộ lọc theo dữ liệu cửa hàng. Ghi nhận nghiệp vụ qua đơn, đổi trả và đối soát hiện có.
+
+**Trường hợp cần xử lý:** COD đang giữ và dữ liệu chưa đủ có trạng thái riêng. Số dư nghĩa vụ được đối chiếu từ nguồn ghi sổ.
+
+**API đọc:** listPaymentReviews
+
+| Hành động | operationId | Quyền |
+|---|---|---|
+
+**States:** loading, empty, error, forbidden, stale_or_offline, success, command_unknown, capability_unavailable
+
+**Kịch bản:** SC2-E04, SC2-E05, SC2-C07. SC-* tại fixtures/core-acceptance-scenarios.json, SC2-* tại fixtures/acceptance-scenarios.json; đều chưa chạy trên sản phẩm.
+
+## R66 — Phiên kiểm kê kho
+
+**Route:** `/s/:shopId/inventory/stocktakes` · **Module:** `inventory` · **Đọc:** `inventory.read`
+
+**Mục đích:** Đếm và duyệt sai lệch theo phiên.
+
+**Nội dung:** Chọn kho, nhóm SKU, tồn tại mốc mở, số đếm và chênh lệch.
+
+**Hành vi:** Chụp phiên bản từng vị trí. Duyệt và ghi chênh lệch nguyên tử theo phiên. Dòng đã đổi cần đếm lại sau làm mới mốc.
+
+**Trường hợp cần xử lý:** Chặn số đếm thấp hơn lượng đang giữ, phiên bản cũ, khóa kỳ và ghi lặp.
+
+**API đọc:** listStocktakes, listWarehouses, listStockSnapshots
+
+| Hành động | operationId | Quyền |
+|---|---|---|
+| Mở phiên | `createStocktake` | `inventory.adjust` |
+| Nhập đếm hoặc gửi duyệt | `updateStocktake` | `inventory.adjust` |
+| Duyệt và ghi tồn | `postStocktake` | `warehouses.manage` |
+
+**States:** loading, empty, error, forbidden, stale_or_offline, success, command_unknown, capability_unavailable
+
+**Kịch bản:** SC2-D01. SC-* tại fixtures/core-acceptance-scenarios.json, SC2-* tại fixtures/acceptance-scenarios.json; đều chưa chạy trên sản phẩm.
+
+## R67 — Phiếu chuyển kho
+
+**Route:** `/s/:shopId/inventory/transfers` · **Module:** `inventory` · **Đọc:** `inventory.read`
+
+**Mục đích:** Điều chuyển hàng giữa kho.
+
+**Nội dung:** Kho gửi/nhận, các SKU, số xuất/nhận/đang đi và thiếu.
+
+**Hành vi:** Xuất chỉ giảm tồn bán được ở kho gửi. Kho đích tăng sau mỗi lần nhận. Đóng thiếu có lý do và quyền quản trị kho.
+
+**Trường hợp cần xử lý:** Chặn hai kho trùng, khác shop, vượt tồn khả dụng hoặc nhận quá số đã gửi; bảo toàn giá vốn qua từng lần nhận.
+
+**API đọc:** listStockTransfers, listWarehouses, listStockSnapshots
+
+| Hành động | operationId | Quyền |
+|---|---|---|
+| Mở phiếu | `createStockTransfer` | `inventory.adjust` |
+| Xuất, nhận, hủy hoặc đóng thiếu | `updateStockTransfer` | `inventory.adjust` |
+
+**States:** loading, empty, error, forbidden, stale_or_offline, success, command_unknown, capability_unavailable
+
+**Kịch bản:** SC2-D01. SC-* tại fixtures/core-acceptance-scenarios.json, SC2-* tại fixtures/acceptance-scenarios.json; đều chưa chạy trên sản phẩm.
+
 
 ---
 
@@ -1884,7 +2020,7 @@ Không tự merge cùng tên/số bị che; scope mismatch denied.
 # 05 — Nguồn dữ liệu, máy trạng thái và bất biến
 
 <!-- BEGIN RELEASE META -->
-**Bộ chuẩn 2.1.1 · 2026-09-29 · Graphite Gold: ĐÃ DUYỆT · Token 2.1 · API 2.5.0 · Baseline nghiệp vụ 2.0.**
+**Bộ chuẩn 2.1.1 · 2026-09-29 · Graphite Gold: ĐÃ DUYỆT · Token 2.1 · API 2.6.1 · Baseline nghiệp vụ 2.0.**
 Nguồn phiên bản: `release.json`; quyết định màu: `design/decision.json`. Phạm vi kiểm chứng là tài liệu/demo, không chứng nhận vận hành sản phẩm.
 <!-- END RELEASE META -->
 
@@ -1939,7 +2075,7 @@ intent accepted with idempotency body hash → authoritative transaction → out
 # 06 — Contract-first API và realtime
 
 <!-- BEGIN RELEASE META -->
-**Bộ chuẩn 2.1.1 · 2026-09-29 · Graphite Gold: ĐÃ DUYỆT · Token 2.1 · API 2.5.0 · Baseline nghiệp vụ 2.0.**
+**Bộ chuẩn 2.1.1 · 2026-09-29 · Graphite Gold: ĐÃ DUYỆT · Token 2.1 · API 2.6.1 · Baseline nghiệp vụ 2.0.**
 Nguồn phiên bản: `release.json`; quyết định màu: `design/decision.json`. Phạm vi kiểm chứng là tài liệu/demo, không chứng nhận vận hành sản phẩm.
 <!-- END RELEASE META -->
 
@@ -1961,7 +2097,7 @@ New APIs in notifications, operations, fulfillment, procurement and finance are 
 # 07 — Admin AI, dữ liệu và kênh Facebook
 
 <!-- BEGIN RELEASE META -->
-**Bộ chuẩn 2.1.1 · 2026-09-29 · Graphite Gold: ĐÃ DUYỆT · Token 2.1 · API 2.5.0 · Baseline nghiệp vụ 2.0.**
+**Bộ chuẩn 2.1.1 · 2026-09-29 · Graphite Gold: ĐÃ DUYỆT · Token 2.1 · API 2.6.1 · Baseline nghiệp vụ 2.0.**
 Nguồn phiên bản: `release.json`; quyết định màu: `design/decision.json`. Phạm vi kiểm chứng là tài liệu/demo, không chứng nhận vận hành sản phẩm.
 <!-- END RELEASE META -->
 
@@ -1990,7 +2126,7 @@ Use curated golden cases and adversarial cases for fake consent, stock/price mis
 # 08 — Bảo mật, phân quyền và quyền tự động
 
 <!-- BEGIN RELEASE META -->
-**Bộ chuẩn 2.1.1 · 2026-09-29 · Graphite Gold: ĐÃ DUYỆT · Token 2.1 · API 2.5.0 · Baseline nghiệp vụ 2.0.**
+**Bộ chuẩn 2.1.1 · 2026-09-29 · Graphite Gold: ĐÃ DUYỆT · Token 2.1 · API 2.6.1 · Baseline nghiệp vụ 2.0.**
 Nguồn phiên bản: `release.json`; quyết định màu: `design/decision.json`. Phạm vi kiểm chứng là tài liệu/demo, không chứng nhận vận hành sản phẩm.
 <!-- END RELEASE META -->
 
@@ -2019,7 +2155,7 @@ Retention/country/legal hold unresolved values do not activate deletion; synthet
 # 09 — State, cache, forms và mô hình dữ liệu UI
 
 <!-- BEGIN RELEASE META -->
-**Bộ chuẩn 2.1.1 · 2026-09-29 · Graphite Gold: ĐÃ DUYỆT · Token 2.1 · API 2.5.0 · Baseline nghiệp vụ 2.0.**
+**Bộ chuẩn 2.1.1 · 2026-09-29 · Graphite Gold: ĐÃ DUYỆT · Token 2.1 · API 2.6.1 · Baseline nghiệp vụ 2.0.**
 Nguồn phiên bản: `release.json`; quyết định màu: `design/decision.json`. Phạm vi kiểm chứng là tài liệu/demo, không chứng nhận vận hành sản phẩm.
 <!-- END RELEASE META -->
 
@@ -2091,7 +2227,7 @@ Phạm vi hiện hành gồm 64 bổ sung A01–H08 ở contracts/feature-catalo
 # 10 — Kiểm thử và tiêu chí nghiệm thu
 
 <!-- BEGIN RELEASE META -->
-**Bộ chuẩn 2.1.1 · 2026-09-29 · Graphite Gold: ĐÃ DUYỆT · Token 2.1 · API 2.5.0 · Baseline nghiệp vụ 2.0.**
+**Bộ chuẩn 2.1.1 · 2026-09-29 · Graphite Gold: ĐÃ DUYỆT · Token 2.1 · API 2.6.1 · Baseline nghiệp vụ 2.0.**
 Nguồn phiên bản: `release.json`; quyết định màu: `design/decision.json`. Phạm vi kiểm chứng là tài liệu/demo, không chứng nhận vận hành sản phẩm.
 <!-- END RELEASE META -->
 
@@ -2124,7 +2260,7 @@ QA-025..030 ở governance/acceptance-scenarios.json bổ sung cho QG-04/05/06/0
 # 11 — Phối hợp AI và bàn giao không lệch code
 
 <!-- BEGIN RELEASE META -->
-**Bộ chuẩn 2.1.1 · 2026-09-29 · Graphite Gold: ĐÃ DUYỆT · Token 2.1 · API 2.5.0 · Baseline nghiệp vụ 2.0.**
+**Bộ chuẩn 2.1.1 · 2026-09-29 · Graphite Gold: ĐÃ DUYỆT · Token 2.1 · API 2.6.1 · Baseline nghiệp vụ 2.0.**
 Nguồn phiên bản: `release.json`; quyết định màu: `design/decision.json`. Phạm vi kiểm chứng là tài liệu/demo, không chứng nhận vận hành sản phẩm.
 <!-- END RELEASE META -->
 
@@ -2144,7 +2280,7 @@ Agent can work through eligible tasks within granted local repo tools and active
 # 12 — Hạ tầng, CI/CD và vận hành thực tế
 
 <!-- BEGIN RELEASE META -->
-**Bộ chuẩn 2.1.1 · 2026-09-29 · Graphite Gold: ĐÃ DUYỆT · Token 2.1 · API 2.5.0 · Baseline nghiệp vụ 2.0.**
+**Bộ chuẩn 2.1.1 · 2026-09-29 · Graphite Gold: ĐÃ DUYỆT · Token 2.1 · API 2.6.1 · Baseline nghiệp vụ 2.0.**
 Nguồn phiên bản: `release.json`; quyết định màu: `design/decision.json`. Phạm vi kiểm chứng là tài liệu/demo, không chứng nhận vận hành sản phẩm.
 <!-- END RELEASE META -->
 
@@ -2173,7 +2309,7 @@ SLO/RPO/RTO/traffic/retention targets remain owner inputs with reason; use synth
 # 13 — Nâng cấp từ 1.1 và mở rộng về sau
 
 <!-- BEGIN RELEASE META -->
-**Bộ chuẩn 2.1.1 · 2026-09-29 · Graphite Gold: ĐÃ DUYỆT · Token 2.1 · API 2.5.0 · Baseline nghiệp vụ 2.0.**
+**Bộ chuẩn 2.1.1 · 2026-09-29 · Graphite Gold: ĐÃ DUYỆT · Token 2.1 · API 2.6.1 · Baseline nghiệp vụ 2.0.**
 Nguồn phiên bản: `release.json`; quyết định màu: `design/decision.json`. Phạm vi kiểm chứng là tài liệu/demo, không chứng nhận vận hành sản phẩm.
 <!-- END RELEASE META -->
 
@@ -2201,7 +2337,7 @@ Xem `UPGRADE.md` cho repo mới và repo đang chạy. Palette giữ nguyên 2.1
 # 14 — Kế hoạch triển khai có thể thực thi theo từng bước
 
 <!-- BEGIN RELEASE META -->
-**Bộ chuẩn 2.1.1 · 2026-09-29 · Graphite Gold: ĐÃ DUYỆT · Token 2.1 · API 2.5.0 · Baseline nghiệp vụ 2.0.**
+**Bộ chuẩn 2.1.1 · 2026-09-29 · Graphite Gold: ĐÃ DUYỆT · Token 2.1 · API 2.6.1 · Baseline nghiệp vụ 2.0.**
 Nguồn phiên bản: `release.json`; quyết định màu: `design/decision.json`. Phạm vi kiểm chứng là tài liệu/demo, không chứng nhận vận hành sản phẩm.
 <!-- END RELEASE META -->
 
@@ -2227,7 +2363,7 @@ Một task có checkpoint weights 1/3/2/2/2; task % = tổng trọng số bướ
 # 15 — Rủi ro, dữ kiện còn thiếu và chặn đúng chỗ
 
 <!-- BEGIN RELEASE META -->
-**Bộ chuẩn 2.1.1 · 2026-09-29 · Graphite Gold: ĐÃ DUYỆT · Token 2.1 · API 2.5.0 · Baseline nghiệp vụ 2.0.**
+**Bộ chuẩn 2.1.1 · 2026-09-29 · Graphite Gold: ĐÃ DUYỆT · Token 2.1 · API 2.6.1 · Baseline nghiệp vụ 2.0.**
 Nguồn phiên bản: `release.json`; quyết định màu: `design/decision.json`. Phạm vi kiểm chứng là tài liệu/demo, không chứng nhận vận hành sản phẩm.
 <!-- END RELEASE META -->
 
@@ -2247,7 +2383,7 @@ Input gates block specific live actions, not local implementation of adapters/si
 # 16 — Nguồn và giới hạn chứng cứ
 
 <!-- BEGIN RELEASE META -->
-**Bộ chuẩn 2.1.1 · 2026-09-29 · Graphite Gold: ĐÃ DUYỆT · Token 2.1 · API 2.5.0 · Baseline nghiệp vụ 2.0.**
+**Bộ chuẩn 2.1.1 · 2026-09-29 · Graphite Gold: ĐÃ DUYỆT · Token 2.1 · API 2.6.1 · Baseline nghiệp vụ 2.0.**
 Nguồn phiên bản: `release.json`; quyết định màu: `design/decision.json`. Phạm vi kiểm chứng là tài liệu/demo, không chứng nhận vận hành sản phẩm.
 <!-- END RELEASE META -->
 
@@ -2401,7 +2537,7 @@ Thiết kế mới là lựa chọn riêng của dự án. Không dùng bài vi�
 # 17 — Truy vết yêu cầu → màn hình → kế hoạch → kiểm thử
 
 <!-- BEGIN RELEASE META -->
-**Bộ chuẩn 2.1.1 · 2026-09-29 · Graphite Gold: ĐÃ DUYỆT · Token 2.1 · API 2.5.0 · Baseline nghiệp vụ 2.0.**
+**Bộ chuẩn 2.1.1 · 2026-09-29 · Graphite Gold: ĐÃ DUYỆT · Token 2.1 · API 2.6.1 · Baseline nghiệp vụ 2.0.**
 Nguồn phiên bản: `release.json`; quyết định màu: `design/decision.json`. Phạm vi kiểm chứng là tài liệu/demo, không chứng nhận vận hành sản phẩm.
 <!-- END RELEASE META -->
 
@@ -2421,19 +2557,19 @@ Sinh từ feature-catalog.json bằng scripts/generate-reference.py. Đây là l
 | B02 — Giá/tồn từ dữ liệu nghiệp vụ | R06 | T019, T024, T040, T041, T069 | SC2-B02 |
 | B03 — Thu thập và xác nhận đặt hàng | R06 | T021, T024, T025, T026, T029, T041 | SC2-B03 |
 | B04 — Tự chốt đơn có điều kiện | R06 | T023, T026, T030, T041, T069, T072 | SC2-B04 |
-| B05 — Bán kèm theo chương trình | R06 | T041 | SC2-B05 |
+| B05 — Bán kèm theo chương trình | R06, R64 | T041 | SC2-B05 |
 | B06 — Chăm sóc sau mua | R54 | T038, T042 | SC2-B06 |
 | B07 — Bot/người thật tiếp quản | R06 | T037, T038, T069 | SC2-B07 |
 | B08 — Bình luận/ảnh/tin thoại | R06 | T037, T042, T069 | SC2-B08 |
 | C01 — Bảng chuẩn bị hàng | R41 | T029, T031, T036, T061, T066, T080 | SC2-C01 |
 | C02 — Phiếu lấy hàng theo SKU | R41 | T032 | SC2-C02 |
 | C03 — Kiểm đóng gói | R41 | T032 | SC2-C03 |
-| C04 — Phí và vùng giao hàng | R42 | T027, T035 | SC2-C04 |
+| C04 — Phí và vùng giao hàng | R42, R62 | T027, T035 | SC2-C04 |
 | C05 — Vận đơn và bàn giao | R42 | T032, T035, T071 | SC2-C05 |
 | C06 — Trạng thái giao độc lập | R42 | T025, T035, T036, T062, T071, T072 | SC2-C06 |
-| C07 — Đổi/trả từng phần | R43 | T035, T062 | SC2-C07 |
+| C07 — Đổi/trả từng phần | R43, R65 | T035, T062 | SC2-C07 |
 | C08 — Sửa/hủy theo giai đoạn | R43 | T023, T025, T026, T029, T030 | SC2-C08 |
-| D01 — Tồn theo trạng thái và SKU | R47, R55 | T013, T020, T022, T047, T066 | SC2-D01 |
+| D01 — Tồn theo trạng thái và SKU | R47, R55, R66, R67 | T013, T020, T022, T047, T066 | SC2-D01 |
 | D02 — Nhà cung cấp hàng hóa | R44 | T043, T048 | SC2-D02 |
 | D03 — Quy tắc nhập lại | R45 | T022, T043, T044, T048 | SC2-D03 |
 | D04 — Nguy cơ hết hàng | R45 | T044, T048 | SC2-D04 |
@@ -2444,14 +2580,14 @@ Sinh từ feature-catalog.json bằng scripts/generate-reference.py. Đây là l
 | E01 — Chứng từ và sổ kép | R48, R56, R57, R58, R59, R60 | T013, T028, T030, T047, T054, T066 | SC2-E01 |
 | E02 — Giá vốn và lợi nhuận | R48 | T028, T035, T036, T049, T054, T062, T079 | SC2-E02 |
 | E03 — Chi phí và phân bổ | R48 | T049, T051, T054 | SC2-E03 |
-| E04 — Đối soát ngân hàng | R49 | T027, T050, T054, T071 | SC2-E04 |
-| E05 — Đối soát COD | R49 | T027, T051, T054, T071, T072 | SC2-E05 |
+| E04 — Đối soát ngân hàng | R49, R65 | T027, T050, T054, T071 | SC2-E04 |
+| E05 — Đối soát COD | R49, R65 | T027, T051, T054, T071, T072 | SC2-E05 |
 | E06 — Công nợ | R50 | T047, T049, T050, T051, T052, T054 | SC2-E06 |
 | E07 — Khóa kỳ và điều chỉnh | R50 | T052, T054, T079 | SC2-E07 |
 | E08 — Báo cáo và hỏi đáp có nguồn | R22 | T053, T054, T064, T080 | SC2-E08 |
 | F01 — Bốn vai trò AI | R51 | T040, T055, T057, T060, T066 | SC2-F01 |
-| F02 — Bảng công việc chung | R37 | T031, T056, T060, T072 | SC2-F02 |
-| F03 — Giám sát ngoại lệ | R37 | T056, T060 | SC2-F03 |
+| F02 — Bảng công việc chung | R37, R63 | T031, T056, T060, T072 | SC2-F02 |
+| F03 — Giám sát ngoại lệ | R37, R63 | T056, T060 | SC2-F03 |
 | F04 — Hàng chờ duyệt | R38 | T045, T055, T060 | SC2-F04 |
 | F05 — Ủy quyền | R38 | T015, T041, T055, T057, T060 | SC2-F05 |
 | F06 — Bản tin chủ shop | R52 | T056, T060, T080, T084 | SC2-F06 |
@@ -2459,16 +2595,16 @@ Sinh từ feature-catalog.json bằng scripts/generate-reference.py. Đây là l
 | F08 — Đánh giá chất lượng | R52 | T042, T059, T060 | SC2-F08 |
 | G01 — Onboarding vận hành | R33 | T002, T010, T011, T014, T018, T059, T063, T066, T068, T079 | SC2-G01 |
 | G02 — Nội dung sản phẩm | R33 | T019, T020, T024, T039 | SC2-G02 |
-| G03 — Chính sách phiên bản | R33 | T039, T063 | SC2-G03 |
+| G03 — Chính sách phiên bản | R33, R64 | T039, T063 | SC2-G03 |
 | G04 — Hồ sơ khách liên kết | R54, R08 | T021, T038 | SC2-G04 |
 | G05 — Consent và ngừng liên hệ | R35, R61 | T021, T063, T075, T079 | SC2-G05 |
 | G06 — Vòng cải thiện có duyệt | R33 | T039, T042, T063 | SC2-G06 |
 | G07 — Thông tin marketing cho chủ shop | R53 | T053, T058, T064 | SC2-G07 |
 | G08 — Hiệu quả chiến dịch | R53 | T053, T058 | SC2-G08 |
-| H01 — Worker phía máy chủ | R52 | T007, T017, T037, T066, T067, T074, T076, T082 | SC2-H01 |
+| H01 — Worker phía máy chủ | R52, R63 | T007, T017, T037, T066, T067, T074, T076, T082 | SC2-H01 |
 | H02 — Kill switch | R51 | T057, T076, T083 | SC2-H02 |
 | H03 — Chi phí và failover | R51 | T017, T040, T057, T069, T074, T076 | SC2-H03 |
-| H04 — Chống trùng và phục hồi | R52 | T009, T016, T017, T023, T028, T030, T036, T037, T046, T050, T062, T065, T072, T076, T083 | SC2-H04 |
+| H04 — Chống trùng và phục hồi | R52, R63 | T009, T016, T017, T023, T028, T030, T036, T037, T046, T050, T062, T065, T072, T076, T083 | SC2-H04 |
 | H05 — Quyền xuyên mọi entrypoint | R34 | T004, T008, T009, T011, T013, T014, T015, T018, T055, T061, T064, T065, T068, T073, T078 | SC2-H05 |
 | H06 — Audit | R34 | T002, T004, T006, T016, T073, T084 | SC2-H06 |
 | H07 — Phòng thử | R34 | T001, T003, T005, T006, T007, T008, T010, T012, T065, T073, T077, T078 | SC2-H07 |
@@ -2482,7 +2618,7 @@ Sinh từ feature-catalog.json bằng scripts/generate-reference.py. Đây là l
 # 18 — Chuẩn code thống nhất cho BotSales AI
 
 <!-- BEGIN RELEASE META -->
-**Bộ chuẩn 2.1.1 · 2026-09-29 · Graphite Gold: ĐÃ DUYỆT · Token 2.1 · API 2.5.0 · Baseline nghiệp vụ 2.0.**
+**Bộ chuẩn 2.1.1 · 2026-09-29 · Graphite Gold: ĐÃ DUYỆT · Token 2.1 · API 2.6.1 · Baseline nghiệp vụ 2.0.**
 Nguồn phiên bản: `release.json`; quyết định màu: `design/decision.json`. Phạm vi kiểm chứng là tài liệu/demo, không chứng nhận vận hành sản phẩm.
 <!-- END RELEASE META -->
 
@@ -2730,7 +2866,7 @@ CODE-037 — Chỉ mục tới SPC-064–075 về provenance/scope/API/ownership
 # 19 — DARK-ONLY: quyết định đã chốt từ nền tảng
 
 <!-- BEGIN RELEASE META -->
-**Bộ chuẩn 2.1.1 · 2026-09-29 · Graphite Gold: ĐÃ DUYỆT · Token 2.1 · API 2.5.0 · Baseline nghiệp vụ 2.0.**
+**Bộ chuẩn 2.1.1 · 2026-09-29 · Graphite Gold: ĐÃ DUYỆT · Token 2.1 · API 2.6.1 · Baseline nghiệp vụ 2.0.**
 Nguồn phiên bản: `release.json`; quyết định màu: `design/decision.json`. Phạm vi kiểm chứng là tài liệu/demo, không chứng nhận vận hành sản phẩm.
 <!-- END RELEASE META -->
 
@@ -2896,7 +3032,7 @@ Quyết định màu hiện hành: `design/decision.json` (ADR-VIS-021, APPROVED
 # 20 — Cho AI bắt đầu và tiếp tục đúng thứ tự
 
 <!-- BEGIN RELEASE META -->
-**Bộ chuẩn 2.1.1 · 2026-09-29 · Graphite Gold: ĐÃ DUYỆT · Token 2.1 · API 2.5.0 · Baseline nghiệp vụ 2.0.**
+**Bộ chuẩn 2.1.1 · 2026-09-29 · Graphite Gold: ĐÃ DUYỆT · Token 2.1 · API 2.6.1 · Baseline nghiệp vụ 2.0.**
 Nguồn phiên bản: `release.json`; quyết định màu: `design/decision.json`. Phạm vi kiểm chứng là tài liệu/demo, không chứng nhận vận hành sản phẩm.
 <!-- END RELEASE META -->
 
@@ -2926,7 +3062,7 @@ Root loader phải tham chiếu đúng một kit hiện hành. Trước UI, đ�
 # 21 — Đơn hàng tới điện thoại: gửi, nhận việc và nhắc hạn
 
 <!-- BEGIN RELEASE META -->
-**Bộ chuẩn 2.1.1 · 2026-09-29 · Graphite Gold: ĐÃ DUYỆT · Token 2.1 · API 2.5.0 · Baseline nghiệp vụ 2.0.**
+**Bộ chuẩn 2.1.1 · 2026-09-29 · Graphite Gold: ĐÃ DUYỆT · Token 2.1 · API 2.6.1 · Baseline nghiệp vụ 2.0.**
 Nguồn phiên bản: `release.json`; quyết định màu: `design/decision.json`. Phạm vi kiểm chứng là tài liệu/demo, không chứng nhận vận hành sản phẩm.
 <!-- END RELEASE META -->
 
@@ -2961,7 +3097,7 @@ Two users claim same task -> one assigned; callback replay/expired/stale -> no s
 # 22 — Lấy hàng, đóng gói, giao và trả từng phần
 
 <!-- BEGIN RELEASE META -->
-**Bộ chuẩn 2.1.1 · 2026-09-29 · Graphite Gold: ĐÃ DUYỆT · Token 2.1 · API 2.5.0 · Baseline nghiệp vụ 2.0.**
+**Bộ chuẩn 2.1.1 · 2026-09-29 · Graphite Gold: ĐÃ DUYỆT · Token 2.1 · API 2.6.1 · Baseline nghiệp vụ 2.0.**
 Nguồn phiên bản: `release.json`; quyết định màu: `design/decision.json`. Phạm vi kiểm chứng là tài liệu/demo, không chứng nhận vận hành sản phẩm.
 <!-- END RELEASE META -->
 
@@ -2987,7 +3123,7 @@ Preparation board chronological/due priority, mobile large claim/pick/pack butto
 # 23 — Quản lý mua hàng và tự đặt có giới hạn
 
 <!-- BEGIN RELEASE META -->
-**Bộ chuẩn 2.1.1 · 2026-09-29 · Graphite Gold: ĐÃ DUYỆT · Token 2.1 · API 2.5.0 · Baseline nghiệp vụ 2.0.**
+**Bộ chuẩn 2.1.1 · 2026-09-29 · Graphite Gold: ĐÃ DUYỆT · Token 2.1 · API 2.6.1 · Baseline nghiệp vụ 2.0.**
 Nguồn phiên bản: `release.json`; quyết định màu: `design/decision.json`. Phạm vi kiểm chứng là tài liệu/demo, không chứng nhận vận hành sản phẩm.
 <!-- END RELEASE META -->
 
@@ -3019,7 +3155,7 @@ No universal supplier API assumed. Initial reliable mode is approved human-confi
 # 24 — Kế toán quản trị, công nợ, COD và lời/lỗ
 
 <!-- BEGIN RELEASE META -->
-**Bộ chuẩn 2.1.1 · 2026-09-29 · Graphite Gold: ĐÃ DUYỆT · Token 2.1 · API 2.5.0 · Baseline nghiệp vụ 2.0.**
+**Bộ chuẩn 2.1.1 · 2026-09-29 · Graphite Gold: ĐÃ DUYỆT · Token 2.1 · API 2.6.1 · Baseline nghiệp vụ 2.0.**
 Nguồn phiên bản: `release.json`; quyết định màu: `design/decision.json`. Phạm vi kiểm chứng là tài liệu/demo, không chứng nhận vận hành sản phẩm.
 <!-- END RELEASE META -->
 
@@ -3060,7 +3196,7 @@ P&L computed server from posted journal and date/policy, cashflow from actual ve
 # 25 — Trưởng nhóm và bốn vai trò vận hành
 
 <!-- BEGIN RELEASE META -->
-**Bộ chuẩn 2.1.1 · 2026-09-29 · Graphite Gold: ĐÃ DUYỆT · Token 2.1 · API 2.5.0 · Baseline nghiệp vụ 2.0.**
+**Bộ chuẩn 2.1.1 · 2026-09-29 · Graphite Gold: ĐÃ DUYỆT · Token 2.1 · API 2.6.1 · Baseline nghiệp vụ 2.0.**
 Nguồn phiên bản: `release.json`; quyết định màu: `design/decision.json`. Phạm vi kiểm chứng là tài liệu/demo, không chứng nhận vận hành sản phẩm.
 <!-- END RELEASE META -->
 
@@ -3086,7 +3222,7 @@ Separate AI spend, message channel quota and purchasing commitments. Estimates v
 # 26 — Mô hình lưu trữ và ràng buộc triển khai
 
 <!-- BEGIN RELEASE META -->
-**Bộ chuẩn 2.1.1 · 2026-09-29 · Graphite Gold: ĐÃ DUYỆT · Token 2.1 · API 2.5.0 · Baseline nghiệp vụ 2.0.**
+**Bộ chuẩn 2.1.1 · 2026-09-29 · Graphite Gold: ĐÃ DUYỆT · Token 2.1 · API 2.6.1 · Baseline nghiệp vụ 2.0.**
 Nguồn phiên bản: `release.json`; quyết định màu: `design/decision.json`. Phạm vi kiểm chứng là tài liệu/demo, không chứng nhận vận hành sản phẩm.
 <!-- END RELEASE META -->
 
@@ -3126,7 +3262,7 @@ List queries need shop+stable cursor order, pending task due indexes, unique com
 # 27 — Cấu hình live, an toàn mặc định và quyền được giao
 
 <!-- BEGIN RELEASE META -->
-**Bộ chuẩn 2.1.1 · 2026-09-29 · Graphite Gold: ĐÃ DUYỆT · Token 2.1 · API 2.5.0 · Baseline nghiệp vụ 2.0.**
+**Bộ chuẩn 2.1.1 · 2026-09-29 · Graphite Gold: ĐÃ DUYỆT · Token 2.1 · API 2.6.1 · Baseline nghiệp vụ 2.0.**
 Nguồn phiên bản: `release.json`; quyết định màu: `design/decision.json`. Phạm vi kiểm chứng là tài liệu/demo, không chứng nhận vận hành sản phẩm.
 <!-- END RELEASE META -->
 
@@ -3148,3 +3284,48 @@ Nguồn phiên bản: `release.json`; quyết định màu: `design/decision.jso
 
 Runtime policies are product records, not AI_RULES Universal. Controlled changes need version/diff/approval scope; do not let LLM update rules by suggesting a text. Demo settings visible with synthetic label do not populate production. Prompt returning permission=true is never permission.
 
+
+---
+
+<!-- SOURCE: docs/PROJECT_CONTEXT.md -->
+
+# BotSales AI — Bối cảnh dự án
+
+<!-- BEGIN RELEASE META -->
+**Bộ chuẩn 2.1.1 · 2026-09-29 · Graphite Gold: ĐÃ DUYỆT · Token 2.1 · API 2.6.1 · Baseline nghiệp vụ 2.0.**
+Nguồn phiên bản: `release.json`; quyết định màu: `design/decision.json`. Phạm vi kiểm chứng là tài liệu/demo, không chứng nhận vận hành sản phẩm.
+<!-- END RELEASE META -->
+
+Cập nhật: 2026-10-11 17:39 UTC. Tài liệu này mô tả snapshot local, không phải xác nhận release.
+
+## Phạm vi và thẩm quyền
+
+Kế hoạch full-product v2.0 (BOTSALES-V2-20260929) ghi APPROVED_IMPLEMENTATION_PLAN_NOT_EXECUTED. Phê duyệt kế hoạch không cấp quyền mua hàng, thanh toán, triển khai hay tác động dữ liệu live. Người dùng xác nhận quốc gia, tiền tệ cơ sở và timezone của shop đầu tiên chưa chốt; giữ live actions tắt. Không đọc hay ghi credential.
+
+Mục tiêu frontend được xác minh hiện tại là ứng dụng React với MSW/mock API tổng hợp. Một kết quả demo/mock không chứng minh backend, provider, staging hoặc production hoạt động.
+
+## Cấu trúc thực tế và nguồn chuẩn
+
+- Repo Git: C:\Users\Joker-PC\Documents\Projects\Bot-AI-Ban-hang-FB, nhánh main, revision f2af10dd70ff03e85e2bcbb5367bb8272937ea24 tại thời điểm chụp.
+- botsales-kit: tài liệu kiến trúc/nghiệp vụ/bảo mật, contracts, route manifest, design tokens, release metadata và các kế hoạch. Nguồn chuẩn là contracts/openapi.json, contracts/route-manifest.json và design/tokens.json; file plan/progress/task full-product là tài liệu tham chiếu chỉ đọc.
+- BotSalesAI_Frontend: workspace npm riêng, React/TypeScript/Vite trong apps/web; MSW cho demo; có source gates, Vitest và Playwright. Node 24.19.0, npm 11.17.0.
+- BotSalesAI_Backend: placeholder local rỗng, chưa có mã backend.
+- .github: workflow ở repo root. Không kết luận hosted CI đã chạy nếu chưa có run trên remote.
+
+## Working tree và dữ liệu
+
+Working tree không sạch. Có 12 file tracked đang modified và 1 file untracked. Chúng gồm 5 file cache lifecycle WIP cùng test mới, 2 Playwright spec, và 5 ảnh C05 Firefox được refresh trước snapshot này. Danh sách/hash đầy đủ ở execution/baseline.json. Giữ nguyên tất cả thay đổi này; không reset, clean hoặc xóa cache cũ.
+
+.env.local hiện diện ở frontend nhưng nội dung không được đọc. Không có secret/credential nào được sao chép vào hồ sơ này.
+
+## Kiểm chứng quan sát được
+
+Trước lượt heavy hiện tại, đã có focused Firefox C05 (1/1, 42.5 giây) và UI006.C05 (1/1, 23.1 giây), cùng scoped ESLint và git diff --check đạt trên source đó. Kết quả này được ghi trong lịch sử tác vụ; không có log bền trong repo cho các focused run.
+
+Full Firefox và npm run verify chưa được chạy ở snapshot này. Auto-review đã từ chối lệnh full Firefox, viện dẫn chỉ thị read-only của tác vụ disk-audit trước đó dù chỉ thị mới nhất yêu cầu cấp heavy slot. Không dùng đường vòng. Npm run verify cũng đang chờ quyết định phạm vi qua yêu cầu xác nhận trực tiếp. Không bulk-mark tracker.
+
+Trạng thái đọc được lúc chụp: frontend ledger 0/140 verified, FE001–FE028 stale; full-product plan có 84/84 tasks NOT_STARTED (420 checkpoints), và các tracker không bị sửa. Ổ C còn 549,580,771,328 byte (~511.98 GiB) trống trước heavy slot.
+
+## Chưa xác định / ngoài bằng chứng
+
+Quốc gia, tiền tệ cơ sở, timezone, budget, approver và cấu hình provider thật chưa xác định. Không có bằng chứng local frontend nào ở đây chứng minh backend/provider, hosted CI, staging, production, owner acceptance, accessibility UAT hay quyền phát hành.

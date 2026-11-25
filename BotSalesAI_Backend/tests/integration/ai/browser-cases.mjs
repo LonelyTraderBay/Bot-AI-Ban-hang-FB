@@ -112,9 +112,16 @@ export async function verifyAiFlow(page) {
     const queued = await body(evaluation, 202);
     const passed = await waitForState(page, '/bot/evaluations/' + queued.id, 'passed');
     assert.equal(passed.passedCases, 5);
+    assert.equal(passed.plannedCases, 5);
+    assert.equal(passed.source, 'local_fixture');
     const detail = page.getByRole('dialog', { name: 'Chi tiết đánh giá' });
     await detail.getByRole('button', { name: 'Cập nhật kết quả' }).click();
     await detail.getByText('5 / 5', { exact: true }).waitFor();
+    await detail.getByText('Số ca đăng ký', { exact: true }).waitFor();
+    const caseRow = detail.getByRole('row').filter({ hasText: 'requires_human_confirmation' });
+    await caseRow.waitFor();
+    await caseRow.getByText('Chưa đo').waitFor();
+    await caseRow.getByText('Chưa có').waitFor();
 
     await page.goto(app + '/bot');
     await page.getByRole('button', { name: 'Duyệt & xuất bản', exact: true }).click();
@@ -133,5 +140,8 @@ export async function verifyAiFlow(page) {
     const current = page.getByRole('row').filter({ hasText: '#' + live.liveRevision }).first();
     await current.getByRole('button', { name: 'Xem phiên bản' }).click();
     await page.getByRole('dialog', { name: 'Chi tiết phiên bản AI' }).getByText(connection.id, { exact: true }).waitFor();
+    await page.goto(app + '/operations/digests');
+    await page.getByRole('link', { name: 'Đánh giá chất lượng AI' }).click();
+    await page.getByRole('heading', { name: 'Đánh giá AI', exact: true }).waitFor();
     console.log('R30 key masked and adapter job succeeded, R27 no send, R28 exact fixture evaluation 5/5, R26 matched publication command and live revision.');
 }

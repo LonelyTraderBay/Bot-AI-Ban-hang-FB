@@ -4,7 +4,7 @@ import type { IncomingHttpHeaders } from 'node:http';
 import type { AuditEntry, Prisma, PrismaClient } from '../../../generated/prisma/client.js';
 import { JobKind, JobStatus } from '../../../generated/prisma/enums.js';
 import { commandDto } from '../../../platform/commands/index.js';
-import { visibleJobSources } from '../../../platform/jobs/sources.js';
+import { requiresJobSourceScope, visibleJobSources } from '../../../platform/jobs/sources.js';
 import { jobDetails, jobDto } from '../../../platform/jobs/view.js';
 import { accessibleResourceEvents } from '../../../platform/outbox/index.js';
 import { contractDirectory, openapi } from '../../../http/contract-source.js';
@@ -24,7 +24,8 @@ const pageSize = 100;
 
 export function visibleUnknownCommandCount(tx: Prisma.TransactionClient, scope: ShopScope) {
     if (!scope.permissions.includes('jobs.read')) return Promise.resolve(0);
-    const operationsAllowed = operations.flatMap(({ operationId, permission }) => permission && scope.permissions.includes(permission) ? [operationId] : []);
+    const operationsAllowed = operations.flatMap(({ operationId, permission }) =>
+        permission && scope.permissions.includes(permission) && !requiresJobSourceScope(operationId) ? [operationId] : []);
     return tx.command.count({ where: { shopId: scope.shopId, actorId: scope.userId, status: 'unknown', OR: [
         { operationId: { in: operationsAllowed } },
         { jobs: { some: { actorId: scope.userId, OR: visibleJobSources(scope.permissions) } } },
@@ -71,7 +72,8 @@ export class ActivityService {
 
     private visibleKinds(permissions: readonly string[]) {
         return operations.filter(operation => this.sources.has(operation.operationId)
-            && operation.permission && permissions.includes(operation.permission)).map(operation => operation.operationId);
+            && operation.permission && permissions.includes(operation.permission)
+            && !requiresJobSourceScope(operation.operationId)).map(operation => operation.operationId);
     }
 
     private visibleCommands(userId: string, permissions: readonly string[]): Prisma.CommandWhereInput {

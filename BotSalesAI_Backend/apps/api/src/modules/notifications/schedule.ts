@@ -1,6 +1,6 @@
 import type { NotificationPolicy, Prisma, PrismaClient, WorkItem } from '../../generated/prisma/client.js';
 import { serializable } from '../../platform/database/transactions.js';
-import { createWorkItem, lockAutomationFence, notificationBudgetAvailable } from '../operations/index.js';
+import { createWorkItem, lockAutomationFence, notificationBudgetAvailable, setWorkState } from '../operations/index.js';
 import type { AuthConfig } from '../workspace/index.js';
 import { availableRecipients, deliverNotification, notificationFixture } from './deliveries.js';
 import { notificationBlockedByQuietHours, notificationPriorities, type EventPriority } from './event-priorities.js';
@@ -32,6 +32,19 @@ export async function notifyPreparation(tx: Prisma.TransactionClient, work: Sour
         if (policy.eventPriorities && notificationBlockedByQuietHours(policy, priority, now)) return;
     }
     for (const id of recipients) await deliverNotification(tx, preparationNotice(work, id, priority));
+}
+
+export async function cancelPreparationReminders(tx: Prisma.TransactionClient, shopId: string, workItemId: string) {
+    const where = { shopId_workItemId: { shopId, workItemId } };
+    const schedule = await tx.workNotificationSchedule.findUnique({ where });
+    if (!schedule) return;
+    if (schedule.nextDueAt) await tx.workNotificationSchedule.update({ where, data: { nextDueAt: null } });
+    const recovery = await tx.workItem.findUnique({ where: { shopId_kind_sourceType_sourceId: {
+        shopId, kind: 'recovery', sourceType: 'notification_schedule', sourceId: workItemId,
+    } } });
+    if (recovery && recovery.state !== 'completed' && recovery.state !== 'cancelled') {
+        await setWorkState(tx, shopId, recovery.id, 'cancelled');
+    }
 }
 
 export async function telegramFallbackDevice(tx: Prisma.TransactionClient,

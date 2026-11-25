@@ -24,10 +24,11 @@ export async function queueDelegatedPurchase(tx: Prisma.TransactionClient, rule:
         return;
     }
     let terms: Awaited<ReturnType<typeof reserveDelegatedTerms>>;
+    let permissionVersion: number;
     try {
         terms = await reserveDelegatedTerms(tx, { shopId, delegationId, budgetPolicyId, warehouseId, supplierOfferId,
             total: new ExactDecimal(offer.unitCost).mul(suggestion.suggestedQuantity), currency: offer.currency }, at, config);
-        await requireShopAccess(tx, terms.ownerId, shopId, 'procurement.write');
+        ({ permissionVersion } = await requireShopAccess(tx, terms.ownerId, shopId, 'procurement.write'));
     } catch (error) {
         if (!(error instanceof HttpException) || ![403, 404, 409, 422].includes(error.getStatus())) throw error;
         await blocked('Ủy quyền, điều khoản hoặc hạn mức mua không còn hợp lệ.');
@@ -35,7 +36,7 @@ export async function queueDelegatedPurchase(tx: Prisma.TransactionClient, rule:
     }
     const order = await createPurchaseDraft(tx, shopId, { supplierId: offer.supplierId, warehouseId, suggestionId: suggestion.id,
         lines: [{ variantId, supplierOfferId, quantity: suggestion.suggestedQuantity }] });
-    const { ownerId: actorId, policy, delegation, agent, shopGeneration } = terms;
+    const { ownerId: actorId, shop, policy, delegation, agent, shopGeneration } = terms;
     const operationId = 'sendPurchaseOrder';
     const idempotencyKey = createHmac('sha256', config.signingKey).update(JSON.stringify(['delegated-purchase/v1', shopId, order.id])).digest('hex');
     await recordCommand(tx, { shopId, actorId, operationId, idempotencyKey }, { id: order.id, intentHash: order.intentHash, delegationId },
@@ -47,9 +48,23 @@ export async function queueDelegatedPurchase(tx: Prisma.TransactionClient, rule:
                 periodKey: policy.period === 'per_order' ? order.id : terms.periodKey, commandId: command.id, createdAt: at,
             } });
             await enqueueResourceUpdate(tx, 'purchase_reservation.updated', reservation);
-            await startPurchaseDispatch(tx, order, command.id);
+            const sending = await startPurchaseDispatch(tx, order, command.id);
             await recordAudit(tx, { shopId, actorId, action: operationId, resourceType: 'purchase_order', resourceId: order.id, requestId: command.id,
-                metadata: { origin: 'delegation', delegationId, reservationId: reservation.id, intentHash: order.intentHash } });
+                metadata: {
+                    origin: 'delegation', actorKind: 'agent', agentId: agent.id, agentKind: agent.kind, agentVersion: agent.version,
+                    permissionVersion, policyVersion: shop.policyVersion, shopGeneration,
+                    agentGeneration: reservation.agentGeneration, delegationId, delegationVersion: delegation.version,
+                    delegationGeneration: reservation.delegationGeneration, reservationId: reservation.id, budgetPolicyId,
+                    budgetPolicyVersion: reservation.budgetPolicyVersion, budgetApprovalId: policy.approvalId,
+                    ruleId: rule.id, ruleVersion: rule.version, offerId: offer.id, offerVersion: offer.version,
+                    suggestion: { id: suggestion.id, available: suggestion.available, confirmedInbound: suggestion.confirmedInbound,
+                        openProposalQuantity: suggestion.openProposalQuantity, quantity: suggestion.suggestedQuantity,
+                        reorderPoint: rule.reorderPoint, safetyStock: rule.safetyStock, targetQuantity: rule.targetQuantity,
+                        sourceAsOf: suggestion.sourceAsOf.toISOString() },
+                    intentHash: order.intentHash, resourceVersion: sending.version, amount: order.total.toFixed(), currency: order.currency,
+                    result: 'queued',
+                },
+            });
             return { type: 'purchase_order', id: order.id };
         }, true);
 }

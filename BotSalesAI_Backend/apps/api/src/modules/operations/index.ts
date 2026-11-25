@@ -95,8 +95,9 @@ async function workCompletionAllowed(tx: Prisma.TransactionClient, work: WorkIte
         return Boolean(shipment && ['delivered', 'returned', 'cancelled'].includes(shipment.state));
     }
     if (kind === 'recovery' && sourceType === 'purchase_order') {
-        const purchase = await tx.purchaseOrder.findUnique({ where: { shopId_id: { shopId, id: sourceId } }, select: { status: true } });
-        return Boolean(purchase && !['unknown', 'sending'].includes(purchase.status));
+        const purchase = await tx.purchaseOrder.findUnique({ where: { shopId_id: { shopId, id: sourceId } },
+            select: { status: true, confirmationId: true } });
+        return Boolean(purchase?.confirmationId && ['confirmed', 'part_received', 'received'].includes(purchase.status));
     }
     return kind === 'recovery';
 }

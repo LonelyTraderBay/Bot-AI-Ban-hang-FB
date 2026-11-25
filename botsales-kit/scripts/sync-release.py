@@ -35,7 +35,7 @@ def outputs():
           '| Demo | [prototype/index.html](prototype/index.html) | Chỉ review UI, không phải app production |',
           '| Tiếp nhận bản mới | [UPGRADE.md](UPGRADE.md) | Bảo toàn tiến độ repo đang chạy |',
           '| Kết quả gói | [evidence/DELIVERY_REPORT_VI.md](evidence/DELIVERY_REPORT_VI.md) | Phạm vi kiểm chứng và giới hạn |', '',
-          '## 28 đặc tả nguồn','', '| File | Nội dung |','|---|---|']
+          '## Đặc tả và tài liệu ngữ cảnh','', '| File | Nội dung |','|---|---|']
     for p in docs:
         rel=p.relative_to(R).as_posix(); title=result[rel].splitlines()[0].lstrip('# ')
         rows.append(f'| [{p.name}]({rel}) | {title} |')
@@ -74,10 +74,16 @@ def outputs():
 
 if __name__=='__main__':
     ap=argparse.ArgumentParser();ap.add_argument('--check',action='store_true');args=ap.parse_args();drift=[]
-    for name,text in outputs().items():
+    documents=outputs()
+    for name,text in documents.items():
         p=R/name
         if args.check:
             if not p.exists() or p.read_text(encoding='utf-8')!=text:drift.append(name)
-        else:p.write_bytes(text.encode('utf-8'))
+        else:
+            previous=p.read_bytes() if p.exists() else b''
+            if b'\r\n' in previous and b'\n' not in previous.replace(b'\r\n',b''):
+                text=text.replace('\n','\r\n')
+            p.write_bytes(text.encode('utf-8'))
     if drift:raise SystemExit('RELEASE_DOC_DRIFT: '+', '.join(drift))
-    print('Release documents are synchronized' if args.check else 'Synchronized 28 document headers, index and compiled blueprint')
+    count=sum(name.startswith('docs/') for name in documents)
+    print('Release documents are synchronized' if args.check else f'Synchronized {count} document headers, index and compiled blueprint')

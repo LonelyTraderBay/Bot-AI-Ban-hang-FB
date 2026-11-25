@@ -128,15 +128,19 @@ async function evaluateCase(plan: Plan, key: string, runId: string, item: typeof
     const input = { model: approval.model, instructions, input: item.input, text, truncation: 'disabled' };
     const countId = runId + '-' + item.id + '-count';
     await journal({ phase: 'count_started', caseId: item.id, expected: item.expected, clientRequestId: countId });
+    const countStart = performance.now();
     const count = await query(plan, key, 'count', countId, input, request);
+    const countTime = performance.now() - countStart;
     if (count?.object !== 'response.input_tokens' || !whole(count.input_tokens, 1, approval.maxInputTokens)) {
         throw new StagingAiError('INPUT_TOKEN_BOUND_EXCEEDED_OR_UNVERIFIED');
     }
     const generationId = runId + '-' + item.id + '-generate';
     await journal({ phase: 'generation_started', caseId: item.id, inputTokens: count.input_tokens, maxOutputTokens: approval.maxOutputTokens,
         clientRequestId: generationId });
+    const generationStart = performance.now();
     const response = await query(plan, key, 'generate', generationId,
         { ...input, store: false, service_tier: 'default', max_output_tokens: approval.maxOutputTokens }, request);
+    const latencyMs = Math.ceil(countTime + performance.now() - generationStart);
     if (!response || response.model !== approval.model || response.object !== 'response' || response.service_tier !== 'default') {
         throw new StagingAiError('PROVIDER_MODEL_OR_TIER_UNVERIFIED');
     }
@@ -147,7 +151,7 @@ async function evaluateCase(plan: Plan, key: string, runId: string, item: typeof
     const observed = response.status === 'completed' ? observedDecision(response) : null;
     const ok = observed === item.expected;
     await journal({ phase: 'case_observed', caseId: item.id, expected: item.expected, observed, passed: ok,
-        inputTokens: usage.input_tokens, outputTokens: usage.output_tokens, conservativeObservedUsd: observedCost.toFixed() });
+        inputTokens: usage.input_tokens, outputTokens: usage.output_tokens, latencyMs, conservativeObservedUsd: observedCost.toFixed() });
     return { observedCost, passed: ok };
 }
 

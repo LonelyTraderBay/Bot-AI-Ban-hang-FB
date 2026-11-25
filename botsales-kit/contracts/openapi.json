@@ -13364,6 +13364,16 @@
               }
             }
           },
+          "413": {
+            "description": "Payload Too Large",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          },
           "422": {
             "description": "Validation Error",
             "content": {
@@ -13415,7 +13425,7 @@
             }
           }
         },
-        "description": "Validate current session/tenant/resource/field permissions and v2 invariants; unknown side-effect results reconcile via command ID. Yêu cầu quyền nguồn: product_image→catalog.write; product_import→catalog.import; knowledge_source→knowledge.write; conversation_media→conversations.reply. conversation_media bắt buộc resourceId là conversationId cùng shop và capability channel hiện hành. Kiểm file phía server; client không quyết định scan status."
+        "description": "Validate current session/tenant/resource/field permissions and v2 invariants; unknown side-effect results reconcile via command ID. Yêu cầu quyền nguồn: product_image→catalog.write; product_import→catalog.import; knowledge_source→knowledge.write; conversation_media→conversations.reply. conversation_media bắt buộc resourceId là conversationId cùng shop và capability channel hiện hành. Máy chủ kiểm tệp, trả mã lý do khi cách ly và không cấp URL đọc cho tệp đó."
       }
     },
     "/shops/{shopId}/uploads/{fileId}": {
@@ -41249,6 +41259,8 @@
               "platform_fee",
               "payment_fee",
               "ai_expense",
+              "advertising_expense",
+              "packaging_expense",
               "operating_expense",
               "capital",
               "loan_principal",
@@ -41360,6 +41372,8 @@
               "platform_fee",
               "payment_fee",
               "ai_expense",
+              "advertising_expense",
+              "packaging_expense",
               "operating_expense",
               "capital",
               "loan_principal",
@@ -41585,6 +41599,28 @@
             ]
           },
           "aiExpense": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Money"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "advertisingExpense": {
+            "description": "Net advertising expenses from posted journals in the reporting period, including reversals.",
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Money"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "packagingExpense": {
+            "description": "Net packaging expenses from posted journals in the reporting period, including reversals.",
             "anyOf": [
               {
                 "$ref": "#/components/schemas/Money"
@@ -43037,6 +43073,37 @@
                 "type": "null"
               }
             ]
+          },
+          "plannedCases": {
+            "type": ["integer", "null"],
+            "minimum": 1
+          },
+          "knowledgeRevisionId": {
+            "anyOf": [
+              { "$ref": "#/components/schemas/Id" },
+              { "type": "null" }
+            ]
+          },
+          "source": {
+            "enum": ["local_fixture", "approved_synthetic", null]
+          },
+          "humanCorrection": {
+            "type": ["boolean", "null"]
+          },
+          "cases": {
+            "type": ["array", "null"],
+            "items": {
+              "type": "object",
+              "required": ["id", "passed", "critical"],
+              "additionalProperties": false,
+              "properties": {
+                "id": { "type": "string", "minLength": 1 },
+                "passed": { "type": "boolean" },
+                "critical": { "type": "boolean" },
+                "latencyMs": { "type": "integer", "minimum": 0 },
+                "estimatedCostUsd": { "type": "string", "pattern": "^[0-9]+(?:[.][0-9]+)?$" }
+              }
+            }
           }
         },
         "required": [
@@ -43261,6 +43328,17 @@
               "quarantined",
               "ready",
               "rejected"
+            ]
+          },
+          "rejectionReason": {
+            "type": "string",
+            "description": "Mã lý do an toàn nếu có. Chỉ áp dụng cho tệp đã bị cách ly hoặc từ chối. Tệp cũ có thể thiếu trường này.",
+            "enum": [
+              "invalid_format",
+              "unsupported_content",
+              "spreadsheet_limit",
+              "unsafe_file",
+              "validation_failed"
             ]
           },
           "readUrl": {
@@ -45540,6 +45618,8 @@
               "platform_fee",
               "payment_fee",
               "ai_expense",
+              "advertising_expense",
+              "packaging_expense",
               "operating_expense",
               "capital",
               "loan_principal",
@@ -49084,6 +49164,7 @@
             }
           },
           "estimatedSpend": {
+            "description": "Sum of the latest reviewed daily estimates available for the selected period, with partial date coverage indicated separately.",
             "anyOf": [
               {
                 "$ref": "#/components/schemas/Money"
@@ -49102,6 +49183,31 @@
                 "type": "null"
               }
             ]
+          },
+          "estimateCoverage": {
+            "type": "object",
+            "properties": {
+              "lastRecordedAt": {
+                "type": "string",
+                "format": "date-time"
+              },
+              "daysWithEstimate": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 366
+              },
+              "daysInPeriod": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 366
+              }
+            },
+            "required": [
+              "lastRecordedAt",
+              "daysWithEstimate",
+              "daysInPeriod"
+            ],
+            "additionalProperties": false
           },
           "period": {
             "$ref": "#/components/schemas/MarketingSummaryPeriod"

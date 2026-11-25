@@ -1,4 +1,4 @@
-import {useListReturn} from '@/shared/model/list-return';
+import { listReturnState, useListReturn } from '@/shared/model/list-return';
 import { codePointLength } from '@/shared/model/format';
 import { ActionGroup, FieldGroup, FormFields } from '../../shared/ui/composition';
 import { useEffect, useRef, useState } from 'react';
@@ -34,6 +34,7 @@ export function ProductsPage() {
     const navigate = useNavigate();
     const [params, setParams] = useSearchParams();
     const location = useLocation();
+    const newProductPath = `/s/${shop.id}/products/new`;
     const [categorySearchInput, setCategorySearchInput] = useState(''), [categorySearch, setCategorySearch] = useState('');
     useEffect(() => {
         const timer = window.setTimeout(() => setCategorySearch(categorySearchInput.trim()), 250);
@@ -52,7 +53,7 @@ export function ProductsPage() {
         next.delete('cursor');
         setParams(next);
     };
-    return <><PageHeader title="Sản phẩm" subtitle="Một nguồn thông tin cho tư vấn, giá bán và các biến thể." actions={<MutationButton permission="catalog.write" onClick={() => navigate(`/s/${shop.id}/products/new`)} variant="contained">Thêm sản phẩm</MutationButton>}/><Panel>
+    return <><PageHeader title="Sản phẩm" subtitle="Một nguồn thông tin cho tư vấn, giá bán và các biến thể." actions={<MutationButton permission="catalog.write" onClick={() => navigate(newProductPath, { state: listReturnState(location.pathname, location.search, newProductPath) })} variant="contained">Thêm sản phẩm</MutationButton>}/><Panel>
         <Toolbar operation="listProducts" placeholder="Tìm tên hoặc SKU…"
             extra={<TextField id="products-status" select size="small" label="Trạng thái" SelectProps={{ displayEmpty: true, SelectDisplayProps: { 'aria-labelledby': 'products-status-label' } }} value={params.get('status') || ''} onChange={event => setFilter('status', event.target.value)} sx={{ minWidth: 150 }}>
                 <MenuItem value="">Tất cả trạng thái</MenuItem><MenuItem value="draft">Bản nháp</MenuItem><MenuItem value="active">Đang bán</MenuItem><MenuItem value="archived">Đã ngừng bán</MenuItem>
@@ -83,7 +84,8 @@ export function ProductEditorPage() {
     const [createdProductId, setCreatedProductId] = useState<string>();
     const productId = routeProductId || createdProductId;
     const { shop } = useScope();
-    const listHref=useListReturn(`/s/${shop.id}/products`);
+    const listPath = `/s/${shop.id}/products`;
+    const listHref = useListReturn(listPath);
     const navigate = useNavigate();
     const canWrite = useCan('catalog.write');
     const product = useApi('getProduct', { path: { productId: productId || 'new' } }, !!productId);
@@ -143,8 +145,25 @@ export function ProductEditorPage() {
             const clean = editor.committed(productSnapshot(response.data), submitted);
             setCreatedProductId(response.data.id);
             if (clean) { if (productElement.current) markDraftClean(productElement.current); destination = `/s/${shop.id}/products/${response.data.id}`; }
-        } catch (error) { editor.failed(error); return; }
-        if (destination) await navigate(destination, { replace: true });
+        } catch (error) {
+            editor.failed(error);
+            if (error instanceof ApiError && error.status === 409) {
+                const issue = error.problem?.errors?.find(item => item.code === 'SKU_CONFLICT');
+                const match = issue && /^\/variants\/(\d+)\/sku$/.exec(issue.path);
+                if (issue && match) {
+                    const index = Number(match[1]);
+                    const field = `variants.${index}.sku` as const;
+                    const sentSku = body.variants[index]?.sku;
+                    if (sentSku !== undefined && productForm.getValues(field)?.trim() === sentSku) {
+                        productForm.setError(field, { type: 'server', message: issue.message }, { shouldFocus: true });
+                    }
+                }
+            }
+            return;
+        }
+        if (destination) {
+            await navigate(destination, { replace: true, state: listReturnState(listPath, listHref.slice(listPath.length), destination) });
+        }
     });
     const pending = create.pending || update.pending || upload.pending;
     return <><PageHeader title={productId ? 'Thông tin sản phẩm' : 'Thêm sản phẩm'} subtitle="Giá theo biến thể. Tồn kho được quản lý ở màn hình riêng." actions={<Button component={RouterLink} to={listHref}>Danh sách</Button>}/>{productId && product.isPending ? <QueryState query={product}>{null}</QueryState> : productId && product.isError ? <QueryState query={product}>{null}</QueryState> : <Box component="form" ref={form => { const element = form as HTMLFormElement | null; productElement.current = element; draftForm(element); }} data-draft-clean={!isDirty && !imagesDirty ? 'true' : undefined} onSubmit={save}>
