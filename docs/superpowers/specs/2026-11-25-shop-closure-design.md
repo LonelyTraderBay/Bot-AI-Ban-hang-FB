@@ -4,7 +4,7 @@ Ngày 25/11/2026. Chủ dự án đã duyệt thiết kế và quy tắc vận h
 
 ## Mục tiêu
 
-Chủ cửa hàng có thể đóng shop khỏi danh sách đang hoạt động và mở lại khi cần. Shop giữ nguyên ID, cấu hình, thành viên, đơn hàng, tồn kho, sổ sách và nhật ký để tra cứu hoặc tiếp tục sử dụng sau này. Shop đã đóng chỉ cho phép đọc dữ liệu nghiệp vụ theo quyền hiện có. Đồng bộ Backend, hợp đồng dùng chung, Frontend live và demo, với một migration tương thích dữ liệu cũ trên PostgreSQL và Supabase.
+Chủ cửa hàng có thể đóng shop khỏi danh sách đang hoạt động và mở lại khi cần. Shop giữ nguyên ID, cấu hình, thành viên, đơn hàng, tồn kho, sổ sách và nhật ký để tra cứu hoặc tiếp tục sử dụng sau này. Shop đã đóng chỉ cho phép đọc dữ liệu nghiệp vụ theo quyền hiện có. Đồng bộ Backend, hợp đồng dùng chung, Frontend live và demo, với migration tương thích dữ liệu cũ trên PostgreSQL và Supabase.
 
 ## Phương án đã xem xét
 
