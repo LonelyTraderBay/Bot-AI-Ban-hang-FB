@@ -248,8 +248,8 @@ export function MarketingPage() {
             const next = new URLSearchParams({ fromDate: marketingPeriod.fromDate, toDate: marketingPeriod.toDate, bucket: marketingPeriod.bucket });
             if (next.toString() !== search) {
                 pendingDefaultSearch.current = next.toString();
-                // Preserve a live anchor even before the router has observed its hash change.
-                void navigate({ search: '?' + next.toString(), hash: window.location.hash }, { replace: true });
+                // Server defaults can arrive while a native skip-link updates the live fragment.
+                void navigate({ search: '?' + next.toString(), hash: window.location.hash }, { replace: true, flushSync: true });
             }
         }
     }, [marketingPeriod, hasDateFilter, search, navigate]);

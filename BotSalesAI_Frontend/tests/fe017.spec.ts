@@ -81,7 +81,9 @@ test('FE017.AC01 demo publishing uses the approved permission and lifecycle subs
     const publishRequest = await publishRequestWait;
     expect(JSON.parse(publishRequest.postData() || 'null')).toEqual({ expectedVersion: current.version, evaluationRunId: evaluation.id, revisionId: initial.draftRevisionId, reason: 'Đánh giá đạt trên đúng bản kiến thức đã duyệt.' });
     expect((await publishResponseWait).status()).toBe(202);
-    await expect(page.getByText('Đã xuất bản', { exact: true })).toBeVisible();
+    const publishedRow = page.getByRole('table', { name: 'Lịch sử phiên bản kiến thức' })
+        .getByRole('row').filter({ hasText: initial.draftRevisionId });
+    await expect(publishedRow.getByText('Đã xuất bản', { exact: true })).toBeVisible();
     const published = await page.evaluate(async () => (await (await fetch('/api/v2/shops/shop-demo/knowledge/k3')).json()).data);
     expect(published).toMatchObject({ status: 'published', publishedRevisionId: initial.draftRevisionId, draftRevisionId: initial.draftRevisionId });
 

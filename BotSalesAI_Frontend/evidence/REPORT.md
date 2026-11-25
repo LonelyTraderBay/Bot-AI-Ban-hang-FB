@@ -1,5 +1,11 @@
 # Báo cáo Frontend — nguồn kết quả hiện hành
 
+## Sửa hồi quy khi chạy CI cho PR #43 · 25/11/2026
+
+Bản demo của commit `685448aa` tải 514.581 byte JavaScript gzip ở trang tổng quan. Ngưỡng kiểm hiện hành là 512.000 byte. Hai mô-đun báo cáo marketing và đối soát thanh toán mô phỏng được tải khi có yêu cầu tương ứng. Chromium và Firefox cùng đo 510.931 byte sau bản sửa. [Job Firefox](https://github.com/LonelyTraderBay/Bot-AI-Ban-hang-FB/actions/runs/45605105474/job/139173847409) · [Ca đo bản demo](../tests/artifacts/demo-preview.spec.ts)
+
+FE017 kiểm trạng thái đúng dòng phiên bản đã xuất bản. W30 phân biệt phần đầu bảng 1×1 px dành cho trình đọc màn hình với chữ hiển thị bị cắt. FE022 đối chiếu lại hai mã ca với bài kiểm và log tương ứng. R53 giữ tiêu điểm và anchor khi nạp bộ lọc mặc định. [FE017](../tests/fe017.spec.ts) · [W30](../tests/ui028-w30-stress.spec.ts) · [Ma trận ca](../docs/route-implementation.json) · [Ca bàn phím](../tests/accessibility/routes.spec.ts)
+
 ## Kiểm đồng bộ tiền đã thu sau xác nhận đơn · 23/11/2026
 
 Firefox 1/9 trên `main@5f4bfae8` ghi nhận API xác nhận đơn trả 202, nhưng thao tác nhấp “Tổng quan” vẫn ở trang đơn hàng và chưa gọi API dashboard. Ca kiểm chờ bảng xác nhận báo giá đóng, dùng Enter trên liên kết và xác nhận URL Tổng quan ở cả hai lượt. Ca kiểm vẫn tắt SSE, xác nhận đúng số tiền `0 ₫` rồi `249.000 ₫` và kiểm chứng từ trong Sổ thu chi. [Job Firefox](https://github.com/LonelyTraderBay/Bot-AI-Ban-hang-FB/actions/runs/45049851876/job/137292337817) · [Trace](https://github.com/LonelyTraderBay/Bot-AI-Ban-hang-FB/actions/runs/45049851876/artifacts/14765102753)

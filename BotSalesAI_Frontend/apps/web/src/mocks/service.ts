@@ -9,12 +9,10 @@ import { markDelegatedPurchasesUnknown, procurement } from './procurement';
 import { allTimeReportWindow, finance, cashflow, profitLoss } from './finance';
 import { auxiliary } from './auxiliary';
 import { clearFileState, files, upload } from './files';
-import { marketingSummary } from './marketing-report';
 import { masters, visibleOrderAddress } from './masters';
 import { privacy as privacyOperations, safeConsentChallenge } from './privacy';
 import { shippingPolicyOperations } from './shipping-policy';
 import { promotionCurrent, promotionDate, promotionOperations } from './promotions';
-import { paymentReviews } from './payment-reviews';
 import { stocktakeOperations } from './stocktakes';
 import { stockTransferOperations } from './stock-transfers';
 import type { EventEnvelope } from '@botsales/contracts';
@@ -109,7 +107,7 @@ export type MockResult = {
     data: unknown;
     commandId?: string;
 };
-function read(op: string, input: Input): unknown {
+async function read(op: string, input: Input): Promise<unknown> {
     const { shopId } = input;
     if (op === 'getFile')
         return files(op, input);
@@ -134,10 +132,14 @@ function read(op: string, input: Input): unknown {
         return {
             asOf: now(), queuedTasks: all('workItems', shopId).filter(t => t.state === 'queued').length, overdueTasks: all('workItems', shopId).filter(t => t.dueAt && Date.parse(str(t.dueAt)) < Date.parse(now()) && !['completed', 'cancelled'].includes(str(t.state))).length, pendingApprovals: all('approvals', shopId).filter(a => a.status === 'pending').length, unknownCommands: all('commands', shopId).filter(c => c.status === 'unknown').length, roles: all('agentRoles', shopId), health: [['Meta', 'messenger'], ['AI provider', 'ai'], ['Worker', 'worker'], ['Thông báo điện thoại', 'notifications']].map(([component, runbook]) => ({ component, runbook, status: 'unknown', checkedAt: null, expiresAt: null, reason: 'Chưa có backend và kiểm tra tích hợp thật.' }))
         };
-    if (op === 'getMarketingSummary')
+    if (op === 'getMarketingSummary') {
+        const { marketingSummary } = await import('./marketing-report');
         return marketingSummary(input);
-    if (op === 'listPaymentReviews')
+    }
+    if (op === 'listPaymentReviews') {
+        const { paymentReviews } = await import('./payment-reviews');
         return paymentReviews(input);
+    }
     if (op === 'getReportSummary')
         return {
             shopId, asOf: now(), availableReports: ['inventory', 'orders', 'cashflow', 'profit_loss'].filter(type => grantedPermissions(role).includes(({ inventory: 'inventory.read', orders: 'orders.read', cashflow: 'finance.read', profit_loss: 'finance.read' } as Record<string, string>)[type] || '')),
@@ -395,7 +397,7 @@ async function execute(request: MockRequest): Promise<MockResult> {
             data = await upload(input, request.form);
         }
         else if (data === undefined && meta.method === 'GET')
-            data = read(request.op, input);
+            data = await read(request.op, input);
         if (data === undefined)
             data = catalog(request.op, input);
         if (data === undefined)

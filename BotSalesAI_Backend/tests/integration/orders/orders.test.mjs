@@ -846,17 +846,15 @@ async function observePayment(orderId, amount, kind) {
     } });
 }
 
-test('SC2-E02: weighted cost is frozen at handover and recognized only on evidenced delivery', async () => {
+test('SC2-E02: weighted cost is frozen at handover and recognized only on evidenced delivery', async t => {
     const shopPath = '/shops/' + shopId;
     const shop = await json(await request(shopPath), 200, 'ShopResponse');
-    const configured = await json(await request(shopPath, owner, {
-        method: 'PATCH',
-        body: JSON.stringify({ businessCountry: 'VN' }),
-        headers: {
-            origin, 'content-type': 'application/json', 'x-csrf-token': owner.csrf,
-            'idempotency-key': randomUUID(), 'if-match': '"' + shop.version + '"',
-        },
-    }), 200, 'ShopResponse');
+    // Keep this fixture setting scoped to E02 because CI reuses the database for the AI suite.
+    t.after(async () => {
+        await admin.shop.update({ where: { id: shopId }, data: { businessCountry: shop.businessCountry } });
+    });
+    await admin.shop.update({ where: { id: shopId }, data: { businessCountry: 'VN' } });
+    const configured = await json(await request(shopPath), 200, 'ShopResponse');
     assert.deepEqual([configured.businessCountry, configured.currency, configured.timezone], ['VN', 'VND', 'Asia/Ho_Chi_Minh']);
     const comparison = await json(await request('/shops/' + shopB.id, other), 200, 'ShopResponse');
     assert.deepEqual([comparison.businessCountry, comparison.currency], [null, 'LAK']);
