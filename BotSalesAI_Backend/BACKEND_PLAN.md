@@ -1439,8 +1439,8 @@ Ghim baseline tại commit `e22bb99d6839df9943308556c94499c04e7b7f85`. Khi ngu�
 
 | Nguồn | Số mục | SHA-256 |
 |---|---:|---|
-| [openapi.json](../botsales-kit/contracts/openapi.json) | 260 thao tác / 384 schema | `7bf7d94093b27c9aed01f7fc9adad9cf252785b21145512d3e33852c5da3a549` |
-| [operation-index.json](../botsales-kit/contracts/operation-index.json) | 260 thao tác | `5b05395589c0c0e3c94cd5fa775f2a2debbc12c74b62bc6712b46890fd76d3e8` |
+| [openapi.json](../botsales-kit/contracts/openapi.json) | 262 thao tác / 384 schema | `2062aea907d16a0444bd4bb7f8cdd00412cb85ad5675489ccebf3419f58c0abc` |
+| [operation-index.json](../botsales-kit/contracts/operation-index.json) | 262 thao tác | `2d733864fcd0ee3874030922630e429733620091f3a875cc15693aa5a062872b` |
 | [route-manifest.json](../botsales-kit/contracts/route-manifest.json) | 67 màn / 16 module | `48005a97b71bd7b1931e0ec54ec173a37ab4ff63437d1503042ee473866633a1` |
 | [feature-catalog.json](../botsales-kit/contracts/feature-catalog.json) | 64 tính năng | `0b3f6c8a1fa8739d7ecd53937d40bfe54559c4d8e274e27bb7c4542171b654b0` |
 | [permission-catalog.json](../botsales-kit/contracts/permission-catalog.json) | 56 quyền / 7 preset / 4 vai trò AI | `144ff0315d2510e2a0c55df1d3eaa82730bf6b7b678461d548229939d2e29acd` |
@@ -1487,7 +1487,7 @@ Các cột đọc, ghi và ca chuẩn lấy từ route manifest. Cột thêm t�
 | R30 Nhà cung cấp AI | `integrations` | [BE-19](#be-19) | `listAIConnections`, `getAIConnection`, `getProviderCatalog`, `getJob` | `createAIConnection`, `updateAIConnection`, `testAIConnection`, `deleteAIConnection` | — | `SC-001`, `SC-002`, `SC-003`, `SC-004`, `SC-006`, `SC-007`, `SC-008`, `SC-010`, `SC-011`, `SC-047`, `SC-048`, `SC-049`, `SC-050` |
 | R31 Báo cáo và xuất dữ liệu | `reports` | [BE-17](#be-17) | `getReportSummary`, `listJobs` | `createExport` | — | `SC-001`, `SC-002`, `SC-003`, `SC-004`, `SC-006`, `SC-007`, `SC-008`, `SC-010`, `SC-011`, `SC-051`, `SC-052` |
 | R32 Nhân sự và quyền | `workspace` | [BE-05](#be-05) | `listMembers`, `getMember` | `inviteMember`, `updateMemberRoles`, `revokeMembership` | — | `SC-001`, `SC-002`, `SC-003`, `SC-004`, `SC-005`, `SC-006`, `SC-007`, `SC-008`, `SC-009`, `SC-010`, `SC-011`, `SC-054`, `SC-055` |
-| R33 Thiết lập cửa hàng | `workspace` | [BE-21](#be-21) | `getShop` | `updateShop` | — | `SC-001`, `SC-002`, `SC-003`, `SC-004`, `SC-005`, `SC-006`, `SC-007`, `SC-008`, `SC-009`, `SC-010`, `SC-011`, `SC-054`, `SC-055` |
+| R33 Thiết lập cửa hàng | `workspace` | [BE-21](#be-21) | `getShop` | `updateShop` | `closeShop`, `reopenShop` | `SC-001`, `SC-002`, `SC-003`, `SC-004`, `SC-005`, `SC-006`, `SC-007`, `SC-008`, `SC-009`, `SC-010`, `SC-011`, `SC-054`, `SC-055` |
 | R34 Nhật ký kiểm toán | `workspace` | [BE-06](#be-06) | `listAuditEvents` | — | — | `SC-001`, `SC-002`, `SC-003`, `SC-004`, `SC-005`, `SC-006`, `SC-007`, `SC-008`, `SC-009`, `SC-010`, `SC-011`, `SC-054`, `SC-055` |
 | R35 Quyền riêng tư và lưu trữ | `workspace` | [BE-21](#be-21) | `getPrivacyPolicy`, `listPrivacyRequests`, `getCommand` | `updatePrivacyPolicy`, `createPrivacyRequest`, `stepUp`, `approvePrivacyRequest` | — | `SC-001`, `SC-002`, `SC-003`, `SC-004`, `SC-005`, `SC-006`, `SC-007`, `SC-008`, `SC-009`, `SC-010`, `SC-011`, `SC-054`, `SC-055` |
 | R36 Theo dõi công việc nền | `workspace` | [BE-10](#be-10) | `getJob` | — | — | `SC-001`, `SC-002`, `SC-003`, `SC-004`, `SC-005`, `SC-006`, `SC-007`, `SC-008`, `SC-009`, `SC-010`, `SC-011`, `SC-054`, `SC-055` |
@@ -1627,6 +1627,8 @@ Bảng màn hình truy vết ca SC và SC2 từ nguồn. Bảng tính năng truy
 | `createShop` | `POST /shops` | [BE-21](#be-21) | — | CSRF, IK | 201 | R03 |
 | `getShop` | `GET /shops/{shopId}` | [BE-05](#be-05) | — | — | 200 | R04, R15, R18, R33, Global |
 | `updateShop` | `PATCH /shops/{shopId}` | [BE-21](#be-21) | `shop.manage` | CSRF, IK, Ver | 200 | R33 |
+| `closeShop` | `POST /shops/{shopId}/close` | [BE-21](#be-21) | `shop.manage` | CSRF, IK, Ver | 200 | R33 |
+| `reopenShop` | `POST /shops/{shopId}/reopen` | [BE-21](#be-21) | `shop.manage` | CSRF, IK, Ver | 200 | R33 |
 | `beginLogin` | `POST /auth/start` | [BE-04](#be-04) | — | CSRF, IK | 200 | R01 |
 | `completeLogin` | `GET /auth/callback` | [BE-04](#be-04) | — | — | 302 | — |
 

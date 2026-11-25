@@ -1,6 +1,7 @@
 import { ConflictException } from '@nestjs/common';
 import type { Prisma, Role } from '../../../generated/prisma/client.js';
 import { tokenHash } from '../auth/session-tokens.js';
+import { lockShopClosure } from '../../../platform/database/shop-lifecycle.js';
 import { membershipAudit } from './activity.js';
 
 const inviteLifetime = 7 * 24 * 60 * 60 * 1000;
@@ -60,7 +61,7 @@ export async function acceptInvitations(tx: Prisma.TransactionClient, identity: 
     const key = { oidcIssuer_oidcSubject: { oidcIssuer, oidcSubject } };
     const activeInvites = await tx.membership.findMany({
         where: {
-            status: 'invited',
+            status: 'invited', shop: { closedAt: null },
             inviteIssuer: oidcIssuer,
             inviteEmailHash: tokenHash(invitationEmail(email)),
             inviteExpiresAt: { gt: new Date() },
@@ -75,6 +76,7 @@ export async function acceptInvitations(tx: Prisma.TransactionClient, identity: 
         : await tx.user.upsert({ where: key, create: identity, update: { email, displayName }, select: { id: true } });
 
     for (const invitation of activeInvites) {
+        if (await lockShopClosure(tx, invitation.shopId)) continue;
         const isRebind = invitation.userId !== user.id;
         if (isRebind && invitation.user.oidcIssuer !== null) continue;
         const current = isRebind

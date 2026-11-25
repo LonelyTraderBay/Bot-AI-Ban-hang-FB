@@ -19,6 +19,8 @@ import { MarketingController, MarketingService } from './marketing.js';
 import { FinanceStatements, StatementsController } from './statements.js';
 import { FinanceSettlement, type Adjustment, type Payment, type Refund } from './settlement.js';
 
+export { hasUnsettledPayments } from './payment-reviews.js';
+export { findDebts } from './debts.js';
 export { financeCommands } from './access.js';
 export { periodApprovalResource } from './period-data.js';
 export { financeJobHandlers, statementCommands } from './statements.js';

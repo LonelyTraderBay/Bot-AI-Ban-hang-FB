@@ -19,6 +19,7 @@ import {
     readAsSession,
 } from '../policy/access.js';
 import { requireIdempotencyKey, writeAsSession, writeShopCommand } from '../policy/command-scope.js';
+import { requireCloseableShop } from './closure-blockers.js';
 
 const membersManage = 'members.manage';
 type MemberWrite = { member: Membership; audit?: Prisma.InputJsonObject };
@@ -27,10 +28,12 @@ export type ShopPatch = Partial<Omit<ShopWrite, 'currency'>>;
 export const shopCommands: CommandSource[] = [
     { operationId: 'createShop', resourceType: 'shop', scopePermissions: { onboarding: 'shop.manage' } },
     { operationId: 'updateShop', resourceType: 'shop' },
+    { operationId: 'closeShop', resourceType: 'shop' },
+    { operationId: 'reopenShop', resourceType: 'shop' },
 ];
 const shopFields = {
     id: true, name: true, currency: true, timezone: true, locale: true, defaultWarehouseId: true,
-    version: true, policyVersion: true, createdAt: true, businessCountry: true,
+    version: true, policyVersion: true, createdAt: true, businessCountry: true, closedAt: true,
 } satisfies Prisma.ShopSelect;
 
 const visibleShops = (userId: string): Prisma.ShopWhereInput => ({
@@ -48,8 +51,9 @@ function membershipView(member: Membership, actorId: string) {
     };
 }
 
-function shopDto({ id, name, currency, timezone, locale, defaultWarehouseId, version, policyVersion, businessCountry }: Pick<Shop, keyof typeof shopFields>) {
-    return { id, name, currency, timezone, locale, defaultWarehouseId, version, policyVersion, businessCountry };
+function shopDto({ id, name, currency, timezone, locale, defaultWarehouseId, version, policyVersion, businessCountry, closedAt }: Pick<Shop, keyof typeof shopFields>) {
+    return { id, name, currency, timezone, locale, defaultWarehouseId, version, policyVersion, businessCountry,
+        status: closedAt ? 'closed' as const : 'active' as const, closedAt: closedAt?.toISOString() ?? null };
 }
 
 async function memberInShop(tx: Prisma.TransactionClient, shopId: string, memberId: string) {
@@ -105,10 +109,11 @@ export class ShopsService {
     list(headers: IncomingHttpHeaders, rawQuery: Record<string, unknown>) {
         return this.read(headers, async (tx, userId) => {
             const query = listQuery(rawQuery);
-            if (query.status !== undefined && query.status !== activeMembership.status) throw new UnprocessableEntityException();
-            const page = paging(query, ['shops', userId]);
+            const status = query.status ?? 'active';
+            if (status !== 'active' && status !== 'closed') throw new UnprocessableEntityException();
+            const page = paging({ ...query, status }, ['shops', userId]);
             const rows = await tx.shop.findMany({
-                where: { ...visibleShops(userId), name: { contains: page.keyword, mode: 'insensitive' }, ...page.after },
+                where: { ...visibleShops(userId), closedAt: status === 'active' ? null : { not: null }, name: { contains: page.keyword, mode: 'insensitive' }, ...page.after },
                 orderBy: page.orderBy,
                 take: page.limit + 1,
                 select: shopFields,
@@ -171,6 +176,23 @@ export class ShopsService {
                     data: { timezone: shop.timezone, version: { increment: 1 } } });
                 await recordAudit(tx, { shopId, actorId: scope.userId, requestId, action: 'updateShop', resourceType: 'shop', resourceId: shopId,
                     metadata: { version: shop.version, fields: Object.keys(patch), policyVersion: shop.policyVersion } });
+                return { type: 'shop', id: shopId };
+            }, async tx => shopDto(await tx.shop.findUniqueOrThrow({ where: { id: shopId }, select: shopFields })));
+    }
+
+    changeStatus(headers: IncomingHttpHeaders, shopId: string, operationId: 'closeShop' | 'reopenShop', requestId: string) {
+        const version = requireIfMatch(headers);
+        return writeShopCommand(this.db, this.config, { headers, shopId, permission: 'shop.manage', operationId, payload: { version } },
+            async (tx, scope) => {
+                const current = await tx.shop.findUniqueOrThrow({ where: { id: shopId }, select: shopFields });
+                requireVersion(current.version, version);
+                const close = operationId === 'closeShop';
+                if (close !== Boolean(current.closedAt)) {
+                    if (close) await requireCloseableShop(tx, shopId, current.currency);
+                    const shop = await tx.shop.update({ where: { id: shopId }, data: { closedAt: close ? new Date() : null, version: { increment: 1 } } });
+                    await recordAudit(tx, { shopId, actorId: scope.userId, requestId, action: operationId, resourceType: 'shop', resourceId: shopId,
+                        metadata: { version: shop.version, status: close ? 'closed' : 'active' } });
+                }
                 return { type: 'shop', id: shopId };
             }, async tx => shopDto(await tx.shop.findUniqueOrThrow({ where: { id: shopId }, select: shopFields })));
     }
