@@ -204,7 +204,8 @@ test('SC2-F01 SC2-F04 SC2-H02 SC2-H03 -- role fences, immutable approved amount 
     const modelConnectionId = await connectedAi();
     const roleRoute = 'agent-roles/' + proposed.id;
     await request(roleRoute, 'Problem', { shop: shopB.id, actor: foreign, status: 404 });
-    const assign = { expectedVersion: proposed.version, humanOwnerId: owner.userId, modelConnectionId, policyVersion: proposed.policyVersion };
+    const { policyVersion } = await db.shop.findUniqueOrThrow({ where: { id: shopId }, select: { policyVersion: true } });
+    const assign = { expectedVersion: proposed.version, humanOwnerId: owner.userId, modelConnectionId, policyVersion };
     await put(roleRoute, { ...assign, humanOwnerId: foreign.userId }, 'Problem', { status: 404 });
     await put(roleRoute, { ...assign, humanOwnerId: reviewer.userId }, 'Problem', { status: 403 });
     await put(roleRoute, { ...assign, policyVersion: 'expired-policy' }, 'Problem', { status: 422 });
@@ -817,7 +818,8 @@ test('SC2-G08 R53 only credits reviewed campaign evidence and keeps estimates an
             const customer = await post('customers', { displayName: 'Khách kiểm quy gán', phone: '0900000223', email: null, notes: '' },
                 'CustomerResponse', { ...options, status: 201 });
             const shipping = await post('customers/' + customer.id + '/addresses', { label: 'Mặc định', recipient: 'Khách kiểm', phone: '0900000223',
-                line1: 'Địa chỉ thử', ward: null, district: null, province: 'Fixture', countryCode: shop.currency === 'LAK' ? 'LA' : 'VN', postalCode: null,
+                line1: 'Địa chỉ thử', ward: null, district: null, province: shop.currency === 'LAK' ? 'Vientiane' : 'Hà Nội',
+                countryCode: shop.currency === 'LAK' ? 'LA' : 'VN', postalCode: null,
             }, 'CustomerAddressResponse', { ...options, status: 201 });
             const { conversation } = await orderConversation(admin, shop.id, customer.id);
             const order = await post('orders', {

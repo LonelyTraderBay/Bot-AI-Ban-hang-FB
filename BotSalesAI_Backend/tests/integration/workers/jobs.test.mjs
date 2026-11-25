@@ -4,7 +4,7 @@ import { createHash, randomUUID } from 'node:crypto';
 import { once } from 'node:events';
 import { readFileSync } from 'node:fs';
 import { createConnection, createServer } from 'node:net';
-import { after, before, test } from 'node:test';
+import { after, afterEach, before, test } from 'node:test';
 import { setTimeout as delay } from 'node:timers/promises';
 import { createApp } from '../../../apps/api/dist/app.js';
 import { readDatabaseUrl } from '../../../apps/api/dist/config.js';
@@ -37,15 +37,16 @@ before(async () => {
     base = await app.getUrl() + '/api/v2';
 });
 
+afterEach(() => stopWorker());
+
 after(async () => {
-    await stopWorker();
     const ids = [ownerA, ownerB, reader].filter(Boolean).map(actor => actor.id);
     if (ids.length) await db.session.updateMany({ where: { id: { in: ids } }, data: { revokedAt: new Date() } });
     await app?.close();
 });
 
-async function until(predicate) {
-    for (let i = 0; i < 100; i++) {
+async function until(predicate, attempts = 100) {
+    for (let i = 0; i < attempts; i++) {
         const result = await predicate();
         if (result) return result;
         await delay(100);
@@ -138,7 +139,8 @@ test('SC2-H01: due jobs survive a worker restart and an empty replacement queue 
     const command = await db.command.findUniqueOrThrow({ where: { shopId_id: { shopId: job.shopId, id: job.commandId } } });
     assert.equal(command.status, 'succeeded');
     assert.deepEqual(command.result, { type: 'job', id: job.id });
-    await until(() => db.outboxEvent.count({ where: { shopId: job.shopId, jobId: job.id, publishedAt: { not: null } } }).then(count => count >= 4));
+    // Earlier CI suites share this outbox, so the relay can publish their events first.
+    await until(() => db.outboxEvent.count({ where: { shopId: job.shopId, jobId: job.id, publishedAt: { not: null } } }).then(count => count >= 4), 300);
     await stopWorker(true);
 
     const detail = await read(jobsPath(shopA) + '/' + job.id, ownerA, 200, 'JobResponse');
