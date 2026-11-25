@@ -168,11 +168,12 @@ test('FE013.AC01–AC04 stale claim conflict is visible; pick, pack, dispatch an
     await page.getByRole('button', { name: 'Tạo vận đơn', exact: true }).click();
     const createDialog = page.getByRole('dialog', { name: 'Tạo vận đơn' });
     await expect(createDialog.getByRole('combobox', { name: 'Đơn đã đóng gói' })).toHaveText('DH-1001');
+    await createDialog.getByRole('textbox', { name: 'Mã vận đơn thủ công' }).fill('  VN-MANUAL-001  ');
     const createRequest = page.waitForRequest(request => request.method() === 'POST' && new URL(request.url()).pathname.endsWith('/shipments'));
     const createResponse = page.waitForResponse(response => response.request().method() === 'POST' && new URL(response.url()).pathname.endsWith('/shipments'));
     await createDialog.getByRole('button', { name: 'Tạo bản vận chuyển' }).click();
     const shipmentCreate = await createRequest;
-    expect(JSON.parse(shipmentCreate.postData() || 'null')).toMatchObject({ orderId: 'DH-1001', warehouseId: 'warehouse-01', carrierId: null, orderLineIds: ['ol-1001'] });
+    expect(JSON.parse(shipmentCreate.postData() || 'null')).toMatchObject({ orderId: 'DH-1001', warehouseId: 'warehouse-01', carrierId: null, orderLineIds: ['ol-1001'], trackingCode: 'VN-MANUAL-001' });
     expect(shipmentCreate.headers()['idempotency-key']).toBeTruthy();
     expect((await createResponse).status()).toBe(201);
 
@@ -184,7 +185,7 @@ test('FE013.AC01–AC04 stale claim conflict is visible; pick, pack, dispatch an
     await replay.getByRole('button', { name: 'Tạo bản vận chuyển' }).click();
     expect((await duplicateCreate).status()).toBe(409);
     await expect(replay.getByRole('alert').filter({ hasText: 'Đơn đã có vận đơn' })).toBeVisible();
-    await replay.getByRole('textbox', { name: 'Mã đơn vị vận chuyển (trống = thủ công)', exact: true }).fill('carrier-demo');
+    await replay.getByRole('textbox', { name: 'Mã vận đơn thủ công' }).fill('OTHER-MANUAL-CODE');
     await replay.getByRole('button', { name: 'Hủy', exact: true }).click();
     const discardDuplicate = page.getByRole('dialog', { name: 'Rời biểu mẫu chưa lưu?', exact: true });
     await expect(discardDuplicate).toBeVisible();
@@ -192,7 +193,8 @@ test('FE013.AC01–AC04 stale claim conflict is visible; pick, pack, dispatch an
     await expect(replay).toBeHidden();
 
     const shipmentRow = page.getByRole('row').filter({ hasText: 'DH-1001' });
-    await expect(shipmentRow).toBeVisible();
+    await expect(shipmentRow.getByText('VN-MANUAL-001', { exact: true })).toBeVisible();
+    await expect(shipmentRow.getByText('Giao thủ công', { exact: true })).toBeVisible();
     await shipmentRow.getByRole('button', { name: 'Bàn giao' }).click();
     const handoverDialog = page.getByRole('dialog', { name: 'Xác nhận bàn giao kiện hàng' });
     await expect(handoverDialog.getByText('Chưa có sự kiện.', { exact: true })).toBeVisible();

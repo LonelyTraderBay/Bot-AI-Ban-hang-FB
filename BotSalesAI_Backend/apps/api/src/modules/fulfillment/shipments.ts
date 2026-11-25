@@ -16,7 +16,7 @@ import { recordStockMovement, settleStockReservation } from '../inventory/index.
 import { setWorkState } from '../operations/index.js';
 import { readAsSession, requireShopAccess, writeShopCommand, type AuthConfig } from '../workspace/index.js';
 
-type ShipmentInput = { orderId: string; warehouseId: string; carrierId: string | null; orderLineIds: string[] };
+type ShipmentInput = { orderId: string; warehouseId: string; carrierId: string | null; orderLineIds: string[]; trackingCode?: string };
 type Version = { expectedVersion: number };
 type Observation = Version & { externalEventId: string; eventType: ShipmentState; occurredAt: string; evidenceRef: string };
 type Action = 'createShipment' | 'handoverShipment' | 'recordShipmentEvent';
@@ -113,7 +113,8 @@ export class ShipmentsService {
             const rate = order.confirmation.quote.shippingRate as { fee: Money } | null;
             return tx.shipment.create({
                 data: {
-                    shopId, orderId: order.id, warehouseId: order.warehouseId, currency: order.currency, shippingFeeQuote: rate?.fee.amount ?? null,
+                    shopId, orderId: order.id, warehouseId: order.warehouseId, currency: order.currency,
+                    trackingCode: input.trackingCode?.trim() ?? null, shippingFeeQuote: rate?.fee.amount ?? null,
                     lines: { create: order.lines.map(line => ({ orderLineId: line.id, quantity: line.quantity })) },
                 },
             });

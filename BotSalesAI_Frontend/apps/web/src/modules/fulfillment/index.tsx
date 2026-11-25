@@ -275,7 +275,7 @@ export function ShipmentsPage() {
     const [orderId, setOrderId] = useState(() => searchParams.get('orderId') || '');
     const selectedOrderDetail = useApi('getOrder', { path: { orderId } }, !!orderId);
     const selectedOrder = orders.data?.data.find(order => order.id === orderId) || selectedOrderDetail.data?.data;
-    const [carrierId, setCarrierId] = useState('');
+    const [trackingCode, setTrackingCode] = useState('');
     const [selectedShipmentId, setSelectedShipmentId] = useState<string | null>(null);
     const [dialogMode, setDialogMode] = useState<ShipmentDialogMode>('view');
     const [eventType, setEventType] = useState<ShipmentEventWrite['eventType']>('in_transit');
@@ -325,7 +325,7 @@ export function ShipmentsPage() {
     return <>
         <PageHeader title="Vận đơn & giao hàng" subtitle="Bàn giao hàng, khách nhận hàng và tiền về là ba sự kiện khác nhau." actions={<ActionGroup direction="row">
             {canManageShipping && <RouteLink to={`/s/${shop.id}/settings/shipping`}>Cấu hình giao hàng</RouteLink>}
-            <MutationButton permission="fulfillment.write" variant="contained" onClick={() => setOpen(true)}>Tạo vận đơn</MutationButton>
+            <MutationButton permission="fulfillment.write" variant="contained" onClick={() => { setTrackingCode(''); setOpen(true); }}>Tạo vận đơn</MutationButton>
         </ActionGroup>} />
         <PageSections>
             <Panel>
@@ -365,7 +365,11 @@ export function ShipmentsPage() {
                 const order = selectedOrder?.fulfillmentState === 'packed' ? selectedOrder : undefined;
                 if (!order) return;
                 try {
-                    await create.execute({ body: { orderId: order.id, warehouseId: order.warehouseId, carrierId: carrierId.trim() || null, orderLineIds: order.lines.map(line => line.id) } });
+                    const manualCode = trackingCode.trim();
+                    await create.execute({ body: {
+                        orderId: order.id, warehouseId: order.warehouseId, carrierId: null, orderLineIds: order.lines.map(line => line.id),
+                        ...(manualCode ? { trackingCode: manualCode } : {}),
+                    } });
                     setOpen(false);
                 }
                 catch { /* the shared error remains visible and the selection is retained */ }
@@ -382,7 +386,8 @@ export function ShipmentsPage() {
                 {orders.isError && <ActionGroup direction="column"><ErrorNotice error={orders.error}/><Button size="small" onClick={() => { void (orders.isFetchNextPageError ? orders.loadMore() : orders.refetch()); }}>Thử lại danh sách đơn</Button></ActionGroup>}
                 {selectedOrderDetail.isError && <ErrorNotice error={selectedOrderDetail.error}/>}
                 {selectedOrder && selectedOrder.fulfillmentState !== 'packed' && <Alert severity="warning">Đơn đã chọn chưa ở trạng thái đã đóng gói nên chưa thể tạo vận đơn.</Alert>}
-                <TextField label="Mã đơn vị vận chuyển (trống = thủ công)" value={carrierId} onChange={event => setCarrierId(limitCodePoints(event.target.value, 160))}  />
+                <TextField label="Mã vận đơn thủ công" value={trackingCode} onChange={event => setTrackingCode(limitCodePoints(event.target.value, 160))}
+                    helperText="Để trống nếu chưa có mã." />
                 <Alert severity="info">Vận đơn/nhãn in của nhà vận chuyển chỉ xuất hiện khi backend có adapter đã được cấp quyền. Không tự tạo mã giao hàng thật.</Alert>
             </FormFields>
         </EditDialog>
