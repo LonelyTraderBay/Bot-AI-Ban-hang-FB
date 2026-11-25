@@ -20,6 +20,7 @@ const retainedBytes = { OR: [{ blob: { isNot: null } }, { storage: { state: { in
 
 function stagedFiles(now: Date, available: Prisma.FileStorageWhereInput = {}): Prisma.FileObjectWhereInput {
     return { status: 'ready', blob: { isNot: null }, AND: [
+        { OR: [{ purpose: 'privacy_export' }, { uploader: { shop: { closedAt: null } } }] },
         { OR: [{ expiresAt: null }, { expiresAt: { gt: now } }] },
         { OR: [{ storage: null }, { storage: { ...available, state: 'pending' } }] },
     ] };
@@ -89,7 +90,29 @@ async function claim(db: PrismaClient, targetId: string, shopId: string, fileId:
     }, true);
 }
 
-async function settle(db: PrismaClient, transfer: NonNullable<Awaited<ReturnType<typeof claim>>>, targetId: string) {
+type ClaimedTransfer = NonNullable<Awaited<ReturnType<typeof claim>>>;
+
+async function renewWriteLease(db: PrismaClient, work: ClaimedTransfer, targetId: string) {
+    const { shopId, id: fileId, purpose } = work.file;
+    return db.$transaction(async tx => {
+        const closedAt = await lockShopClosure(tx, shopId);
+        const held = { shopId, fileId, targetId, leaseUntil: work.leaseUntil, state: 'pending' } as const;
+        const now = new Date();
+        if (!closedAt || purpose === 'privacy_export') {
+            const leaseUntil = new Date(now.getTime() + leaseMs);
+            const result = await tx.fileStorage.updateMany({
+                where: { ...held, leaseUntil: { equals: work.leaseUntil, gt: now }, file: {
+                    status: 'ready', blob: { isNot: null }, OR: [{ expiresAt: null }, { expiresAt: { gt: now } }],
+                } },
+                data: { leaseUntil },
+            });
+            if (result.count) return leaseUntil;
+        }
+        await tx.fileStorage.updateMany({ where: held, data: { leaseUntil: null } });
+    });
+}
+
+async function settle(db: PrismaClient, transfer: ClaimedTransfer, targetId: string) {
     const { file, leaseUntil, remove } = transfer;
     const key = keyFor(file.shopId, file.id);
     return serializable(db, async tx => {
@@ -117,9 +140,7 @@ export async function transferFileObjects(db: PrismaClient, store: FileObjectSto
         { storage: null, blob: { isNot: null } }, { storage: { ...due, state: { in: unpurgedStates } } },
     ] }] } satisfies Prisma.FileObjectWhereInput;
     const files = await db.fileObject.findMany({
-        where: purgeOnly ? { ...purgeScope, ...purge } : { OR: [
-            { ...stagedFiles(now, due), OR: [{ purpose: 'privacy_export' }, { uploader: { shop: { closedAt: null } } }] }, purge,
-        ] },
+        where: purgeOnly ? { ...purgeScope, ...purge } : { OR: [stagedFiles(now, due), purge] },
         select: { shopId: true, id: true }, orderBy: [{ createdAt: 'asc' }, { shopId: 'asc' }, { id: 'asc' }], take: 8,
     });
     let bucketChecked = false;
@@ -134,7 +155,12 @@ export async function transferFileObjects(db: PrismaClient, store: FileObjectSto
                 bucketChecked = true;
             }
             if (work.remove) await store.remove(work.file);
-            else await store.write(work.file, work.file.blob!.bytes);
+            else {
+                const leaseUntil = await renewWriteLease(db, work, store.id);
+                if (!leaseUntil) continue;
+                work.leaseUntil = leaseUntil;
+                await store.write(work.file, work.file.blob!.bytes);
+            }
             if (await settle(db, work, store.id)) completed++;
         } catch {
             const attempts = Math.min(work.attempts + 1, 10);

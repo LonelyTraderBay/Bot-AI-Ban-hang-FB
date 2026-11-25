@@ -1557,6 +1557,7 @@ model ChannelConversation {
   unreadCount        Int              @default(0) @map("unread_count")
   generation        Int              @default(1)
   lastInboundAt     DateTime?        @map("last_inbound_at") @db.Timestamptz(3)
+  lastInboundWhileClosed Boolean       @default(false) @map("last_inbound_while_closed")
   version            Int              @default(1)
   createdAt          DateTime         @default(now()) @map("created_at") @db.Timestamptz(3)
   updatedAt          DateTime         @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(3)

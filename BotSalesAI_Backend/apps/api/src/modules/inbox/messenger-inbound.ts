@@ -75,7 +75,8 @@ export async function receiveMessengerMessage(tx: Prisma.TransactionClient, chan
     if (newest) {
         const reopen = conversation.status === 'resolved' && occurredAt > conversation.updatedAt;
         const updated = await updateConversation(tx, conversation, {
-            lastInboundAt: occurredAt, ...(reopen ? { status: 'open', assignedUserId: null, generation: { increment: 1 } } : {}),
+            lastInboundAt: occurredAt, lastInboundWhileClosed: closedAt !== null,
+            ...(reopen ? { status: 'open', assignedUserId: null, generation: { increment: 1 } } : {}),
             ...(conversation.status === 'open' || reopen ? { unreadCount: { increment: 1 } } : {}),
         });
         if (!closedAt && origin === 'fixture') await queueBotInbound(tx, updated, channel, message.id, config);

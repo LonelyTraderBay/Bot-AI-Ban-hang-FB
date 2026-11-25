@@ -559,6 +559,15 @@ test('closed shops retain signed inbound messages once while only the active sho
         await setClosed(null);
         assert.equal((await event({ ...closed.input, eventId: randomUUID() })).duplicate, true);
         assert.equal(await queued(closed.shopId, first.messageId), 0);
+        const later = new Date(Date.now() + 16 * 60_000);
+        const afterReopen = overrides => event({ ...closed.input, eventId: randomUUID(), messageId: randomUUID(), ...overrides });
+        await afterReopen({ occurredAt: new Date(Date.parse(closed.input.occurredAt) - 500).toISOString() });
+        await refreshOperationExceptions(db, later);
+        assert.equal(await handoffs(closed), 0);
+        const newMessage = await afterReopen({ occurredAt: new Date().toISOString() });
+        assert.equal(await queued(closed.shopId, newMessage.messageId), 1);
+        await refreshOperationExceptions(db, later);
+        assert.equal(await handoffs(closed), 1);
     } finally {
         await setClosed(null);
     }

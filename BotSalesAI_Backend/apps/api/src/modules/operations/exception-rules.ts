@@ -23,7 +23,7 @@ const rules: readonly ExceptionRule[] = [
             FROM channel_conversations c
             JOIN channel_connections ch ON (ch.shop_id, ch.id) = (c.shop_id, c.channel_id)
             JOIN customers customer ON (customer.shop_id, customer.id) = (c.shop_id, c.customer_id)
-            WHERE c.status = 'open' AND ch.status = 'connected' AND customer.privacy_erased_at IS NULL
+            WHERE c.status = 'open' AND NOT c.last_inbound_while_closed AND ch.status = 'connected' AND customer.privacy_erased_at IS NULL
               AND c.last_inbound_at <= ${now}::timestamptz - interval '15 minutes'
               AND NOT EXISTS (
                 SELECT 1 FROM channel_messages m
