@@ -1168,6 +1168,13 @@ test('SC-033 and T072 Messenger: discard a late result after takeover and handle
             await receive(webhook('Tin khởi tạo', senderId));
             const conversationId = await releaseToBot(senderId);
             const privateNote = 'private-fixture-' + randomUUID();
+            let priorHandoff;
+            if (['provider_unknown', 'interrupted_after_claim', 'stale_staging_scope'].includes(outcome)) {
+                const source = { shopId, kind: 'customer_handoff', sourceType: 'conversation', sourceId: conversationId };
+                const old = { state: outcome === 'interrupted_after_claim' ? 'cancelled' : 'completed', assigneeUserId: owner.userId,
+                    ruleVersion: 'previous-exception', dueAt: new Date(Date.now() - 86_400_000), version: 7 };
+                priorHandoff = await db.workItem.upsert({ where: { shopId_kind_sourceType_sourceId: source }, create: { ...source, ...old }, update: old });
+            }
             if (outcome === 'provider_unknown') {
                 const { customerId } = await conversation(senderId);
                 await db.customer.update({ where: { shopId_id: { shopId, id: customerId } }, data: { notes: privateNote } });
@@ -1267,6 +1274,30 @@ test('SC-033 and T072 Messenger: discard a late result after takeover and handle
             assert.equal(completed.outcome, outcome === 'interrupted_after_claim' ? 'provider_unknown' : outcome);
             assert.ok(completed.finishedAt);
             assert.equal(completed.reservedTokens, 1152);
+            if (priorHandoff) {
+                const work = await request('work-items/' + priorHandoff.id, 'WorkItemResponse');
+                if (completed.outcome === 'provider_unknown') {
+                    assert.deepEqual([work.state, work.version, work.assigneeUserId, work.dueAt, work.allowedActions.includes('claim')],
+                        ['queued', priorHandoff.version + 1, null, null, true]);
+                    const history = await db.workItemLifecycle.findMany({ where: { shopId, workItemId: work.id }, orderBy: { eventId: 'desc' }, take: 2 });
+                    assert.deepEqual(history.map(row => row.state), ['queued', priorHandoff.state]);
+                    const record = await db.workItem.findUniqueOrThrow({ where: { shopId_id: { shopId, id: work.id } } });
+                    assert.equal(record.ruleVersion, null);
+                    const audits = await db.auditEntry.findMany({ where: { shopId, resourceId: work.id, action: 'reopenCustomerHandoff' } });
+                    assert.deepEqual(audits.map(entry => [entry.requestId, entry.metadata]), [[completed.messageId, {
+                        previousState: priorHandoff.state, resourceVersion: work.version, outcome: 'provider_unknown',
+                    }]]);
+                    assert.equal(await db.outboxEvent.count({ where: { shopId, eventType: 'work_item.updated',
+                        payload: { equals: { resourceType: 'work_item', resourceId: work.id, resourceVersion: work.version } } } }), 1);
+                    const claimed = await post('work-items/' + work.id + '/claim', { expectedVersion: work.version }, 'WorkItemResponse');
+                    assert.deepEqual([claimed.state, claimed.assigneeUserId], ['claimed', owner.userId]);
+                    const shopVersion = (await db.shop.findUniqueOrThrow({ where: { id: shopId } })).version;
+                    const denied = await post('close', undefined, 'Problem', { version: shopVersion, status: 409 });
+                    assert.ok(denied.errors.some(error => error.code === 'BACKGROUND_WORK'));
+                } else {
+                    assert.deepEqual([work.state, work.version], [priorHandoff.state, priorHandoff.version]);
+                }
+            }
             if (takeover) {
                 const assigned = await conversation(senderId);
                 assert.deepEqual([assigned.mode, assigned.generation, assigned.assignedUserId], ['human', takeover.to, owner.userId]);
@@ -1295,6 +1326,16 @@ test('SC-033 and T072 Messenger: discard a late result after takeover and handle
             assert.equal(await db.channelMessage.count({ where: { shopId, conversationId, direction: 'outbound' } }), 0);
             assert.equal(await db.workItem.count({ where: { shopId, sourceId: { in: orders.map(order => order.id) } } }), 0);
             assert.deepEqual(await effects(), beforeEffects);
+            if (completed.outcome === 'provider_unknown') {
+                const path = 'work-items/' + priorHandoff.id;
+                const claimed = await request(path, 'WorkItemResponse');
+                const working = await post(path + '/actions', { action: 'begin', expectedVersion: claimed.version, reason: 'Tiếp nhận sự cố dịch vụ AI' }, 'WorkItemResponse');
+                const current = await conversation(senderId);
+                await post('conversations/' + current.id + '/resolve', { expectedVersion: current.version, reason: 'Đã hỗ trợ khách' }, 'CommandResponse', { status: 202 });
+                const done = await post(path + '/actions', { action: 'complete', expectedVersion: working.version, reason: 'Hoàn tất bàn giao lần mới' }, 'WorkItemResponse');
+                assert.equal(done.state, 'completed');
+                assert.equal((await task()).outcome, 'provider_unknown');
+            }
             if (outcome === 'provider_unknown') {
                 assert.deepEqual(orders, []);
                 console.log(JSON.stringify({ status: 'SC050_PRIMARY_FAILURE_NO_FALLBACK', primaryCalls: attempts.length,

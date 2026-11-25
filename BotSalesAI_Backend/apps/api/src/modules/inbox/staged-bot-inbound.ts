@@ -4,6 +4,7 @@ import type { BotInboundTask, ChannelConnection, ChannelConversation, ChannelMes
 import { recordAudit } from '../../platform/audit/index.js';
 import { serializable } from '../../platform/database/transactions.js';
 import { ExactDecimal } from '../../platform/money/index.js';
+import { enqueueResourceUpdate } from '../../platform/outbox/index.js';
 import { evaluateStagingDraft, liveBotSnapshot, proposeSalesDraft, reserveAiUsage, stagingDraftCase, stagingDraftIntent, StagingAiError,
     type ApprovedEvaluationConfig } from '../ai/index.js';
 import { metaInboundPage } from '../channels/index.js';
@@ -74,7 +75,18 @@ async function eligible(tx: Prisma.TransactionClient, row: Task, auth: AuthConfi
 }
 
 async function finish(tx: Prisma.TransactionClient, row: Task, outcome: string) {
-    if (sameConversation(row)) await workForHandoff(tx, row.message.conversation, true);
+    if (sameConversation(row)) {
+        const item = await workForHandoff(tx, row.message.conversation, true);
+        if (outcome === 'provider_unknown' && (item.state === 'completed' || item.state === 'cancelled')) {
+            const reopened = await tx.workItem.update({
+                where: { shopId_id: { shopId: row.shopId, id: item.id } },
+                data: { state: 'queued', assigneeUserId: null, blockedReason: null, dueAt: null, ruleVersion: null, version: { increment: 1 } },
+            });
+            await enqueueResourceUpdate(tx, 'work_item.updated', reopened);
+            await recordAudit(tx, { shopId: row.shopId, actorId: null, requestId: row.messageId, action: 'reopenCustomerHandoff',
+                resourceType: 'work_item', resourceId: item.id, metadata: { previousState: item.state, resourceVersion: reopened.version, outcome } });
+        }
+    }
     await tx.botInboundTask.update({ where: taskWhere(row), data: { finishedAt: new Date(), outcome } });
 }
 
