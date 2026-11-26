@@ -8,7 +8,7 @@ import { useListQuery } from '@/shared/model/filters';
 import { dateTime } from '@/shared/model/format';
 import { useCan, useScope } from '@/shared/model/scope';
 import { ActionGroup, FieldGroup, FormFields } from '@/shared/ui/composition';
-import { Amount, DataTable, DetailLine, EditDialog, ErrorNotice, MutationButton, PageHeader, Pager, Panel, QueryState, RouteLink, Toolbar } from '@/shared/ui/components';
+import { Amount, DataTable, DetailLine, EditDialog, ErrorNotice, MutationButton, PageHeader, Pager, Panel, QueryState, RouteLink, Status, Toolbar } from '@/shared/ui/components';
 
 const reviewLabels: Record<PaymentReview['status'], string> = {
     unpaid: 'Chờ xác minh thu', partial: 'Đã xác minh một phần', cod_pending: 'Chờ đối soát COD',
@@ -31,7 +31,7 @@ export function PaymentReviewsPage() {
     const list = useApi('listPaymentReviews', { query: { ...query, kind: kind || undefined, stage: stage === 'all' ? undefined : stage } });
     const [selected, setSelected] = useState<PaymentReview | null>(null);
     return <>
-        <PageHeader title="Xác minh thu tiền và hoàn tiền" subtitle="Theo dõi chứng từ, số còn lại và khoản cần đối chiếu theo đơn."
+        <PageHeader title="Xác minh thu và hoàn tiền" subtitle="Theo dõi chứng từ, số còn lại và khoản cần đối chiếu theo đơn."
             actions={<RouteLink to={`/s/${shop.id}/finance/reconciliation`}>Đối soát ngân hàng &amp; COD</RouteLink>} />
         <Panel title="Hàng đợi thu và hoàn tiền" subtitle="Số đã xác minh được lấy từ chứng từ hoặc công nợ đã đối chiếu.">
             <Toolbar operation="listPaymentReviews" placeholder="Tìm mã đơn hoặc chứng từ…" filters={<FieldGroup direction={{ xs: 'column', sm: 'row' }} role="group" aria-label="Bộ lọc thu và hoàn tiền">
@@ -47,10 +47,14 @@ export function PaymentReviewsPage() {
                 </TextField>
             </FieldGroup>} />
             <QueryState query={list} pendingProfile="section">{list.data && <>
-                <DataTable label="Hàng đợi thu và hoàn tiền" reflowOnMobile rows={list.data.data} rowKey={row => row.id}
+                <DataTable mobile={{ layout: 'cards', titleKey: 'order', summaryKeys: ['status', 'remaining', 'due'], actionKey: 'action' }} label="Hàng đợi thu và hoàn tiền" rows={list.data.data} rowKey={row => row.id}
                     empty="Chưa có khoản tiền theo bộ lọc." columns={[
                         { key: 'order', label: 'Đơn hàng', render: row => row.orderId },
-                        { key: 'status', label: 'Tình trạng', render: row => `${row.kind === 'refund' ? 'Hoàn tiền' : 'Thu tiền'} · ${reviewLabels[row.status]}${row.pendingTransferImages?.length ? ' · ' + row.pendingTransferImages.length + ' ảnh chờ đối chiếu' : ''}` },
+                        { key: 'status', label: 'Tình trạng', render: row => <>
+                            <Typography variant="body2">{row.kind === 'refund' ? 'Hoàn tiền' : 'Thu tiền'}</Typography>
+                            <Status value={row.status} labelText={reviewLabels[row.status]} />
+                            {!!row.pendingTransferImages?.length && <Typography variant="caption" display="block">{row.pendingTransferImages.length} ảnh chờ đối chiếu</Typography>}
+                        </> },
                         { key: 'expected', label: 'Phải thu/hoàn', align: 'right', render: row => <Amount value={row.expected} /> },
                         { key: 'verified', label: 'Đã xác minh', align: 'right', render: row => <Amount value={row.verified} /> },
                         { key: 'remaining', label: 'Còn lại', align: 'right', render: row => <Amount value={row.remaining} /> },
@@ -73,7 +77,7 @@ function PaymentReviewDetails({ row, close }: { row: PaymentReview; close: () =>
     const shopPath = `/s/${shop.id}`;
     return <EditDialog open title={`Chứng từ đơn ${row.orderId}`} onClose={close} actions={<Button onClick={close}>Đóng</Button>}>
         <FormFields>
-            <DetailLine label="Tình trạng">{reviewLabels[row.status]}</DetailLine>
+            <DetailLine label="Tình trạng"><Status value={row.status} labelText={reviewLabels[row.status]} /></DetailLine>
             <DetailLine label="Phải thu/hoàn"><Amount wrap value={row.expected} /></DetailLine>
             <DetailLine label="Đã xác minh"><Amount wrap value={row.verified} /></DetailLine>
             <DetailLine label="Còn lại"><Amount wrap value={row.remaining} /></DetailLine>

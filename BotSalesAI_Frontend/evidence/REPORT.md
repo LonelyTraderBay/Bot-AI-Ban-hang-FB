@@ -1,5 +1,23 @@
 # Báo cáo Frontend — nguồn kết quả hiện hành
 
+## Chuẩn hóa giao diện 67 màn hình · 26/11/2026
+
+Đối chiếu 67 route và 54 mục menu từ `685dab0a` cùng bản chỉnh Hộp thư hiện hành. Bản sao kiểm thử bật demo với dữ liệu mẫu, chụp đường cơ sở ở 390 và 1440 px trước khi sửa. Mỗi route có mẫu bố cục, nhóm, màn tham chiếu và phạm vi kiểm. [Ma trận 67 route](ui-consistency-20261126/route-profiles.md)
+
+`DataTable` hiện nhận cấu hình mobile tại cả 78 điểm dùng. Có 66 bảng hiển thị thẻ gọn, với nhận diện, trường chính, nút theo dòng và phần mở thêm. Có 12 bảng giữ cột để đối chiếu và cuộn trong vùng riêng. R21, R44 và R48 đã đưa nút vào vùng nhìn thấy ở 320 và 390 px. Khi đóng hộp thoại sau khi vùng hiển thị đổi từ bảng sang thẻ, tiêu điểm về danh sách. R17 giữ ngày tạo trong thẻ và R53 giữ bảng đối chiếu trong khung ở mobile. Tiêu đề của 22 màn khớp tên menu, cùng quy tắc cho breadcrumb và tiêu đề trình duyệt. [Chuẩn khoảng cách và thẻ](../docs/FRONTEND_SPACING_STANDARD.md) · [Ca kiểm nút và trả tiêu điểm](../tests/ui-table-mobile-actions.spec.ts)
+
+Ma trận demo có 268 lượt render tại 390 và 1440 px trên Chromium và Firefox, với 0 lượt lỗi hoặc tràn ngang toàn trang. Kiểm tra live đọc Đơn hàng, Sổ thu chi và Hộp thư của hai shop mẫu. Sáu giao dịch đọc trả HTTP 200, mỗi màn đã được xem ở hai khổ màn hình. Kiểm thử ghi dữ liệu sử dụng demo mô phỏng. [Phạm vi theo đợt](../docs/FRONTEND_UI_IMPROVEMENT_PLAN.md#chuẩn-hóa-danh-sách-và-cách-ghép-màn-hình--26112026)
+
+`npm run verify` đạt, gồm 291 kiểm thử Vitest, kiểm token, kiểm thành phần, kiểm bố cục, S17 và build production. Bộ hồi quy chọn lọc trên bản demo đã build đạt 128/128 ca Chromium và Firefox, gồm phím, bản nháp Hộp thư, báo cáo, thẻ và chín độ rộng từ 320 đến 1920 px. Hai trình duyệt cùng đo 511.779 byte JavaScript gzip tải đầu trang Tổng quan so với ngưỡng 512.000 byte. Chrome zoom trang 200% và Firefox phóng riêng chữ 200% cùng đạt ba ca gồm thẻ Sổ thu chi, bản nháp dài trong Hộp thư và hộp thoại lý do dài.
+
+Kết quả của đợt này có phạm vi kiểm tự động cục bộ và đọc API ở môi trường mẫu. CI từ xa, kiểm bằng trình đọc màn hình, thiết bị thật và nghiệm thu người dùng còn chờ thực hiện.
+
+## Cân chỉnh bố cục Hộp thư R05 và R06 · 25/11/2026
+
+Hộp thư dùng lại các token Graphite Gold và thành phần dùng chung. Danh sách nhóm bộ lọc theo cột thích ứng. Khung chi tiết dành thêm chỗ cho lịch sử, đặt nút đính kèm và gửi trên cùng một hàng, rồi đưa mã hội thoại sang bối cảnh khách. Nguồn tham chiếu có thể mở bằng bàn phím. Thanh phát tin thoại trong bản nháp có hàng riêng để tên tệp và trạng thái vẫn đọc được ở khung hẹp. [Danh sách và chi tiết](../apps/web/src/modules/inbox/index.tsx) · [Thành phần hội thoại](../apps/web/src/modules/inbox/conversation-components.tsx)
+
+Firefox với API thật tải được hộp thư ở hai shop mẫu tại 1716×950 và 390×844. Trên shop B ở desktop, nút đính kèm thu từ 810 xuống 93 px, lịch sử tăng từ 273 lên 318 px và khung bối cảnh rộng từ 260 lên 311 px. Không có cuộn ngang ở hai kích thước đã kiểm. Bộ kiểm Chromium và Firefox chạy 54/54 lượt Inbox với dữ liệu mô phỏng. Bản build chạy 6/6 phép kiểm preview, tải đầu 511.390 byte gzip so với ngưỡng 512.000. Chrome zoom trang 200% và Firefox chỉ phóng chữ 200% đều đạt hai ca soạn bản nháp và nhập lý do tiếp quản. Kiểm tra trên shop thật chỉ đọc, các luồng gửi và đính kèm dùng API mô phỏng. [Ca FE016](../tests/fe016.spec.ts) · [Bố cục theo kích thước](../tests/ui028-w24-inbox-layout.spec.ts) · [Chữ phóng to](../tests/ui-inbox-text-resize.spec.ts)
+
 ## Đóng và mở lại cửa hàng · 25/11/2026
 
 Luồng chọn shop, xác nhận của chủ shop, nhóm công việc cản trở và xử lý tab cũ đã chạy trên hai trình duyệt với bản demo dựng cục bộ. Các phép kiểm, kích thước trang đầu và giới hạn nghiệm thu được ghi trong [kết quả đóng cửa hàng](shop-closure-20261125.md).

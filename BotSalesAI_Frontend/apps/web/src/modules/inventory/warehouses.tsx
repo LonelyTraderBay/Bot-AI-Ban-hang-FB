@@ -42,7 +42,7 @@ export function WarehousesPage() {
         <PageHeader title="Quản trị kho" subtitle="Một danh mục kho dùng chung cho đơn hàng, tồn kho và mua hàng; ngừng dùng giữ nguyên lịch sử." actions={<MutationButton permission="warehouses.manage" variant="contained" onClick={()=>{setSelected(null);form.reset(empty);setOpen(true);}}>Thêm kho</MutationButton>}/>
         {success&&<Alert severity="success" role="status">{success}</Alert>}
         <Panel><Toolbar operation="listWarehouses" placeholder="Tìm mã hoặc tên kho…"/><QueryState query={list} pendingProfile="section">{list.data&&<>
-            <DataTable label="Danh mục kho" rows={list.data.data} rowKey={warehouse=>warehouse.id} columns={[
+            <DataTable mobile={{ layout: 'cards', titleKey: 'code', summaryKeys: ['name', 'address', 'status'], actionKey: 'edit' }} label="Danh mục kho" rows={list.data.data} rowKey={warehouse=>warehouse.id} columns={[
                 {key:'code',label:'Mã kho',render:w=>w.code},{key:'name',label:'Tên kho',render:w=>w.name},{key:'address',label:'Địa điểm',render:w=>w.addressLine},{key:'status',label:'Trạng thái',render:w=><Status value={w.status}/>},
                 {key:'edit',label:'Thao tác',render:w=>w.status==='active'?<ActionGroup><MutationButton permission="warehouses.manage" onClick={()=>{setSelected(w);form.reset(snapshot(w).values);setOpen(true);}}>Sửa kho {w.code}</MutationButton><MutationButton permission="warehouses.manage" onClick={()=>setArchive(w)}>Ngừng dùng {w.code}</MutationButton></ActionGroup>:'Lịch sử được giữ'},
             ]}/><Pager page={list.data.page}/></>}</QueryState></Panel>

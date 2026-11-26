@@ -12,10 +12,11 @@ test('service case details and processing are reachable on narrow screens and re
     for (const width of [320, 390, 1440]) {
         await page.setViewportSize({ width, height: 900 });
         await page.goto(`${url}/s/shop-demo/service-cases`);
-        const row = page.getByRole('region', { name: 'Yêu cầu chăm sóc sau bán' }).getByRole('row').nth(1);
+        const collection = page.getByRole('region', { name: 'Yêu cầu chăm sóc sau bán' });
+        const row = width < 768 ? collection.getByRole('listitem').first() : collection.getByRole('row').nth(1);
         await expect(row).toBeVisible();
-        const customerName = await row.getByRole('cell').nth(1).innerText();
-        const detailButton = width < 768 ? row.getByRole('cell').first().getByRole('button', { name: 'Chi tiết yêu cầu', exact: true }) : row.getByRole('button', { name: 'Chi tiết yêu cầu', exact: true });
+        const customerName = await row.locator('a[href*="/customers/"]').innerText();
+        const detailButton = row.getByRole('button', { name: 'Chi tiết yêu cầu', exact: true });
         await expect(detailButton).toBeInViewport();
         await detailButton.focus();
         await page.keyboard.press('Enter');
@@ -53,8 +54,8 @@ test('service case customer falls back to its ID when the lookup does not contai
     });
     await page.setViewportSize({ width: 390, height: 900 });
     await page.goto(`${url}/s/shop-demo/service-cases`);
-    const row = page.getByRole('region', { name: 'Yêu cầu chăm sóc sau bán' }).getByRole('row').nth(1);
-    await expect(row.getByRole('cell').nth(1)).toHaveText('c2');
-    await row.getByRole('cell').first().getByRole('button', { name: 'Chi tiết yêu cầu' }).click();
+    const row = page.getByRole('region', { name: 'Yêu cầu chăm sóc sau bán' }).getByRole('listitem').first();
+    await expect(row.getByRole('link', { name: 'c2', exact: true })).toBeVisible();
+    await row.getByRole('button', { name: 'Chi tiết yêu cầu', exact: true }).click();
     await expect(page.getByRole('dialog', { name: 'Chi tiết yêu cầu sau bán' }).getByRole('link', { name: 'c2', exact: true })).toBeVisible();
 });

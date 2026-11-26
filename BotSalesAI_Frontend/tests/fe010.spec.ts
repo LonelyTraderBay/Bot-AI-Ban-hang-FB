@@ -277,7 +277,7 @@ test('categories create, search, update with a version, and render cursor pagina
 test('CSV preview reports row-level errors and commits only valid product rows',async({page})=>{
     const calls=observeShopRequests(page);
     await gotoDemo(page,'/s/shop-demo/imports');
-    await expect(page.getByRole('heading',{name:'Nhập dữ liệu sản phẩm',exact:true})).toBeVisible();
+    await expect(page.getByRole('heading',{name:'Nhập dữ liệu',exact:true})).toBeVisible();
     await expect(page.getByRole('alert').filter({hasText:'Trong demo mô phỏng'})).toContainText('5 MB');
     await expect(page.getByRole('alert').filter({hasText:'Trong demo mô phỏng'})).toContainText('1.000 dòng');
     const sampleLink=page.getByRole('link',{name:'Tải CSV mẫu',exact:true});

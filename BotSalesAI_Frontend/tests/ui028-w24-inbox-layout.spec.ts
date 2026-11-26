@@ -24,6 +24,15 @@ test('UI028.W24 Inbox spacing roles remain consistent across breakpoints without
         await page.setViewportSize({ width, height: 844 });
         await page.goto(new URL('/s/shop-demo/inbox', demoUrl).toString());
         await expect(page.getByRole('link', { name: /Linh \(khách mẫu\)/ })).toBeVisible();
+        if (width !== 768) {
+            const filters = page.getByRole('group', { name: 'Bộ lọc hội thoại' });
+            const filterRowTops = await filters.getByRole('combobox').evaluateAll(controls =>
+                controls.map(control => control.getBoundingClientRect().top));
+            expect(filterRowTops).toHaveLength(4);
+            expect(filterRowTops[0]).toBe(filterRowTops[1]);
+            expect(filterRowTops[2]).toBe(filterRowTops[3]);
+            expect(filterRowTops[0]).toBeLessThan(filterRowTops[2]);
+        }
         const listSpacing = await page.evaluate(() => {
             const row = document.querySelector<HTMLElement>('a.MuiListItemButton-root[href*="/inbox/cv"]');
             const unread = document.querySelector<HTMLElement>('[data-testid="inbox-unread-count"]');
@@ -74,7 +83,7 @@ test('UI028.W24 Inbox spacing roles remain consistent across breakpoints without
             messageMetaGap: '8px',
             messageGroupGap: '12px',
             composerInset: '12px',
-            contextInset: width < 768 ? '12px' : '16px',
+            contextInset: width < 768 ? '0px 12px 12px' : '0px 16px 16px',
         });
         const draft = `W24 draft ${width}`;
         await composer.fill(draft);

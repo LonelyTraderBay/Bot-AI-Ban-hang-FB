@@ -67,12 +67,13 @@ export function PageSections({ rhythm = 'section', beforeGap, geometry, shrinkCh
 
 type SectionGridProps = Pick<BoxProps, 'children' | 'id' | 'role' | 'aria-label' | 'alignItems'> & DataAttributes & {
     columns: Responsive<CSSProperties['gridTemplateColumns']>;
+    component?: 'div' | 'ul';
     geometry?: Geometry;
     shrinkChildren?: boolean;
     rhythm?: 'section' | 'content';
 };
 
 /** Column geometry may follow the workflow; the gutter is always owned here. */
-export function SectionGrid({ columns, geometry, shrinkChildren, rhythm = 'section', ...props }: SectionGridProps) {
-    return <Box children={props.children} id={props.id} role={props.role} aria-label={props['aria-label']} alignItems={props.alignItems} data-testid={props['data-testid']} data-draft-clean={props['data-draft-clean']} data-ui-composition="section-grid" data-ui-rhythm={rhythm} sx={[rhythm === 'section' ? layoutSx.grid.gutter : layoutSx.surface.contentGap, layoutSx.composition.childBoundaries, { display: 'grid', gridTemplateColumns: columns }, shrinkChildren === true && { '& > *': { minWidth: 0 } }, { width: geometry?.width, minWidth: geometry?.minWidth, maxWidth: geometry?.maxWidth, height: geometry?.height, minHeight: geometry?.minHeight, flex: geometry?.flex, gridColumn: geometry?.gridColumn }]}/>;
+export function SectionGrid({ columns, component = 'div', geometry, shrinkChildren, rhythm = 'section', ...props }: SectionGridProps) {
+    return <Box component={component} children={props.children} id={props.id} role={props.role} aria-label={props['aria-label']} alignItems={props.alignItems} data-testid={props['data-testid']} data-draft-clean={props['data-draft-clean']} data-ui-composition="section-grid" data-ui-rhythm={rhythm} sx={[rhythm === 'section' ? layoutSx.grid.gutter : layoutSx.surface.contentGap, layoutSx.composition.childBoundaries, { display: 'grid', gridTemplateColumns: columns }, component === 'ul' && { m: 0, p: 0, listStyle: 'none' }, shrinkChildren === true && { '& > *': { minWidth: 0 } }, { width: geometry?.width, minWidth: geometry?.minWidth, maxWidth: geometry?.maxWidth, height: geometry?.height, minHeight: geometry?.minHeight, flex: geometry?.flex, gridColumn: geometry?.gridColumn }]}/>;
 }

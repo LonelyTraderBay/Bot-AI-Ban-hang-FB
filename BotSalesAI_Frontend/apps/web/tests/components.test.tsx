@@ -165,7 +165,7 @@ describe('Accessible shared presentation',()=>{
     });
 
     it('renders semantic status text and a keyboard-navigable, named table region',()=>{
-        renderWithTheme(<DataTable rows={[{id:'1',name:'Sản phẩm mẫu'}]} rowKey={r=>r.id} columns={[{key:'name',label:'Tên',render:r=>r.name}]} label="Danh sách sản phẩm"/>);
+        renderWithTheme(<DataTable mobile={{ layout: 'comparison' }} rows={[{id:'1',name:'Sản phẩm mẫu'}]} rowKey={r=>r.id} columns={[{key:'name',label:'Tên',render:r=>r.name}]} label="Danh sách sản phẩm"/>);
         expect(screen.getByRole('region',{name:'Danh sách sản phẩm'})).toHaveAttribute('tabindex','0');
         expect(screen.getByRole('table',{name:'Danh sách sản phẩm'})).toBeInTheDocument();
         expect(screen.getByText('Cuộn ngang để xem đủ cột.')).toBeInTheDocument();
@@ -174,7 +174,7 @@ describe('Accessible shared presentation',()=>{
     });
 
     it('keeps contextual empty actions inside the shared table empty state',()=>{
-        renderWithTheme(<DataTable rows={[]} rowKey={r=>r.id} columns={[{key:'name',label:'Tên',render:r=>r.name}]} label="Danh sách tác vụ" empty="Chưa có tác vụ. Chọn tệp để bắt đầu." emptyAction={<Button>Chọn tệp</Button>}/>);
+        renderWithTheme(<DataTable mobile={{ layout: 'comparison' }} rows={[]} rowKey={r=>r.id} columns={[{key:'name',label:'Tên',render:r=>r.name}]} label="Danh sách tác vụ" empty="Chưa có tác vụ. Chọn tệp để bắt đầu." emptyAction={<Button>Chọn tệp</Button>}/>);
         expect(screen.getByRole('status')).toHaveTextContent('Chưa có tác vụ. Chọn tệp để bắt đầu.');
         expect(screen.getByRole('button',{name:'Chọn tệp'})).toBeInTheDocument();
     });
@@ -317,7 +317,7 @@ describe('Accessible shared presentation',()=>{
     });
 
     it('has no axe violations in the shared table, status, and search states',async()=>{
-        const {container}=renderWithTheme(<MemoryRouter><Toolbar operation="listProducts"/><Status value="active"/><DataTable rows={[{id:'1',name:'Sản phẩm mẫu'}]} rowKey={r=>r.id} columns={[{key:'name',label:'Tên',render:r=>r.name}]} label="Danh sách sản phẩm"/></MemoryRouter>);
+        const {container}=renderWithTheme(<MemoryRouter><Toolbar operation="listProducts"/><Status value="active"/><DataTable mobile={{ layout: 'comparison' }} rows={[{id:'1',name:'Sản phẩm mẫu'}]} rowKey={r=>r.id} columns={[{key:'name',label:'Tên',render:r=>r.name}]} label="Danh sách sản phẩm"/></MemoryRouter>);
         const results=await axe.run(container,{runOnly:{type:'tag',values:['wcag2a','wcag2aa','wcag21a','wcag21aa']},rules:{'color-contrast':{enabled:false}}});
         expect(results.violations.map(issue=>issue.id)).toEqual([]);
     });
@@ -358,8 +358,8 @@ describe('Accessible shared presentation',()=>{
         expect(report.viewports.map(view=>[view.width,view.kpiColumns,view.documentWidth<=view.contentWidth])).toEqual([
             [320,1,true],[390,1,true],[768,2,true],[1440,4,true],
         ]);
-        expect(report.viewports[0].tableScrollsLocally).toBe(true);
-        expect(report.viewports[0].tableHintVisible).toBe(true);
+        expect(report.viewports[0].recentOrdersFit).toBe(true);
+        expect(report.viewports[1].recentOrdersFit).toBe(true);
         expect(report.axe.mainViolations).toEqual([]);
         expect(report.axe.appViolations).toEqual([]);
     },30000);

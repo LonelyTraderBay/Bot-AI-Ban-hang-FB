@@ -13,10 +13,10 @@ test.beforeEach(async () => {
 test.afterEach(async () => closeDemo?.());
 
 const routes = [
-    { path: '/s/shop-demo/bot', heading: 'Điều khiển Admin AI' },
-    { path: '/s/shop-demo/bot/playground', heading: 'Phòng thử bot' },
-    { path: '/s/shop-demo/bot/evaluations', heading: 'Đánh giá AI' },
-    { path: '/s/shop-demo/bot/team', heading: 'Đội ngũ AI' },
+    { path: '/s/shop-demo/bot', heading: 'Cấu hình Admin' },
+    { path: '/s/shop-demo/bot/playground', heading: 'Thử bot' },
+    { path: '/s/shop-demo/bot/evaluations', heading: 'Chất lượng AI' },
+    { path: '/s/shop-demo/bot/team', heading: 'Bốn nhân viên AI' },
 ];
 
 async function openRoute(page: import('@playwright/test').Page, route: string, heading: string) {

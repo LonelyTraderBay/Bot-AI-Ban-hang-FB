@@ -284,7 +284,7 @@ test('Shared consolidation Inbox preserves selected filters and composer draft t
     await expect(search).toHaveValue('');
     await search.fill('Linh'); await expect(search).toHaveValue('Linh');
     await status.focus(); await status.press('Enter');
-    await page.getByRole('option', { name: 'Tất cả trạng thái', exact: true }).press('Enter');
+    await page.getByRole('option', { name: 'Tất cả', exact: true }).press('Enter');
     expect(new URL(page.url()).searchParams.has('status')).toBe(false);
     await expect(status).toBeFocused();
     await expect(search).toHaveValue('Linh');
@@ -397,7 +397,7 @@ test('UI002 inbox list and message cursors stay independent through paging, conv
     });
     await page.getByRole('link', { name: /Linh \(khách mẫu\)/ }).click();
     expect((await secondShopMessages).status()).toBe(200);
-    await expect(page.getByTestId('inbox-thread')).toContainText('b-cv1');
+    await expect(page.getByTestId('inbox-context-panel')).toContainText('Mã hội thoại · b-cv1');
     expect(requests.slice(beforeOtherShopDetail).filter(request => request.shopId === 'shop-second').every(request => request.cursor === null)).toBe(true);
     await expect(page.getByText(/UI002 message/)).toHaveCount(0);
     expect(invalidCursorResponses).toEqual([]);

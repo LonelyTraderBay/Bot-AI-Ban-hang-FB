@@ -122,7 +122,7 @@ export function InventoryPage() {
         <Alert severity="info" sx={layoutSx.page.sectionAfter}>Số tồn tại thời điểm cập nhật không cộng hàng đang về hoặc hàng cách ly vào số có thể bán. Kho mặc định: {shop.defaultWarehouseId}.</Alert>
         {completedCommandId && <Alert severity="success" role="status" sx={layoutSx.notice.afterGap}>Điều chỉnh đã được xác nhận. Mã lệnh: {completedCommandId}. Tồn kho và lịch sử đã được tải lại.</Alert>}
         <Panel><Toolbar operation="listStockSnapshots" placeholder="Tìm SKU hoặc mã biến thể…" filters={<InventoryFilters/>}/><QueryState query={list} pendingProfile="section">{list.data && <>
-            <DataTable pinActionOnMobile label="Tồn kho theo vị trí" rows={list.data.data} rowKey={row => row.id} columns={[
+            <DataTable mobile={{ layout: 'cards', titleKey: 'sku', summaryKeys: ['available', 'onHand', 'state'], actionKey: 'action' }} label="Tồn kho theo vị trí" rows={list.data.data} rowKey={row => row.id} columns={[
                 { key: 'sku', label: 'SKU / Kho', render: row => <Stack><Typography fontWeight={visualSx.typography.fontWeight.strong}>{row.sku}</Typography><Typography variant="caption" color="text.secondary">Mã kho: {row.warehouseId} · cập nhật {dateTime(row.asOf, shop.timezone)}</Typography>{canCatalog && <RouteLink to={`/s/${shop.id}/products?q=${encodeURIComponent(row.sku)}`}>Mở sản phẩm</RouteLink>}</Stack> },
                 { key: 'onHand', label: 'Thực tế', align: 'right', render: row => row.onHand },
                 { key: 'reserved', label: 'Đã giữ', align: 'right', render: row => row.reserved },
@@ -161,7 +161,7 @@ export function MovementsPage() {
     return <>
         <PageHeader title="Lịch sử kho" subtitle="Truy nguyên mỗi thay đổi đến chứng từ và người thực hiện." actions={<RouteLink to={`/s/${shop.id}/inventory`}>Về tồn kho</RouteLink>}/>
         <Panel><Toolbar operation="listStockMovements" placeholder="Tìm SKU, mã biến thể hoặc mã chứng từ…" filters={<InventoryFilters includeVariant/>}/><QueryState query={list} pendingProfile="section">{list.data && <>
-            <DataTable reflowOnMobile label="Lịch sử biến động kho" rows={list.data.data} rowKey={row => row.id} columns={[
+            <DataTable mobile={{ layout: 'cards', titleKey: 'variant', summaryKeys: ['kind', 'quantity', 'date'] }} label="Lịch sử biến động kho" rows={list.data.data} rowKey={row => row.id} columns={[
                 { key: 'date', label: 'Thời gian', render: row => dateTime(row.createdAt, shop.timezone) },
                 { key: 'kind', label: 'Loại', render: row => <Status domain="stockMovement" value={row.kind}/> },
                 { key: 'variant', label: 'Biến thể', render: row => variants.get(row.variantId) || `Mã biến thể: ${row.variantId}` },

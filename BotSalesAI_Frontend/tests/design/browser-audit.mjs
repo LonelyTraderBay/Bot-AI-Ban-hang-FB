@@ -64,6 +64,9 @@ export async function runDesignBrowserAudit() {
         if (EVIDENCE_DIR) await fs.promises.mkdir(EVIDENCE_DIR, { recursive: true });
         for (const width of [320,390,768,1440]) {
             await page.setViewportSize({width,height:1000});
+            if (width === 320 || width === 390) {
+                await page.getByRole('region', {name: 'Đơn hàng gần đây'}).getByRole('listitem').first().waitFor();
+            }
             const observed = await page.evaluate(()=>{
                 const grid = [...document.querySelectorAll('.MuiBox-root')].find(element=>{
                     const text=element.textContent||'';
@@ -74,8 +77,7 @@ export async function runDesignBrowserAudit() {
                     documentWidth:document.documentElement.scrollWidth,
                     contentWidth:document.documentElement.clientWidth,
                     kpiColumns:grid?getComputedStyle(grid).gridTemplateColumns.trim().split(/\s+/).length:0,
-                    tableScrollsLocally:(()=>{const table=document.querySelector('main#main-content table');const region=table?.parentElement;return Boolean(region&&table.scrollWidth>region.clientWidth&&['auto','scroll'].includes(getComputedStyle(region).overflowX)&&document.documentElement.scrollWidth<=document.documentElement.clientWidth);})(),
-                    tableHintVisible:(()=>{const hint=[...document.querySelectorAll('main#main-content *')].find(item=>item.textContent==='Cuộn ngang để xem đủ cột.');return Boolean(hint&&getComputedStyle(hint).display!=='none');})(),
+                    recentOrdersFit:(()=>{const cards=document.querySelector('main#main-content [data-ui-table-layout="cards"][aria-label="Đơn hàng gần đây"]');return Boolean(cards?.querySelector('li')&&cards.scrollWidth<=cards.clientWidth);})(),
                 };
             });
             viewports.push(observed);

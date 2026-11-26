@@ -35,12 +35,12 @@ async function chooseMockOption(page: import('@playwright/test').Page, label: st
 
 async function navigateToBotConfig(page: import('@playwright/test').Page) {
     await page.getByRole('link', { name: 'Cấu hình Admin' }).click();
-    await expect(page.getByRole('heading', { name: 'Điều khiển Admin AI' })).toBeVisible();
+    await expect(page.getByRole('heading', { name: 'Cấu hình Admin' })).toBeVisible();
 }
 
 async function navigateToBotTeam(page: import('@playwright/test').Page) {
     await page.getByRole('link', { name: 'Bốn nhân viên AI' }).click();
-    await expect(page.getByRole('heading', { name: 'Đội ngũ AI' })).toBeVisible();
+    await expect(page.getByRole('heading', { name: 'Bốn nhân viên AI' })).toBeVisible();
 }
 
 async function createEvaluation(page: import('@playwright/test').Page, datasetVersion = 'fe018-synthetic-dataset') {
@@ -107,11 +107,11 @@ type EvaluationListEnvelope = {
 
 async function openEvaluationList(page: import('@playwright/test').Page, count: number) {
     await gotoDemo(page, '/s/shop-demo/bot');
-    await expect(page.getByRole('heading', { name: 'Điều khiển Admin AI' })).toBeVisible();
+    await expect(page.getByRole('heading', { name: 'Cấu hình Admin' })).toBeVisible();
     const createdIds = await seedEvaluationRows(page, count);
     const listResponse = page.waitForResponse(response => response.request().method() === 'GET' && new URL(response.url()).pathname.endsWith('/bot/evaluations'));
     await page.getByRole('link', { name: 'Chất lượng AI' }).click();
-    await expect(page.getByRole('heading', { name: 'Đánh giá AI' })).toBeVisible();
+    await expect(page.getByRole('heading', { name: 'Chất lượng AI' })).toBeVisible();
     const response = await listResponse;
     expect(response.status()).toBe(200);
     return { createdIds, firstPage: await response.json() as EvaluationListEnvelope };

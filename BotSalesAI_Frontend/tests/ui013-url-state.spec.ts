@@ -20,7 +20,7 @@ test('UI013 reconciliation tab deep links and survives refresh; malformed tab sa
     await gotoDemo(page, '/s/shop-demo/finance/reconciliation?tab=cod&keep=filter');
     const codTab = page.getByRole('tab', { name: 'COD' });
     await expect(codTab).toHaveAttribute('aria-selected', 'true');
-    await expect(page.getByRole('heading', { name: 'Đối soát ngân hàng & COD' })).toBeVisible();
+    await expect(page.getByRole('heading', { name: 'Đối soát' })).toBeVisible();
 
     await page.reload();
     await expect(codTab).toHaveAttribute('aria-selected', 'true');

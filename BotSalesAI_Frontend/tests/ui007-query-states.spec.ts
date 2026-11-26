@@ -127,7 +127,7 @@ test('UI007 supplier and offer failures keep purchase suggestions visible and ha
     });
     await page.getByRole('navigation', { name: 'Điều hướng chính' }).getByRole('link', { name: 'Đề nghị nhập', exact: true }).click();
 
-    await expect(page.getByRole('heading', { name: 'Nhập lại hàng', exact: true })).toBeVisible();
+    await expect(page.getByRole('heading', { name: 'Đề nghị nhập', exact: true })).toBeVisible();
     await expect(page.getByRole('group', { name: 'Trạng thái danh sách báo giá' }).getByRole('alert').filter({ hasText: 'UI007_OFFERS_503' })).toBeVisible();
     await expect(page.getByRole('group', { name: 'Trạng thái danh sách nhà cung cấp' }).getByRole('alert').filter({ hasText: 'UI007_SUPPLIERS_403' })).toBeVisible();
     await expect(page.getByRole('button', { name: 'Thử lại danh sách báo giá', exact: true })).toBeVisible();

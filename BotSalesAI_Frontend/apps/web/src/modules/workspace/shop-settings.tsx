@@ -75,7 +75,7 @@ export function ShopSettingsPage() {
         catch (error) { editor.failed(error); setError(error instanceof Error ? error : new Error('Không lưu được cấu hình')); }
     };
     return <>
-        <PageHeader title="Thiết lập cửa hàng" subtitle="Thông tin cơ sở và nguồn tư vấn đã được duyệt."
+        <PageHeader title="Cửa hàng" subtitle="Thông tin cơ sở và nguồn tư vấn đã được duyệt."
             actions={canWriteKnowledge ? <RouteLink to={`/s/${scope.shop.id}/knowledge?template=product_content`}>Soạn hồ sơ nội dung sản phẩm</RouteLink> : undefined} />
         <PageSections >
             <Panel title="Thông tin cơ sở" bodyMode="inset">

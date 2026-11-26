@@ -45,7 +45,7 @@ export function DashboardPage() {
         <Box sx={[layoutSx.dashboard.groupInset, layoutSx.pageHeader.afterGap, { border: 1, borderColor: colors.heroBorder, borderRadius: visualSx.radius.hero, background: `linear-gradient(115deg, ${colors.heroStart}, ${colors.heroEnd})` }]}>
             <Stack direction={{ xs: 'column', md: 'row' }} justifyContent="space-between" sx={layoutSx.dashboard.sectionGap}>
                 <Box>
-                    <Typography component="h1" variant="h3" sx={[layoutSx.dashboard.heroTitleFlow, { fontSize: visualSx.typography.dashboardTitle.fontSize, fontWeight: visualSx.typography.fontWeight.semibold, overflowWrap: 'anywhere' }]}>Tổng quan cửa hàng</Typography>
+                    <Typography component="h1" variant="h3" sx={[layoutSx.dashboard.heroTitleFlow, { fontSize: visualSx.typography.dashboardTitle.fontSize, fontWeight: visualSx.typography.fontWeight.semibold, overflowWrap: 'anywhere' }]}>Tổng quan</Typography>
                     <Typography color="text.secondary" sx={[layoutSx.dashboard.heroDescriptionGap, { maxWidth: 620 }]}>Theo dõi việc cần xử lý, tiến độ đơn hàng và trạng thái đội ngũ AI</Typography>
                 </Box>
                 {(canOps || canOrders || canCreateOrder) && <ActionGroup direction="column" density="comfortable" justifyContent="center">
@@ -80,7 +80,7 @@ export function DashboardPage() {
             </Panel>
 
             <Panel title="Đơn hàng gần đây" subtitle="Mở đơn để xem trạng thái chuẩn bị, giao hàng và thanh toán." action={canOrders ? <RouteLink to={`/s/${shop.id}/orders`}>Tất cả đơn</RouteLink> : undefined} bodyMode={canOrders ? 'flush' : 'inset'} geometry={{ gridColumn: { xs: 'auto', xl: '1 / -1' } }}>
-                {canOrders ? <QueryState query={orders} pendingProfile="section">{orders.data && <DataTable rows={orders.data.data} rowKey={order => order.id} label="Đơn hàng gần đây" columns={[
+                {canOrders ? <QueryState query={orders} pendingProfile="section">{orders.data && <DataTable mobile={{ layout: 'cards', titleKey: 'id', summaryKeys: ['total', 'status', 'delivery'] }} rows={orders.data.data} rowKey={order => order.id} label="Đơn hàng gần đây" columns={[
                     { key: 'id', label: 'Đơn hàng', render: order => <Stack direction="row" alignItems="center" sx={layoutSx.code.inlineGap} flexWrap="wrap"><RouteLink to={`/s/${shop.id}/orders/${order.id}`}>{order.id}</RouteLink><CopyableCode value={order.id} label="mã đơn hàng" showValue={false} /></Stack> },
                     { key: 'total', label: 'Giá trị', align: 'right', render: order => <Amount value={order.total} /> },
                     { key: 'status', label: 'Đơn', render: order => <Status value={order.orderState} /> },

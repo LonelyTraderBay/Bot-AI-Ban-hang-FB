@@ -19,7 +19,7 @@ test('Orders R17/R18/R19/R43 preserve responsive page geometry at 320-1440px', a
         { id: 'R17', path: '/s/shop-demo/orders', heading: 'Đơn hàng' },
         { id: 'R18', path: '/s/shop-demo/orders/new', heading: 'Tạo đơn hàng' },
         { id: 'R19', path: '/s/shop-demo/orders/DH-1001', heading: 'Đơn DH-1001' },
-        { id: 'R43', path: '/s/shop-demo/returns', heading: 'Đổi và trả hàng' },
+        { id: 'R43', path: '/s/shop-demo/returns', heading: 'Đổi trả' },
     ];
     const observations = [];
 
@@ -100,7 +100,8 @@ test('Orders draft, versioned quote, canonical address snapshot and return dialo
         await page.keyboard.press('Escape');
 
         await page.goto(new URL('/s/shop-demo/returns', demoUrl).toString());
-        const row = page.getByRole('row').filter({ hasText: 'seed-returncase-10036' });
+        const row = page.getByRole('region', { name: 'Yêu cầu đổi trả', exact: true })
+            .getByRole(width < 768 ? 'listitem' : 'row').filter({ hasText: 'seed-returncase-10036' });
         await row.getByRole('button', { name: 'Kiểm nhận' }).click();
         const inspectionDialog = page.getByRole('dialog', { name: 'Kiểm nhận hàng trả' });
         await expect(inspectionDialog).toBeVisible();

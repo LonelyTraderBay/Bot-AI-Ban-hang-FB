@@ -15,7 +15,7 @@ test.afterEach(async () => closeDemo?.());
 const routes = [
     { path: '/s/shop-demo/operations', heading: 'Công việc hôm nay' },
     { path: '/s/shop-demo/approvals', heading: 'Cần phê duyệt' },
-    { path: '/s/shop-demo/operations/digests', heading: 'Bản tin & sức khỏe hệ thống' },
+    { path: '/s/shop-demo/operations/digests', heading: 'Bản tin & sức khỏe' },
 ];
 
 async function openRoute(page: import('@playwright/test').Page, route: string, heading: string) {

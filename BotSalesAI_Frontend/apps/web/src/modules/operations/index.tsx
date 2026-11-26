@@ -25,7 +25,7 @@ function CommandsPanel() {
     return <Panel title="Trạng thái thao tác" beforeGap="section">
         <SurfaceContent bodyMode="inset"><Typography color="text.secondary">Trạng thái do API trả về. Kết quả chưa rõ cần kiểm tra riêng; xem lịch sử không mở khóa thao tác đang chờ đối soát.</Typography></SurfaceContent>
         <QueryState query={list} pendingProfile="section">{list.data && <>
-            <DataTable label="Trạng thái thao tác" rows={list.data.data} rowKey={command => command.id} empty="Chưa có thao tác được phép xem trong trang này." columns={[
+            <DataTable mobile={{ layout: 'cards', titleKey: 'kind', summaryKeys: ['status', 'updated'], actionKey: 'detail' }} label="Trạng thái thao tác" rows={list.data.data} rowKey={command => command.id} empty="Chưa có thao tác được phép xem trong trang này." columns={[
                 { key: 'kind', label: 'Thao tác', render: command => commandNames[command.kind] || 'Thao tác khác' },
                 { key: 'status', label: 'Trạng thái', render: command => <Status value={command.status}/> },
                 { key: 'updated', label: 'Cập nhật', render: command => dateTime(command.updatedAt, shop.timezone) },
@@ -96,7 +96,7 @@ export function OperationsPage() {
             <Toolbar operation="listWorkItems" />
             <QueryState query={list} pendingProfile="section">
                 {list.data && <>
-                    <DataTable label="Công việc vận hành" rows={visibleItems} rowKey={task => task.id} columns={[
+                    <DataTable mobile={{ layout: 'cards', titleKey: 'task', summaryKeys: ['status', 'assigned', 'due'], actionKey: 'actions' }} label="Công việc vận hành" rows={visibleItems} rowKey={task => task.id} columns={[
                         {
                             key: 'task', label: 'Công việc', render: task => <Stack>
                                 <Typography fontWeight={visualSx.typography.fontWeight.strong}>{task.kind === 'prepare_order' ? 'Chuẩn bị đơn hàng' : task.kind === 'customer_handoff' ? 'Tiếp quản khách hàng' : task.kind === 'payment_mismatch' ? 'Sai lệch thanh toán' : task.kind === 'late_shipment' ? 'Vận đơn quá hạn' : businessLabel(task.kind)}</Typography>
@@ -247,7 +247,7 @@ export function DigestsPage() {
         section?.focus({ preventScroll: true });
     }, [hash]);
     return <>
-        <PageHeader title="Bản tin & sức khỏe hệ thống" subtitle="Những việc quan trọng cần chủ shop quyết định; không thay thế người trực thực tế."
+        <PageHeader title="Bản tin & sức khỏe" subtitle="Những việc quan trọng cần chủ shop quyết định; không thay thế người trực thực tế."
             actions={canReadEvaluations && <RouteLink to={`/s/${shop.id}/bot/evaluations`}>Đánh giá chất lượng AI</RouteLink>} />
         {__MOCK__ && <Alert severity="info" sx={layoutSx.notice.afterGap}>Đây là dữ liệu mô phỏng. Trạng thái “chưa xác minh” không chứng minh backend, provider hoặc worker đã sẵn sàng.</Alert>}
         <SectionGrid columns={{ xs: '1fr', lg: '1.5fr 1fr' }}>

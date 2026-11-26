@@ -72,7 +72,7 @@ export function ProductsPage() {
                     {categories.isError && <Button size="small" onClick={() => { void (categories.isFetchNextPageError ? categories.loadMore() : categories.refetch()); }}>Thử lại danh mục</Button>}
                 </FieldGroup>
             </FormFields>}/>
-        <QueryState query={list} pendingProfile="section">{list.data && <><DataTable pinActionOnMobile label="Danh sách sản phẩm" rows={list.data.data} rowKey={p => p.id} columns={[
+        <QueryState query={list} pendingProfile="section">{list.data && <><DataTable mobile={{ layout: 'cards', titleKey: 'name', summaryKeys: ['price', 'status', 'variants'], actionKey: 'action' }} label="Danh sách sản phẩm" rows={list.data.data} rowKey={p => p.id} columns={[
         {
             key: 'name', label: 'Sản phẩm', render: p => <Stack><Typography fontWeight={visualSx.typography.fontWeight.strong}>{p.name}</Typography><Typography variant="caption" color="text.secondary">{p.variants.map(v => v.sku).join(' · ')}</Typography></Stack>
         },
@@ -203,7 +203,7 @@ export function CategoriesPage() {
         refresh: () => categoryDetail.refetch({ throwOnError: true }),
     });
     const open = (c: Category | null) => { setSavedMessage(''); setName(c?.name || ''); setParentId(c?.parentId || ''); setEdit(c); };
-    return <><PageHeader title="Danh mục" subtitle="Sắp xếp sản phẩm, không thay đổi tồn kho." actions={<MutationButton permission="catalog.write" variant="contained" onClick={() => open(null)}>Thêm danh mục</MutationButton>}/>{savedMessage && <Alert severity="success" role="status" sx={layoutSx.notice.afterGap}>{savedMessage}</Alert>}<Panel><Toolbar operation="listCategories" /><QueryState query={list} pendingProfile="section">{list.data && <><DataTable label="Danh sách danh mục" rows={list.data.data} rowKey={c => c.id} columns={[
+    return <><PageHeader title="Danh mục" subtitle="Sắp xếp sản phẩm, không thay đổi tồn kho." actions={<MutationButton permission="catalog.write" variant="contained" onClick={() => open(null)}>Thêm danh mục</MutationButton>}/>{savedMessage && <Alert severity="success" role="status" sx={layoutSx.notice.afterGap}>{savedMessage}</Alert>}<Panel><Toolbar operation="listCategories" /><QueryState query={list} pendingProfile="section">{list.data && <><DataTable mobile={{ layout: 'cards', titleKey: 'name', summaryKeys: ['parent', 'state'], actionKey: 'action' }} label="Danh sách danh mục" rows={list.data.data} rowKey={c => c.id} columns={[
         { key: 'name', label: 'Tên danh mục', render: c => c.name }, { key: 'parent', label: 'Danh mục cha', render: c => list.data?.data.find(p => p.id === c.parentId)?.name || '—' }, { key: 'state', label: 'Trạng thái', render: c => <Status value={c.active ? 'active' : 'disabled'}/> },
         {
             key: 'action', label: 'Thao tác', render: c => <Stack direction="row"><MutationButton permission="catalog.write" onClick={() => open(c)}>Sửa</MutationButton><MutationButton permission="catalog.write" color="error" onClick={() => setRemove(c)}>Ngừng dùng</MutationButton></Stack>

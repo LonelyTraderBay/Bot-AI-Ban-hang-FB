@@ -49,7 +49,7 @@ for (const role of capabilityRoles) {
         const server = await startDemoServer();
         try {
             await page.goto(new URL('/s/shop-demo/bot/playground', server.url).toString());
-            await expect(page.getByRole('heading', { name: 'Phòng thử bot' })).toBeVisible();
+            await expect(page.getByRole('heading', { name: 'Thử bot' })).toBeVisible();
             if (role !== 'owner') {
                 await chooseMockOption(page, 'Vai trò mô phỏng', role);
                 await expect(page.getByRole('status').filter({ hasText: 'Vai trò mô phỏng đã được áp dụng.' })).toBeVisible();

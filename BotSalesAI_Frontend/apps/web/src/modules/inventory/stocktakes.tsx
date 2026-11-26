@@ -6,7 +6,7 @@ import { useListQuery } from '@/shared/model/filters';
 import { useScope } from '@/shared/model/scope';
 import { codePointLength, dateTime } from '@/shared/model/format';
 import { ActionGroup, FormFields } from '@/shared/ui/composition';
-import { ConfirmDialog, DataTable, DetailLine, EditDialog, ErrorNotice, MutationButton, PageHeader, Pager, Panel, QueryState, RouteLink, Toolbar } from '@/shared/ui/components';
+import { ConfirmDialog, DataTable, DetailLine, EditDialog, ErrorNotice, MutationButton, PageHeader, Pager, Panel, QueryState, RouteLink, Status, Toolbar } from '@/shared/ui/components';
 import { StockPositionPicker, WarehouseLookupStatus, WarehousePicker, stockReads, useActiveWarehouses } from './warehouse-forms';
 import type { PickedSku } from './warehouse-forms';
 
@@ -41,11 +41,11 @@ export function StocktakesPage() {
         <Panel title="Các phiên kiểm kê" action={<RouteLink to={`/s/${shop.id}/inventory`}>Tồn kho</RouteLink>}>
             <Toolbar operation="listStocktakes" placeholder="Tìm mã phiên, kho hoặc SKU…" />
             <QueryState query={query} pendingProfile="section">{query.data && <>
-                <DataTable label="Các phiên kiểm kê" rows={query.data.data} rowKey={session => session.id} reflowOnMobile
+                <DataTable mobile={{ layout: 'cards', titleKey: 'session', summaryKeys: ['warehouse', 'state', 'items'], actionKey: 'actions' }} label="Các phiên kiểm kê" rows={query.data.data} rowKey={session => session.id}
                     empty="Chưa có phiên kiểm kê." columns={[
                         { key: 'session', label: 'Phiên', render: session => session.id },
                         { key: 'warehouse', label: 'Kho', render: session => warehouses.data?.data.find(item => item.id === session.warehouseId)?.name ?? session.warehouseId },
-                        { key: 'state', label: 'Trạng thái', render: session => statuses[session.status] },
+                        { key: 'state', label: 'Trạng thái', render: session => <Status value={session.status} labelText={statuses[session.status]} /> },
                         { key: 'items', label: 'Đã đếm', render: session => `${session.lines.filter(line => line.counted !== null).length}/${session.lines.length} SKU` },
                         { key: 'updated', label: 'Cập nhật', render: session => dateTime(session.updatedAt, shop.timezone) },
                         { key: 'actions', label: 'Thao tác', render: session => <ActionGroup direction="row">
@@ -129,11 +129,11 @@ function StocktakeDetails({ session, close }: { session: Stocktake; close: () =>
     const { shop } = useScope();
     return <EditDialog open title={`Phiên ${session.id}`} onClose={close} actions={<Button onClick={close}>Đóng</Button>}>
         <FormFields>
-            <DetailLine label="Trạng thái">{statuses[session.status]}</DetailLine>
+            <DetailLine label="Trạng thái"><Status value={session.status} labelText={statuses[session.status]} /></DetailLine>
             <DetailLine label="Kho">{session.warehouseId}</DetailLine>
             <DetailLine label="Lý do">{session.reason}</DetailLine>
             <DetailLine label="Kết quả duyệt">{session.reviewReason ?? 'Chưa có'}</DetailLine>
-            <DataTable label="Số liệu kiểm kê" reflowOnMobile rows={session.lines} rowKey={line => line.variantId} columns={[
+            <DataTable mobile={{ layout: 'comparison' }} label="Số liệu kiểm kê" rows={session.lines} rowKey={line => line.variantId} columns={[
                 { key: 'sku', label: 'SKU', render: line => line.sku },
                 { key: 'expected', label: 'Mốc tồn', render: line => line.expected },
                 { key: 'counted', label: 'Số đếm', render: line => line.counted ?? 'Chưa đếm' },

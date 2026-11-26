@@ -48,7 +48,7 @@ export function ShippingPolicyPage() {
                 action={<MutationButton permission="shop.manage" variant="contained" disabled={!policy || policy.rules.length >= 100}
                     onClick={() => open(-1, 'edit')}>Thêm vùng giao</MutationButton>}>
                 <QueryState query={current} pendingProfile="section">
-                    {policy && <DataTable label="Biểu phí giao hàng" reflowOnMobile rows={policy.rules}
+                    {policy && <DataTable mobile={{ layout: 'cards', titleKey: 'zone', summaryKeys: ['service', 'fee'], actionKey: 'actions' }} label="Biểu phí giao hàng" rows={policy.rules}
                         rowKey={rule => rule.countryCode + ':' + rule.province}
                         empty="Chưa có vùng giao. Báo giá đơn cần kiểm tra phí giao thủ công."
                         columns={[

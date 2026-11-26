@@ -93,7 +93,7 @@ test('R65 filters refund records and opens their source documents on narrow scre
     await page.setViewportSize({ width: 390, height: 850 });
     await page.goto(url + shop + '/finance/payment-reviews');
     const content = main(page);
-    await expect(content.getByRole('heading', { name: 'Xác minh thu tiền và hoàn tiền' })).toBeVisible();
+    await expect(content.getByRole('heading', { name: 'Xác minh thu và hoàn tiền' })).toBeVisible();
     await choose(page, content, 'Loại khoản tiền', 'Hoàn tiền');
     const filtered = page.waitForResponse(response => {
         const target = new URL(response.url());
@@ -103,7 +103,7 @@ test('R65 filters refund records and opens their source documents on narrow scre
     const reply = await filtered;
     expect(reply.status()).toBe(200);
     expect(new URL(reply.url()).searchParams.get('kind')).toBe('refund');
-    const row = content.getByRole('row', { name: /DH-DEMO-PAID-01/ });
+    const row = content.getByRole('region', { name: 'Hàng đợi thu và hoàn tiền' }).getByRole('listitem').filter({ hasText: 'DH-DEMO-PAID-01' });
     await row.getByRole('button', { name: 'Xem chứng từ' }).click();
     const detail = page.getByRole('dialog', { name: 'Chứng từ đơn DH-DEMO-PAID-01' });
     await expect(detail.getByRole('link', { name: 'Mở đơn hàng' })).toHaveAttribute('href', shop + '/orders/DH-DEMO-PAID-01');

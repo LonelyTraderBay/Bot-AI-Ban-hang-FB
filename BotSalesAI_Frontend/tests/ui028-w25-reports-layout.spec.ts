@@ -25,7 +25,7 @@ test('UI028.W25 Reports semantic spacing stays stable at mobile, tablet and desk
     for (const width of widths) {
         await page.setViewportSize({ width, height: 900 });
         await page.goto(new URL('/s/shop-demo/reports?reportType=orders&fromDate=2026-09-28&toDate=2026-09-29', demoUrl).toString());
-        await expect(page.getByRole('heading', { name: 'Báo cáo & xuất dữ liệu' })).toBeVisible();
+        await expect(page.getByRole('heading', { name: 'Xuất báo cáo' })).toBeVisible();
         await expect(page.getByRole('heading', { name: 'Công việc gần đây' })).toBeVisible();
         const spacing = await page.evaluate(() => {
             const styleOf = (selector: string) => {
@@ -68,9 +68,11 @@ test('UI028.W25 Reports semantic spacing stays stable at mobile, tablet and desk
         });
         await page.goto(new URL('/s/shop-demo/reports/marketing', demoUrl).toString());
         expect((await canonicalResponse).status()).toBe(200);
-        await expect(page.getByRole('heading', { name: 'Thông tin cho marketing' })).toBeVisible();
+        await expect(page.getByRole('heading', { name: 'Thông tin marketing' })).toBeVisible();
         await expect(page.getByTestId('marketing-loss-chart')).toBeVisible();
-        await expect(page.getByRole('table', { name: 'Lý do không chốt đơn' })).toBeVisible();
+        const lossData = page.getByRole('region', { name: 'Lý do không chốt đơn', exact: true });
+        await expect(lossData).toBeVisible();
+        await expect(lossData).toHaveAttribute('data-ui-table-layout', width < 768 ? 'cards' : 'table');
         const chartSvg = page.getByTestId('marketing-loss-chart').locator('svg.recharts-surface');
         await expect(chartSvg).toBeVisible();
         await expect(chartSvg.locator('text')).not.toHaveCount(0);

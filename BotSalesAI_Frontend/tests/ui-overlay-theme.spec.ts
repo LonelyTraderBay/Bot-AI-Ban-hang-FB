@@ -118,7 +118,7 @@ async function exerciseOverlayConsumers(page: Page, width: 390 | 1440, baseUrl: 
     const surfacePage = await page.context().newPage();
     await surfacePage.setViewportSize({ width, height: 900 });
     await surfacePage.goto(new URL('/s/shop-demo/overview', baseUrl).toString());
-    await expect(surfacePage.getByRole('heading', { level: 1 })).toHaveText('Tổng quan cửa hàng');
+    await expect(surfacePage.getByRole('heading', { level: 1 })).toHaveText('Tổng quan');
     const expectedLayers = Object.fromEntries(Object.entries(tokens.zIndex).map(([name, value]) => [name, String(value)]));
     const shellLayers = await surfacePage.evaluate(expected => {
         const root = getComputedStyle(document.documentElement);

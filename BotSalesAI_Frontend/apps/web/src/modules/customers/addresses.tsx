@@ -68,7 +68,7 @@ export function AddressesPanel({customer}:{customer:Customer}) {
         {!canCreate&&<Alert severity="info">Quyền hiện tại che thông tin bắt buộc của địa chỉ; cần người có quyền phù hợp để tạo địa chỉ mới.</Alert>}
         {success&&<Alert severity="success" role="status">{success}</Alert>}
         <QueryState query={list} pendingProfile="section">{list.data&&<>
-            <DataTable label="Địa chỉ trong hồ sơ khách" rows={list.data.data} rowKey={address=>address.id} columns={[
+            <DataTable mobile={{ layout: 'cards', titleKey: 'name', summaryKeys: ['recipient', 'line', 'status'], actionKey: 'edit' }} label="Địa chỉ trong hồ sơ khách" rows={list.data.data} rowKey={address=>address.id} columns={[
                 {key:'name',label:'Địa chỉ',render:a=>addressName(a)},{key:'recipient',label:'Người nhận',render:a=>a.recipient||'Đã che theo quyền'},{key:'line',label:'Địa điểm',render:a=>a.line1||'Đã che theo quyền'},{key:'status',label:'Trạng thái',render:a=><Status value={a.status}/>},
                 {key:'edit',label:'Thao tác',render:a=>a.status==='active'?<ActionGroup><MutationButton permission="customers.write" onClick={()=>{setSelected(a);form.reset(snapshot(a).values);setOpen(true);}}>Sửa địa chỉ {addressName(a)}</MutationButton><MutationButton permission="customers.write" onClick={()=>setArchive(a)}>Ngừng dùng {addressName(a)}</MutationButton></ActionGroup>:'Lịch sử được giữ'},
             ]}/><LookupLoadMore label="địa chỉ khách hàng" loadedCount={list.loadedCount} hasMore={list.hasMore} busy={list.isLoadingMore} onLoadMore={list.loadMore}/>

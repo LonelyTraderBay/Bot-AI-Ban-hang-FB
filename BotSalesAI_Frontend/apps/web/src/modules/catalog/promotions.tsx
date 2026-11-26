@@ -6,16 +6,16 @@ import { useCan, useCanWrite, useScope } from '@/shared/model/scope';
 import { useListQuery } from '@/shared/model/filters';
 import { codePointLength, dateOnlyInTimezone, formatDateOnly, isValidDateOnly } from '@/shared/model/format';
 import { ActionGroup, FieldGroup, FormFields } from '@/shared/ui/composition';
-import { Amount, ConfirmDialog, DataTable, DetailLine, EditDialog, ErrorNotice, LookupLoadMore, MutationButton, PageHeader, Pager, Panel, QueryState, RouteLink, Toolbar } from '@/shared/ui/components';
+import { Amount, ConfirmDialog, DataTable, DetailLine, EditDialog, ErrorNotice, LookupLoadMore, MutationButton, PageHeader, Pager, Panel, QueryState, RouteLink, Status, Toolbar } from '@/shared/ui/components';
 
 const titles = { draft: 'Bản nháp', active: 'Đã duyệt bật', paused: 'Tạm dừng' };
 const updates = ['listPromotions', 'getMarketingSummary'] as const;
 type Selection = { mode: 'detail' | 'edit' | 'activate' | 'pause'; item: Promotion };
 
-function effectiveLabel(item: Promotion, today: string) {
-    if (item.status !== 'active') return titles[item.status];
-    if (item.startsOn > today) return 'Chưa đến ngày áp dụng';
-    return item.endsOn < today ? 'Hết hiệu lực' : 'Đang hiệu lực';
+function PromotionStatus({ item, today }: { item: Promotion; today: string }) {
+    if (item.status !== 'active') return <Status value={item.status} labelText={titles[item.status]} />;
+    if (item.startsOn > today) return <Status value="scheduled" labelText="Chưa đến ngày áp dụng" />;
+    return item.endsOn < today ? <Status value="expired" labelText="Hết hiệu lực" /> : <Status value="active" labelText="Đang hiệu lực" />;
 }
 
 export function PromotionsPage() {
@@ -34,10 +34,10 @@ export function PromotionsPage() {
         <Panel title="Chương trình ưu đãi" action={<RouteLink to={`/s/${shop.id}/products`}>Sản phẩm</RouteLink>}>
             <Toolbar operation="listPromotions" placeholder="Tìm tên hoặc mã ưu đãi…" />
             <QueryState query={result} pendingProfile="section">{result.data && <>
-                <DataTable label="Chương trình ưu đãi" reflowOnMobile rows={result.data.data} rowKey={item => item.id}
+                <DataTable mobile={{ layout: 'cards', titleKey: 'name', summaryKeys: ['status', 'dates', 'amount'], actionKey: 'actions' }} label="Chương trình ưu đãi" rows={result.data.data} rowKey={item => item.id}
                     empty="Chưa có chương trình ưu đãi." columns={[
                         { key: 'name', label: 'Chương trình', render: item => item.name },
-                        { key: 'status', label: 'Trạng thái', render: item => effectiveLabel(item, today) },
+                        { key: 'status', label: 'Trạng thái', render: item => <PromotionStatus item={item} today={today} /> },
                         { key: 'dates', label: 'Ngày áp dụng', render: item => `${formatDateOnly(item.startsOn)} – ${formatDateOnly(item.endsOn)}` },
                         { key: 'amount', label: 'Giảm mỗi đơn', align: 'right', render: item => <Amount value={{ amount: item.discountAmount, currency: shop.currency }} /> },
                         { key: 'actions', label: 'Thao tác', render: item => <ActionGroup direction="row">
@@ -55,7 +55,7 @@ export function PromotionsPage() {
         {selection?.mode === 'detail' && <EditDialog open title={selection.item.name} onClose={close} actions={<Button onClick={close}>Đóng</Button>}>
             <DetailLine label="Phiên bản">{selection.item.version}</DetailLine>
             <DetailLine label="Biên tối thiểu">{selection.item.minMarginPercent}%</DetailLine>
-            <DataTable label="Thành phần combo" rows={selection.item.lines} rowKey={line => line.variantId} columns={[
+            <DataTable mobile={{ layout: 'cards', titleKey: 'product', summaryKeys: ['quantity'] }} label="Thành phần combo" rows={selection.item.lines} rowKey={line => line.variantId} columns={[
                 { key: 'product', label: 'SKU / Sản phẩm', render: line => `${line.sku} · ${line.label}` },
                 { key: 'quantity', label: 'Số lượng tối thiểu', align: 'right', render: line => line.quantity },
             ]} />

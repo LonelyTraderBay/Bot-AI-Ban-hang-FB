@@ -2,7 +2,7 @@ import {label as businessLabel} from '@/shared/model/labels';
 import { useEffect, useRef, useState } from 'react';
 import { visualSx } from '@/shared/ui/visual';
 import type { ChangeEvent, ReactNode } from 'react';
-import { Alert, Box, Button, Chip, Divider, FormControlLabel, Checkbox, IconButton, MenuItem, Stack, TextField, Typography } from '@mui/material';
+import { Alert, Box, Button, Divider, FormControlLabel, Checkbox, IconButton, MenuItem, Stack, TextField, Typography } from '@mui/material';
 import AttachFileRounded from '@mui/icons-material/AttachFileRounded';
 import CloseRounded from '@mui/icons-material/CloseRounded';
 import SendRounded from '@mui/icons-material/SendRounded';
@@ -13,7 +13,7 @@ import { useApi, useCommand } from '@/shared/api/hooks';
 import { useCan, useCanWrite, useScope } from '@/shared/model/scope';
 import { limitCodePoints, dateTime } from '@/shared/model/format';
 import { DetailLine, EditDialog, ErrorNotice, MutationButton, Panel, RouteLink, Status } from '@/shared/ui/components';
-import { FormFields } from '@/shared/ui/composition';
+import { ActionGroup, FormFields, SurfaceContent } from '@/shared/ui/composition';
 import { layoutSx } from '@/shared/ui/layout';
 
 type DraftAttachment = {
@@ -223,46 +223,49 @@ export function ConversationComposer({ conversation }: {
                         disabled={!canSend || upload.pending}
                         onChange={event => void chooseFiles(event)}
                     />
-                    <Button
-                        size="small"
-                        variant="outlined"
-                        startIcon={<AttachFileRounded />}
-                        disabled={!canSend || upload.pending || attachments.length >= (mediaPolicy?.maxAttachmentCount || 0)}
-                        onClick={() => attachmentInput.current?.click()}
-                    >
-                        Đính kèm
-                    </Button>
-                    {mediaPolicy && <Typography variant="caption" color="text.secondary">Tối đa {mediaPolicy.maxAttachmentCount} tệp, mỗi tệp {Math.ceil(mediaPolicy.maxFileSizeBytes / 1048576)} MB. {__MOCK__ ? 'Chỉ gửi sau khi kiểm tra mô phỏng đạt.' : 'Chỉ gửi tệp ở trạng thái sẵn sàng.'}</Typography>}
+                    {mediaPolicy && <Typography variant="body2" color="text.secondary">
+                        Tối đa {mediaPolicy.maxAttachmentCount} tệp, {Math.ceil(mediaPolicy.maxFileSizeBytes / 1048576)} MB mỗi tệp. {__MOCK__ ? 'Chỉ gửi sau khi kiểm tra mô phỏng đạt.' : 'Chỉ gửi tệp đã sẵn sàng.'}
+                    </Typography>}
                     {mediaError && <Alert severity="warning" onClose={() => setMediaError('')}>{mediaError}</Alert>}
                     {attachments.map(attachment => (
-                        <Stack key={attachment.localId} direction="row" alignItems="center" sx={[layoutSx.inbox.composerActionGap, layoutSx.surface.compactInset, { minWidth: 0, border: 1, borderColor: 'divider', borderRadius: visualSx.radius.control }]}>
-                            {attachment.previewUrl && attachment.file.type.startsWith('image/')
-                                ? <Box component="img" src={attachment.previewUrl} alt={`Xem trước ${attachment.file.name}`} sx={{ width: 56, height: 56, objectFit: 'cover', borderRadius: visualSx.radius.control, flexShrink: 0 }} />
-                                : attachment.previewUrl && attachment.file.type.startsWith('audio/')
-                                    ? <audio controls preload="metadata" src={attachment.previewUrl} aria-label={`Nghe thử ${attachment.file.name}`} style={{ maxWidth: 'min(260px, 52vw)' }} />
+                        <Stack key={attachment.localId} sx={[layoutSx.inbox.messageContentGap, layoutSx.surface.compactInset, { minWidth: 0, border: 1, borderColor: 'divider', borderRadius: visualSx.radius.control }]}>
+                            <Stack direction="row" alignItems="center" sx={layoutSx.inbox.composerActionGap}>
+                                {attachment.previewUrl && attachment.file.type.startsWith('image/')
+                                    ? <Box component="img" src={attachment.previewUrl} alt={`Xem trước ${attachment.file.name}`} sx={{ width: 56, height: 56, objectFit: 'cover', borderRadius: visualSx.radius.control, flexShrink: 0 }} />
                                     : <AttachFileRounded aria-hidden="true" />}
-                            <Stack sx={{ minWidth: 0, flex: 1 }}>
-                                <Typography variant="body2" sx={{ overflowWrap: 'anywhere' }}>{attachment.file.name}</Typography>
-                                <Typography role="status" variant="caption" color={attachment.status === 'error' || attachment.status === 'not_ready' ? 'error.main' : 'text.secondary'}>
-                                    {attachment.status === 'uploading' ? 'Đang tải và kiểm tra tệp…' : attachment.status === 'ready' ? (__MOCK__ ? 'Sẵn sàng gửi · kiểm tra mô phỏng đạt' : 'Sẵn sàng gửi') : attachment.error || 'Chưa thể gửi tệp'}
-                                </Typography>
-                                {attachment.status === 'error' && <Button size="small" onClick={() => void uploadAttachment(attachment)}>Thử tải lại</Button>}
+                                <Stack sx={{ minWidth: 0, flex: 1 }}>
+                                    <Typography variant="body2" sx={{ overflowWrap: 'anywhere' }}>{attachment.file.name}</Typography>
+                                    <Typography role="status" variant="caption" color={attachment.status === 'error' || attachment.status === 'not_ready' ? 'error.main' : 'text.secondary'}>
+                                        {attachment.status === 'uploading' ? 'Đang tải và kiểm tra tệp…' : attachment.status === 'ready' ? (__MOCK__ ? 'Sẵn sàng gửi · kiểm tra mô phỏng đạt' : 'Sẵn sàng gửi') : attachment.error || 'Chưa thể gửi tệp'}
+                                    </Typography>
+                                    {attachment.status === 'error' && <Button size="small" onClick={() => void uploadAttachment(attachment)}>Thử tải lại</Button>}
+                                </Stack>
+                                <IconButton aria-label={`Gỡ ${attachment.file.name}`} disabled={attachment.status === 'uploading'} onClick={() => removeAttachment(attachment)}>
+                                    <CloseRounded />
+                                </IconButton>
                             </Stack>
-                            <IconButton aria-label={`Gỡ ${attachment.file.name}`} disabled={attachment.status === 'uploading'} onClick={() => removeAttachment(attachment)}>
-                                <CloseRounded />
-                            </IconButton>
+                            {attachment.previewUrl && attachment.file.type.startsWith('audio/') &&
+                                <audio controls preload="metadata" src={attachment.previewUrl} aria-label={`Nghe thử ${attachment.file.name}`} style={{ maxWidth: 'min(260px, 100%)' }} />}
                         </Stack>
                     ))}
                 </Stack>
             )}
             {!internal && !mediaSupported && <Alert severity="info">Kênh này chưa khai báo loại tệp được hỗ trợ; bạn vẫn có thể gửi văn bản.</Alert>}
             {!internal && !__MOCK__ &&
-                <Typography variant="caption" color="text.secondary">Chưa hỗ trợ trả lời riêng từ bình luận Facebook.</Typography>}
+                <Typography variant="body2" color="text.secondary">Chưa hỗ trợ nhắn riêng từ bình luận Facebook.</Typography>}
+                {(!online || !canSend) && <Typography variant="body2" color="text.secondary">
+                    {!online ? 'Đang ngoại tuyến' : 'Cần tiếp quản hoặc quyền gửi hợp lệ'}
+                </Typography>}
             </Box>
-            <Stack direction="row" alignItems="center" justifyContent="space-between" sx={[layoutSx.inbox.composerControlsBeforeGap, layoutSx.inbox.composerActionGap, { flexShrink: 0 }]}>
-                <Typography variant="caption" color="text.secondary">
-                    {!online ? 'Đang ngoại tuyến' : !canSend ? 'Cần tiếp quản hoặc quyền gửi hợp lệ' : 'Tin gửi qua API; trạng thái được xác nhận từ phản hồi lệnh'}
-                </Typography>
+            <Stack direction="row" alignItems="center" justifyContent={!internal && mediaSupported ? 'space-between' : 'flex-end'} sx={[layoutSx.inbox.composerControlsBeforeGap, layoutSx.inbox.composerActionGap, { flexShrink: 0, flexWrap: 'wrap' }]}>
+                {!internal && mediaSupported && <Button
+                    size="small"
+                    startIcon={<AttachFileRounded />}
+                    disabled={!canSend || upload.pending || attachments.length >= (mediaPolicy?.maxAttachmentCount || 0)}
+                    onClick={() => attachmentInput.current?.click()}
+                >
+                    Đính kèm
+                </Button>}
                 <Button
                     type="submit"
                     variant="contained"
@@ -325,11 +328,18 @@ export function ConversationMessageList({ messages, timezone, onRate }: {
                             }} />)}
                     </Stack>
                     {message.sourceEvidence.length > 0 && (
-                        <Stack direction="row" sx={[layoutSx.surface.compactContentGap, { flexWrap: 'wrap' }]} aria-label="Nguồn tham chiếu">
-                            {message.sourceEvidence.map((reference, index) => (
-                                <Chip key={`${reference.type}:${reference.id}:${index}`} size="small" variant="outlined" label={`${businessLabel(reference.type)} · ${reference.id}`} title={reference.type} />
-                            ))}
-                        </Stack>
+                        <Box component="details">
+                            <Typography component="summary" variant="body2" color="text.secondary" sx={{ cursor: 'pointer', minHeight: 44, alignContent: 'center' }}>
+                                Nguồn tham chiếu ({message.sourceEvidence.length})
+                            </Typography>
+                            <Stack sx={layoutSx.inbox.messageContentGap}>
+                                {message.sourceEvidence.map((reference, index) => (
+                                    <Typography key={`${reference.type}:${reference.id}:${index}`} variant="body2" sx={{ overflowWrap: 'anywhere' }}>
+                                        {businessLabel(reference.type)} · {reference.id}
+                                    </Typography>
+                                ))}
+                            </Stack>
+                        </Box>
                     )}
                     <Stack direction="row" alignItems="center" sx={[layoutSx.inbox.composerActionGap, { flexWrap: 'wrap' }]}>
                         <Typography variant="caption" color="text.secondary">{dateTime(message.createdAt, timezone)} · {businessLabel(message.status, 'message')}</Typography>
@@ -439,26 +449,33 @@ export function ConversationContextPanel({ conversation, children }: {
                             Tạo đơn từ hội thoại
                         </RouteLink>
                     )}
-                    <Divider sx={[layoutSx.surface.sectionBefore, layoutSx.notice.afterGap]} />
-                    <TextField label="Giao cho nhân viên" select fullWidth size="small" value={assignee} onChange={event => setAssignee(event.target.value)}>
-                        <MenuItem value="">Chọn nhân viên</MenuItem>
-                        {metadata.data?.data.assignees.map(user => <MenuItem key={user.userId} value={user.userId}>{user.displayName}</MenuItem>)}
-                    </TextField>
-                    <MutationButton
-                        permission="conversations.assign"
-                        disabled={!assignee}
-                        busy={assign.pending}
-                        onClick={() => {
-                            void assign.execute({
-                                path: { conversationId: conversation.id },
-                                body: { userId: assignee, expectedVersion: conversation.version },
-                            }).catch(() => undefined);
-                        }}
-                    >
-                        Phân công
-                    </MutationButton>
-                    <ErrorNotice error={assign.error} />
+                    <FormFields density="compact">
+                        <Divider />
+                        <TextField label="Giao cho nhân viên" select fullWidth size="small" value={assignee} SelectProps={{ displayEmpty: true }} onChange={event => setAssignee(event.target.value)}>
+                            <MenuItem value="">Chọn nhân viên</MenuItem>
+                            {metadata.data?.data.assignees.map(user => <MenuItem key={user.userId} value={user.userId}>{user.displayName}</MenuItem>)}
+                        </TextField>
+                        <ActionGroup>
+                            <MutationButton
+                                permission="conversations.assign"
+                                disabled={!assignee}
+                                busy={assign.pending}
+                                onClick={() => {
+                                    void assign.execute({
+                                        path: { conversationId: conversation.id },
+                                        body: { userId: assignee, expectedVersion: conversation.version },
+                                    }).catch(() => undefined);
+                                }}
+                            >
+                                Phân công
+                            </MutationButton>
+                        </ActionGroup>
+                        <ErrorNotice error={assign.error} />
+                    </FormFields>
                     {children}
+                    <SurfaceContent beforeGap="surface">
+                        <Typography variant="body2" color="text.secondary" sx={{ overflowWrap: 'anywhere' }}>Mã hội thoại · {conversation.id}</Typography>
+                    </SurfaceContent>
                 </Box>
             </Panel>
         </Box>

@@ -139,7 +139,7 @@ export function ReportsPage() {
         : null;
 
     return <>
-        <PageHeader title="Báo cáo & xuất dữ liệu" subtitle="Chọn loại báo cáo và khoảng ngày để xuất CSV." />
+        <PageHeader title="Xuất báo cáo" subtitle="Chọn loại báo cáo và khoảng ngày để xuất CSV." />
         <SectionGrid data-testid="reports-main-layout" columns={{ xs: 'minmax(0, 1fr)', xl: 'minmax(0, 1.2fr) minmax(0, .8fr)' }} alignItems={'start'} geometry={{minWidth: 0}}>
             <PageSections data-testid="reports-page-sections" >
                 <QueryState query={summary} pendingProfile="section">
@@ -179,7 +179,7 @@ export function ReportsPage() {
                 </QueryState>
                 {canReadJobs ? <QueryState query={jobs} pendingProfile="section">
                     {jobs.data && <Panel title="Công việc gần đây" subtitle="Trạng thái và tiến độ lấy từ API; trang hiện tại có thể chứa nhiều loại công việc.">
-                        <DataTable rows={jobs.data.data} rowKey={job => job.id} label="Công việc gần đây" empty="Chưa có công việc trong trang này." columns={[
+                        <DataTable mobile={{ layout: 'cards', titleKey: 'id', summaryKeys: ['kind', 'status', 'progress'] }} rows={jobs.data.data} rowKey={job => job.id} label="Công việc gần đây" empty="Chưa có công việc trong trang này." columns={[
                             { key: 'id', label: 'Mã công việc', render: job => <RouteLink to={`/s/${shop.id}/jobs/${job.id}`}>{job.id}</RouteLink> },
                             { key: 'kind', label: 'Loại', render: job => <Status value={job.kind} /> },
                             { key: 'status', label: 'Trạng thái', render: job => <Status value={job.status} /> },
@@ -270,7 +270,7 @@ export function MarketingPage() {
     };
 
     return <>
-        <PageHeader title="Thông tin cho marketing" subtitle="Đề xuất chỉ đọc; trang không tự đăng nội dung hoặc thay đổi ngân sách." />
+        <PageHeader title="Thông tin marketing" subtitle="Đề xuất chỉ đọc; trang không tự đăng nội dung hoặc thay đổi ngân sách." />
         {__MOCK__ && <Alert severity="warning" sx={layoutSx.notice.afterGap}>Số liệu mẫu do API mô phỏng tổng hợp; chưa kết nối tài khoản quảng cáo hoặc nguồn phân bổ thật.</Alert>}
         <Panel title="Khoảng thời gian báo cáo" subtitle={`Ngày được tính theo lịch ${shop.timezone} của cửa hàng.`} bodyMode="inset" afterGap="section">
             <FormFields component="form" onSubmit={applyFilter} data-testid="marketing-range-form">
@@ -301,7 +301,7 @@ export function MarketingPage() {
                 </Typography>}
                 <Typography variant="caption" color="text.secondary">Cập nhật {dateTime(m.asOf, m.period?.timezone || shop.timezone)} · {shop.name} · múi giờ {m.period?.timezone || shop.timezone}</Typography>
             </Stack>
-            <SectionGrid data-testid="marketing-sections-grid" columns={{ xs: '1fr', lg: '1fr 1fr' }}>
+            <SectionGrid data-testid="marketing-sections-grid" columns={{ xs: 'minmax(0, 1fr)', lg: 'repeat(2, minmax(0, 1fr))' }} shrinkChildren>
                 <Panel title="Đơn theo thời gian">
                     <Box role="img" aria-label={`Số đơn theo ${m.period?.bucket || 'kỳ'} trong khoảng đã chọn`} data-testid="marketing-trend-chart" sx={[{ height: 280 }, layoutSx.report.chartViewportInset]}>
                         {m.trend?.length ? <ResponsiveContainer width="100%" height="100%"><BarChart data={m.trend} accessibilityLayer>
@@ -315,7 +315,7 @@ export function MarketingPage() {
                             <Bar dataKey="unknownAttributionOrders" name="Chưa rõ nguồn" fill={colors.textSecondary} radius={[3, 3, 0, 0]} />
                         </BarChart></ResponsiveContainer> : <Typography color="text.secondary" sx={layoutSx.report.emptyStateInset}>API chưa có bucket dữ liệu trong kỳ đã chọn.</Typography>}
                     </Box>
-                    <DataTable label="Tổng hợp marketing theo kỳ" rows={m.trend || []} rowKey={point => point.fromDate} empty="Chưa có dữ liệu theo kỳ trong khoảng này." columns={[
+                    <DataTable mobile={{ layout: 'comparison' }} label="Tổng hợp marketing theo kỳ" rows={m.trend || []} rowKey={point => point.fromDate} empty="Chưa có dữ liệu theo kỳ trong khoảng này." columns={[
                         { key: 'range', label: 'Khoảng ngày', render: point => `${formatDateOnly(point.fromDate)} – ${formatDateOnly(point.toDate)}` },
                         { key: 'known', label: 'Có nguồn', align: 'right', render: point => point.knownAttributedOrders },
                         ...(m.estimatedAttributedOrders === undefined ? [] : [{
@@ -341,7 +341,7 @@ export function MarketingPage() {
                     </Box>
                 </Panel>
                 {!!m.promotionResults?.length && <Panel title="Kết quả ưu đãi" subtitle="Đơn đã chốt trong kỳ. Tiền hàng tính sau giảm, trước các khoản hoàn." geometry={{ gridColumn: '1 / -1' }}>
-                    <DataTable label="Kết quả ưu đãi" reflowOnMobile rows={m.promotionResults} rowKey={row => row.promotionId} columns={[
+                    <DataTable mobile={{ layout: 'comparison' }} label="Kết quả ưu đãi" rows={m.promotionResults} rowKey={row => row.promotionId} columns={[
                         { key: 'program', label: 'Chương trình', render: row => row.orderId ?
                             <RouteLink to={`/s/${shop.id}/orders/${row.orderId}`}>{row.name} · đơn mẫu</RouteLink> : row.name },
                         { key: 'orders', label: 'Đơn đã chốt', align: 'right', render: row => row.orders },
@@ -359,7 +359,7 @@ export function MarketingPage() {
                             <Bar dataKey="count" name="Số trường hợp" fill={colors.accent} radius={[4, 4, 0, 0]} />
                         </BarChart></ResponsiveContainer> : <Typography color="text.secondary" sx={layoutSx.report.emptyStateInset}>Chưa có lý do mất đơn trong kỳ này.</Typography>}
                     </Box>
-                    <DataTable rows={m.lostSaleReasons} rowKey={reason => reason.reason} label="Lý do không chốt đơn" empty="Chưa có lý do mất đơn trong kỳ đã chọn." columns={[
+                    <DataTable mobile={{ layout: 'cards', titleKey: 'reason', summaryKeys: ['count'] }} rows={m.lostSaleReasons} rowKey={reason => reason.reason} label="Lý do không chốt đơn" empty="Chưa có lý do mất đơn trong kỳ đã chọn." columns={[
                         { key: 'reason', label: 'Lý do', render: reason => {
                             const source = m.lostSaleEvidence?.find(row => row.reason === reason.reason);
                             return source ? <RouteLink to={`/s/${shop.id}/inbox/${source.conversationId}`}>{reason.reason} · hội thoại mẫu</RouteLink> : reason.reason;

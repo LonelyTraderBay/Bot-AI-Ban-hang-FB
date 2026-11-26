@@ -30,10 +30,10 @@ const routes = [
     { id: 'R01', path: '/login', heading: 'Đăng nhập BotSales AI' },
     { id: 'R02', path: '/workspaces', heading: 'Chọn cửa hàng' },
     { id: 'R03', path: '/onboarding', heading: 'Tạo cửa hàng' },
-    { id: 'R32', path: '/s/shop-demo/settings/team', heading: 'Nhân sự & phân quyền' },
-    { id: 'R33', path: '/s/shop-demo/settings/shop', heading: 'Thiết lập cửa hàng' },
-    { id: 'R34', path: '/s/shop-demo/settings/audit', heading: 'Nhật ký hoạt động' },
-    { id: 'R35', path: '/s/shop-demo/settings/privacy', heading: 'Quyền riêng tư & vòng đời dữ liệu' },
+    { id: 'R32', path: '/s/shop-demo/settings/team', heading: 'Nhân sự & quyền' },
+    { id: 'R33', path: '/s/shop-demo/settings/shop', heading: 'Cửa hàng' },
+    { id: 'R34', path: '/s/shop-demo/settings/audit', heading: 'Nhật ký' },
+    { id: 'R35', path: '/s/shop-demo/settings/privacy', heading: 'Quyền riêng tư' },
     { id: 'R36', path: '/s/shop-demo/jobs/missing-job', heading: 'Công việc missing-job' },
 ];
 
@@ -119,7 +119,7 @@ test('shop closure preserves history and settings across both workspace lists', 
     await expect(page.getByRole('heading', { name: 'Shop lưu trữ' })).toBeVisible();
     await page.getByRole('link', { name: 'Xem cửa hàng' }).click();
     await page.locator('a[href="/s/' + shopId + '/settings/audit"]').first().click();
-    await expect(page.getByRole('heading', { name: 'Nhật ký hoạt động' })).toBeVisible();
+    await expect(page.getByRole('heading', { name: 'Nhật ký' })).toBeVisible();
     await expect(page.getByText('closeShop', { exact: true }).first()).toBeVisible();
     await page.locator('a[href="/s/' + shopId + '/reports"]').first().click();
     await expect(page.getByRole('button', { name: 'Tạo tệp báo cáo CSV' })).toBeDisabled();

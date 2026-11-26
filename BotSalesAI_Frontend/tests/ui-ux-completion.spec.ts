@@ -13,7 +13,7 @@ test('UX01 setup feedback CTA reaches review workflow rather than dynamic knowle
  await page.goto(url+'/s/shop-demo/settings/shop');
  await page.getByRole('link',{name:'Duyệt góp ý',exact:true}).click();
  await expect(page).toHaveURL(/\/knowledge\/review$/);
- await expect(page.getByRole('heading',{name:'Duyệt phản hồi AI',exact:true})).toBeVisible();
+ await expect(page.getByRole('heading',{name:'Phản hồi cần duyệt',exact:true})).toBeVisible();
 });
 test('UX02 stock warnings describe low/zero stock without implying a server block',async({page})=>{
  await page.goto(url+'/s/shop-demo/inventory');
@@ -130,7 +130,7 @@ test('UX07 titles and breadcrumb distinguish create/detail/review; menu empty st
  await expect(search).toHaveValue('');await expect(search).toBeFocused();
  await expect(page.getByRole('link',{name:'Sản phẩm',exact:true})).toBeVisible();
  await page.goto(url+'/s/shop-demo/knowledge/review');
- await expect(page).toHaveTitle('Đánh giá và phản hồi · BotSales AI');
+ await expect(page).toHaveTitle('Phản hồi cần duyệt · BotSales AI');
  await page.goto(url+'/unknown-path');await expect(page).toHaveTitle('Không tìm thấy trang · BotSales AI');
 });
 

@@ -313,9 +313,9 @@ test('FE020.F06/H01 digest and dependency health panels show synthetic history w
     const digests = (await digestsResponse.json()).data as Array<{ id: string; text: string; status: string }>;
     const summary = (await healthResponse.json()).data as { health: Array<{ component: string; status: string; checkedAt: string | null; reason: string }> };
 
-    await expect(page.getByRole('heading', { name: 'Bản tin & sức khỏe hệ thống', exact: true })).toBeVisible();
+    await expect(page.getByRole('heading', { name: 'Bản tin & sức khỏe', exact: true })).toBeVisible();
     await expect(page.getByText('Đây là dữ liệu mô phỏng.', { exact: false })).toBeVisible();
-    await expect(page.getByRole('heading', { name: 'Bản tin điều hành', exact: true })).toBeVisible();
+    await expect(page.getByRole('heading', { name: 'Bản tin & sức khỏe', exact: true })).toBeVisible();
     for (const digest of digests) {
         await expect(page.getByText(digest.id, { exact: false })).toBeVisible();
         await expect(page.getByText(digest.text, { exact: true })).toBeVisible();
@@ -335,7 +335,7 @@ test('FE020.F06/H01 digest and dependency health panels show synthetic history w
 test('FE020.F06/F07 links historical source work and shows the runbook on both operations routes', async ({ page }) => {
     await page.setViewportSize({ width: 390, height: 844 });
     await gotoDemo(page, '/s/shop-demo/operations/digests');
-    await expect(page.getByRole('heading', { name: 'Bản tin điều hành' })).toBeVisible();
+    await expect(page.getByRole('heading', { name: 'Bản tin & sức khỏe' })).toBeVisible();
     if (process.env.BOTSALES_OPERATIONS_BASELINE_DIR) {
         await expect(page.getByText('Meta', { exact: true })).toBeVisible();
         await page.screenshot({ path: process.env.BOTSALES_OPERATIONS_BASELINE_DIR + '/' + test.info().project.name + '-r52-before.png', fullPage: true });
@@ -343,7 +343,7 @@ test('FE020.F06/F07 links historical source work and shows the runbook on both o
     await page.getByText('1 công việc đã hoàn tất', { exact: true }).click();
     await page.getByRole('link', { name: 'seed-workitem-10009' }).click();
     await expect(page).toHaveURL(/\/operations\?q=seed-workitem-10009$/);
-    await expect(page.getByRole('table', { name: 'Công việc vận hành' }).getByRole('row')).toHaveCount(2);
+    await expect(page.getByRole('region', { name: 'Công việc vận hành' }).getByRole('listitem')).toHaveCount(1);
     const checks = page.getByRole('region', { name: 'Trạng thái phụ thuộc' });
     await expect(checks.getByText('Meta', { exact: true })).toBeVisible();
     await checks.getByRole('link', { name: 'Hướng dẫn xử lý Meta' }).click();

@@ -78,7 +78,7 @@ function WorkQueue() {
         </FieldGroup>} />
         <ErrorNotice error={claim.error} />
         <QueryState query={list} pendingProfile="section">{list.data && <>
-            <DataTable label="Hàng đợi công việc" rows={list.data.data} rowKey={task => task.id} reflowOnMobile
+            <DataTable mobile={{ layout: 'cards', titleKey: 'type', summaryKeys: ['state', 'assignee', 'due'], actionKey: 'actions' }} label="Hàng đợi công việc" rows={list.data.data} rowKey={task => task.id}
                 empty="Chưa có công việc cần xử lý theo bộ lọc." columns={[
                     { key: 'type', label: 'Công việc', render: task => <>{businessLabel(task.kind)}<Typography variant="caption" display="block">{task.id}</Typography></> },
                     { key: 'state', label: 'Trạng thái', render: task => <Status value={task.state} /> },
@@ -109,7 +109,7 @@ function JobQueue() {
             <QueueFilter name="status" label="Trạng thái tác vụ" initial="failed" options={['failed', 'partial', 'queued', 'running', 'awaiting_confirmation', 'succeeded', 'cancelled']} />
         </FieldGroup>} />
         <QueryState query={list} pendingProfile="section">{list.data && <>
-            <DataTable label="Tác vụ nền" rows={list.data.data} rowKey={job => job.id} reflowOnMobile
+            <DataTable mobile={{ layout: 'cards', titleKey: 'type', summaryKeys: ['status', 'errors', 'updated'], actionKey: 'actions' }} label="Tác vụ nền" rows={list.data.data} rowKey={job => job.id}
                 empty="Chưa có tác vụ theo bộ lọc." columns={[
                     { key: 'type', label: 'Tác vụ', render: job => <>{businessLabel(job.kind)}<Typography variant="caption" display="block">{job.id}</Typography></> },
                     { key: 'status', label: 'Trạng thái', render: job => <Status value={job.status} /> },
@@ -134,7 +134,7 @@ function CommandQueue() {
             <QueueFilter name="status" label="Trạng thái thao tác" initial="unknown" options={['unknown', 'failed', 'accepted', 'running', 'succeeded']} />
         </FieldGroup>} />
         <QueryState query={list} pendingProfile="section">{list.data && <>
-            <DataTable label="Hàng đợi thao tác" rows={list.data.data} rowKey={command => command.id} reflowOnMobile
+            <DataTable mobile={{ layout: 'cards', titleKey: 'type', summaryKeys: ['status', 'updated'], actionKey: 'actions' }} label="Hàng đợi thao tác" rows={list.data.data} rowKey={command => command.id}
                 empty="Chưa có thao tác theo bộ lọc." columns={[
                     { key: 'type', label: 'Thao tác', render: command => <>{commandNames[command.kind] || 'Thao tác khác'}<Typography variant="caption" display="block">{command.id}</Typography></> },
                     { key: 'status', label: 'Trạng thái', render: command => <Status value={command.status} /> },

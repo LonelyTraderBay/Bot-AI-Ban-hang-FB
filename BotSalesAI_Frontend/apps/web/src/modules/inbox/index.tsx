@@ -1,4 +1,4 @@
-import { ActionGroup, FieldGroup, FormFields, SectionGrid, SurfaceContent } from '../../shared/ui/composition';
+import { ActionGroup, FormFields, SectionGrid, SurfaceContent } from '../../shared/ui/composition';
 import { useLayoutEffect, useRef, useState } from 'react';
 import { visualSx } from '@/shared/ui/visual';
 import { Link as RouterLink, useParams, useSearchParams } from 'react-router-dom';
@@ -47,43 +47,47 @@ export function InboxPage() {
     };
     return <>
         <PageHeader title="Hộp thư khách hàng" subtitle="AI và nhân viên tiếp quản rõ ràng; chỉ gửi khi chính sách kênh cho phép." />
-        <SectionGrid columns={{ xs: '1fr', lg: '300px minmax(0,1fr)' }} geometry={{minHeight: 650}}>
-            <Panel geometry={{ display: { xs: conversationId ? 'none' : 'block', lg: 'block' } }}>
-                <Toolbar operation="listConversations" placeholder="Tìm hội thoại…" cursorParam={listCursorParam} filters={
-                <FieldGroup direction={{ xs: 'column', sm: 'row' }} flexWrap="wrap" role="group" aria-label="Bộ lọc hội thoại">
-                    <TextField id="inbox-status" select size="small" label="Trạng thái" SelectProps={{ displayEmpty: true, SelectDisplayProps: { 'aria-labelledby': 'inbox-status-label' } }} value={status || ''} onChange={event => updateFilter('status', event.target.value)} sx={{ flex: 1, minWidth: 140 }}>
-                        <MenuItem value="">Tất cả trạng thái</MenuItem><MenuItem value="open">Đang mở</MenuItem><MenuItem value="resolved">Đã giải quyết</MenuItem>
-                    </TextField>
-                    <TextField id="inbox-mode" select size="small" label="Chế độ" SelectProps={{ displayEmpty: true, SelectDisplayProps: { 'aria-labelledby': 'inbox-mode-label' } }} value={mode || ''} onChange={event => updateFilter('mode', event.target.value)} sx={{ flex: 1, minWidth: 140 }}>
-                        <MenuItem value="">Tất cả chế độ</MenuItem><MenuItem value="bot">Bot</MenuItem><MenuItem value="human">Nhân viên</MenuItem><MenuItem value="paused">Tạm dừng</MenuItem>
-                    </TextField>
-                    <TextField id="inbox-channel" select size="small" label="Kênh" SelectProps={{ displayEmpty: true, SelectDisplayProps: { 'aria-labelledby': 'inbox-channel-label' } }} value={channelId || ''} onChange={event => updateFilter('channelId', event.target.value)} sx={{ flex: 1, minWidth: 160 }}>
-                        <MenuItem value="">Tất cả kênh</MenuItem>{metadata.data?.data.channels.map(channel => <MenuItem key={channel.id} value={channel.id}>{channel.displayName}</MenuItem>)}
-                    </TextField>
-                    <TextField id="inbox-assignee" select size="small" label="Nhân viên" SelectProps={{ displayEmpty: true, SelectDisplayProps: { 'aria-labelledby': 'inbox-assignee-label' } }} value={assignedUserId || ''} onChange={event => updateFilter('assignedUserId', event.target.value)} sx={{ flex: 1, minWidth: 160 }}>
-                        <MenuItem value="">Tất cả nhân viên</MenuItem>{metadata.data?.data.assignees.map(assignee => <MenuItem key={assignee.userId} value={assignee.userId}>{assignee.displayName}</MenuItem>)}
-                    </TextField>
-                </FieldGroup>} />
-                <QueryState query={list}>
-                    <List disablePadding>
-                        {list.data?.data.map(c => <ListItem key={c.id} disablePadding>
-                            <ListItemButton selected={c.id === conversationId} component={RouterLink} to={detailHref(c.id)} sx={[layoutSx.inbox.listInset, layoutSx.inbox.listContentGap, { alignItems: 'start', borderBottom: 1, borderColor: 'divider' }]}>
-                                <Avatar sx={{ bgcolor: colors.raised, color: 'text.primary', width: 38, height: 38 }}>{c.displayName.slice(0, 1)}</Avatar>
-                                <Box sx={{ minWidth: 0, flex: 1 }}>
-                                    <Stack direction="row" justifyContent="space-between" sx={[layoutSx.surface.compactContentGap, { alignItems: 'center' }]}>
-                                        <Typography fontWeight={visualSx.typography.fontWeight.strong} sx={{ minWidth: 0, overflowWrap: 'anywhere' }}>{c.displayName}</Typography>
-                                        {c.unreadCount > 0 && <Box data-testid="inbox-unread-count" sx={[layoutSx.inbox.unreadCountInset, { bgcolor: 'primary.main', color: colors.onAccent, borderRadius: visualSx.radius.large, fontSize: tokens.fontSizes.meta, flexShrink: 0 }]}>{c.unreadCount}</Box>}
-                                    </Stack>
-                                    <Typography variant="body2" color="text.secondary" sx={[layoutSx.surface.titleDescriptionGap, { display: 'block', overflowWrap: 'anywhere' }]}>{c.lastMessagePreview || 'Chưa có tin nhắn'}</Typography>
-                                    <Box sx={layoutSx.inbox.listStatusBeforeGap}><Status value={c.mode} /></Box>
-                                </Box>
-                            </ListItemButton>
-                        </ListItem>)}
-                    </List>
-                    {!list.data?.data.length && <Empty text="Chưa có hội thoại phù hợp." />}
-                    <Pager page={list.data?.page} cursorParam={listCursorParam} />
-                </QueryState>
-            </Panel>
+        <SectionGrid columns={{ xs: 'minmax(0, 1fr)', lg: '300px minmax(0,1fr)' }} geometry={{ minHeight: { lg: 650 } }}>
+            <Box data-testid="inbox-list-pane" sx={{ display: { xs: conversationId ? 'none' : 'block', lg: 'block' }, minWidth: 0, height: conversationId ? { lg: 650 } : undefined }}>
+                <Panel geometry={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
+                    <Toolbar operation="listConversations" placeholder="Tìm hội thoại…" cursorParam={listCursorParam} filters={
+                        <SectionGrid columns={{ xs: 'repeat(auto-fit, minmax(min(100%, 7.5em), 1fr))' }} rhythm="content" shrinkChildren role="group" aria-label="Bộ lọc hội thoại">
+                            <TextField id="inbox-status" select size="small" label="Trạng thái" SelectProps={{ displayEmpty: true, SelectDisplayProps: { 'aria-labelledby': 'inbox-status-label' } }} value={status || ''} onChange={event => updateFilter('status', event.target.value)}>
+                                <MenuItem value="">Tất cả</MenuItem><MenuItem value="open">Đang mở</MenuItem><MenuItem value="resolved">Đã giải quyết</MenuItem>
+                            </TextField>
+                            <TextField id="inbox-mode" select size="small" label="Chế độ" SelectProps={{ displayEmpty: true, SelectDisplayProps: { 'aria-labelledby': 'inbox-mode-label' } }} value={mode || ''} onChange={event => updateFilter('mode', event.target.value)}>
+                                <MenuItem value="">Tất cả</MenuItem><MenuItem value="bot">Bot</MenuItem><MenuItem value="human">Nhân viên</MenuItem><MenuItem value="paused">Tạm dừng</MenuItem>
+                            </TextField>
+                            <TextField id="inbox-channel" select size="small" label="Kênh" SelectProps={{ displayEmpty: true, SelectDisplayProps: { 'aria-labelledby': 'inbox-channel-label' } }} value={channelId || ''} onChange={event => updateFilter('channelId', event.target.value)}>
+                                <MenuItem value="">Tất cả</MenuItem>{metadata.data?.data.channels.map(channel => <MenuItem key={channel.id} value={channel.id}>{channel.displayName}</MenuItem>)}
+                            </TextField>
+                            <TextField id="inbox-assignee" select size="small" label="Nhân viên" SelectProps={{ displayEmpty: true, SelectDisplayProps: { 'aria-labelledby': 'inbox-assignee-label' } }} value={assignedUserId || ''} onChange={event => updateFilter('assignedUserId', event.target.value)}>
+                                <MenuItem value="">Tất cả</MenuItem>{metadata.data?.data.assignees.map(assignee => <MenuItem key={assignee.userId} value={assignee.userId}>{assignee.displayName}</MenuItem>)}
+                            </TextField>
+                        </SectionGrid>} />
+                    <Box sx={{ minHeight: 0, flex: '1 1 auto', overflowY: 'auto' }}>
+                        <QueryState query={list}>
+                            <List disablePadding>
+                                {list.data?.data.map(c => <ListItem key={c.id} disablePadding>
+                                    <ListItemButton selected={c.id === conversationId} component={RouterLink} to={detailHref(c.id)} sx={[layoutSx.inbox.listInset, layoutSx.inbox.listContentGap, { alignItems: 'start', borderBottom: 1, borderColor: 'divider' }]}>
+                                        <Avatar sx={{ bgcolor: colors.raised, color: 'text.primary', width: 38, height: 38 }}>{c.displayName.slice(0, 1)}</Avatar>
+                                        <Box sx={{ minWidth: 0, flex: 1 }}>
+                                            <Stack direction="row" justifyContent="space-between" sx={[layoutSx.surface.compactContentGap, { alignItems: 'center' }]}>
+                                                <Typography fontWeight={visualSx.typography.fontWeight.strong} sx={{ minWidth: 0, overflowWrap: 'anywhere' }}>{c.displayName}</Typography>
+                                                {c.unreadCount > 0 && <Box data-testid="inbox-unread-count" sx={[layoutSx.inbox.unreadCountInset, { bgcolor: 'primary.main', color: colors.onAccent, borderRadius: visualSx.radius.large, fontSize: tokens.fontSizes.meta, flexShrink: 0 }]}>{c.unreadCount}</Box>}
+                                            </Stack>
+                                            <Typography variant="body2" color="text.secondary" sx={[layoutSx.surface.titleDescriptionGap, { display: 'block', overflowWrap: 'anywhere' }]}>{c.lastMessagePreview || 'Chưa có tin nhắn'}</Typography>
+                                            <Box sx={layoutSx.inbox.listStatusBeforeGap}><Status value={c.mode} /></Box>
+                                        </Box>
+                                    </ListItemButton>
+                                </ListItem>)}
+                            </List>
+                            {!list.data?.data.length && <Empty text="Chưa có hội thoại phù hợp." />}
+                            {(cursor || list.data?.page.hasMore) && <Pager page={list.data?.page} cursorParam={listCursorParam} />}
+                        </QueryState>
+                    </Box>
+                </Panel>
+            </Box>
             {conversationId ? <ConversationPanel key={conversationId} conversationId={conversationId} /> : <Panel><Empty text="Chọn một cuộc trò chuyện để xem lịch sử, tiếp quản và tạo đơn." /></Panel>}
         </SectionGrid>
     </>;
@@ -190,23 +194,23 @@ function ConversationPanel({ conversationId }: {
     return (
         <QueryState query={c} pendingProfile="section">
             {conversation && (
-                <SectionGrid data-testid="inbox-conversation-layout" columns={{ xs: '1fr', xl: 'minmax(0,1fr) 260px' }} geometry={{minWidth: 0}}>
+                <SectionGrid data-testid="inbox-conversation-layout" columns={{ xs: 'minmax(0, 1fr)', xl: 'minmax(0, 1fr) minmax(288px, 28%)' }} geometry={{ minWidth: 0 }}>
                     <Box data-testid="inbox-thread" component="section" aria-label="Nội dung hội thoại" sx={{ minWidth: 0, height: { xl: 650 } }}>
                         <Panel geometry={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
-                            <ActionGroup direction="row" alignItems="center" justifyContent="space-between" bodyMode="header" geometry={{ flex: '0 0 auto' }}>
-                                <Stack direction="row" alignItems="center" sx={[layoutSx.surface.compactContentGap, { flexWrap: 'wrap' }]}>
+                            <ActionGroup direction="row" alignItems="center" justifyContent="space-between" flexWrap="wrap" bodyMode="header" geometry={{ flex: '0 0 auto' }}>
+                                <Stack direction="row" alignItems="center" sx={[layoutSx.surface.compactContentGap, { minWidth: 0 }]}>
                                     <Button component={RouterLink} to={inboxHref()} sx={{ display: { lg: 'none' }, minWidth: 44 }} aria-label="Danh sách hội thoại">
                                         <ArrowBackRounded />
                                     </Button>
-                                    <Avatar sx={{ bgcolor: colors.selected, color: 'primary.main' }}>{conversation.displayName.slice(0, 1)}</Avatar>
-                                    <Box>
+                                    <Avatar sx={{ bgcolor: colors.selected, color: 'primary.main', width: 36, height: 36 }}>{conversation.displayName.slice(0, 1)}</Avatar>
+                                    <Box sx={{ minWidth: 0, overflowWrap: 'anywhere' }}>
                                         <Typography component="h2" variant="h6">{conversation.displayName}</Typography>
-                                        <Typography variant="caption" color="text.secondary">
-                                            {conversation.mode === 'human' ? 'Nhân viên đang tiếp quản' : 'Trợ lý tự động'} · {conversation.id}
+                                        <Typography variant="body2" color="text.secondary">
+                                            {conversation.mode === 'human' ? 'Nhân viên đang tiếp quản' : conversation.mode === 'paused' ? 'Đang tạm dừng' : 'Trợ lý tự động'}
                                         </Typography>
                                     </Box>
                                 </Stack>
-                                <ActionGroup direction="row" >
+                                <ActionGroup direction="row" flexWrap="wrap">
                                     <MutationButton permission="conversations.assign" variant="outlined" onClick={() => setAction(conversation.mode === 'human' ? 'release' : 'takeover')}>
                                         {conversation.mode === 'human' ? 'Trả lại bot' : 'Tiếp quản'}
                                     </MutationButton>
@@ -236,7 +240,7 @@ function ConversationPanel({ conversationId }: {
                                     }
                                     previousScrollTop.current = scrollTop;
                                 }}
-                                sx={[layoutSx.inbox.paneInset, { flex: 1, minHeight: { xs: 350, xl: '6em' }, maxHeight: 550, overflowY: 'auto', background: colors.canvas }]}>
+                                sx={[layoutSx.inbox.paneInset, { flex: 1, minHeight: { xs: '14em', md: 350, xl: '6em' }, maxHeight: { xs: 'clamp(14em, 36svh, 24em)', md: 550 }, overflowY: 'auto', background: colors.canvas }]}>
                                 <QueryState query={messages}>
                                     <Stack data-testid="inbox-message-groups" sx={layoutSx.inbox.messageGroupGap}>
                                         {!messageCursor && history.hasMore && <Button size="small" sx={{ alignSelf: 'start' }}
@@ -252,7 +256,7 @@ function ConversationPanel({ conversationId }: {
                                         />
                                     </Stack>
                                     {!messages.data?.data.length && <Empty text="Chưa có tin nhắn." />}
-                                    <Pager page={messageCursor ? bookmarked.data?.page : history.firstPage?.page} />
+                                    {(messageCursor || history.firstPage?.page.hasMore) && <Pager page={messageCursor ? bookmarked.data?.page : history.firstPage?.page} />}
                                 </QueryState>
                             </Box>
                             <Box role="status" aria-live="polite" aria-atomic="true"
@@ -335,7 +339,7 @@ type SalesSourceRow = {
 function KnowledgeScriptLink() {
     const { shop } = useScope();
     const canWrite = useCanWrite('knowledge.write');
-    return canWrite ? <RouteLink to={`/s/${shop.id}/knowledge?template=sales_script`}>Soạn kịch bản tư vấn theo ngành</RouteLink> : null;
+    return canWrite ? <RouteLink to={`/s/${shop.id}/knowledge?template=sales_script`}>Soạn kịch bản tư vấn</RouteLink> : null;
 }
 
 const sampleSalesScripts = {
@@ -394,7 +398,7 @@ function MockSalesFlowPreview({ customerId, conversationId }: { customerId: stri
                 {!canReadCatalog || !canReadInventory
                     ? <Alert severity="warning">Cần quyền xem sản phẩm và tồn kho để đối chiếu nguồn.</Alert>
                     : <QueryState query={products} pendingProfile="section">{products.data && <QueryState query={stock} pendingProfile="section">{stock.data && <>
-                    <DataTable label="Nguồn giá và tồn trong hộp thư" rows={sourceRows} rowKey={row => row.key} empty="Chưa có sản phẩm đủ dữ liệu để đối chiếu." columns={[
+                    <DataTable mobile={{ layout: 'cards', titleKey: 'product', summaryKeys: ['sku', 'price', 'available'] }} label="Nguồn giá và tồn trong hộp thư" rows={sourceRows} rowKey={row => row.key} empty="Chưa có sản phẩm đủ dữ liệu để đối chiếu." columns={[
                         { key: 'product', label: 'Sản phẩm', render: row => row.product.name },
                         { key: 'sku', label: 'SKU', render: row => row.variant.sku },
                         { key: 'price', label: 'Giá', align: 'right', render: row => <Amount value={row.variant.price} /> },

@@ -155,7 +155,7 @@ test('job detail follows an export created in the current synthetic shop and can
     });
 
     await gotoDemo(page,'/s/shop-demo/reports');
-    await expect(page.getByRole('heading',{name:'Báo cáo & xuất dữ liệu',exact:true})).toBeVisible();
+    await expect(page.getByRole('heading',{name:'Xuất báo cáo',exact:true})).toBeVisible();
     const exportButton=page.getByRole('button',{name:'Tạo tệp báo cáo CSV',exact:true});
     await expect(exportButton).toBeEnabled();
     await exportButton.click();
@@ -242,7 +242,7 @@ test('FE009.G05 consent management persists challenges without granting consent 
 
 test('FE009.H06 audit screen distinguishes available fields from missing contract detail',async({page})=>{
     await gotoDemo(page,'/s/shop-demo/settings/audit');
-    await expect(page.getByRole('heading',{name:'Nhật ký hoạt động',exact:true})).toBeVisible();
+    await expect(page.getByRole('heading',{name:'Nhật ký',exact:true})).toBeVisible();
     const auditTable=page.getByRole('table');
     for(const header of ['Người thực hiện','Thao tác','Đối tượng','Kết quả','Mã truy vết'])
         await expect(auditTable.getByRole('columnheader',{name:header,exact:true})).toBeVisible();

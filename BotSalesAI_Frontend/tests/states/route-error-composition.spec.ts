@@ -74,7 +74,7 @@ test.describe('every shop route composes the shared API error state with its pag
                 await categoryError.getByRole('button', { name: 'Thử lại danh mục' }).click();
                 await expect(categoryError).toHaveCount(0);
             } else if (route.id === 'R33') {
-                await expect(main.getByRole('heading', { name: 'Thiết lập cửa hàng' }), 'R33 uses shop data already loaded by the shared shell').toBeVisible();
+                await expect(main.getByRole('heading', { name: 'Cửa hàng' }), 'R33 uses shop data already loaded by the shared shell').toBeVisible();
                 await chooseMockOption(page, 'Trạng thái thử', 'Bình thường');
             } else {
                 await expect(main.locator('[role="alert"], [role="status"]').filter({ hasText: 'API mô phỏng đang lỗi liên tục' }).first(), `${route.id} ${route.path} should expose the failed read`)

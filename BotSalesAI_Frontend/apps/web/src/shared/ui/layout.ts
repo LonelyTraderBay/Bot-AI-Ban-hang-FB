@@ -179,7 +179,7 @@ export const layoutSx = {
         listContentGap: { '&.MuiListItemButton-root': { gap: factor.md } },
         unreadCountInset: { px: factor.sm },
         listStatusBeforeGap: { mt: factor.sm },
-        contextInset: { p: { xs: factor.md, md: factor.lg } },
+        contextInset: { px: { xs: factor.md, md: factor.lg }, pb: { xs: factor.md, md: factor.lg } },
     },
     report: {
         contextGap: { gap: factor.md },

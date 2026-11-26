@@ -19,8 +19,8 @@ async function gotoDemo(page: import('@playwright/test').Page, route: string) {
 test('SC2-C01 R41 filters preparation by stage and assignee and shows the work item deadline', async ({ page }) => {
     await page.setViewportSize({ width: 390, height: 844 });
     await gotoDemo(page, '/s/shop-demo/fulfillment?state=handed_over&assignee=me');
-    const table = page.getByRole('table', { name: 'Công việc chuẩn bị đơn' });
-    await expect(table.getByRole('columnheader', { name: 'Hạn chuẩn bị' })).toBeVisible();
+    const table = page.getByRole('region', { name: 'Công việc chuẩn bị đơn' });
+    await expect(table.getByRole('listitem').getByText('Hạn chuẩn bị', { exact: true }).first()).toBeVisible();
     await expect(table.getByRole('link', { name: 'Mã đơn: DH-DEMO-PAID-01' })).toBeVisible();
     const result = page.waitForResponse(response => {
         const url = new URL(response.url());
@@ -61,7 +61,7 @@ test('Fulfillment R41/R42 preserve shell gutter and contain responsive route lay
         for (const route of routes) {
             await gotoDemo(page, route.path);
             await expect(page.getByRole('heading', { name: route.heading, exact: true })).toBeVisible({ timeout: 15_000 });
-            await expect(page.getByRole('table').first()).toBeVisible();
+            await expect(page.locator(`main [data-ui-table-layout="${width < 768 ? 'cards' : 'table'}"]`).first()).toBeVisible();
             await expect(page.locator('main#main-content')).toHaveCSS('padding-left', width >= 768 ? '24px' : '16px');
             const geometry = await page.evaluate(() => ({
                 clientWidth: document.documentElement.clientWidth,
@@ -103,7 +103,7 @@ test('Fulfillment prep, shipment-create, detail and event dialogs fit mobile and
         await expectDialogWithinViewport(page, createDialog, width, height);
         await page.keyboard.press('Escape');
 
-        await page.getByRole('table').first().getByRole('button', { name: 'Chi tiết' }).first().click();
+        await page.getByRole('region', { name: 'Danh sách vận đơn', exact: true }).getByRole('button', { name: 'Chi tiết' }).first().click();
         const detailDialog = page.getByRole('dialog', { name: 'Chi tiết vận đơn' });
         await expect(detailDialog.getByText('Sự kiện vận chuyển', { exact: true })).toBeVisible();
         await expectDialogWithinViewport(page, detailDialog, width, height);

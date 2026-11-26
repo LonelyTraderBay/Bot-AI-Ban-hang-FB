@@ -1,9 +1,9 @@
-import { useCallback, useEffect, useId, useRef, useState } from 'react';
+import { lazy, Suspense, useCallback, useEffect, useId, useLayoutEffect, useRef, useState } from 'react';
 import { visualSx } from './visual';
 import type { CSSProperties, KeyboardEvent as ReactKeyboardEvent, ReactNode } from 'react';
 import { Link as RouterLink, useLocation, useSearchParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { Alert, AlertTitle, Box, Button, Chip, CircularProgress, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Divider, IconButton, InputAdornment, LinearProgress, Paper, Stack, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TextField, Typography } from '@mui/material';
+import { Alert, AlertTitle, Box, Button, Chip, CircularProgress, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Divider, IconButton, InputAdornment, LinearProgress, Paper, Stack, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TextField, Typography, useMediaQuery } from '@mui/material';
 import SearchRounded from '@mui/icons-material/SearchRounded';
 import CloseRounded from '@mui/icons-material/CloseRounded';
 import ArrowForwardRounded from '@mui/icons-material/ArrowForwardRounded';
@@ -20,6 +20,8 @@ import { label, type LabelDomain } from '../model/labels';
 import { listReturnState } from '../model/list-return';
 import { permitsClosedShopWrite } from '../model/shop-lifecycle';
 import { useScope, useCan } from '../model/scope';
+import type { MobileCards, TableColumn } from './internal/table-cards';
+import { tabletAndUpQuery } from './theme';
 export function PageHeader({ title, subtitle, actions, eyebrow }: {
     title: string;
     subtitle?: string;
@@ -82,10 +84,14 @@ export function Stats({ children, afterGap = 'section' }: {
     children: ReactNode;
     afterGap?: 'section' | 'none';
 }) { return <Box sx={[layoutSx.stats.gutter, afterGap === 'section' && layoutSx.stats.afterGap, { display: 'grid', gridTemplateColumns: { xs: '1fr', md: 'repeat(2,1fr)', lg: 'repeat(4,1fr)' } }]}>{children}</Box>; }
+const amountWrap = { whiteSpace: 'normal', overflowWrap: 'anywhere' } as const;
+
 export function Amount({ value, wrap = false }: {
     value: Money | null | undefined;
     wrap?: boolean;
-}) { return <Box component="span" sx={{ fontVariantNumeric: 'tabular-nums', whiteSpace: wrap ? 'normal' : 'nowrap', overflowWrap: wrap ? 'anywhere' : undefined }}>{formatMoney(value)}</Box>; }
+}) {
+    return <Box component="span" sx={[{ fontVariantNumeric: 'tabular-nums', whiteSpace: 'nowrap', '[data-ui-table-layout="cards"] &': amountWrap }, wrap && amountWrap]}>{formatMoney(value)}</Box>;
+}
 export function CopyableCode({ value, label: codeLabel = 'mã', showValue = true }: {
     value: string;
     label?: string;
@@ -111,40 +117,66 @@ export function CopyableCode({ value, label: codeLabel = 'mã', showValue = true
 }
 const positive = new Set(['active', 'completed', 'succeeded', 'connected', 'published', 'approved', 'received', 'settled', 'verified', 'posted', 'delivered', 'passed', 'healthy', 'in_stock']);
 const danger = new Set(['failed', 'rejected', 'cancelled', 'revoked', 'denied', 'error']);
-const warn = new Set(['unknown', 'blocked', 'degraded', 'pending_approval', 'partial', 'part_received', 'unconfigured', 'provisional', 'incomplete', 'paused', 'expired', 'low_stock', 'out_of_stock']);
-export function Status({ value, domain, density = 'standard' }: {
+const warn = new Set(['unknown', 'blocked', 'degraded', 'pending_approval', 'partial', 'part_received', 'unconfigured', 'provisional', 'incomplete', 'paused', 'expired', 'low_stock', 'out_of_stock', 'closed_short', 'needs_check', 'cod_pending', 'refund_due']);
+export function Status({ value, domain, labelText, density = 'standard' }: {
     value: string;
     domain?: LabelDomain;
+    labelText?: string;
     density?: 'standard' | 'compact';
 }) {
     const palette = positive.has(value) ? [colors.success, colors.successSurface] : danger.has(value) ? [colors.danger, colors.dangerSurface] : warn.has(value) ? [colors.warning, colors.warningSurface] : [colors.info, colors.infoSurface];
-    return <Chip label={label(value, domain)} title={value} sx={{ color: palette[0], background: palette[1], maxWidth: '100%', height: density === 'compact' ? 21 : 'fit-content', minHeight: density === 'compact' ? 21 : 32, verticalAlign: density === 'compact' ? 'top' : undefined, '& .MuiChip-label': { whiteSpace: 'normal', overflowWrap: 'normal' } }}/>;
+    return <Chip label={labelText ?? label(value, domain)} title={value} sx={{ color: palette[0], background: palette[1], maxWidth: '100%', height: density === 'compact' ? 21 : 'fit-content', minHeight: density === 'compact' ? 21 : 32, verticalAlign: density === 'compact' ? 'top' : undefined, '& .MuiChip-label': { whiteSpace: 'normal', overflowWrap: 'normal' } }}/>;
 }
-export interface Column<T> {
-    key: string;
-    label: string;
-    render: (row: T) => ReactNode;
-    align?: 'left' | 'right' | 'center';
-}
-export function DataTable<T>({ rows, columns, rowKey, empty = 'Chưa có dữ liệu phù hợp.', emptyAction, pinActionOnMobile = false, reflowOnMobile = false, label: tableLabel = 'Dữ liệu' }: {
+export type Column<T> = TableColumn<T>;
+const TableCards = lazy(() => import('./internal/table-cards')) as typeof import('./internal/table-cards').default;
+
+type MobileTable<T> = MobileCards<T> | { layout: 'comparison'; actionKey?: string };
+
+export function DataTable<T>({ rows, columns, rowKey, empty = 'Chưa có dữ liệu phù hợp.', emptyAction, mobile, label: tableLabel = 'Dữ liệu' }: {
     rows: readonly T[];
     columns: readonly Column<T>[];
     rowKey: (row: T) => string;
     empty?: string;
     emptyAction?: ReactNode;
-    pinActionOnMobile?: boolean;
-    reflowOnMobile?: boolean;
+    mobile: MobileTable<T>;
     label?: string;
 }) {
+    const regionId = useId();
+    const narrow = !useMediaQuery(tabletAndUpQuery);
+    if (narrow && mobile.layout === 'cards') {
+        return <Box component="section" id={regionId} aria-label={tableLabel} tabIndex={0} data-ui-table-layout="cards">
+            {rows.length > 0 ? <Suspense fallback={<Typography role="status" color="text.secondary" sx={layoutSx.surface.inset}>Đang tải dữ liệu</Typography>}>
+                <TableCards rows={rows} columns={columns} rowKey={rowKey} mobile={mobile} />
+            </Suspense>
+                : <Empty text={empty} action={emptyAction}/>}
+        </Box>;
+    }
     const pinnedAction = { position: { xs: 'sticky', md: 'static' }, right: 0, backgroundColor: 'background.paper' } as const;
+    const actionKey = mobile.layout === 'comparison' ? mobile.actionKey : undefined;
+    const stickyColumn = actionKey !== undefined && columns.at(-1)?.key === actionKey ? actionKey : undefined;
+    const tableMinWidth = Math.max(600, Math.min(760, columns.length * tokens.layout.touchTarget * 3));
     return <>
-        {!reflowOnMobile && <Typography variant="caption" color="text.secondary" sx={[layoutSx.table.mobileHintInset, { display: { xs: 'block', md: 'none' } }]}>Cuộn ngang để xem đủ cột.</Typography>}
-        <TableContainer sx={{ maxWidth: '100%' }} tabIndex={0} role="region" aria-label={tableLabel} onKeyDown={event => {
-            if ((event.key === 'ArrowRight' || event.key === 'ArrowLeft') && event.currentTarget.scrollWidth > event.currentTarget.clientWidth) {
+        <Typography variant="caption" color="text.secondary" sx={[layoutSx.table.mobileHintInset, { display: { xs: 'block', md: 'none' } }]}>Cuộn ngang để xem đủ cột.</Typography>
+        <TableContainer id={regionId} sx={{ maxWidth: '100%' }} tabIndex={0} role="region" aria-label={tableLabel} data-ui-table-layout="table" onKeyDown={event => {
+            if ((event.key === 'ArrowRight' || event.key === 'ArrowLeft') && event.target === event.currentTarget
+                && event.currentTarget.scrollWidth > event.currentTarget.clientWidth) {
                 event.preventDefault();
                 event.currentTarget.scrollBy({ left: event.key === 'ArrowRight' ? 40 : -40 });
             }
-        }}><Table size="small" aria-label={tableLabel} sx={{ minWidth: reflowOnMobile ? { xs: 0, md: Math.max(600, Math.min(760, columns.length * tokens.layout.touchTarget * 3)) } : Math.max(600, Math.min(760, columns.length * tokens.layout.touchTarget * 3)) }}><TableHead sx={reflowOnMobile ? { position: { xs: 'absolute', md: 'static' }, width: { xs: '1px', md: 'auto' }, height: { xs: '1px', md: 'auto' }, overflow: { xs: 'hidden', md: 'visible' }, clipPath: { xs: 'inset(50%)', md: 'none' } } : {}}><TableRow>{columns.map(c => <TableCell key={c.key} align={c.align} sx={pinActionOnMobile && columns.at(-1)?.key === c.key && c.key === 'action' ? pinnedAction : {}}>{c.label}</TableCell>)}</TableRow></TableHead><TableBody>{rows.map(row => <TableRow key={rowKey(row)} hover sx={reflowOnMobile ? { display: { xs: 'block', md: 'table-row' } } : {}}>{columns.map(c => <TableCell key={c.key} align={c.align} sx={reflowOnMobile ? { display: { xs: 'block', md: 'table-cell' }, overflowWrap: 'anywhere', textAlign: { xs: 'left', md: c.align || 'left' } } : pinActionOnMobile && columns.at(-1)?.key === c.key && c.key === 'action' ? pinnedAction : {}}>{reflowOnMobile && <Typography component="span" variant="caption" color="text.secondary" aria-hidden="true" sx={{ display: { xs: 'block', md: 'none' } }}>{c.label}</Typography>}{c.render(row)}</TableCell>)}</TableRow>)}</TableBody></Table></TableContainer>
+        }}>
+            <Table size="small" aria-label={tableLabel} sx={{ minWidth: tableMinWidth }}>
+                <TableHead><TableRow>
+                    {columns.map(column => <TableCell key={column.key} align={column.align} sx={column.key === stickyColumn ? pinnedAction : {}}>{column.label}</TableCell>)}
+                </TableRow></TableHead>
+                <TableBody>
+                    {rows.map(row => <TableRow key={rowKey(row)} hover>
+                        {columns.map(column => <TableCell key={column.key} align={column.align} sx={column.key === stickyColumn ? pinnedAction : {}}>
+                            {column.render(row)}
+                        </TableCell>)}
+                    </TableRow>)}
+                </TableBody>
+            </Table>
+        </TableContainer>
         {rows.length === 0 && <Empty text={empty} action={emptyAction}/>}
     </>;
 }
@@ -387,6 +419,22 @@ export function EditDialog({ open, title, description, onClose, children, action
     const [discardOpen, setDiscardOpen] = useState(false);
     const discardConfirmedRef = useRef(false);
     const [dialogDirty, setDialogDirty] = useState(false);
+    const tableOpenerRef = useRef<{ opener: Element; regionId: string } | null>(null);
+    const restoreTableFocus = useCallback(() => {
+        const previous = tableOpenerRef.current;
+        if (!previous || previous.opener.isConnected) return;
+        window.requestAnimationFrame(() => {
+            // MUI restores the original control when it still exists.
+            if (document.activeElement === document.body) document.getElementById(previous.regionId)?.focus();
+        });
+    }, []);
+    useLayoutEffect(() => {
+        if (!open) return;
+        const opener = document.activeElement;
+        const regionId = opener?.closest('[data-ui-table-layout]')?.id;
+        tableOpenerRef.current = opener && regionId ? { opener, regionId } : null;
+        return restoreTableFocus;
+    }, [open, restoreTableFocus]);
     const establishBaseline = useCallback(() => {
         if (baselineReadyRef.current || !contentRef.current)
             return;
@@ -500,7 +548,7 @@ export function EditDialog({ open, title, description, onClose, children, action
         setDiscardOpen(false);
     };
     return <>
-        <Dialog open={open} onClose={requestClose} fullWidth maxWidth="sm" aria-labelledby={titleId} aria-describedby={descriptionId} slotProps={{ paper: { sx: layoutSx.dialog.viewportMargin }, transition: { onEntered: () => { if (!interactionRef.current) refreshBaseline(); } } }}><DialogTitle id={`${titleId}-heading`} aria-labelledby={titleId} sx={[density === 'comfortable' ? layoutSx.dialog.inset : layoutSx.dialog.compactInset, { display: 'flex', alignItems: 'center' }]}><Box component="span" id={titleId} sx={{ minWidth: 0, flex: 1, overflowWrap: 'anywhere' }}>{title}</Box><IconButton aria-label={t('app.close')} disabled={busy} onClick={requestClose} sx={{ flexShrink: 0 }}><CloseRounded /></IconButton></DialogTitle>{busy && <LinearProgress aria-label="Đang lưu"/>}<DialogContent ref={contentRef} tabIndex={0} role="region" aria-labelledby={titleId} inert={busy && !allowEditsWhileBusy} dividers sx={density === 'comfortable' ? layoutSx.dialog.inset : layoutSx.dialog.compactInset} onFocusCapture={event => { establishBaseline(); if (event.target instanceof Element && event.target.matches('input, select, textarea, [role="combobox"]')) interactionRef.current = true; }} onBeforeInputCapture={establishBaseline} onChangeCapture={updateAfterInteraction} onClickCapture={updateAfterInteraction}>{description && <Typography id={descriptionId} color="text.secondary" sx={layoutSx.dialog.descriptionAfterGap}>{description}</Typography>}{children}</DialogContent><DialogActions disableSpacing sx={[layoutSx.dialog.actionsInset, layoutSx.dialog.actionsGap]}><Button onClick={requestClose} disabled={busy}>{t('app.cancel')}</Button>{typeof actions === 'function' ? actions({ requestClose, busy }) : actions}</DialogActions></Dialog>
+        <Dialog open={open} onClose={requestClose} onTransitionExited={restoreTableFocus} fullWidth maxWidth="sm" aria-labelledby={titleId} aria-describedby={descriptionId} slotProps={{ paper: { sx: layoutSx.dialog.viewportMargin }, transition: { onEntered: () => { if (!interactionRef.current) refreshBaseline(); } } }}><DialogTitle id={`${titleId}-heading`} aria-labelledby={titleId} sx={[density === 'comfortable' ? layoutSx.dialog.inset : layoutSx.dialog.compactInset, { display: 'flex', alignItems: 'center' }]}><Box component="span" id={titleId} sx={{ minWidth: 0, flex: 1, overflowWrap: 'anywhere' }}>{title}</Box><IconButton aria-label={t('app.close')} disabled={busy} onClick={requestClose} sx={{ flexShrink: 0 }}><CloseRounded /></IconButton></DialogTitle>{busy && <LinearProgress aria-label="Đang lưu"/>}<DialogContent ref={contentRef} tabIndex={0} role="region" aria-labelledby={titleId} inert={busy && !allowEditsWhileBusy} dividers sx={density === 'comfortable' ? layoutSx.dialog.inset : layoutSx.dialog.compactInset} onFocusCapture={event => { establishBaseline(); if (event.target instanceof Element && event.target.matches('input, select, textarea, [role="combobox"]')) interactionRef.current = true; }} onBeforeInputCapture={establishBaseline} onChangeCapture={updateAfterInteraction} onClickCapture={updateAfterInteraction}>{description && <Typography id={descriptionId} color="text.secondary" sx={layoutSx.dialog.descriptionAfterGap}>{description}</Typography>}{children}</DialogContent><DialogActions disableSpacing sx={[layoutSx.dialog.actionsInset, layoutSx.dialog.actionsGap]}><Button onClick={requestClose} disabled={busy}>{t('app.cancel')}</Button>{typeof actions === 'function' ? actions({ requestClose, busy }) : actions}</DialogActions></Dialog>
         <Dialog open={open && discardOpen} onClose={() => setDiscardOpen(false)} aria-labelledby={`${titleId}-draft-warning`} aria-describedby={`${titleId}-draft-description`} slotProps={{ paper: { sx: layoutSx.dialog.viewportMargin }, transition: { onExited: () => {
             if (!discardConfirmedRef.current)
                 return;

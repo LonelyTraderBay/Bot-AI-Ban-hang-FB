@@ -10,7 +10,8 @@ async function ready(page:import('@playwright/test').Page, route:string){await p
 test('density table saves row space while preserving action target and data',async({page})=>{
  for(const width of [320,806,1440]){
   await page.setViewportSize({width,height:900});await ready(page,'products');
-  const cells=page.locator('main tbody td');await expect(cells.first()).toHaveCSS('padding-top','8px');await expect(cells.first()).toHaveCSS('padding-left','12px');
+  if(width>=768){const cell=page.locator('main tbody td').first();await expect(cell).toHaveCSS('padding-top','8px');await expect(cell).toHaveCSS('padding-left','12px');}
+  else await expect(page.locator('main [data-ui-table-layout="cards"]')).toBeVisible();
   const link=page.getByRole('link',{name:'Chi tiết',exact:true}).first();expect((await link.boundingBox())!.height).toBeGreaterThanOrEqual(44);
   await expect(page.getByText('DEMO-001',{exact:true})).toBeVisible();await expect(page.getByText('150.000 ₫',{exact:true})).toBeVisible();
   expect(await page.evaluate(()=>document.documentElement.scrollWidth)).toBe(width);

@@ -190,9 +190,8 @@ test('FE017 price and stock source preview uses canonical product and timestampe
     await expect(row).toContainText(expectedSnapshotTime);
     await expect(page.getByText(/được truy vấn riêng với nội dung tri thức/)).toBeVisible();
     await page.setViewportSize({ width: 375, height: 812 });
-    const sourceTable = page.getByRole('table', { name: 'Nguồn giá và snapshot tồn kho' });
     const sourceRegion = page.getByRole('region', { name: 'Nguồn giá và snapshot tồn kho' });
-    await expect(sourceTable).toBeVisible();
+    await expect(sourceRegion.getByRole('listitem').first()).toBeVisible();
     await sourceRegion.focus();
     await expect(sourceRegion).toBeFocused();
     const pageWidth = await page.evaluate(() => ({ viewport: document.documentElement.clientWidth, content: document.documentElement.scrollWidth }));

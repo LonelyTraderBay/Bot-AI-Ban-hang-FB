@@ -138,7 +138,7 @@ export function PrivacyPage() {
         } catch (error) { editor.failed(error); }
     };
     return <>
-        <PageHeader title="Quyền riêng tư & vòng đời dữ liệu" subtitle="Quản lý thời hạn lưu dữ liệu và yêu cầu của khách."/>
+        <PageHeader title="Quyền riêng tư" subtitle="Quản lý thời hạn lưu dữ liệu và yêu cầu của khách."/>
         <SectionGrid columns={{ xs: '1fr', lg: '1fr 1.4fr' }}>
             <Panel title="Chính sách lưu trữ" bodyMode="inset">
                 <QueryState query={policy} pendingProfile="section">
@@ -164,7 +164,7 @@ export function PrivacyPage() {
             <Panel title="Yêu cầu của khách" action={<MutationButton permission="privacy.manage" action="createPrivacyRequest" onClick={() => setOpen(true)}>Tạo yêu cầu</MutationButton>}>
                 <QueryState query={requests} pendingProfile="section">
                     {requests.data && <>
-                        <DataTable label="Yêu cầu quyền riêng tư" rows={requests.data.data} rowKey={r => r.id} columns={[
+                        <DataTable mobile={{ layout: 'cards', titleKey: 'customer', summaryKeys: ['kind', 'state', 'reason'], actionKey: 'action' }} label="Yêu cầu quyền riêng tư" rows={requests.data.data} rowKey={r => r.id} columns={[
                             { key: 'customer', label: 'Khách', render: r => `Mã khách hàng: ${r.customerId}` },
                             { key: 'kind', label: 'Yêu cầu', render: r => <Status value={r.kind}/> },
                             { key: 'state', label: 'Trạng thái', render: r => <Status value={r.status}/> },
@@ -238,7 +238,7 @@ function ConsentManagement({ customers, canReadCustomers, shopId }: { customers:
             <FieldGroup role="group" aria-label="Bản ghi consent hiện tại">
                 <Typography component="h2" variant="h6">Bản ghi consent hiện tại</Typography>
                 <QueryState query={consentList} pendingProfile="section">{consentList.data && <>
-                    <DataTable label="Lịch sử consent khách hàng" rows={consentList.data.data} rowKey={record => record.id} columns={[
+                    <DataTable mobile={{ layout: 'cards', titleKey: 'customer', summaryKeys: ['purpose', 'channel', 'status'] }} label="Lịch sử consent khách hàng" rows={consentList.data.data} rowKey={record => record.id} columns={[
                         { key: 'customer', label: 'Khách', render: record => `Mã khách hàng: ${record.customerId}` },
                         { key: 'purpose', label: 'Mục đích', render: record => businessLabel(record.purpose) },
                         { key: 'channel', label: 'Kênh', render: record => businessLabel(record.channel) },
@@ -252,7 +252,7 @@ function ConsentManagement({ customers, canReadCustomers, shopId }: { customers:
             <FieldGroup role="group" aria-label="Yêu cầu xác nhận đang chờ">
                 <Typography component="h2" variant="h6">Yêu cầu xác nhận đang chờ</Typography>
                 <QueryState query={challengeList} pendingProfile="section">{challengeList.data && <>
-                    <DataTable label="Yêu cầu xác nhận đang chờ" rows={challengeList.data.data} rowKey={challenge => challenge.id} columns={[
+                    <DataTable mobile={{ layout: 'cards', titleKey: 'customer', summaryKeys: ['purpose', 'action', 'status'] }} label="Yêu cầu xác nhận đang chờ" rows={challengeList.data.data} rowKey={challenge => challenge.id} columns={[
                         { key: 'customer', label: 'Khách', render: challenge => `Mã khách hàng: ${challenge.customerId}` },
                         { key: 'purpose', label: 'Mục đích', render: challenge => businessLabel(challenge.purpose) },
                         { key: 'channel', label: 'Kênh', render: challenge => businessLabel(challenge.channel) },

@@ -123,11 +123,11 @@ describe('S10 shared component rendered-slot contract', () => {
     it('DataTable renders a ReactNode column callback and its empty-state slot', () => {
         type Row = { id: string; name: string };
         const column: Column<Row> = { key: 'name', label: 'Tên', align: 'right', render: row => <strong data-testid="rendered-cell">{row.name}</strong> };
-        const { rerender } = renderWithTheme(<DataTable rows={[{ id: '1', name: 'Sản phẩm mẫu' }]} columns={[column]} rowKey={row => row.id} label="Sản phẩm" />);
+        const { rerender } = renderWithTheme(<DataTable mobile={{ layout: 'comparison' }} rows={[{ id: '1', name: 'Sản phẩm mẫu' }]} columns={[column]} rowKey={row => row.id} label="Sản phẩm" />);
         expect(screen.getByRole('table', { name: 'Sản phẩm' })).toBeInTheDocument();
         expect(screen.getByTestId('rendered-cell')).toHaveTextContent('Sản phẩm mẫu');
         expect(screen.getByRole('cell', { name: 'Sản phẩm mẫu' })).toHaveClass('MuiTableCell-alignRight');
-        rerender(<ThemeProvider theme={theme}><CssBaseline /><DataTable rows={[]} columns={[column]} rowKey={row => row.id} empty="Không tìm thấy sản phẩm" label="Sản phẩm" /></ThemeProvider>);
+        rerender(<ThemeProvider theme={theme}><CssBaseline /><DataTable mobile={{ layout: 'comparison' }} rows={[]} columns={[column]} rowKey={row => row.id} empty="Không tìm thấy sản phẩm" label="Sản phẩm" /></ThemeProvider>);
         expect(screen.getByRole('status')).toHaveTextContent('Không tìm thấy sản phẩm');
     });
 

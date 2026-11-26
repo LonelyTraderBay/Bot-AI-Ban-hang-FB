@@ -35,11 +35,11 @@ test('Finance R20/R21/R22/R48/R49/R50 route layouts retain shell gutter without 
     const errors: string[] = [];
     page.on('pageerror', error => errors.push(error.message));
     const routes = [
-        { id: 'R20', path: '/s/shop-demo/finance', heading: 'Dòng tiền' },
+        { id: 'R20', path: '/s/shop-demo/finance', heading: 'Thu chi' },
         { id: 'R21', path: '/s/shop-demo/finance/entries', heading: 'Sổ thu chi' },
-        { id: 'R22', path: '/s/shop-demo/finance/profit-loss', heading: 'Lợi nhuận quản trị' },
-        { id: 'R48', path: '/s/shop-demo/finance/journals', heading: 'Bút toán' },
-        { id: 'R49', path: '/s/shop-demo/finance/reconciliation', heading: 'Đối soát ngân hàng & COD' },
+        { id: 'R22', path: '/s/shop-demo/finance/profit-loss', heading: 'Lợi nhuận' },
+        { id: 'R48', path: '/s/shop-demo/finance/journals', heading: 'Chứng từ & sổ kép' },
+        { id: 'R49', path: '/s/shop-demo/finance/reconciliation', heading: 'Đối soát' },
         { id: 'R50', path: '/s/shop-demo/finance/debts-periods', heading: 'Công nợ & khóa kỳ' },
     ];
     const observations: Array<{ route: string; width: number; clientWidth: number; scrollWidth: number }> = [];
@@ -151,7 +151,7 @@ test('Finance report, entry, journal, reconciliation and period dialogs remain i
         await expect(dialog).toHaveCount(0);
 
         await gotoDemo(page, '/s/shop-demo/finance/entries');
-        await page.getByRole('table').getByRole('button', { name: 'Chi tiết', exact: true }).first().click();
+        await page.getByRole('region', { name: 'Chứng từ thu chi', exact: true }).getByRole('button', { name: 'Chi tiết', exact: true }).first().click();
         dialog = page.getByRole('dialog').first();
         await expect(dialog.getByRole('button', { name: 'Đóng', exact: true }).last()).toBeVisible();
         await expectDialogWithinViewport(page, dialog, width, height);
@@ -185,7 +185,7 @@ test('Finance report, entry, journal, reconciliation and period dialogs remain i
         expect(casesResult.status()).toBe(200);
         const casesPayload = await casesResult.json();
         expect(Array.isArray(casesPayload.data)).toBe(true);
-        await expect(page.getByRole('heading', { name: 'Đối soát ngân hàng & COD', exact: true })).toBeVisible();
+        await expect(page.getByRole('heading', { name: 'Đối soát', exact: true })).toBeVisible();
         await expect(page.getByRole('button', { name: 'Ghép giao dịch', exact: true })).toHaveCount(casesPayload.data.length);
         const match = page.getByRole('button', { name: 'Ghép giao dịch', exact: true }).first();
         if (await match.isVisible().catch(() => false)) {

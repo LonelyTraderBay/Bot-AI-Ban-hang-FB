@@ -52,7 +52,7 @@ test('R63 queries server filters and verifies unknown commands without replay at
     await page.setViewportSize({ width: 390, height: 844 });
     await page.goto(url + '/s/shop-demo/operations/exceptions');
     await expect(page.getByRole('heading', { name: 'Ngoại lệ và tác vụ nền' })).toBeVisible();
-    const work = page.getByRole('table', { name: 'Hàng đợi công việc' });
+    const work = page.getByRole('region', { name: 'Hàng đợi công việc' });
     await expect(work.getByText('demo-workitem-late-shipment')).toBeVisible();
     await page.getByRole('combobox', { name: 'Loại công việc' }).click();
     const filterRequest = page.waitForResponse(response => {

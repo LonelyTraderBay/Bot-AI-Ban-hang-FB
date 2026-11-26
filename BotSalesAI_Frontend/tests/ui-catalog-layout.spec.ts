@@ -25,7 +25,7 @@ test('catalog R09-R14 keeps shared gutters, inset ownership and dry-run flow at 
         { id: 'R10', path: '/s/shop-demo/products/new', heading: 'Thêm sản phẩm', inset: true },
         { id: 'R11', path: '/s/shop-demo/products/p1', heading: 'Thông tin sản phẩm', inset: true },
         { id: 'R12', path: '/s/shop-demo/categories', heading: 'Danh mục' },
-        { id: 'R13', path: '/s/shop-demo/imports', heading: 'Nhập dữ liệu sản phẩm', inset: true },
+        { id: 'R13', path: '/s/shop-demo/imports', heading: 'Nhập dữ liệu', inset: true },
     ];
     const observations = [];
 
@@ -71,7 +71,7 @@ test('Imports review notice and demo controls keep the measured shared disclosur
     const route = new URL('/s/shop-demo/imports', demoUrl);
     await page.goto(route.toString());
     await expect(page).toHaveURL(route.toString());
-    await expect(page.getByRole('heading', { name: 'Nhập dữ liệu sản phẩm', exact: true })).toBeVisible();
+    await expect(page.getByRole('heading', { name: 'Nhập dữ liệu', exact: true })).toBeVisible();
 
     const notice = page.getByRole('alert').filter({ hasText: 'Frontend review: API được mô phỏng trong bộ nhớ' });
     const controls = page.locator('#mock-tools-controls');

@@ -2,6 +2,7 @@ import { navigateDemoAndRead, openDemoControls } from './session/demo-controls';
 import { readFileSync } from 'node:fs';
 import { test, expect } from '@playwright/test';
 import { startDemoPreview, startDemoServer, startLiveServer } from './session/demo-server.mjs';
+import { navigation } from '../apps/web/src/app/navigation';
 
 type RouteManifest = { routes: Array<{ id: string; path: string }> };
 const routes = JSON.parse(readFileSync(new URL('../packages/contracts/src/routes.json', import.meta.url), 'utf8')) as RouteManifest;
@@ -95,6 +96,7 @@ test('all canonical routes render inside the real React demo application', async
     // Each route opens a fresh page and bootstraps its own session.
     test.setTimeout(240_000);
     const errors: string[] = [];
+    const menuTitles = new Map(navigation.flatMap(group => group.items.map(([id, title]) => [String(id), title] as const)));
     // The route walk verifies the shipped demo. Source chunk-failure checks below
     // continue to use their separate live dev server.
     const built = await startDemoPreview();
@@ -114,6 +116,11 @@ test('all canonical routes render inside the real React demo application', async
                     const main = page.locator('main#main-content');
                     await expect(main, `${route.id} should mount the shop-scoped page`).toBeVisible({ timeout: 15_000 });
                     await expect(main.getByRole('heading').first(), `${route.id} should render page content`).toBeVisible();
+                    const menuTitle = menuTitles.get(route.id);
+                    if (menuTitle) {
+                        await expect(main.getByRole('heading', { level: 1, name: menuTitle, exact: true })).toBeVisible();
+                        await expect(page).toHaveTitle(`${menuTitle} · BotSales AI`);
+                    }
                     await expect(main.getByRole('heading', { name: 'Không thể mở màn hình', exact: true }), `${route.id} should not fall through to the router error boundary`).toHaveCount(0);
                     await expect(page.getByText('Dữ liệu mô phỏng', { exact: true }), `${route.id} should disclose the synthetic data source`).toBeVisible();
                 } else {

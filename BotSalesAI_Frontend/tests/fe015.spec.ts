@@ -118,7 +118,7 @@ test('FE021.E08 report explanation is mock-only, cites the filtered P&L snapshot
         if (url.pathname.includes('/shops/') && request.method() !== 'GET') writes.push(`${request.method()} ${url.pathname}`);
     });
     await gotoDemo(page, '/s/shop-demo/finance/profit-loss');
-    await expect(page.getByRole('heading', { name: 'Lợi nhuận quản trị', exact: true })).toBeVisible();
+    await expect(page.getByRole('heading', { name: 'Lợi nhuận', exact: true })).toBeVisible();
     await expect(page.getByRole('heading', { name: 'Hỏi đáp có nguồn', exact: true })).toBeVisible();
     await expect(page.getByText(/Chế độ mô phỏng: câu trả lời theo mẫu cố định/)).toBeVisible();
 
@@ -207,7 +207,7 @@ test('FE015.E02/E03 profit report renders canonical cost, gross-profit and opera
         aiExpense: { amount: string; currency: string };
         otherOperatingExpenses: { amount: string; currency: string };
     };
-    await expect(page.getByRole('heading', { name: 'Lợi nhuận quản trị', exact: true })).toBeVisible();
+    await expect(page.getByRole('heading', { name: 'Lợi nhuận', exact: true })).toBeVisible();
     for (const label of ['Giá vốn', 'Lãi gộp', 'Chi phí giao', 'Phí nền tảng', 'Phí thanh toán', 'Chi phí AI', 'Chi phí khác']) {
         await expect(page.getByText(label, { exact: true }).first()).toBeVisible();
     }
@@ -330,7 +330,7 @@ test('FE015.E04 permission changes clear a statement preview before writes resum
         window.dispatchEvent(new Event('online'));
     });
     await expect(dialog).toHaveCount(0);
-    await expect(page.getByRole('heading', { name: 'Đối soát ngân hàng & COD' })).toBeVisible();
+    await expect(page.getByRole('heading', { name: 'Đối soát' })).toBeVisible();
     await expect(page.getByRole('button', { name: 'Nhập bảng đối soát' })).toHaveCount(0);
     expect(submissions).toBe(0);
 });

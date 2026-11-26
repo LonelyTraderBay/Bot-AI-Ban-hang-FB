@@ -206,7 +206,8 @@ test('FE011.AC05 inventory reflows at mobile widths, passes axe, and restores ke
     const audit = await new AxeBuilder({ page }).withTags(['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa']).analyze();
     expect(audit.violations).toEqual([]);
 
-    const trigger = page.getByRole('row').filter({ hasText: 'DEMO-001' }).getByRole('button', { name: 'Điều chỉnh' });
+    const trigger = page.getByRole('region', { name: 'Tồn kho theo vị trí' }).getByRole('listitem')
+        .filter({ hasText: 'DEMO-001' }).getByRole('button', { name: 'Điều chỉnh' });
     await trigger.click();
     const dialog = page.getByRole('dialog', { name: /Điều chỉnh DEMO-001/ });
     await expect(dialog).toBeVisible();
