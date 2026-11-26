@@ -43,8 +43,17 @@ test('UI61 A01 empty table content and actions fit the visible surface at 320/39
             }
         }
     }
-    await ready(page, 'R07'); const table = page.locator('main [role="region"]').filter({ has: page.locator('table') }).first();
-    await page.setViewportSize({ width: 320, height: 900 }); await table.focus();
+    await page.setViewportSize({ width: 320, height: 900 });
+    await ready(page, 'R07');
+    const customers = page.getByRole('region', { name: 'Danh sách khách hàng', exact: true });
+    await expect(customers.getByRole('list')).toBeVisible();
+    await customers.focus();
+    await expect(customers).toBeFocused();
+    expect(await customers.evaluate(node => node.scrollWidth - node.clientWidth)).toBeLessThanOrEqual(1);
+
+    await ready(page, 'R58');
+    const table = page.getByRole('region', { name: 'Sổ cái theo chứng từ', exact: true });
+    await table.focus();
     const before = await table.evaluate(node => node.scrollLeft); await page.keyboard.press('ArrowRight');
     await expect.poll(() => table.evaluate(node => node.scrollLeft)).toBeGreaterThan(before);
     await info.attach('empty-geometry.json', { body: JSON.stringify(observations), contentType: 'application/json' });
@@ -56,7 +65,7 @@ test('UI61 A02 status chips retain intrinsic width in headers and privacy fields
         await page.setViewportSize({ width, height: 900 });
         for (const id of ['R22','R24','R26','R30','R35','R51']) {
             await ready(page, id);
-            const chips = await page.locator('main .MuiChip-root').evaluateAll(nodes => nodes.filter(node => !node.closest('td')).map(node => {
+            const chips = await page.locator('main .MuiChip-root').evaluateAll(nodes => nodes.filter(node => !node.closest('td, [data-ui-table-layout="cards"]')).map(node => {
                 const clone = node.cloneNode(true) as HTMLElement;
                 Object.assign(clone.style, { position: 'fixed', visibility: 'hidden', width: 'max-content', maxWidth: node.parentElement!.clientWidth + 'px' });
                 node.parentElement!.append(clone); const natural = clone.getBoundingClientRect().width; clone.remove();

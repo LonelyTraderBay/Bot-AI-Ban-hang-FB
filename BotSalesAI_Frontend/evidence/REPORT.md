@@ -12,6 +12,8 @@ Ma trận demo có 268 lượt render tại 390 và 1440 px trên Chromium và F
 
 CI của `fb6bffd7` phát hiện một số phép kiểm còn dùng tiêu đề trước khi đồng bộ. Các ma trận tải, sẵn sàng, dữ liệu cũ và phục hồi kết quả chưa rõ hiện đối chiếu tên menu với tiêu đề trình duyệt, dùng tên manifest cho route ngoài menu. Ca bố cục AI và bản tin dùng tiêu đề màn hiện hành. Ca trạng thái rỗng R52 trên Firefox ghi nhận mục chọn chưa ổn định rồi rời DOM. Bộ kiểm dùng `waitForDemoMenu` và đợi xác nhận vai trò trước khi chọn dữ liệu rỗng. Các kiểm tra quyền, phản hồi HTTP, trạng thái, kích thước và hộp thoại vẫn được thực hiện. [Lượt CI đầu của PR #45](https://github.com/LonelyTraderBay/Bot-AI-Ban-hang-FB/actions/runs/45752807156)
 
+CI của `40bdba81` tìm thấy ca Mở sổ và Danh mục sản phẩm vẫn chờ thẻ HTML `<table>` ở chiều rộng mobile. Ca Mở sổ hiện kiểm vùng thẻ và thông báo rỗng, đồng thời giữ kiểm bảng cho desktop và các báo cáo đối chiếu. Ca Danh mục kiểm danh sách hoặc bảng theo chiều rộng và giữ khẳng định phân trang cùng vùng nội dung. Ca Đơn hàng và Khách hàng kiểm vùng bấm và mở chi tiết bằng Enter. Ca cuộn ngang bằng phím dùng bảng đối chiếu Sổ cái. [Lượt CI của `40bdba81`](https://github.com/LonelyTraderBay/Bot-AI-Ban-hang-FB/actions/runs/45753725630)
+
 Kết quả của đợt này có phạm vi kiểm tự động cục bộ và đọc API ở môi trường mẫu. CI từ xa, kiểm bằng trình đọc màn hình, thiết bị thật và nghiệm thu người dùng còn chờ thực hiện.
 
 ## Cân chỉnh bố cục Hộp thư R05 và R06 · 25/11/2026

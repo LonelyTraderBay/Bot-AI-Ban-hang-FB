@@ -108,18 +108,17 @@ test('S15 catalog QueryState fragment keeps DataTable and Pager as peer children
     for (const width of [390, 806, 1440]) {
         await openRoute(page, '/s/shop-demo/products', width);
         await expect(page.getByRole('heading', { name: 'Sản phẩm', exact: true })).toBeVisible();
-        const table = page.getByRole('table').first();
+        const collection = page.getByRole('region', { name: 'Danh sách sản phẩm', exact: true });
         const next = page.getByRole('button', { name: 'Trang tiếp', exact: true });
-        await expect(table).toBeVisible();
+        await expect(collection.getByRole(width < 768 ? 'list' : 'table')).toBeVisible();
         await expect(next).toBeVisible();
-        const relationship = await page.evaluate(() => {
-            const main = document.querySelector('main');
-            const region = main?.querySelector('[role="region"]');
+        const relationship = await collection.evaluate(region => {
+            const main = region.closest('main');
             const nextButton = [...(main?.querySelectorAll('button') || [])].find(button => button.textContent?.trim() === 'Trang tiếp');
             const pagerRoot = nextButton?.parentElement?.parentElement;
-            const panel = region?.closest('.MuiPaper-root');
+            const panel = region.closest('.MuiPaper-root');
             return {
-                regionAndPagerShareContentParent: !!region && !!pagerRoot && region.parentElement === pagerRoot.parentElement,
+                regionAndPagerShareContentParent: !!pagerRoot && region.parentElement === pagerRoot.parentElement,
                 regionAndPagerSharePanel: !!panel && panel === pagerRoot?.closest('.MuiPaper-root'),
                 documentWidth: document.documentElement.scrollWidth,
                 viewportWidth: document.documentElement.clientWidth,
