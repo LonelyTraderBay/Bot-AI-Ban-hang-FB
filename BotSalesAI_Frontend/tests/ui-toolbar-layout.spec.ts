@@ -110,7 +110,8 @@ test('Shared consolidation Inbox filters share Toolbar ownership and stay outsid
         await page.setViewportSize({ width, height: 1000 });
         await ready(page, `/s/shop-demo/${route}`);
         const filters = page.locator('[aria-label="Bộ lọc hội thoại"]');
-        await expect(filters).toHaveAttribute('data-ui-composition', 'field-group');
+        await expect(filters).toHaveAttribute('data-ui-composition', 'section-grid');
+        await expect(filters).toHaveAttribute('data-ui-rhythm', 'content');
         await expect(filters).toHaveAttribute('role', 'group');
         await expect(filters.getByRole('combobox', { includeHidden: true })).toHaveCount(4);
         const hiddenList = route.includes('/') && width < 1280;

@@ -14,6 +14,8 @@ CI của `fb6bffd7` phát hiện một số phép kiểm còn dùng tiêu đề 
 
 CI của `40bdba81` tìm thấy ca Mở sổ và Danh mục sản phẩm vẫn chờ thẻ HTML `<table>` ở chiều rộng mobile. Ca Mở sổ hiện kiểm vùng thẻ và thông báo rỗng, đồng thời giữ kiểm bảng cho desktop và các báo cáo đối chiếu. Ca Danh mục kiểm danh sách hoặc bảng theo chiều rộng và giữ khẳng định phân trang cùng vùng nội dung. Ca Đơn hàng và Khách hàng kiểm vùng bấm và mở chi tiết bằng Enter. Ca cuộn ngang bằng phím dùng bảng đối chiếu Sổ cái. [Lượt CI của `40bdba81`](https://github.com/LonelyTraderBay/Bot-AI-Ban-hang-FB/actions/runs/45753725630)
 
+CI của `a8817d1a` ghi nhận ca bố cục Hộp thư vẫn chờ `FieldGroup` ở vùng bộ lọc. Ca kiểm hiện dùng `SectionGrid` với nhịp khoảng cách `content` như giao diện đang chạy. Các khẳng định về quan hệ với form tìm kiếm, bốn trường lọc, kích thước, các khổ 320–1440 px và axe vẫn được thực hiện. Sau sửa, chạy cục bộ Chromium 7/9 đạt 92/92 ca và ca Hộp thư trên Firefox đạt 1/1. [Job Chromium](https://github.com/LonelyTraderBay/Bot-AI-Ban-hang-FB/actions/runs/45754757530/job/139690797142)
+
 Kết quả của đợt này có phạm vi kiểm tự động cục bộ và đọc API ở môi trường mẫu. CI từ xa, kiểm bằng trình đọc màn hình, thiết bị thật và nghiệm thu người dùng còn chờ thực hiện.
 
 ## Cân chỉnh bố cục Hộp thư R05 và R06 · 25/11/2026
