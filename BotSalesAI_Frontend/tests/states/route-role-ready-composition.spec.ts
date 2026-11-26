@@ -2,6 +2,7 @@ import { openDemoControls, waitForDemoMenu, navigateDemoAndRead } from '../sessi
 import { readFileSync } from 'node:fs';
 import { test, expect } from '@playwright/test';
 import { startDemoServer } from '../session/demo-server.mjs';
+import { expectedDocumentTitle } from '../session/document-title';
 
 // Each role has its own page/context, clock and response map; only the server is shared.
 test.describe.configure({ mode: 'parallel' });
@@ -107,7 +108,7 @@ test.describe('ready route content renders for every role granted read access by
                 await expect(main, `${route.id} should render for ${role}`).toBeVisible();
                 await expect(main.getByRole('heading').first(), `${route.id} should expose route content for ${role}`).toBeVisible();
                 await expect.poll(() => new URL(page.url()).pathname, { message: `${route.id} should become the active router location for ${role}` }).toBe(routePath(route.path));
-                await expect.poll(() => page.title(), { message: `${route.id} should update canonical route metadata for ${role}` }).toBe(`${route.title} · BotSales AI`);
+                await expect.poll(() => page.title(), { message: `${route.id} should update canonical route metadata for ${role}` }).toBe(expectedDocumentTitle(route));
                 const primaryOperation = route.readOperations[0];
                 await expect.poll(() => operationStatuses.has(primaryOperation), { message: `${route.id} should complete ${primaryOperation} before state changes for ${role}` }).toBe(true);
                 await expect(main.getByText(/Đang tải/), `${route.id} should settle its visible loading state for ${role}`).toHaveCount(0, { timeout: 10_000 });
@@ -150,7 +151,7 @@ test.describe('ready route content renders for every role granted read access by
                     window.dispatchEvent(new PopStateEvent('popstate', { state: window.history.state }));
                 }, loadedRouteLocations.get(route.id) || routePath(route.path));
                 const main = page.locator('main#main-content');
-                await expect.poll(() => page.title(), { message: `${route.id} should remain the active route while showing stale data for ${role}` }).toBe(`${route.title} · BotSales AI`);
+                await expect.poll(() => page.title(), { message: `${route.id} should remain the active route while showing stale data for ${role}` }).toBe(expectedDocumentTitle(route));
                 await expect(main.getByRole('heading').first(), `${route.id} should retain its loaded content for ${role}`).toBeVisible();
                 await expect(main.getByText(/có thể đã cũ/i).first(), `${route.id} should explain when retained data may be stale for ${role}`).toBeVisible({ timeout: 15_000 });
                 console.log(`BROWSER=${browser} ROLE_STATE=stale_or_offline ROLE=${role} ROUTE=${route.id} RESULT=PASS`);

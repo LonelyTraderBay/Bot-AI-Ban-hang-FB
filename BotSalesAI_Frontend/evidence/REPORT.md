@@ -10,6 +10,8 @@ Ma trận demo có 268 lượt render tại 390 và 1440 px trên Chromium và F
 
 `npm run verify` đạt, gồm 291 kiểm thử Vitest, kiểm token, kiểm thành phần, kiểm bố cục, S17 và build production. Bộ hồi quy chọn lọc trên bản demo đã build đạt 128/128 ca Chromium và Firefox, gồm phím, bản nháp Hộp thư, báo cáo, thẻ và chín độ rộng từ 320 đến 1920 px. Hai trình duyệt cùng đo 511.779 byte JavaScript gzip tải đầu trang Tổng quan so với ngưỡng 512.000 byte. Chrome zoom trang 200% và Firefox phóng riêng chữ 200% cùng đạt ba ca gồm thẻ Sổ thu chi, bản nháp dài trong Hộp thư và hộp thoại lý do dài.
 
+CI của `fb6bffd7` phát hiện một số phép kiểm còn dùng tiêu đề trước khi đồng bộ. Các ma trận tải, sẵn sàng, dữ liệu cũ và phục hồi kết quả chưa rõ hiện đối chiếu tên menu với tiêu đề trình duyệt, dùng tên manifest cho route ngoài menu. Ca bố cục AI và bản tin dùng tiêu đề màn hiện hành. Ca trạng thái rỗng R52 trên Firefox ghi nhận mục chọn chưa ổn định rồi rời DOM. Bộ kiểm dùng `waitForDemoMenu` và đợi xác nhận vai trò trước khi chọn dữ liệu rỗng. Các kiểm tra quyền, phản hồi HTTP, trạng thái, kích thước và hộp thoại vẫn được thực hiện. [Lượt CI đầu của PR #45](https://github.com/LonelyTraderBay/Bot-AI-Ban-hang-FB/actions/runs/45752807156)
+
 Kết quả của đợt này có phạm vi kiểm tự động cục bộ và đọc API ở môi trường mẫu. CI từ xa, kiểm bằng trình đọc màn hình, thiết bị thật và nghiệm thu người dùng còn chờ thực hiện.
 
 ## Cân chỉnh bố cục Hộp thư R05 và R06 · 25/11/2026

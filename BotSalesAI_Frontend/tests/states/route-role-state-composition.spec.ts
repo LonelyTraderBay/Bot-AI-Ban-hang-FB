@@ -4,6 +4,7 @@ import { test, expect } from '@playwright/test';
 import { startDemoServer } from '../session/demo-server.mjs';
 import { assertEmptyTable } from '../session/assert-empty-table';
 import { holdRouteReads } from '../session/read-barrier';
+import { expectedDocumentTitle } from '../session/document-title';
 import { API_BASE_PATH } from '../../packages/contracts/src/generated';
 
 // Every role test uses a fresh page fixture; no browser/mock state is shared.
@@ -202,7 +203,7 @@ test.describe('route loading state appears for every readable route with route-o
                     const barrier = await holdRouteReads(page, patterns);
                     try {
                         await navigateWithinDemo(page, route.path);
-                        await expect.poll(() => page.title(), { message: `${route.id} must become the active route for ${role}` }).toBe(`${route.title} · BotSales AI`);
+                        await expect.poll(() => page.title(), { message: `${route.id} must become the active route for ${role}` }).toBe(expectedDocumentTitle(route));
                         const main = page.locator('main#main-content');
                         await expect(main, `${route.id} should render for ${role}`).toBeVisible();
                         const loading = main.getByText(/Đang tải/);

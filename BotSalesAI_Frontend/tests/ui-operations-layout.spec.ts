@@ -58,7 +58,7 @@ test('R52 role-control confirmation stays inside mobile and desktop viewports', 
         { width: 1280, height: 900 },
     ]) {
         await page.setViewportSize({ width, height });
-        await openRoute(page, '/s/shop-demo/operations/digests', 'Bản tin & sức khỏe hệ thống');
+        await openRoute(page, '/s/shop-demo/operations/digests', 'Bản tin & sức khỏe');
         await page.getByRole('button', { name: 'Kiểm tra điều kiện tiếp tục', exact: true }).first().click();
         await expect(page.getByRole('dialog', { name: 'Kiểm tra điều kiện tiếp tục' })).toBeVisible();
         await expectDialogFits(page, width, height);

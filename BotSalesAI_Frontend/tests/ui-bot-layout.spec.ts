@@ -57,22 +57,22 @@ test('Bot config, evaluation, role and budget dialogs stay inside mobile and des
     ]) {
         await page.setViewportSize({ width, height });
 
-        await openRoute(page, '/s/shop-demo/bot', 'Điều khiển Admin AI');
+        await openRoute(page, '/s/shop-demo/bot', 'Cấu hình Admin');
         await page.getByRole('button', { name: 'Sửa bản nháp' }).click();
         await expect(page.getByRole('dialog', { name: 'Cấu hình bản nháp' })).toBeVisible();
         await expectDialogFits(page, width, height);
 
-        await openRoute(page, '/s/shop-demo/bot/evaluations', 'Đánh giá AI');
+        await openRoute(page, '/s/shop-demo/bot/evaluations', 'Chất lượng AI');
         await page.getByRole('button', { name: 'Chạy đánh giá' }).click();
         await expect(page.getByRole('dialog', { name: 'Đánh giá cấu hình nháp' })).toBeVisible();
         await expectDialogFits(page, width, height);
 
-        await openRoute(page, '/s/shop-demo/bot/team', 'Đội ngũ AI');
+        await openRoute(page, '/s/shop-demo/bot/team', 'Bốn nhân viên AI');
         await page.getByRole('button', { name: 'Phân công' }).first().click();
         await expect(page.getByRole('dialog', { name: 'Giao trách nhiệm và cấu hình vai trò' })).toBeVisible();
         await expectDialogFits(page, width, height);
 
-        await openRoute(page, '/s/shop-demo/bot/team', 'Đội ngũ AI');
+        await openRoute(page, '/s/shop-demo/bot/team', 'Bốn nhân viên AI');
         await page.getByRole('button', { name: 'Đổi có phê duyệt' }).first().click();
         await expect(page.getByRole('dialog', { name: 'Đổi giới hạn được duyệt' })).toBeVisible();
         await expectDialogFits(page, width, height);

@@ -1,4 +1,4 @@
-import { openDemoControls } from '../session/demo-controls';
+import { openDemoControls, waitForDemoMenu } from '../session/demo-controls';
 import { readFileSync } from 'node:fs';
 import { test, expect } from '@playwright/test';
 import { startDemoServer } from '../session/demo-server.mjs';
@@ -29,6 +29,7 @@ function routePath(path: string) {
 async function chooseMockOption(page: import('@playwright/test').Page, label: string, value: string) {
     if (['Vai trò mô phỏng', 'Trạng thái thử', 'Dataset mô phỏng'].includes(label)) await openDemoControls(page);
     await page.getByRole('combobox', { name: label }).click();
+    await waitForDemoMenu(page, label);
     await page.getByRole('option', { name: value, exact: true }).click();
 }
 
@@ -91,7 +92,11 @@ for (const role of roles) {
         const server = await startDemoServer();
         try {
             await page.goto(new URL('/s/shop-demo/overview', server.url).toString());
-            if (role !== 'owner') await chooseMockOption(page, 'Vai trò mô phỏng', role);
+            if (role !== 'owner') {
+                await chooseMockOption(page, 'Vai trò mô phỏng', role);
+                await expect(page.getByRole('status').filter({ hasText: 'Vai trò mô phỏng đã được áp dụng.' })).toBeVisible();
+                await expect(page.getByRole('combobox', { name: 'Vai trò mô phỏng' })).toHaveText(role);
+            }
             await chooseMockOption(page, 'Trạng thái thử', 'Danh sách rỗng (demo)');
             await page.evaluate(() => { window.history.pushState({}, '', '/s/shop-demo/operations/digests'); window.dispatchEvent(new PopStateEvent('popstate', { state: window.history.state })); });
             const main = page.locator('main#main-content');
