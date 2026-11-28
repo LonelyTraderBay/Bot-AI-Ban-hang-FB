@@ -122,7 +122,7 @@ export function CustomerPage() {
         <PageHeader title={customer.data?.data.displayName || t('customers.detail.fallbackTitle')} subtitle={t('customers.detail.subtitle')} actions={<RouteLink to={listHref}>{t('customers.detail.listAction')}</RouteLink>}/>
         <QueryState query={customer} pendingProfile="section">
             {customer.data && <SectionGrid shrinkChildren columns={{ xs: '1fr' }}>
-                <Panel title={t('customers.detail.information')} bodyMode="inset">
+                <PageSections geometry={{ maxWidth: layoutSx.form.standardWidth.maxWidth }}><Panel title={t('customers.detail.information')} bodyMode="inset">
                     <FormFields component="form" ref={draftForm} data-draft-clean={!editor.dirty ? 'true' : undefined} onSubmit={save} >
                         <ErrorNotice error={update.error}/>
                         <DraftConflict editor={editor} labels={{ displayName: 'Tên khách hàng', phone: 'Điện thoại', email: 'Email', notes: 'Ghi chú' }} busy={update.pending}/>
@@ -130,7 +130,7 @@ export function CustomerPage() {
                         {customerFormFields.map(field => <TextField key={field.name} label={t(field.labelKey)} {...form.register(field.name)} error={!!form.formState.errors[field.name]} helperText={form.formState.errors[field.name]?.message} disabled={!canEdit || customer.data?.data.redactedFields.includes(field.name)} multiline={field.multiline} minRows={field.multiline ? 3 : undefined}/>)}
                         <MutationButton permission="customers.write" type="submit" variant="contained" busy={update.pending} disabled={!editor.dirty}>{t('customers.form.saveAction')}</MutationButton>
                     </FormFields>
-                </Panel>
+                </Panel></PageSections>
                 <PageSections >
                     <AddressesPanel key={customer.data.data.id} customer={customer.data.data}/>
                     <Panel title={t('customers.detail.recentOrders')} bodyMode="inset">

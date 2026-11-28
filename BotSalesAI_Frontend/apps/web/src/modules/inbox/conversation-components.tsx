@@ -1,5 +1,5 @@
 import {label as businessLabel} from '@/shared/model/labels';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useId, useRef, useState } from 'react';
 import { visualSx } from '@/shared/ui/visual';
 import type { ChangeEvent, ReactNode } from 'react';
 import { Alert, Box, Button, Divider, FormControlLabel, Checkbox, IconButton, MenuItem, Stack, TextField, Typography } from '@mui/material';
@@ -7,12 +7,12 @@ import AttachFileRounded from '@mui/icons-material/AttachFileRounded';
 import CloseRounded from '@mui/icons-material/CloseRounded';
 import SendRounded from '@mui/icons-material/SendRounded';
 import type { Conversation, Message, MessageAttachment } from '@botsales/contracts';
-import { colors } from '@botsales/tokens';
+import { colors, tokens } from '@botsales/tokens';
 import { request } from '@/shared/api/client';
 import { useApi, useCommand } from '@/shared/api/hooks';
 import { useCan, useCanWrite, useScope } from '@/shared/model/scope';
 import { limitCodePoints, dateTime } from '@/shared/model/format';
-import { DetailLine, EditDialog, ErrorNotice, MutationButton, Panel, RouteLink, Status } from '@/shared/ui/components';
+import { DetailLine, EditDialog, ErrorNotice, MutationButton, RouteLink, Status } from '@/shared/ui/components';
 import { ActionGroup, FormFields, SurfaceContent } from '@/shared/ui/composition';
 import { layoutSx } from '@/shared/ui/layout';
 
@@ -43,6 +43,7 @@ export function ConversationComposer({ conversation }: {
     const [internal, setInternal] = useState(false);
     const [attachments, setAttachments] = useState<DraftAttachment[]>([]);
     const [mediaError, setMediaError] = useState('');
+    const attachmentHintId = useId();
     const revision = useRef(0);
     const currentConversation = useRef(conversation.id);
     const attachmentInput = useRef<HTMLInputElement>(null);
@@ -194,7 +195,7 @@ export function ConversationComposer({ conversation }: {
             }}
             sx={[layoutSx.inbox.composerInset, { borderTop: 1, borderColor: 'divider', minHeight: 0, display: 'flex', flexDirection: 'column' }]}
         >
-            <Box data-testid="inbox-composer-body" sx={{ minHeight: 0, minWidth: 0, flex: { xl: '1 1 auto' }, overflowY: { xl: 'auto' } }}>
+            <Box data-testid="inbox-composer-body" sx={{ minHeight: 0, minWidth: 0, flex: '1 1 auto', overflowY: 'auto' }}>
             <ErrorNotice error={send.error || note.error} />
             <FormControlLabel
                 label="Ghi chú nội bộ (không gửi khách)"
@@ -203,10 +204,12 @@ export function ConversationComposer({ conversation }: {
             <TextField
                 fullWidth
                 multiline
-                minRows={2}
-                maxRows={7}
+                size="small"
+                minRows={1}
+                maxRows={4}
                 label={internal ? 'Ghi chú cho nhóm' : 'Nội dung trả lời khách'}
                 value={text}
+                sx={{ '& textarea:focus-visible': { outline: `${tokens.focusRing.width}px solid ${colors.accent}`, outlineOffset: tokens.focusRing.controlOffset } }}
                 onChange={event => { revision.current += 1; setText(limitCodePoints(event.target.value, internal ? 10000 : 20000)); }}
                 disabled={!canReply}
             />
@@ -223,9 +226,6 @@ export function ConversationComposer({ conversation }: {
                         disabled={!canSend || upload.pending}
                         onChange={event => void chooseFiles(event)}
                     />
-                    {mediaPolicy && <Typography variant="body2" color="text.secondary">
-                        Tối đa {mediaPolicy.maxAttachmentCount} tệp, {Math.ceil(mediaPolicy.maxFileSizeBytes / 1048576)} MB mỗi tệp. {__MOCK__ ? 'Chỉ gửi sau khi kiểm tra mô phỏng đạt.' : 'Chỉ gửi tệp đã sẵn sàng.'}
-                    </Typography>}
                     {mediaError && <Alert severity="warning" onClose={() => setMediaError('')}>{mediaError}</Alert>}
                     {attachments.map(attachment => (
                         <Stack key={attachment.localId} sx={[layoutSx.inbox.messageContentGap, layoutSx.surface.compactInset, { minWidth: 0, border: 1, borderColor: 'divider', borderRadius: visualSx.radius.control }]}>
@@ -253,22 +253,24 @@ export function ConversationComposer({ conversation }: {
             {!internal && !mediaSupported && <Alert severity="info">Kênh này chưa khai báo loại tệp được hỗ trợ; bạn vẫn có thể gửi văn bản.</Alert>}
             {!internal && !__MOCK__ &&
                 <Typography variant="body2" color="text.secondary">Chưa hỗ trợ nhắn riêng từ bình luận Facebook.</Typography>}
-                {(!online || !canSend) && <Typography variant="body2" color="text.secondary">
+                {!internal && mediaSupported && mediaPolicy && canSend && <Typography id={attachmentHintId} variant="caption" color="text.secondary" component="p">
+                    Tối đa {mediaPolicy.maxAttachmentCount} tệp · {Math.ceil(mediaPolicy.maxFileSizeBytes / 1048576)} MB mỗi tệp.
+                </Typography>}
+                {(!online || (!canSend && (internal || conversation.sendEligibility.state === 'allowed'))) && <Typography variant="body2" color="text.secondary">
                     {!online ? 'Đang ngoại tuyến' : 'Cần tiếp quản hoặc quyền gửi hợp lệ'}
                 </Typography>}
             </Box>
             <Stack direction="row" alignItems="center" justifyContent={!internal && mediaSupported ? 'space-between' : 'flex-end'} sx={[layoutSx.inbox.composerControlsBeforeGap, layoutSx.inbox.composerActionGap, { flexShrink: 0, flexWrap: 'wrap' }]}>
-                {!internal && mediaSupported && <Button
-                    size="small"
-                    startIcon={<AttachFileRounded />}
-                    disabled={!canSend || upload.pending || attachments.length >= (mediaPolicy?.maxAttachmentCount || 0)}
-                    onClick={() => attachmentInput.current?.click()}
-                >
-                    Đính kèm
-                </Button>}
+                {!internal && mediaSupported && mediaPolicy && <Button type="button" size="small" startIcon={<AttachFileRounded />} aria-describedby={canSend ? attachmentHintId : undefined}
+                        disabled={!canSend || upload.pending || attachments.length >= mediaPolicy.maxAttachmentCount}
+                        onClick={() => attachmentInput.current?.click()}>
+                        Đính kèm
+                    </Button>}
                 <Button
                     type="submit"
                     variant="contained"
+                    size="small"
+                    sx={layoutSx.actions.compactFace}
                     endIcon={<SendRounded />}
                     disabled={!canSend || sendingBlocked}
                 >
@@ -282,7 +284,7 @@ export function ConversationComposer({ conversation }: {
 export function ConversationMessageList({ messages, timezone, onRate }: {
     messages: Message[];
     timezone: string;
-    onRate: (message: Message) => void;
+    onRate?: (message: Message) => void;
 }) {
     const note = useCommand('addInternalNote', ['listMessages']);
     const [review, setReview] = useState<{ conversationId: string; messageId: string; fileId: string; name: string } | null>(null);
@@ -321,11 +323,11 @@ export function ConversationMessageList({ messages, timezone, onRate }: {
                         {messageText && <Typography sx={{ whiteSpace: 'pre-wrap', overflowWrap: 'anywhere' }}>{displayText}</Typography>}
                         {mockConfirmation && <Typography variant="caption" color="text.secondary">Xác nhận mẫu · mã báo giá {mockConfirmation[1]}</Typography>}
                         {message.attachments?.map(attachment => <MessageAttachmentView key={attachment.fileId} attachment={attachment}
-                            onReview={() => {
+                            onReview={onRate ? () => {
                                 setTranscript('');
                                 note.clearError();
                                 setReview({ conversationId: message.conversationId, messageId: message.id, fileId: attachment.fileId, name: attachment.name });
-                            }} />)}
+                            } : undefined} />)}
                     </Stack>
                     {message.sourceEvidence.length > 0 && (
                         <Box component="details">
@@ -343,13 +345,13 @@ export function ConversationMessageList({ messages, timezone, onRate }: {
                     )}
                     <Stack direction="row" alignItems="center" sx={[layoutSx.inbox.composerActionGap, { flexWrap: 'wrap' }]}>
                         <Typography variant="caption" color="text.secondary">{dateTime(message.createdAt, timezone)} · {businessLabel(message.status, 'message')}</Typography>
-                        <Button
+                        {onRate && <Button
                             size="small"
                             aria-label={`Đánh giá tin nhắn của ${senderLabel} lúc ${dateTime(message.createdAt, timezone)}: ${messagePreview}`}
                             onClick={() => onRate(message)}
                         >
                             Đánh giá
-                        </Button>
+                        </Button>}
                     </Stack>
                 </Stack>
             </Box>
@@ -368,7 +370,7 @@ export function ConversationMessageList({ messages, timezone, onRate }: {
     </>;
 }
 
-function MessageAttachmentView({ attachment, onReview }: { attachment: MessageAttachment; onReview: () => void }) {
+function MessageAttachmentView({ attachment, onReview }: { attachment: MessageAttachment; onReview?: () => void }) {
     const { shop, membership } = useScope();
     const [readUrl, setReadUrl] = useState<string | null>(null);
     const [failed, setFailed] = useState(false);
@@ -405,18 +407,20 @@ function MessageAttachmentView({ attachment, onReview }: { attachment: MessageAt
     if (attachment.mimeType.startsWith('image/')) return <Box component="img" src={readUrl} alt={attachment.name} sx={{ display: 'block', maxWidth: 'min(100%, 360px)', maxHeight: 280, objectFit: 'contain', borderRadius: visualSx.radius.control }} />;
     if (attachment.mimeType.startsWith('audio/')) return <FormFields>
         <audio controls preload="metadata" src={readUrl} aria-label={`Phát ${attachment.name}`} style={{ maxWidth: '100%' }} />
-        <MutationButton permission="conversations.reply" onClick={onReview}>Duyệt bản chép lời</MutationButton>
+        {onReview && <MutationButton permission="conversations.reply" onClick={onReview}>Duyệt bản chép lời</MutationButton>}
     </FormFields>;
     return <a href={readUrl} download={attachment.name}>{attachment.name} · tải tệp</a>;
 }
 
-export function ConversationContextPanel({ conversation, children }: {
+export function ConversationContextPanel({ conversation, hidden, children, onCreateOrder }: {
     conversation: Conversation;
+    hidden: boolean;
     children?: ReactNode;
+    onCreateOrder?: () => void;
 }) {
     const { shop, session } = useScope();
     const canReadCustomers = useCan('customers.read');
-    const canCreateOrders = useCanWrite('orders.write');
+    const canAssign = useCan('conversations.assign');
     const metadata = useApi('getInboxMetadata');
     const assign = useCommand('assignConversation', ['getConversation', 'listConversations']);
     const [assignee, setAssignee] = useState('');
@@ -429,55 +433,52 @@ export function ConversationContextPanel({ conversation, children }: {
             data-testid="inbox-context-panel"
             component="aside"
             aria-label="Bối cảnh khách hàng"
-            tabIndex={0}
-            sx={{ minWidth: 0, minHeight: 0, maxHeight: { xl: 650 }, overflowY: { xl: 'auto' } }}
+            sx={{ display: hidden ? 'none' : 'flex', flexDirection: 'column', flex: 1, minWidth: 0, minHeight: 0 }}
         >
-            <Panel title="Bối cảnh khách hàng">
-                <Box data-testid="inbox-context-content" sx={layoutSx.inbox.contextInset}>
-                    <DetailLine label="Trạng thái"><Status value={conversation.status} /></DetailLine>
-                    {conversation.assignedUserId && (
-                        <DetailLine label="Người phụ trách">{assignedName || 'Chưa xác định tên nhân viên'}</DetailLine>
-                    )}
-                    <DetailLine label="Kênh">
-                        {metadata.data?.data.channels.find(channel => channel.id === conversation.channelId)?.displayName || conversation.channelId}
-                    </DetailLine>
+            <Box data-testid="inbox-context-content" role="region" aria-label="Chi tiết khách hàng" tabIndex={0}
+                sx={[layoutSx.inbox.contextInset, { minHeight: 0, overflowY: 'auto' }]}>
+                <Typography component="h3" variant="h6" sx={[layoutSx.surface.sectionBefore, { overflowWrap: 'anywhere' }]}>{conversation.displayName}</Typography>
+                <DetailLine label="Trạng thái"><Status value={conversation.status} /></DetailLine>
+                <DetailLine label="Kênh">
+                    {metadata.data?.data.channels.find(channel => channel.id === conversation.channelId)?.displayName || conversation.channelId}
+                </DetailLine>
+                <DetailLine label="Người phụ trách">
+                    {conversation.assignedUserId ? assignedName || 'Chưa xác định tên nhân viên' : 'Chưa phân công'}
+                </DetailLine>
+                <ActionGroup density="comfortable" flexWrap="wrap" alignItems="center">
                     {canReadCustomers
                         ? <RouteLink to={`/s/${shop.id}/customers/${conversation.customerId}`}>Hồ sơ khách</RouteLink>
                         : <Typography variant="caption" color="text.secondary">Thông tin khách bị ẩn theo quyền hiện tại.</Typography>}
-                    {canCreateOrders && (
-                        <RouteLink to={`/s/${shop.id}/orders/new?customerId=${conversation.customerId}&conversationId=${conversation.id}`}>
-                            Tạo đơn từ hội thoại
-                        </RouteLink>
-                    )}
-                    <FormFields density="compact">
-                        <Divider />
-                        <TextField label="Giao cho nhân viên" select fullWidth size="small" value={assignee} SelectProps={{ displayEmpty: true }} onChange={event => setAssignee(event.target.value)}>
-                            <MenuItem value="">Chọn nhân viên</MenuItem>
-                            {metadata.data?.data.assignees.map(user => <MenuItem key={user.userId} value={user.userId}>{user.displayName}</MenuItem>)}
-                        </TextField>
-                        <ActionGroup>
-                            <MutationButton
-                                permission="conversations.assign"
-                                disabled={!assignee}
-                                busy={assign.pending}
-                                onClick={() => {
-                                    void assign.execute({
-                                        path: { conversationId: conversation.id },
-                                        body: { userId: assignee, expectedVersion: conversation.version },
-                                    }).catch(() => undefined);
-                                }}
-                            >
-                                Phân công
-                            </MutationButton>
-                        </ActionGroup>
-                        <ErrorNotice error={assign.error} />
-                    </FormFields>
-                    {children}
-                    <SurfaceContent beforeGap="surface">
-                        <Typography variant="body2" color="text.secondary" sx={{ overflowWrap: 'anywhere' }}>Mã hội thoại · {conversation.id}</Typography>
-                    </SurfaceContent>
-                </Box>
-            </Panel>
+                    {onCreateOrder && <Button onClick={onCreateOrder}>Tạo đơn từ hội thoại</Button>}
+                </ActionGroup>
+                {canAssign && <FormFields density="compact">
+                    <Divider />
+                    <TextField label="Giao cho nhân viên" select fullWidth size="small" value={assignee} SelectProps={{ displayEmpty: true }} onChange={event => setAssignee(event.target.value)}>
+                        <MenuItem value="">Chọn nhân viên</MenuItem>
+                        {metadata.data?.data.assignees.map(user => <MenuItem key={user.userId} value={user.userId}>{user.displayName}</MenuItem>)}
+                    </TextField>
+                    <ActionGroup>
+                        <MutationButton
+                            permission="conversations.assign"
+                            disabled={!assignee}
+                            busy={assign.pending}
+                            onClick={() => {
+                                void assign.execute({
+                                    path: { conversationId: conversation.id },
+                                    body: { userId: assignee, expectedVersion: conversation.version },
+                                }).catch(() => undefined);
+                            }}
+                        >
+                            Phân công
+                        </MutationButton>
+                    </ActionGroup>
+                    <ErrorNotice error={assign.error} />
+                </FormFields>}
+                {children}
+                <SurfaceContent beforeGap="surface">
+                    <Typography variant="body2" color="text.secondary" sx={{ overflowWrap: 'anywhere' }}>Mã hội thoại · {conversation.id}</Typography>
+                </SurfaceContent>
+            </Box>
         </Box>
     );
 }

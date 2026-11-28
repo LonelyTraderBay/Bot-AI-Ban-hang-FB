@@ -32,7 +32,7 @@ export const theme = createTheme({
                 body: { margin: 0, colorScheme: 'dark', backgroundColor: colors.canvas }, '*': { boxSizing: 'border-box' }, 'a': { color: colors.accent }, ':focus-visible': { outline: `${tokens.focusRing.width}px solid ${colors.accent}`, outlineOffset: tokens.focusRing.globalOffset }, '::selection': { background: colors.selected, color: colors.textPrimary }, '@media (prefers-reduced-motion: reduce)': { '*': { animationDuration: `${tokens.motion.reducedMotionMs}ms !important`, transitionDuration: `${tokens.motion.reducedMotionMs}ms !important`, scrollBehavior: 'auto !important' } }, '@media (forced-colors: active)': { ':focus-visible': { outlineColor: 'Highlight' }, button: { border: '1px solid ButtonText' } }
             } },
         MuiButton: { defaultProps: { disableElevation: true }, styleOverrides: {
-                root: { minHeight: tokens.layout.touchTarget, borderRadius: tokens.radius.control, '&.Mui-focusVisible': { outline: `${tokens.focusRing.width}px solid ${colors.accent}`, outlineOffset: tokens.focusRing.controlOffset }, '&.MuiButton-contained': { transition: 'none' }, '&.MuiButton-contained.Mui-disabled': { color: colors.textPrimary, backgroundColor: colors.raised, opacity: 1, boxShadow: 'none' } }, containedPrimary: { '&:hover': { backgroundColor: colors.accentHover }, '&:active': { backgroundColor: colors.accentPressed } }, outlined: { borderColor: colors.borderControl }
+                root: { minHeight: tokens.layout.touchTarget, borderRadius: tokens.radius.control, '&.Mui-focusVisible': { outline: `${tokens.focusRing.width}px solid ${colors.accent}`, outlineOffset: tokens.focusRing.controlOffset }, '&.MuiButton-contained': { transition: 'none' }, '&.MuiButton-contained.Mui-disabled': { color: colors.textPrimary, backgroundColor: colors.raised, opacity: 1, boxShadow: 'none' } }, sizeSmall: { fontSize: tokens.fontSizes.buttonCompact }, containedPrimary: { '&:hover': { backgroundColor: colors.accentHover }, '&:active': { backgroundColor: colors.accentPressed } }, outlined: { borderColor: colors.borderControl }
             } },
         MuiIconButton: { styleOverrides: { root: { minWidth: tokens.layout.touchTarget, minHeight: tokens.layout.touchTarget, '&.Mui-focusVisible': { outline: `${tokens.focusRing.width}px solid ${colors.accent}`, outlineOffset: tokens.focusRing.controlOffset } } } },
         MuiListItemButton: { styleOverrides: { root: { '&.Mui-focusVisible': { outline: `${tokens.focusRing.width}px solid ${colors.accent}`, outlineOffset: tokens.focusRing.controlOffset } } } },
@@ -61,3 +61,4 @@ export const theme = createTheme({
 });
 
 export const tabletAndUpQuery = theme.breakpoints.up('md');
+export const desktopAndUpQuery = theme.breakpoints.up('lg');

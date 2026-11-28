@@ -208,13 +208,18 @@ export function Bad() { return <TextField sx={{ minWidth: 0, width: 240 }} slotP
 });
 
 test('keeps Panel geometry inspectable and rejects spacing hidden in its geometry prop', () => {
-    writeSource(`export function Good() { return <><Panel geometry={{ display: { xs: 'none', lg: 'block' }, flexDirection: 'column', height: '100%', gridColumn: { xs: 'auto', xl: '1 / -1' } }} />
+    writeSource(`export function Good() { return <><Panel geometry={{ display: { xs: 'none', lg: 'block' }, flexDirection: 'column', height: '100%', gridColumn: { xs: 'auto', xl: '1 / -1' }, overflowY: 'auto' }} />
   <Panel bodyMode="inset" beforeGap="section" afterGap="section" /></>; }
 `);
     let report = reportOf(runChecker());
     assert.equal(report.status, 'PASS', JSON.stringify(report.findings));
 
     writeSource('export function Bad() { return <Panel geometry={{ display: "grid", p: 2 }} />; }\n');
+    report = reportOf(runChecker());
+    assert.equal(report.status, 'FAIL');
+    assert.equal(report.counts.PANEL_GEOMETRY_SPACING_FORBIDDEN, 1);
+
+    writeSource('export function Bad() { return <Panel geometry={{ overflowY: "visible" }} />; }\n');
     report = reportOf(runChecker());
     assert.equal(report.status, 'FAIL');
     assert.equal(report.counts.PANEL_GEOMETRY_SPACING_FORBIDDEN, 1);

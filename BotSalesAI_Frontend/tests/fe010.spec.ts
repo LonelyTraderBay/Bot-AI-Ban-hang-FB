@@ -1,4 +1,4 @@
-import { navigateDemoAndRead, openDemoControls } from './session/demo-controls';
+import { navigateDemoAndRead, setDemoControl } from './session/demo-controls';
 import {test,expect} from '@playwright/test';
 import {mkdir,readFile,writeFile} from 'node:fs/promises';
 import {resolve} from 'node:path';
@@ -21,7 +21,6 @@ async function gotoDemo(page: import('@playwright/test').Page,path: string){
 }
 
 async function chooseMockOption(page: import('@playwright/test').Page,label: string,value: string){
-    if (['Vai trò mô phỏng', 'Trạng thái thử', 'Dataset mô phỏng'].includes(label)) await openDemoControls(page);
     await page.getByRole('combobox',{name:label}).click();
     await page.getByRole('option',{name:value,exact:true}).click();
 }
@@ -210,7 +209,7 @@ test('product update sends If-Match and keeps edits visible after a 412 conflict
     await expect(page.getByRole('heading',{name:'Thông tin sản phẩm',exact:true})).toBeVisible();
     await page.getByLabel('Tên sản phẩm').fill('Áo cập nhật FE010');
     await page.getByLabel('Giá bán (VND)').first().fill('71000');
-    await chooseMockOption(page,'Trạng thái thử','Xung đột lần ghi tiếp');
+    await setDemoControl(page, 'fault', 'conflict');
     const staleSave=page.waitForResponse(response=>response.request().method()==='PATCH'&&new URL(response.url()).pathname.endsWith('/shops/shop-demo/products/p1'));
     await page.getByRole('button',{name:'Lưu sản phẩm',exact:true}).click();
     expect((await staleSave).status()).toBe(412);
@@ -238,7 +237,7 @@ test('product update sends If-Match and keeps edits visible after a 412 conflict
 
 test('warehouse role can read catalog products but cannot edit product fields or price cost data',async({page})=>{
     await gotoDemo(page,'/s/shop-demo/products/p1');
-    await chooseMockOption(page,'Vai trò mô phỏng','warehouse');
+    await setDemoControl(page, 'role', 'warehouse');
     await expect(page.getByLabel('Tên sản phẩm')).toBeDisabled();
     await expect(page.getByLabel('Giá bán (VND)').first()).toBeDisabled();
     await expect(page.getByRole('button',{name:'Lưu sản phẩm',exact:true})).toHaveCount(0);
@@ -537,13 +536,13 @@ test('product category lookup pages the full collection and preserves the select
     await page.getByLabel('Tìm danh mục').fill('');
     await expect(categoryCount(20)).toBeVisible();
 
-    await chooseMockOption(page,'Trạng thái thử','Tải chậm');
+    await setDemoControl(page, 'fault', 'slow');
     await page.getByRole('button',{name:'Tải thêm danh mục'}).click();
     await expect(page.getByRole('button',{name:'Tải thêm danh mục'})).toHaveText('Đang tải…');
     await expect(page.getByLabel('Tên sản phẩm')).toHaveValue('Áo mẫu A');
     await expect(categoryCount(40)).toBeVisible();
 
-    await chooseMockOption(page,'Trạng thái thử','Mất quyền truy vấn tiếp');
+    await setDemoControl(page, 'fault', 'forbidden');
     const forbiddenPage=page.waitForResponse(response=>{
         const url=new URL(response.url());
         return response.request().method()==='GET'&&url.pathname.endsWith('/shops/shop-demo/categories')&&url.searchParams.has('cursor');
@@ -559,7 +558,7 @@ test('product category lookup pages the full collection and preserves the select
     await expect(page.getByRole('combobox',{name:'Danh mục'})).toBeEnabled();
     await page.screenshot({path:resolve(process.cwd(),`evidence/frontend-ui-improvements/UI005/S04-edit-lookup-403-preserves-product-${test.info().project.name}-${evidenceRunId}.png`),fullPage:true});
 
-    await chooseMockOption(page,'Trạng thái thử','Bình thường');
+    await setDemoControl(page, 'fault', 'normal');
     const retryPage=page.waitForResponse(response=>{
         const url=new URL(response.url());
         return response.request().method()==='GET'&&url.pathname.endsWith('/shops/shop-demo/categories')&&url.searchParams.has('cursor');

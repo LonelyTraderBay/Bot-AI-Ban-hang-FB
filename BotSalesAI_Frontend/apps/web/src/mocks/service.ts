@@ -9,13 +9,10 @@ import { orders } from './orders';
 import { fulfillment } from './fulfillment';
 import { markDelegatedPurchasesUnknown, procurement } from './procurement';
 import { allTimeReportWindow, finance, cashflow, profitLoss } from './finance';
-import { auxiliary } from './auxiliary';
 import { clearFileState, files, upload } from './files';
 import { masters, visibleOrderAddress } from './masters';
 import { shippingPolicyOperations } from './shipping-policy';
 import { promotionCurrent, promotionDate, promotionOperations } from './promotions';
-import { stocktakeOperations } from './stocktakes';
-import { stockTransferOperations } from './stock-transfers';
 import type { EventEnvelope } from '@botsales/contracts';
 export { MockFailure };
 export const CSRF = 'botsales-demo-csrf-not-a-real-secret';
@@ -126,10 +123,20 @@ async function read(op: string, input: Input): Promise<unknown> {
     }
     if (op === 'listBotRevisions')
         return all('botRevisions', shopId);
-    if (op === 'getDashboard')
+    if (op === 'getDashboard') {
+        const permissions = grantedPermissions(role);
+        const summary = (states: string[]) => all('orders', shopId).filter(row => states.includes(str(row.orderState)))
+            .sort((a, b) => str(b.updatedAt).localeCompare(str(a.updatedAt))).slice(0, 3)
+            .map(({ id, fulfillmentState, total, updatedAt, customerId }) => ({ id, fulfillmentState, total, updatedAt,
+                customerName: permissions.includes('customers.read') ? all('customers', shopId).find(row => row.id === customerId)?.displayName ?? null : null }));
+        const stock = all('stock', shopId).sort((a, b) => num(a.available) - num(b.available) || str(a.sku).localeCompare(str(b.sku))).slice(0, 3)
+            .map(({ id, sku, onHand, reserved, available }) => ({ id, sku, onHand, reserved, available }));
         return {
-            shopId, asOf: now(), openConversations: all('conversations', shopId).filter(c => c.status === 'open').length, pendingOrders: all('orders', shopId).filter(o => ['draft', 'confirmed'].includes(str(o.orderState))).length, lowStockVariants: all('stock', shopId).filter(s => num(s.available) <= num(s.lowStockThreshold)).length, botStatus: first('bots', shopId).status, recognizedRevenue: grantedPermissions(role).includes('finance.read') ? profitLoss(shopId, allTimeReportWindow(shopId)).netSales : null, cashReceived: grantedPermissions(role).includes('finance.read') ? cashflow(shopId, allTimeReportWindow(shopId)).receipts : null, warnings: ['Môi trường mô phỏng. Các kết nối ngoài chưa hoạt động.']
+            shopId, asOf: now(), openConversations: all('conversations', shopId).filter(c => c.status === 'open').length, pendingOrders: all('orders', shopId).filter(o => ['draft', 'confirmed'].includes(str(o.orderState))).length, lowStockVariants: all('stock', shopId).filter(s => num(s.available) <= num(s.lowStockThreshold)).length, botStatus: first('bots', shopId).status, recognizedRevenue: permissions.includes('finance.read') ? profitLoss(shopId, allTimeReportWindow(shopId)).netSales : null, cashReceived: permissions.includes('finance.read') ? cashflow(shopId, allTimeReportWindow(shopId)).receipts : null, warnings: [],
+            ...(permissions.includes('orders.read') && { pendingOrderRows: summary(['draft', 'confirmed']), completedOrderRows: summary(['completed']) }),
+            ...(permissions.includes('inventory.read') && { availableStockRows: stock }),
         };
+    }
     if (op === 'getOperationsSummary')
         return {
             asOf: now(), queuedTasks: all('workItems', shopId).filter(t => t.state === 'queued').length, overdueTasks: all('workItems', shopId).filter(t => t.dueAt && Date.parse(str(t.dueAt)) < Date.parse(now()) && !['completed', 'cancelled'].includes(str(t.state))).length, pendingApprovals: all('approvals', shopId).filter(a => a.status === 'pending').length, unknownCommands: all('commands', shopId).filter(c => c.status === 'unknown').length, roles: all('agentRoles', shopId), health: [['Meta', 'messenger'], ['AI provider', 'ai'], ['Worker', 'worker'], ['Thông báo điện thoại', 'notifications']].map(([component, runbook]) => ({ component, runbook, status: 'unknown', checkedAt: null, expiresAt: null, reason: 'Chưa có backend và kiểm tra tích hợp thật.' }))
@@ -218,6 +225,12 @@ async function read(op: string, input: Input): Promise<unknown> {
         }
         if (op === 'listProducts' && input.query.has('categoryId'))
             data = data.filter(r => r.categoryId === input.query.get('categoryId'));
+        if (op === 'listOrders') {
+            for (const filter of ['fulfillmentState', 'paymentState'] as const) {
+                const value = input.query.get(filter);
+                if (value) data = data.filter(order => order[filter] === value);
+            }
+        }
         const search = input.query.get('q')?.toLocaleLowerCase('vi');
         if (search)
             data = data.filter(r => JSON.stringify(r).toLocaleLowerCase('vi').includes(search));
@@ -381,9 +394,13 @@ async function execute(request: MockRequest): Promise<MockResult> {
         throw new MockFailure(503, 'SIMULATED_FAILURE', 'Lỗi dịch vụ mô phỏng. Đổi “Thử trạng thái” về bình thường để tiếp tục.');
     }
     if (fault === 'error_persistent_all')
-        throw new MockFailure(503, 'SIMULATED_FAILURE', 'API mô phỏng đang lỗi liên tục. Đổi “Trạng thái thử” về bình thường rồi thử lại.');
+        throw new MockFailure(503, 'SIMULATED_FAILURE', 'API mô phỏng đang lỗi liên tục.');
     if (fault === 'error_persistent' && request.op === 'listDevices')
         throw new MockFailure(503, 'SIMULATED_FAILURE', 'Danh sách thiết bị đang lỗi mô phỏng. Đổi “Thử trạng thái” về bình thường rồi thử tải lại.');
+    if (request.op === 'estimateOrderDraft') {
+        ensure(currentShop?.status !== 'closed', 'Cửa hàng đã đóng.', 409, 'SHOP_CLOSED');
+        return { status: meta.status, data: await orders(request.op, input) };
+    }
     if (fault === 'stale' && mutating) {
         fault = 'none';
         throw new MockFailure(412, 'STALE_VERSION', 'Mô phỏng dữ liệu bị thay đổi bởi người khác.');
@@ -417,8 +434,18 @@ async function execute(request: MockRequest): Promise<MockResult> {
         let data: unknown = masters(request.op,input);
         if (data === undefined) data = shippingPolicyOperations(request.op, input);
         if (data === undefined) data = promotionOperations(request.op, input);
-        if (data === undefined) data = stocktakeOperations(request.op, input);
-        if (data === undefined) data = stockTransferOperations(request.op, input);
+        if (data === undefined && /Stocktake$/.test(request.op) && meta.method !== 'GET') {
+            const { stocktakeOperations } = await import('./stocktakes');
+            data = stocktakeOperations(request.op, input);
+        }
+        if (data === undefined && /StockTransfer$/.test(request.op) && meta.method !== 'GET') {
+            const { stockTransferOperations } = await import('./stock-transfers');
+            data = stockTransferOperations(request.op, input);
+        }
+        if (data === undefined && /ConversationOrderDrafts?$/.test(request.op)) {
+            const { conversationDraftOperations } = await import('./conversation-drafts');
+            data = await conversationDraftOperations(request.op, input);
+        }
         if (request.op === 'uploadFile') {
             ensure(request.form, 'Thiếu file.', 422);
             data = await upload(input, request.form);
@@ -435,8 +462,10 @@ async function execute(request: MockRequest): Promise<MockResult> {
             data = await procurement(request.op, input);
         if (data === undefined)
             data = finance(request.op, input);
-        if (data === undefined)
+        if (data === undefined) {
+            const { auxiliary } = await import('./auxiliary');
             data = await auxiliary(request.op, input);
+        }
         if (data === undefined) {
             const { privacy } = await import('./privacy');
             data = await privacy(request.op, input);

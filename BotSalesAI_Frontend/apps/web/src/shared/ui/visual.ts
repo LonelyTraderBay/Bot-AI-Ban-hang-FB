@@ -3,6 +3,8 @@ import { tokens } from '@botsales/tokens';
 /** Named, theme-backed visual roles for UI consumers. Keep raw design values in the canonical token source. */
 export const visualSx = {
     typography: {
+        screenTitle: { xs: tokens.fontSizes.screenTitleMobile, md: tokens.fontSizes.screenTitleDesktop },
+        panelTitle: tokens.fontSizes.panelTitle,
         fontWeight: {
             regular: tokens.fontWeights.regular,
             semibold: tokens.fontWeights.semibold,
@@ -21,6 +23,11 @@ export const visualSx = {
                 xs: tokens.fontSizes.dashboardTitleCompact,
                 md: tokens.fontSizes.dashboardTitleWide,
             },
+        },
+        metricValue: {
+            fontSize: tokens.fontSizes.metricValue,
+            fontWeight: tokens.fontWeights.semibold,
+            lineHeight: tokens.lineHeights.display,
         },
     },
     radius: {

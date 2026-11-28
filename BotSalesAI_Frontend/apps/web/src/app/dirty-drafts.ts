@@ -1,1 +1,1 @@
-export { consumeFormSubmissionNavigation, hasUnsavedFormDraft, observeFormSubmissions } from '../shared/model/dirty-drafts';
+export { consumeFormSubmissionNavigation, flushDirtyDrafts, hasUnsavedFormDraft, observeFormSubmissions } from '../shared/model/dirty-drafts';

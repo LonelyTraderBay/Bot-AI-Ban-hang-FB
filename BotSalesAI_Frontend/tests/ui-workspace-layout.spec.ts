@@ -1,5 +1,5 @@
 import { expect, test } from '@playwright/test';
-import { openDemoControls, waitForDemoMenu } from './session/demo-controls';
+import { setDemoControl } from './session/demo-controls';
 import { startDemoServer } from './session/demo-server.mjs';
 
 let demoUrl = '';
@@ -145,10 +145,7 @@ test('shop closure lists blockers in the dialog and restricts controls to owners
     await expect(dialog.getByRole('alert')).toBeFocused();
     await page.keyboard.press('Escape');
     await expect(dialog).toBeHidden();
-    await openDemoControls(page);
-    await page.getByRole('combobox', { name: 'Vai trò mô phỏng' }).click();
-    await waitForDemoMenu(page, 'Vai trò mô phỏng');
-    await page.getByRole('option', { name: 'manager', exact: true }).click();
+    await setDemoControl(page, 'role', 'manager');
     await expect(page.getByRole('button', { name: 'Đóng cửa hàng', exact: true })).toHaveCount(0);
     expect(pageErrors).toEqual([]);
 });
@@ -253,11 +250,7 @@ test('shop closure refreshes the filtered workspace list while it is visible', a
 test('shop closure recovers a lost demo receipt without a second change', async ({ page }) => {
     const shopId = await openFreshShop(page);
     await page.locator('a[href="/s/' + shopId + '/settings/shop"]').first().click();
-    await openDemoControls(page);
-    await page.getByRole('combobox', { name: 'Trạng thái thử' }).click();
-    await waitForDemoMenu(page, 'Trạng thái thử');
-    await page.getByRole('option', { name: 'Kết quả ghi chưa rõ' }).click();
-    await expect(page.getByRole('status').filter({ hasText: 'Trạng thái thử đã được áp dụng.' })).toBeVisible();
+    await setDemoControl(page, 'fault', 'unknown');
     await page.getByRole('button', { name: 'Đóng cửa hàng', exact: true }).click();
     const dialog = page.getByRole('dialog', { name: 'Đóng cửa hàng' });
     await dialog.getByRole('button', { name: 'Đóng cửa hàng', exact: true }).click();

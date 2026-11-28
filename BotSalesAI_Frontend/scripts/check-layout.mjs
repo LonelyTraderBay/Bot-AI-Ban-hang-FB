@@ -30,7 +30,7 @@ const MARGIN_KEYS = new Set([
 ]);
 const MARGIN_SHORTHAND_KEYS = new Set(['m', 'margin', 'marginBlock', 'marginInline', 'margin-block', 'margin-inline']);
 const STYLE_ATTRIBUTES = new Set(['sx', 'style', 'css', 'slotProps', 'componentsProps', 'styles']);
-const PANEL_GEOMETRY_KEYS = new Set(['display', 'flexDirection', 'height', 'gridColumn']);
+const PANEL_GEOMETRY_KEYS = new Set(['display', 'flexDirection', 'height', 'gridColumn', 'overflowY']);
 const OWNER_PATH = 'apps/web/src/shared/ui/layout.ts';
 
 function parseArgs(argv) {
@@ -750,8 +750,11 @@ function scan(root, registryPath = null) {
                     continue;
                 }
                 const key = propertyName(member.name);
+                const value = unwrapExpression(member.initializer);
                 if (!key || !PANEL_GEOMETRY_KEYS.has(key)) {
-                    addFinding(file, locationOf(sourceFile, member), key || 'Panel.geometry', member.initializer.getText(sourceFile), 'PANEL_GEOMETRY_SPACING_FORBIDDEN', 'Panel.geometry is restricted to display, flexDirection, height, and gridColumn; use semantic spacing props for gaps and insets');
+                    addFinding(file, locationOf(sourceFile, member), key || 'Panel.geometry', member.initializer.getText(sourceFile), 'PANEL_GEOMETRY_SPACING_FORBIDDEN', 'Panel.geometry is restricted to display, flexDirection, height, gridColumn, and local vertical scrolling; use semantic spacing props for gaps and insets');
+                } else if (key === 'overflowY' && (!ts.isStringLiteral(value) || value.text !== 'auto')) {
+                    addFinding(file, locationOf(sourceFile, member), key, member.initializer.getText(sourceFile), 'PANEL_GEOMETRY_SPACING_FORBIDDEN', 'Panel.geometry.overflowY only accepts auto for a bounded workspace');
                 }
             }
         };

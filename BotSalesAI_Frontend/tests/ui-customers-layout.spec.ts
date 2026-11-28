@@ -42,7 +42,7 @@ test('Customers R07/R08/R54 layouts fit the shell at every responsive boundary',
         for (const route of routes) {
             await gotoDemo(page, route.path);
             await expect(page.getByRole('heading', { name: route.heading, exact: true })).toBeVisible();
-            await expect(page.locator('main#main-content')).toHaveCSS('padding-left', width >= 768 ? '24px' : '16px');
+            await expect(page.locator('main#main-content')).toHaveCSS('padding-left', '8px');
             const geometry = await page.evaluate(() => ({
                 clientWidth: document.documentElement.clientWidth,
                 scrollWidth: document.documentElement.scrollWidth,

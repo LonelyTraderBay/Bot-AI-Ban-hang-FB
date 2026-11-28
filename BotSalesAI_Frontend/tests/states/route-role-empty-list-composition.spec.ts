@@ -1,6 +1,6 @@
 import { readFileSync } from 'node:fs';
 import { expect, test } from '@playwright/test';
-import { openDemoControls } from '../session/demo-controls';
+import { setDemoControl } from '../session/demo-controls';
 import { startDemoServer } from '../session/demo-server.mjs';
 import { assertEmptyTable } from '../session/assert-empty-table';
 
@@ -21,11 +21,7 @@ function routePath(path: string) {
 function canRead(route: Route, role: string) {
     return route.readPermission === null || permissionCatalog.rolePresets[role].includes(route.readPermission);
 }
-async function chooseMockOption(page: import('@playwright/test').Page, label: string, value: string) {
-    await openDemoControls(page);
-    await page.getByRole('combobox', { name: label }).click();
-    await page.getByRole('option', { name: value, exact: true }).click();
-}
+
 async function assertEmptyRoute(page: import('@playwright/test').Page, route: Route, role: string) {
     const main = page.locator('main#main-content');
     await expect(main, `${route.id} should render an empty-list result for ${role}`).toBeVisible();
@@ -63,8 +59,8 @@ for (const role of roles) {
         const server = await startDemoServer();
         try {
             await page.goto(new URL('/s/shop-demo/overview', server.url).toString());
-            if (role !== 'owner') await chooseMockOption(page, 'Vai trò mô phỏng', role);
-            await chooseMockOption(page, 'Trạng thái thử', 'Danh sách rỗng (demo)');
+            if (role !== 'owner') await setDemoControl(page, 'role', role);
+            await setDemoControl(page, 'fault', 'empty_persistent');
             const readableRoutes = listRoutes.filter(route => canRead(route, role));
             for (const route of readableRoutes) {
                 await page.evaluate(nextPath => { window.history.pushState({}, '', nextPath); window.dispatchEvent(new PopStateEvent('popstate', { state: window.history.state })); }, routePath(route.path));

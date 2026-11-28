@@ -273,24 +273,24 @@ export function MarketingPage() {
         <PageHeader title="Thông tin marketing" subtitle="Đề xuất chỉ đọc; trang không tự đăng nội dung hoặc thay đổi ngân sách." />
         {__MOCK__ && <Alert severity="warning" sx={layoutSx.notice.afterGap}>Số liệu mẫu do API mô phỏng tổng hợp; chưa kết nối tài khoản quảng cáo hoặc nguồn phân bổ thật.</Alert>}
         <Panel title="Khoảng thời gian báo cáo" subtitle={`Ngày được tính theo lịch ${shop.timezone} của cửa hàng.`} bodyMode="inset" afterGap="section">
-            <FormFields component="form" onSubmit={applyFilter} data-testid="marketing-range-form">
-                <Stack direction={{ xs: 'column', md: 'row' }} alignItems={{ xs: 'stretch', md: 'flex-end' }} sx={layoutSx.toolbar.controlGap}>
+            <FormFields component="form" density="compact" onSubmit={applyFilter} data-testid="marketing-range-form">
+                <SectionGrid columns={{ xs: 'repeat(auto-fit, minmax(min(100%, 10rem), 1fr))', md: 'repeat(3, minmax(0, 1fr)) auto' }} rhythm="content" alignItems="end" shrinkChildren>
                     <TextField inputRef={fromRef} type="date" label="Từ ngày" value={draft.fromDate} onChange={event => { draftTouched.current = true; setDraft(value => ({ ...value, fromDate: event.target.value })); }} slotProps={{ inputLabel: { shrink: true } }} error={visibleFilterError?.field === 'fromDate'} helperText={visibleFilterError?.field === 'fromDate' ? visibleFilterError.message : isValidDateOnly(draft.fromDate) ? `Từ ${formatDateOnly(draft.fromDate)}, bao gồm ngày này.` : 'Ngày bắt đầu, tính cả ngày đã chọn.'} />
                     <TextField inputRef={toRef} type="date" label="Đến ngày" value={draft.toDate} onChange={event => { draftTouched.current = true; setDraft(value => ({ ...value, toDate: event.target.value })); }} slotProps={{ inputLabel: { shrink: true } }} error={visibleFilterError?.field === 'toDate'} helperText={visibleFilterError?.field === 'toDate' ? visibleFilterError.message : isValidDateOnly(draft.toDate) ? `Đến ${formatDateOnly(draft.toDate)}, bao gồm ngày này; tối đa 366 ngày.` : 'Tối đa 366 ngày, tính cả hai đầu.'} />
                     <TextField inputRef={bucketRef} select label="Gộp theo" value={draft.bucket} onChange={event => { draftTouched.current = true; setDraft(value => ({ ...value, bucket: event.target.value })); }} error={visibleFilterError?.field === 'bucket'} helperText={visibleFilterError?.field === 'bucket' ? visibleFilterError.message : 'Chọn ngày, tuần hoặc tháng.'}>
                         <MenuItem value="day">Ngày</MenuItem><MenuItem value="week">Tuần</MenuItem><MenuItem value="month">Tháng</MenuItem>
                     </TextField>
                     <Button type="submit" variant="contained">Áp dụng</Button>
-                </Stack>
+                </SectionGrid>
                 {showFilterError && draftError && <Alert severity="error" role="alert">{draftError.message}</Alert>}
             </FormFields>
         </Panel>
         {appliedError ? <Alert severity="error" role="alert"><strong>Bộ lọc trên đường dẫn không hợp lệ.</strong> Hãy sửa trường được đánh dấu trước khi áp dụng.</Alert> : <QueryState query={data} pendingProfile="section">{m && <>
-            <Stats>
+            <Stats density="compact" appearance="strip">
                 <Stat title="Đơn có nguồn xác định" value={m.knownAttributedOrders} note="Được API tổng hợp trong kỳ" />
                 <Stat title="Đơn chưa rõ nguồn" value={m.unknownAttributionOrders} note="Giữ riêng, không tự gán nguồn" />
-                <Stat title="Chi quảng cáo thực tế" value={<Amount wrap value={m.actualSpend} />} note={m.actualSpend ? 'API cung cấp số thực tế' : 'Kỳ này chưa có số thực tế từ API'} />
-                <Stat title="Chi quảng cáo ước tính" value={<Amount wrap value={m.estimatedSpend} />} note={m.estimateCoverage
+                <Stat title="Chi quảng cáo thực tế" value={<Amount wrap value={m.actualSpend} />} valueRole={m.actualSpend == null ? 'text' : 'metric'} note={m.actualSpend ? 'API cung cấp số thực tế' : 'Kỳ này chưa có số thực tế từ API'} />
+                <Stat title="Chi quảng cáo ước tính" value={<Amount wrap value={m.estimatedSpend} />} valueRole={m.estimatedSpend == null ? 'text' : 'metric'} note={m.estimateCoverage
                     ? `Đã có dự trù cho ${m.estimateCoverage.daysWithEstimate}/${m.estimateCoverage.daysInPeriod} ngày. Lần ghi gần nhất ${dateTime(m.estimateCoverage.lastRecordedAt, m.period?.timezone || shop.timezone)}.`
                     : 'Ước tính không phải số ghi sổ'} />
             </Stats>
@@ -301,7 +301,7 @@ export function MarketingPage() {
                 </Typography>}
                 <Typography variant="caption" color="text.secondary">Cập nhật {dateTime(m.asOf, m.period?.timezone || shop.timezone)} · {shop.name} · múi giờ {m.period?.timezone || shop.timezone}</Typography>
             </Stack>
-            <SectionGrid data-testid="marketing-sections-grid" columns={{ xs: 'minmax(0, 1fr)', lg: 'repeat(2, minmax(0, 1fr))' }} shrinkChildren>
+            <SectionGrid data-testid="marketing-sections-grid" alignItems="start" columns={{ xs: 'minmax(0, 1fr)', lg: 'repeat(2, minmax(0, 1fr))' }} shrinkChildren>
                 <Panel title="Đơn theo thời gian">
                     <Box role="img" aria-label={`Số đơn theo ${m.period?.bucket || 'kỳ'} trong khoảng đã chọn`} data-testid="marketing-trend-chart" sx={[{ height: 280 }, layoutSx.report.chartViewportInset]}>
                         {m.trend?.length ? <ResponsiveContainer width="100%" height="100%"><BarChart data={m.trend} accessibilityLayer>

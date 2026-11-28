@@ -27,11 +27,12 @@ const sourceInputs = [
     'tests/evidence-run-id.mjs',
 ];
 const scenarios = [
-    { id: 'form-error-short', route: '/s/shop-demo/products/new', viewport: { width: 320, height: 480 }, targets: ['main h1', 'input[name="name"]', 'input[name="variants.0.sku"]', 'button[type="submit"]'], focus: 'button[type="submit"]' },
     { id: 'mobile-menu-long-label', route: '/s/shop-demo/overview', viewport: { width: 390, height: 560 }, targets: ['[data-w30-long-label="true"]', 'main h1'], focus: '[data-w30-long-label="true"]' },
     { id: 'report-long-id', route: '/s/shop-demo/reports/marketing', viewport: { width: 640, height: 450 }, targets: ['[data-w30-long-id="true"]', 'main h1', 'button[aria-label="Mở menu"]'], focus: 'button[aria-label="Mở menu"]' },
     { id: 'inbox-long-composer', route: '/s/shop-demo/inbox/cv1', viewport: { width: 390, height: 560 }, targets: ['textarea', 'button[type="submit"]', 'main h1'], focus: 'textarea' },
     { id: 'dialog-long-reason', route: '/s/shop-demo/inbox/cv1', viewport: { width: 320, height: 480 }, targets: ['[role="dialog"]', '[role="dialog"] textarea', '[role="dialog"] button'], focus: '[role="dialog"] textarea' },
+    // The invalid form stays dirty. Run it last so the next scenario does not hit the browser's unload prompt.
+    { id: 'form-error-short', route: '/s/shop-demo/products/new', viewport: { width: 320, height: 480 }, targets: ['main h1', 'input[name="name"]', 'input[name="variants.0.sku"]', 'button[type="submit"]'], focus: 'button[type="submit"]' },
 ];
 
 function sha256(file) {
@@ -419,7 +420,7 @@ try {
     await send('webExtension.install', { extensionData: { type: 'path', path: extensionPath } });
 
     const tree = await send('browsingContext.getTree', {});
-    let context = tree.contexts?.[0]?.context;
+    const context = tree.contexts?.[0]?.context;
     if (!context) throw new Error('Firefox WebDriver BiDi did not expose the isolated tab context.');
     await send('script.addPreloadScript', {
         functionDeclaration: `() => {

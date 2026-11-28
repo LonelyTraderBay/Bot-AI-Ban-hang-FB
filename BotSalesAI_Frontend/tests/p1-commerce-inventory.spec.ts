@@ -52,8 +52,10 @@ test('R64 creates and approves a combo that appears in the Inbox and order draft
     await confirm(page, 'Duyệt bật ưu đãi', true);
     await expect(row.getByRole('cell', { name: /Đang hiệu lực/ })).toBeVisible();
     await navigateInDemo(page, '/inbox/cv1');
-    await expect(content.getByText(/Combo hai SKU · giảm/)).toBeVisible();
-    await content.getByRole('link', { name: 'Kiểm tra trên đơn nháp' }).click();
+    await content.getByRole('button', { name: 'Thông tin khách' }).click();
+    const details = page.getByRole('dialog', { name: 'Thông tin khách' });
+    await expect(details.getByText(/Combo hai SKU · giảm/)).toBeVisible();
+    await details.getByRole('link', { name: 'Kiểm tra trên đơn nháp' }).click();
     await expect(content.getByRole('combobox', { name: 'Ưu đãi combo' })).toContainText('Combo hai SKU');
     await choose(page, content, 'Sản phẩm 1', /DEMO-001/);
     await content.getByRole('button', { name: 'Thêm dòng', exact: true }).click();

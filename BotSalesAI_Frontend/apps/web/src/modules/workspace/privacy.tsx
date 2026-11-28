@@ -139,10 +139,10 @@ export function PrivacyPage() {
     };
     return <>
         <PageHeader title="Quyền riêng tư" subtitle="Quản lý thời hạn lưu dữ liệu và yêu cầu của khách."/>
-        <SectionGrid columns={{ xs: '1fr', lg: '1fr 1.4fr' }}>
+        <SectionGrid alignItems="start" columns={{ xs: '1fr', lg: '1fr 1.4fr' }}>
             <Panel title="Chính sách lưu trữ" bodyMode="inset">
                 <QueryState query={policy} pendingProfile="section">
-                    <FormFields component="form" ref={policyForm} onSubmit={event => { event.preventDefault(); void savePolicy(); }}>
+                    <FormFields component="form" density="compact" ref={policyForm} onSubmit={event => { event.preventDefault(); void savePolicy(); }}>
                         <ErrorNotice error={save.error}/>
                         <DraftConflict editor={editor} labels={{ days: 'Số ngày lưu hội thoại', note: 'Căn cứ / thị trường áp dụng' }} busy={save.pending}/>
                         {policySaved && <Alert severity="success" role="status">{policySaved}</Alert>}
@@ -150,7 +150,7 @@ export function PrivacyPage() {
                         <TextField label="Số ngày lưu hội thoại" value={days} onBlur={() => setDaysTouched(true)}
                             onChange={e => { setDays(e.target.value); setDaysTouched(true); setPolicySaved(''); }} type="number"
                             inputProps={{ min: 1, max: 36500, step: 1 }} error={showDaysError} helperText={showDaysError ? daysError : 'Nhập số nguyên từ 1 đến 36.500 ngày.'}/>
-                        <TextField label="Căn cứ / thị trường áp dụng" multiline minRows={4} value={note} onBlur={() => setNoteTouched(true)}
+                        <TextField label="Căn cứ / thị trường áp dụng" multiline minRows={3} value={note} onBlur={() => setNoteTouched(true)}
                             onChange={e => { setNote(e.target.value); setNoteTouched(true); setPolicySaved(''); }} error={showNoteError}
                             helperText={showNoteError ? noteError : 'Tối thiểu 5 và tối đa 2.000 ký tự.'}/>
                         <MutationButton permission="privacy.manage" type="submit" variant="contained" busy={save.pending}
@@ -221,6 +221,7 @@ function ConsentManagement({ customers, canReadCustomers, shopId }: { customers:
     };
     return <Panel title="Consent marketing và xác nhận lại" beforeGap="section" bodyMode="inset">
         <FormFields>
+            <FormFields geometry={{ maxWidth: layoutSx.form.standardWidth.maxWidth }}>
             <Alert severity="info">Consent được lưu theo khách, mục đích, kênh, phiên bản và lịch sử. Tạo yêu cầu chỉ tạo challenge đang chờ; không bật consent. Môi trường local không có nhà cung cấp gửi email/SMS/Meta nên không khẳng định đã gửi link thật.</Alert>
             {canReadCustomers ? <>
                 <TextField select label="Khách hàng" value={customerId} onChange={event => { setSelectedCustomerId(event.target.value); setCreated(false); }} disabled={!customer}>
@@ -235,6 +236,7 @@ function ConsentManagement({ customers, canReadCustomers, shopId }: { customers:
                 <ErrorNotice error={createChallenge.error || consentList.error || challengeList.error}/>
                 {created && <Alert severity="success" role="status">Đã tạo challenge chờ khách xác nhận. Trạng thái này chưa phải consent được cấp.</Alert>}
             </> : <Alert severity="warning">Cần quyền customers.read để chọn khách. Danh sách và thông tin nhận dạng được ẩn.</Alert>}
+            </FormFields>
             <FieldGroup role="group" aria-label="Bản ghi consent hiện tại">
                 <Typography component="h2" variant="h6">Bản ghi consent hiện tại</Typography>
                 <QueryState query={consentList} pendingProfile="section">{consentList.data && <>

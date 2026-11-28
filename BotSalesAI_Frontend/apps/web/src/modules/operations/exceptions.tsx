@@ -1,43 +1,41 @@
 import { useState } from 'react';
-import { Alert, Button, MenuItem, Tab, Tabs, TextField, Typography } from '@mui/material';
+import { Alert, Button, Tab, Tabs, Typography } from '@mui/material';
 import { useSearchParams } from 'react-router-dom';
 import { useApi, useCommand } from '@/shared/api/hooks';
-import { useListQuery } from '@/shared/model/filters';
+import { useListQuery, type ListFilter } from '@/shared/model/filters';
 import { dateTime } from '@/shared/model/format';
 import { label as businessLabel } from '@/shared/model/labels';
 import { useCan, useScope } from '@/shared/model/scope';
-import { ActionGroup, FieldGroup, PageSections } from '@/shared/ui/composition';
+import { ActionGroup, PageSections } from '@/shared/ui/composition';
 import { DataTable, ErrorNotice, MutationButton, PageHeader, Pager, Panel, QueryState, RouteLink, Status, Toolbar } from '@/shared/ui/components';
 import { CommandDetails, commandNames, RelatedResourceLink } from './command-details';
 
 const workKinds = ['prepare_order', 'purchase_review', 'payment_mismatch', 'customer_handoff', 'late_shipment', 'low_stock', 'unmatched_bank', 'recovery'];
 const jobKinds = ['import', 'export', 'knowledge_index', 'evaluation', 'privacy', 'connection_test'];
+const queueOptionLabels: Record<string, string> = {
+    me: 'Của tôi', unassigned: 'Chưa có người nhận', overdue: 'Quá hạn', unscheduled: 'Chưa đặt hạn',
+};
 
-function QueueFilter({ name, label, options, initial = '' }: {
-    name: string;
-    label: string;
-    options: readonly string[];
-    initial?: string;
-}) {
-    const [params, setParams] = useSearchParams();
-    const requested = params.get(name) ?? initial;
-    const value = options.includes(requested) ? requested : '';
-    return <TextField select label={label} value={value || 'all'} onChange={event => {
-        const selected = event.target.value;
-        setParams(previous => {
-            const next = new URLSearchParams(previous);
-            if (selected === 'all' && !initial) next.delete(name);
-            else next.set(name, selected);
-            next.delete('cursor');
-            return next;
-        });
-    }}>
-        <MenuItem value="all">Tất cả</MenuItem>
-        {options.map(option => <MenuItem key={option} value={option}>
-            {commandNames[option] || ({ me: 'Của tôi', unassigned: 'Chưa có người nhận', overdue: 'Quá hạn', unscheduled: 'Chưa đặt hạn' }[option] ?? businessLabel(option))}
-        </MenuItem>)}
-    </TextField>;
+function queueFilter(name: string, label: string, options: readonly string[], profile?: Pick<ListFilter, 'pinned' | 'defaultValue'>): ListFilter {
+    return { name, label, ...profile, options: options.map(value => ({
+        value, label: commandNames[value] ?? queueOptionLabels[value] ?? businessLabel(value),
+    })) };
 }
+
+const workFilters = [
+    queueFilter('kind', 'Loại công việc', workKinds),
+    queueFilter('state', 'Trạng thái', ['queued', 'claimed', 'working', 'blocked'], { pinned: true }),
+    queueFilter('assignee', 'Người phụ trách', ['me', 'unassigned']),
+    queueFilter('due', 'Hạn xử lý', ['overdue', 'unscheduled'], { pinned: true }),
+];
+const jobFilters = [
+    queueFilter('kind', 'Loại tác vụ', jobKinds),
+    queueFilter('status', 'Trạng thái', ['failed', 'partial', 'queued', 'running', 'awaiting_confirmation', 'succeeded', 'cancelled'], { pinned: true, defaultValue: 'failed' }),
+];
+const commandFilters = [
+    queueFilter('kind', 'Loại thao tác', Object.keys(commandNames)),
+    queueFilter('status', 'Trạng thái', ['unknown', 'failed', 'accepted', 'running', 'succeeded'], { pinned: true, defaultValue: 'unknown' }),
+];
 
 export function ExceptionsPage() {
     const { shop } = useScope();
@@ -66,16 +64,12 @@ export function ExceptionsPage() {
 
 function WorkQueue() {
     const { shop, session } = useScope();
-    const query = useListQuery('listWorkItems');
+    const query = useListQuery('listWorkItems', 'cursor', workFilters);
     const list = useApi('listWorkItems', { query: { ...query, exception: 'active' } });
     const claim = useCommand('claimWorkItem', ['listWorkItems', 'listPrepJobs', 'getOperationsSummary']);
-    return <Panel title="Công việc cần xử lý" subtitle="Lọc các việc còn mở trên toàn bộ dữ liệu của cửa hàng.">
-        <Toolbar operation="listWorkItems" placeholder="Tìm mã công việc hoặc hồ sơ…" filters={<FieldGroup direction={{ xs: 'column', sm: 'row' }} role="group" aria-label="Bộ lọc công việc">
-            <QueueFilter name="kind" label="Loại công việc" options={workKinds} />
-            <QueueFilter name="state" label="Trạng thái công việc" options={['queued', 'claimed', 'working', 'blocked']} />
-            <QueueFilter name="assignee" label="Người phụ trách" options={['me', 'unassigned']} />
-            <QueueFilter name="due" label="Hạn xử lý" options={['overdue', 'unscheduled']} />
-        </FieldGroup>} />
+    return <Panel title="Công việc cần xử lý">
+        <Toolbar operation="listWorkItems" placeholder="Mã hoặc hồ sơ"
+            filterGroup={{ label: 'Bộ lọc công việc', filters: workFilters }} />
         <ErrorNotice error={claim.error} />
         <QueryState query={list} pendingProfile="section">{list.data && <>
             <DataTable mobile={{ layout: 'cards', titleKey: 'type', summaryKeys: ['state', 'assignee', 'due'], actionKey: 'actions' }} label="Hàng đợi công việc" rows={list.data.data} rowKey={task => task.id}
@@ -100,14 +94,11 @@ function WorkQueue() {
 
 function JobQueue() {
     const { shop } = useScope();
-    const query = useListQuery('listJobs');
-    const status = query?.status ?? 'failed';
-    const list = useApi('listJobs', { query: { ...query, status: status === 'all' ? undefined : status } });
+    const query = useListQuery('listJobs', 'cursor', jobFilters);
+    const list = useApi('listJobs', { query });
     return <Panel title="Tác vụ nền" subtitle="Dùng mã tác vụ để xem tiến độ, lỗi và kết quả.">
-        <Toolbar operation="listJobs" placeholder="Tìm mã tác vụ…" filters={<FieldGroup direction={{ xs: 'column', sm: 'row' }} role="group" aria-label="Bộ lọc tác vụ">
-            <QueueFilter name="kind" label="Loại tác vụ" options={jobKinds} />
-            <QueueFilter name="status" label="Trạng thái tác vụ" initial="failed" options={['failed', 'partial', 'queued', 'running', 'awaiting_confirmation', 'succeeded', 'cancelled']} />
-        </FieldGroup>} />
+        <Toolbar operation="listJobs" placeholder="Mã tác vụ"
+            filterGroup={{ label: 'Bộ lọc tác vụ', filters: jobFilters }} />
         <QueryState query={list} pendingProfile="section">{list.data && <>
             <DataTable mobile={{ layout: 'cards', titleKey: 'type', summaryKeys: ['status', 'errors', 'updated'], actionKey: 'actions' }} label="Tác vụ nền" rows={list.data.data} rowKey={job => job.id}
                 empty="Chưa có tác vụ theo bộ lọc." columns={[
@@ -124,15 +115,12 @@ function JobQueue() {
 
 function CommandQueue() {
     const { shop } = useScope();
-    const query = useListQuery('listCommands');
-    const status = query?.status ?? 'unknown';
-    const list = useApi('listCommands', { query: { ...query, status: status === 'all' ? undefined : status } });
+    const query = useListQuery('listCommands', 'cursor', commandFilters);
+    const list = useApi('listCommands', { query });
     const [selected, setSelected] = useState('');
     return <Panel title="Thao tác cần đối chiếu" subtitle="Kiểm tra kết quả theo mã trước khi thực hiện thêm thao tác.">
-        <Toolbar operation="listCommands" placeholder="Tìm mã thao tác…" filters={<FieldGroup direction={{ xs: 'column', sm: 'row' }} role="group" aria-label="Bộ lọc thao tác">
-            <QueueFilter name="kind" label="Loại thao tác" options={Object.keys(commandNames)} />
-            <QueueFilter name="status" label="Trạng thái thao tác" initial="unknown" options={['unknown', 'failed', 'accepted', 'running', 'succeeded']} />
-        </FieldGroup>} />
+        <Toolbar operation="listCommands" placeholder="Mã thao tác"
+            filterGroup={{ label: 'Bộ lọc thao tác', filters: commandFilters }} />
         <QueryState query={list} pendingProfile="section">{list.data && <>
             <DataTable mobile={{ layout: 'cards', titleKey: 'type', summaryKeys: ['status', 'updated'], actionKey: 'actions' }} label="Hàng đợi thao tác" rows={list.data.data} rowKey={command => command.id}
                 empty="Chưa có thao tác theo bộ lọc." columns={[

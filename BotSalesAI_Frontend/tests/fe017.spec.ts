@@ -1,4 +1,4 @@
-import { openDemoControls } from './session/demo-controls';
+import { setDemoControl } from './session/demo-controls';
 import { test, expect } from '@playwright/test';
 import { startDemoServer } from './session/demo-server.mjs';
 
@@ -15,12 +15,6 @@ test.afterAll(async () => closeDemo?.());
 
 async function gotoDemo(page: import('@playwright/test').Page, route: string) {
     await page.goto(new URL(route, demoUrl).toString());
-}
-
-async function chooseOption(page: import('@playwright/test').Page, label: string, value: string) {
-    if (['Vai trò mô phỏng', 'Trạng thái thử', 'Dataset mô phỏng'].includes(label)) await openDemoControls(page);
-    await page.getByRole('combobox', { name: label }).click();
-    await page.getByRole('option', { name: value, exact: true }).click();
 }
 
 test('FE017.AC01 demo publishing uses the approved permission and lifecycle substitute without an API allowedActions field', async ({ page }) => {
@@ -259,8 +253,7 @@ test('FE017.AC04 feedback approval creates inert draft content and its first rev
 
 test('FE017.AC05 manager sees knowledge read-only and synthetic API rejects purpose-specific upload and publish', async ({ page }) => {
     await gotoDemo(page, '/s/shop-demo/knowledge/k3');
-    await chooseOption(page, 'Vai trò mô phỏng', 'manager');
-    await expect(page.getByRole('combobox', { name: 'Vai trò mô phỏng' })).toContainText('manager');
+    await setDemoControl(page, 'role', 'manager');
     await expect(page.getByRole('button', { name: 'Sửa bản nháp', exact: true })).toHaveCount(0);
     await expect(page.getByRole('button', { name: 'Gửi duyệt', exact: true })).toHaveCount(0);
     await expect(page.getByRole('button', { name: 'Xuất bản bản đã đánh giá', exact: true })).toHaveCount(0);
@@ -280,7 +273,7 @@ test('FE017.AC05 manager sees knowledge read-only and synthetic API rejects purp
 
 test('FE017.AC06 stale review preserves the reason and explains the conflict', async ({ page }) => {
     await gotoDemo(page, '/s/shop-demo/knowledge/k3');
-    await chooseOption(page, 'Trạng thái thử', 'Xung đột lần ghi tiếp');
+    await setDemoControl(page, 'fault', 'conflict');
     await page.getByRole('button', { name: 'Gửi duyệt', exact: true }).click();
     const dialog = page.getByRole('dialog', { name: 'Gửi nguồn kiến thức để duyệt' });
     const reason = 'Giữ lý do này sau khi phiên bản bị thay đổi.';

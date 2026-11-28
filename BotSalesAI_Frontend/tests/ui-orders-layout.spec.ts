@@ -33,7 +33,7 @@ test('Orders R17/R18/R19/R43 preserve responsive page geometry at 320-1440px', a
             await expect(page.locator('main .MuiCircularProgress-root,main .MuiLinearProgress-root')).toHaveCount(0, { timeout: 30_000 });
             await expect(page.getByRole('heading', { name: route.heading, exact: true })).toBeVisible({ timeout: 30_000 });
             const main = page.locator('main#main-content');
-            await expect(main).toHaveCSS('padding-left', width >= 768 ? '24px' : '16px');
+            await expect(main).toHaveCSS('padding-left', '8px');
             const geometry = await page.evaluate(() => ({
                 clientWidth: document.documentElement.clientWidth,
                 scrollWidth: document.documentElement.scrollWidth,

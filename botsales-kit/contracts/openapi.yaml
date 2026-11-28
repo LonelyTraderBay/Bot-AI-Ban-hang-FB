@@ -2968,6 +2968,34 @@ paths:
       - $ref: '#/components/parameters/StatusFilter'
       - $ref: '#/components/parameters/Sort'
       - $ref: '#/components/parameters/CustomerFilter'
+      - name: fulfillmentState
+        in: query
+        required: false
+        schema:
+          type: string
+          enum:
+          - unfulfilled
+          - reserved
+          - picking
+          - packed
+          - dispatched
+          - part_delivered
+          - delivered
+          - part_returned
+          - returned
+      - name: paymentState
+        in: query
+        required: false
+        schema:
+          type: string
+          enum:
+          - unpaid
+          - part_paid
+          - verified
+          - cod_collected
+          - settled
+          - part_refunded
+          - refunded
       responses:
         '200':
           description: Success
@@ -24267,6 +24295,774 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/StockTransferUpdate'
+  /shops/{shopId}/conversation-order-drafts:
+    get:
+      operationId: listConversationOrderDrafts
+      summary: listConversationOrderDrafts
+      tags:
+      - orders
+      x-permission: orders.read
+      x-stage: SPECIFICATION_NOT_IMPLEMENTED
+      description: Requires orders.read and conversations.read for the given shop.
+      parameters:
+      - name: shopId
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/Id'
+      - $ref: '#/components/parameters/Limit'
+      - $ref: '#/components/parameters/Cursor'
+      - $ref: '#/components/parameters/Query'
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConversationOrderDraftListResponse'
+        '400':
+          description: Bad Request
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '401':
+          description: Unauthorized
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '403':
+          description: Forbidden
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '404':
+          description: Not Found
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '409':
+          description: Conflict
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '412':
+          description: Precondition Failed
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '422':
+          description: Validation Error
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '428':
+          description: Precondition Required
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '429':
+          description: Rate Limited
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '503':
+          description: Unavailable
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+  /shops/{shopId}/conversations/{conversationId}/order-draft:
+    get:
+      operationId: getConversationOrderDraft
+      summary: getConversationOrderDraft
+      tags:
+      - orders
+      x-permission: orders.read
+      x-stage: SPECIFICATION_NOT_IMPLEMENTED
+      description: Requires orders.read and conversations.read for the given shop.
+      parameters:
+      - name: shopId
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/Id'
+      - name: conversationId
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/Id'
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConversationOrderDraftViewResponse'
+        '400':
+          description: Bad Request
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '401':
+          description: Unauthorized
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '403':
+          description: Forbidden
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '404':
+          description: Not Found
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '409':
+          description: Conflict
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '412':
+          description: Precondition Failed
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '422':
+          description: Validation Error
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '428':
+          description: Precondition Required
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '429':
+          description: Rate Limited
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '503':
+          description: Unavailable
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+  /shops/{shopId}/conversations/{conversationId}/order-draft/access:
+    post:
+      operationId: accessConversationOrderDraft
+      summary: accessConversationOrderDraft
+      tags:
+      - orders
+      x-permission: orders.write
+      x-stage: SPECIFICATION_NOT_IMPLEMENTED
+      description: Requires orders and conversations access, current assignee and
+        active editor for changes to an existing draft. When access action is renew,
+        If-Match and editEpoch are required.
+      parameters:
+      - name: shopId
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/Id'
+      - name: conversationId
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/Id'
+      - $ref: '#/components/parameters/CSRF'
+      - $ref: '#/components/parameters/Idempotency'
+      - name: If-Match
+        in: header
+        required: false
+        schema:
+          type: string
+          minLength: 1
+        description: Exact ETag từ detail GET trước đó.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ConversationOrderDraftAccess'
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConversationOrderDraftResponse'
+        '400':
+          description: Bad Request
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '401':
+          description: Unauthorized
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '403':
+          description: Forbidden
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '404':
+          description: Not Found
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '409':
+          description: Conflict
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '412':
+          description: Precondition Failed
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '422':
+          description: Validation Error
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '428':
+          description: Precondition Required
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '429':
+          description: Rate Limited
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '503':
+          description: Unavailable
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+  /shops/{shopId}/conversations/{conversationId}/order-draft/{draftId}:
+    patch:
+      operationId: saveConversationOrderDraft
+      summary: saveConversationOrderDraft
+      tags:
+      - orders
+      x-permission: orders.write
+      x-stage: SPECIFICATION_NOT_IMPLEMENTED
+      description: Requires orders and conversations access, current assignee and
+        active editor for changes to an existing draft. When access action is renew,
+        If-Match and editEpoch are required.
+      parameters:
+      - name: shopId
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/Id'
+      - name: conversationId
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/Id'
+      - name: draftId
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/Id'
+      - $ref: '#/components/parameters/CSRF'
+      - $ref: '#/components/parameters/Idempotency'
+      - $ref: '#/components/parameters/IfMatch'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ConversationOrderDraftSave'
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConversationOrderDraftResponse'
+        '400':
+          description: Bad Request
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '401':
+          description: Unauthorized
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '403':
+          description: Forbidden
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '404':
+          description: Not Found
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '409':
+          description: Conflict
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '412':
+          description: Precondition Failed
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '422':
+          description: Validation Error
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '428':
+          description: Precondition Required
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '429':
+          description: Rate Limited
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '503':
+          description: Unavailable
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+  /shops/{shopId}/conversations/{conversationId}/order-draft/{draftId}/discard:
+    post:
+      operationId: discardConversationOrderDraft
+      summary: discardConversationOrderDraft
+      tags:
+      - orders
+      x-permission: orders.write
+      x-stage: SPECIFICATION_NOT_IMPLEMENTED
+      description: Requires orders and conversations access, current assignee and
+        active editor for changes to an existing draft. When access action is renew,
+        If-Match and editEpoch are required.
+      parameters:
+      - name: shopId
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/Id'
+      - name: conversationId
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/Id'
+      - name: draftId
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/Id'
+      - $ref: '#/components/parameters/CSRF'
+      - $ref: '#/components/parameters/Idempotency'
+      - $ref: '#/components/parameters/IfMatch'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ConversationOrderDraftEdit'
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConversationOrderDraftDiscardResponse'
+        '400':
+          description: Bad Request
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '401':
+          description: Unauthorized
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '403':
+          description: Forbidden
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '404':
+          description: Not Found
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '409':
+          description: Conflict
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '412':
+          description: Precondition Failed
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '422':
+          description: Validation Error
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '428':
+          description: Precondition Required
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '429':
+          description: Rate Limited
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '503':
+          description: Unavailable
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+  /shops/{shopId}/conversations/{conversationId}/order-draft/{draftId}/convert:
+    post:
+      operationId: convertConversationOrderDraft
+      summary: convertConversationOrderDraft
+      tags:
+      - orders
+      x-permission: orders.write
+      x-stage: SPECIFICATION_NOT_IMPLEMENTED
+      description: Requires orders and conversations access, current assignee and
+        active editor for changes to an existing draft. When access action is renew,
+        If-Match and editEpoch are required.
+      parameters:
+      - name: shopId
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/Id'
+      - name: conversationId
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/Id'
+      - name: draftId
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/Id'
+      - $ref: '#/components/parameters/CSRF'
+      - $ref: '#/components/parameters/Idempotency'
+      - $ref: '#/components/parameters/IfMatch'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ConversationOrderDraftEdit'
+      responses:
+        '201':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OrderResponse'
+        '400':
+          description: Bad Request
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '401':
+          description: Unauthorized
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '403':
+          description: Forbidden
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '404':
+          description: Not Found
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '409':
+          description: Conflict
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '412':
+          description: Precondition Failed
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '422':
+          description: Validation Error
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '428':
+          description: Precondition Required
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '429':
+          description: Rate Limited
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '503':
+          description: Unavailable
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+  /shops/{shopId}/conversations/{conversationId}/order-draft/{draftId}/estimate:
+    get:
+      operationId: estimateConversationOrderDraft
+      summary: estimateConversationOrderDraft
+      tags:
+      - orders
+      x-permission: orders.read
+      x-stage: SPECIFICATION_NOT_IMPLEMENTED
+      description: Requires orders.read and conversations.read for the given shop.
+      parameters:
+      - name: shopId
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/Id'
+      - name: conversationId
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/Id'
+      - name: draftId
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/Id'
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConversationOrderDraftEstimateResponse'
+        '400':
+          description: Bad Request
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '401':
+          description: Unauthorized
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '403':
+          description: Forbidden
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '404':
+          description: Not Found
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '409':
+          description: Conflict
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '412':
+          description: Precondition Failed
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '422':
+          description: Validation Error
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '428':
+          description: Precondition Required
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '429':
+          description: Rate Limited
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '503':
+          description: Unavailable
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+  /shops/{shopId}/orders/estimate:
+    post:
+      operationId: estimateOrderDraft
+      summary: estimateOrderDraft
+      tags:
+      - orders
+      x-permission: orders.write
+      x-stage: SPECIFICATION_NOT_IMPLEMENTED
+      parameters:
+      - name: shopId
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/Id'
+      - $ref: '#/components/parameters/CSRF'
+      responses:
+        '200':
+          description: Current read-only draft estimate
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OrderDraftEstimateResponse'
+        '400':
+          description: Bad Request
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '401':
+          description: Unauthorized
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '403':
+          description: Forbidden
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '404':
+          description: Not Found
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '409':
+          description: Conflict
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '412':
+          description: Precondition Failed
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '422':
+          description: Validation Error
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '428':
+          description: Precondition Required
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '429':
+          description: Rate Limited
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '503':
+          description: Unavailable
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OrderDraft'
+      description: Price unsaved order inputs using current shop rules. Returns a
+        nullable estimated shipping fee and never creates a command, order, address
+        snapshot, reservation, or journal.
 components:
   securitySchemes:
     SessionCookie:
@@ -24416,6 +25212,309 @@ components:
       schema:
         $ref: '#/components/schemas/Id'
   schemas:
+    ConversationOrderDraftValues:
+      type: object
+      properties:
+        warehouseId:
+          $ref: '#/components/schemas/Id'
+        shippingAddressId:
+          anyOf:
+          - $ref: '#/components/schemas/Id'
+          - type: 'null'
+        paymentMethod:
+          type: string
+          enum:
+          - prepay
+          - cod
+        promotionId:
+          anyOf:
+          - $ref: '#/components/schemas/Id'
+          - type: 'null'
+        notes:
+          type: string
+          maxLength: 2000
+        lines:
+          type: array
+          maxItems: 100
+          items:
+            type: object
+            properties:
+              variantId:
+                $ref: '#/components/schemas/Id'
+              quantity:
+                type: integer
+                minimum: 1
+                maximum: 1000000
+            required: []
+            additionalProperties: false
+        lastField:
+          type: string
+          enum:
+          - product
+          - quantity
+          - warehouse
+          - shippingAddress
+          - paymentMethod
+          - promotion
+          - notes
+      required: []
+      additionalProperties: false
+    ConversationOrderDraftAccess:
+      type: object
+      properties:
+        tabId:
+          type: string
+          pattern: ^[0-9a-fA-F]{8}(?:-[0-9a-fA-F]{4}){3}-[0-9a-fA-F]{12}$
+        action:
+          type: string
+          enum:
+          - open
+          - resume
+          - renew
+        editEpoch:
+          type: integer
+          minimum: 1
+        draftId:
+          $ref: '#/components/schemas/Id'
+      required:
+      - tabId
+      - action
+      additionalProperties: false
+      description: Resume and renew must include the current draft ID and edit epoch.
+        Renewal also requires If-Match.
+    ConversationOrderDraftEdit:
+      type: object
+      properties:
+        tabId:
+          type: string
+          pattern: ^[0-9a-fA-F]{8}(?:-[0-9a-fA-F]{4}){3}-[0-9a-fA-F]{12}$
+        editEpoch:
+          type: integer
+          minimum: 1
+      required:
+      - tabId
+      - editEpoch
+      additionalProperties: false
+    ConversationOrderDraftSave:
+      type: object
+      properties:
+        tabId:
+          type: string
+          pattern: ^[0-9a-fA-F]{8}(?:-[0-9a-fA-F]{4}){3}-[0-9a-fA-F]{12}$
+        editEpoch:
+          type: integer
+          minimum: 1
+        values:
+          $ref: '#/components/schemas/ConversationOrderDraftValues'
+      required:
+      - tabId
+      - editEpoch
+      - values
+      additionalProperties: false
+    ConversationOrderDraft:
+      type: object
+      properties:
+        id:
+          $ref: '#/components/schemas/Id'
+        shopId:
+          $ref: '#/components/schemas/Id'
+        conversationId:
+          $ref: '#/components/schemas/Id'
+        version:
+          type: integer
+          minimum: 1
+        editEpoch:
+          type: integer
+          minimum: 1
+        values:
+          $ref: '#/components/schemas/ConversationOrderDraftValues'
+        savedAt:
+          anyOf:
+          - $ref: '#/components/schemas/DateTime'
+          - type: 'null'
+        editExpiresAt:
+          anyOf:
+          - $ref: '#/components/schemas/DateTime'
+          - type: 'null'
+      required:
+      - id
+      - shopId
+      - conversationId
+      - version
+      - editEpoch
+      - values
+      - savedAt
+      - editExpiresAt
+      additionalProperties: false
+    ConversationOrderDraftSummary:
+      type: object
+      properties:
+        id:
+          $ref: '#/components/schemas/Id'
+        conversationId:
+          $ref: '#/components/schemas/Id'
+        savedAt:
+          $ref: '#/components/schemas/DateTime'
+        assigneeId:
+          anyOf:
+          - $ref: '#/components/schemas/Id'
+          - type: 'null'
+        customerName:
+          anyOf:
+          - type: string
+          - type: 'null'
+      required:
+      - id
+      - conversationId
+      - savedAt
+      - assigneeId
+      - customerName
+      additionalProperties: false
+    ConversationOrderDraftResponse:
+      type: object
+      properties:
+        data:
+          $ref: '#/components/schemas/ConversationOrderDraft'
+        meta:
+          $ref: '#/components/schemas/Meta'
+      required:
+      - data
+      - meta
+      additionalProperties: false
+    ConversationOrderDraftViewResponse:
+      type: object
+      properties:
+        data:
+          type: object
+          properties:
+            draft:
+              anyOf:
+              - $ref: '#/components/schemas/ConversationOrderDraft'
+              - type: 'null'
+            canOpen:
+              type: boolean
+            selectedVariants:
+              type: array
+              maxItems: 100
+              items:
+                type: object
+                properties:
+                  id:
+                    $ref: '#/components/schemas/Id'
+                  label:
+                    type: string
+                required:
+                - id
+                - label
+                additionalProperties: false
+          required:
+          - draft
+          - canOpen
+          additionalProperties: false
+        meta:
+          $ref: '#/components/schemas/Meta'
+      required:
+      - data
+      - meta
+      additionalProperties: false
+    ConversationOrderDraftListResponse:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/ConversationOrderDraftSummary'
+        meta:
+          $ref: '#/components/schemas/Meta'
+        page:
+          $ref: '#/components/schemas/Page'
+      required:
+      - data
+      - meta
+      - page
+      additionalProperties: false
+    ConversationOrderDraftDiscardResponse:
+      type: object
+      properties:
+        data:
+          type: 'null'
+        meta:
+          $ref: '#/components/schemas/Meta'
+      required:
+      - data
+      - meta
+      additionalProperties: false
+    ConversationOrderDraftEstimateResponse:
+      type: object
+      properties:
+        data:
+          type: object
+          properties:
+            version:
+              type: integer
+              minimum: 1
+            items:
+              $ref: '#/components/schemas/Money'
+            shipping:
+              anyOf:
+              - $ref: '#/components/schemas/Money'
+              - type: 'null'
+            total:
+              $ref: '#/components/schemas/Money'
+          required:
+          - version
+          - items
+          - shipping
+          - total
+          additionalProperties: false
+        meta:
+          $ref: '#/components/schemas/Meta'
+      required:
+      - data
+      - meta
+      additionalProperties: false
+    DashboardOrderRow:
+      type: object
+      properties:
+        id:
+          $ref: '#/components/schemas/Id'
+        fulfillmentState:
+          type: string
+        total:
+          $ref: '#/components/schemas/Money'
+        updatedAt:
+          $ref: '#/components/schemas/DateTime'
+        customerName:
+          anyOf:
+          - type: string
+          - type: 'null'
+      required:
+      - id
+      - fulfillmentState
+      - total
+      - updatedAt
+      - customerName
+      additionalProperties: false
+    DashboardStockRow:
+      type: object
+      properties:
+        id:
+          $ref: '#/components/schemas/Id'
+        sku:
+          type: string
+        onHand:
+          type: integer
+        reserved:
+          type: integer
+        available:
+          type: integer
+      required:
+      - id
+      - sku
+      - onHand
+      - reserved
+      - available
+      additionalProperties: false
     Id:
       type: string
       minLength: 1
@@ -26095,6 +27194,21 @@ components:
     Dashboard:
       type: object
       properties:
+        pendingOrderRows:
+          type: array
+          items:
+            $ref: '#/components/schemas/DashboardOrderRow'
+          maxItems: 3
+        completedOrderRows:
+          type: array
+          items:
+            $ref: '#/components/schemas/DashboardOrderRow'
+          maxItems: 3
+        availableStockRows:
+          type: array
+          items:
+            $ref: '#/components/schemas/DashboardStockRow'
+          maxItems: 3
         shopId:
           $ref: '#/components/schemas/Id'
         asOf:
@@ -35459,4 +36573,29 @@ components:
       required:
       - count
       - workItemIds
+      additionalProperties: false
+    OrderDraftEstimateResponse:
+      type: object
+      properties:
+        data:
+          type: object
+          properties:
+            items:
+              $ref: '#/components/schemas/Money'
+            shipping:
+              anyOf:
+              - $ref: '#/components/schemas/Money'
+              - type: 'null'
+            total:
+              $ref: '#/components/schemas/Money'
+          required:
+          - items
+          - shipping
+          - total
+          additionalProperties: false
+        meta:
+          $ref: '#/components/schemas/Meta'
+      required:
+      - data
+      - meta
       additionalProperties: false

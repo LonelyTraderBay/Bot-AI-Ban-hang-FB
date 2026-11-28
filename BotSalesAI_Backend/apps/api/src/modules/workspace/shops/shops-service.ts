@@ -20,6 +20,7 @@ import {
 } from '../policy/access.js';
 import { requireIdempotencyKey, writeAsSession, writeShopCommand } from '../policy/command-scope.js';
 import { requireCloseableShop } from './closure-blockers.js';
+import { clearDraftLease } from '../../../platform/database/draft-lease.js';
 
 const membersManage = 'members.manage';
 type MemberWrite = { member: Membership; audit?: Prisma.InputJsonObject };
@@ -188,7 +189,13 @@ export class ShopsService {
                 requireVersion(current.version, version);
                 const close = operationId === 'closeShop';
                 if (close !== Boolean(current.closedAt)) {
-                    if (close) await requireCloseableShop(tx, shopId, current.currency);
+                    if (close) {
+                        await requireCloseableShop(tx, shopId, current.currency);
+                        await tx.conversationOrderDraft.updateMany({
+                            where: { shopId, state: 'active', editSessionId: { not: null } },
+                            data: { ...clearDraftLease, editEpoch: { increment: 1 } },
+                        });
+                    }
                     const shop = await tx.shop.update({ where: { id: shopId }, data: { closedAt: close ? new Date() : null, version: { increment: 1 } } });
                     await recordAudit(tx, { shopId, actorId: scope.userId, requestId, action: operationId, resourceType: 'shop', resourceId: shopId,
                         metadata: { version: shop.version, status: close ? 'closed' : 'active' } });

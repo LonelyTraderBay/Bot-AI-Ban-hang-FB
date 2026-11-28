@@ -78,7 +78,7 @@ export function ShopSettingsPage() {
         <PageHeader title="Cửa hàng" subtitle="Thông tin cơ sở và nguồn tư vấn đã được duyệt."
             actions={canWriteKnowledge ? <RouteLink to={`/s/${scope.shop.id}/knowledge?template=product_content`}>Soạn hồ sơ nội dung sản phẩm</RouteLink> : undefined} />
         <PageSections >
-            <Panel title="Thông tin cơ sở" bodyMode="inset">
+            <PageSections geometry={{ maxWidth: layoutSx.form.standardWidth.maxWidth }}><Panel title="Thông tin cơ sở" bodyMode="inset">
                 <FormFields component="form" ref={formRef} noValidate onSubmit={event => { event.preventDefault(); void save(); }}>
                     <ErrorNotice error={error || update.error} />
                     <DraftConflict editor={editor} labels={{ name: 'Tên cửa hàng', timezone: 'Múi giờ', locale: 'Ngôn ngữ', businessCountry: 'Quốc gia kinh doanh' }} busy={update.pending}/>
@@ -91,13 +91,15 @@ export function ShopSettingsPage() {
                         <TextField label="Múi giờ" value={timezone} disabled={!canManageShop} onBlur={() => setTimezoneTouched(true)} onChange={event => { setTimezone(event.target.value); setSaved(false); }} error={(timezoneTouched || settingsSubmitted) && !!timezoneError} helperText={(timezoneTouched || settingsSubmitted) && timezoneError ? timezoneError : 'Áp dụng cho ngày giờ theo cửa hàng.'} sx={{ flex: 1, minWidth: 0 }} />
                         <TextField label="Ngôn ngữ giao diện" value="Tiếng Việt" disabled helperText={`Giao diện hiện chỉ hỗ trợ tiếng Việt. Ngôn ngữ lưu cho cửa hàng: ${locale}.`} sx={{ flex: 1, minWidth: 0 }} />
                     </FieldGroup>
-                    <TextField label="Quốc gia kinh doanh" name="businessCountry" value={businessCountry ?? ''} disabled={!canManageShop}
+                    <FieldGroup direction={{ xs: 'column', sm: 'row' }} alignItems={{ xs: 'stretch', sm: 'start' }}>
+                        <TextField label="Quốc gia kinh doanh" name="businessCountry" value={businessCountry ?? ''} disabled={!canManageShop}
                         onChange={event => { setBusinessCountry(event.target.value.trim().toUpperCase() || null); setSaved(false); }}
-                        error={countryError} helperText={countryError ? 'Nhập mã hai chữ cái, ví dụ LA hoặc VN.' : 'Khai báo bằng mã ISO 3166-1, ví dụ LA hoặc VN.'} />
-                    <TextField label="Giao diện" value="Graphite Gold · Dark-only" disabled />
+                            error={countryError} helperText={countryError ? 'Nhập mã hai chữ cái, ví dụ LA hoặc VN.' : 'Khai báo bằng mã ISO 3166-1, ví dụ LA hoặc VN.'} sx={{ flex: 1, minWidth: 0 }} />
+                        <TextField label="Giao diện" value="Graphite Gold · Dark-only" disabled sx={{ flex: 1, minWidth: 0 }} />
+                    </FieldGroup>
                     <MutationButton permission="shop.manage" type="submit" variant="contained" busy={update.pending} disabled={!canManageShop || !editor.dirty || countryError || update.pending}>Lưu cấu hình</MutationButton>
                 </FormFields>
-            </Panel>
+            </Panel></PageSections>
             <Panel title="Checklist thiết lập vận hành" bodyMode="inset">
                 <Stack sx={layoutSx.surface.compactContentGap}>
                     <SetupChecklistItem title="Chạy bot trên Messenger" status={currentShop.businessCountry

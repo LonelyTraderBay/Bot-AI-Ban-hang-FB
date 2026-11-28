@@ -1,4 +1,4 @@
-import { openDemoControls } from './session/demo-controls';
+import { setDemoControl } from './session/demo-controls';
 import { test, expect } from '@playwright/test';
 import AxeBuilder from '@axe-core/playwright';
 import { startDemoServer } from './session/demo-server.mjs';
@@ -23,7 +23,6 @@ async function gotoDemo(page: import('@playwright/test').Page, path: string) {
 }
 
 async function chooseOption(page: import('@playwright/test').Page, label: string, value: string | RegExp) {
-    if (['Vai trò mô phỏng', 'Trạng thái thử', 'Dataset mô phỏng'].includes(label)) await openDemoControls(page);
     await page.getByRole('combobox', { name: label }).click();
     await page.getByRole('option', { name: value, exact: true }).click();
 }
@@ -133,7 +132,7 @@ test('FE014.AC02 approval covers the exact purchase intent; unknown send is bloc
     const approvedDialog = page.getByRole('dialog', { name: `Đơn mua ${purchaseId}` });
     await expect(approvedDialog.getByText('Đã duyệt', { exact: true })).toBeVisible();
     await approvedDialog.getByRole('button', { name: 'Đóng', exact: true }).last().click();
-    await chooseOption(page, 'Trạng thái thử', 'Kết quả ghi chưa rõ');
+    await setDemoControl(page, 'fault', 'unknown');
     await purchaseRow.getByRole('button', { name: 'Xem chi tiết' }).click();
     const approvedAfterFaultDialog = page.getByRole('dialog', { name: `Đơn mua ${purchaseId}` });
     await approvedAfterFaultDialog.getByRole('button', { name: 'Gửi đơn mua' }).click();
@@ -243,7 +242,7 @@ test('FE014.S03 manager without procurement.receive cannot open receipt actions'
     expect(JSON.parse(created.postData() || 'null')).toMatchObject({ sourceDocumentRef: 'FE014-GR-PERMISSION-01', lines: [{ acceptedQuantity: 1, rejectedQuantity: 0 }] });
     const receipt = page.getByRole('row').filter({ hasText: 'FE014-GR-PERMISSION-01' });
     await expect(receipt).toBeVisible();
-    await chooseOption(page, 'Vai trò mô phỏng', 'manager');
+    await setDemoControl(page, 'role', 'manager');
     await expect(page.getByRole('navigation', { name: 'Điều hướng chính' }).getByText('Quản lý', { exact: true })).toBeVisible();
     await expect(receipt.getByRole('button', { name: 'Xem / ghi nhận phiếu' })).toHaveCount(0);
 });

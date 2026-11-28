@@ -100,7 +100,8 @@ for (const scenario of scenarios) {
         await page.evaluate(() => new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve))));
 
         await page.locator(fixture.focusTarget).first().focus();
-        await page.keyboard.press('Tab');
+        const reverseTab = scenario.id === 'form-error-short' || scenario.id === 'inbox-long-composer';
+        await page.keyboard.press(reverseTab ? 'Shift+Tab' : 'Tab');
         const measured = await page.evaluate((selectors: string[]) => {
             const bounds = (element: HTMLElement) => {
                 const rect = element.getBoundingClientRect();

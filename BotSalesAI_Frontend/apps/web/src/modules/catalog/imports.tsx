@@ -1,4 +1,5 @@
-import { ActionGroup, FieldGroup, FormFields } from '../../shared/ui/composition';
+import { ActionGroup, FieldGroup, FormFields, PageSections } from '../../shared/ui/composition';
+import { layoutSx } from '@/shared/ui/layout';
 import { useRef, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { Alert, Box, Button, MenuItem, TextField, Typography } from '@mui/material';
@@ -33,7 +34,7 @@ export function ImportsPage() {
 
     return <>
         <PageHeader title="Nhập dữ liệu" subtitle="Tải tệp → ánh xạ cột → kiểm tra trước → xác nhận các dòng hợp lệ." />
-        <Panel title="Tệp & ánh xạ" bodyMode="inset">
+        <PageSections geometry={{ maxWidth: layoutSx.form.standardWidth.maxWidth }}><Panel title="Tệp & ánh xạ" bodyMode="inset">
             <Box sx={{ width: '100%', minWidth: 0 }}>
                 <ErrorNotice error={(!uploadTooLarge && upload.error) || dry.error} />
                 <FormFields >
@@ -97,7 +98,7 @@ export function ImportsPage() {
                     }}>Kiểm tra trước khi nhập</MutationButton>
                 </FormFields>
             </Box>
-        </Panel>
+        </Panel></PageSections>
         <Panel title="Tác vụ gần đây" subtitle="Tình trạng xử lý do API trả về; dữ liệu mẫu chỉ chạy trong bộ nhớ." beforeGap={"section"}>
             <QueryState query={jobs} pendingProfile="section">
                 {jobs.data && <>

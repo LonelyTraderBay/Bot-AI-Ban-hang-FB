@@ -54,6 +54,7 @@ test('R63 queries server filters and verifies unknown commands without replay at
     await expect(page.getByRole('heading', { name: 'Ngoại lệ và tác vụ nền' })).toBeVisible();
     const work = page.getByRole('region', { name: 'Hàng đợi công việc' });
     await expect(work.getByText('demo-workitem-late-shipment')).toBeVisible();
+    await page.getByRole('button', { name: 'Bộ lọc', exact: true }).click();
     await page.getByRole('combobox', { name: 'Loại công việc' }).click();
     const filterRequest = page.waitForResponse(response => {
         const request = new URL(response.url());

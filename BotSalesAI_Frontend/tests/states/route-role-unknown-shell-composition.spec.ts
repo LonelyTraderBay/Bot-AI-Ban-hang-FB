@@ -1,6 +1,6 @@
 import { readFileSync } from 'node:fs';
 import { expect, test } from '@playwright/test';
-import { openDemoControls } from '../session/demo-controls';
+import { setDemoControl } from '../session/demo-controls';
 import { startDemoServer } from '../session/demo-server.mjs';
 import { expectedDocumentTitle } from '../session/document-title';
 
@@ -42,9 +42,7 @@ test.afterAll(async () => stopDemo?.());
 
 async function chooseRole(page: import('@playwright/test').Page, role: string) {
     if (role === 'owner') return;
-    await openDemoControls(page);
-    await page.getByRole('combobox', { name: 'Vai trò mô phỏng' }).click();
-    await page.getByRole('option', { name: role, exact: true }).click();
+    await setDemoControl(page, 'role', role);
 }
 
 test.describe('unknown command recovery shell renders for each readable route and permitted action role', () => {

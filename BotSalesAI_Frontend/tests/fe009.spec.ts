@@ -1,4 +1,4 @@
-import { navigateDemoAndRead, openDemoControls } from './session/demo-controls';
+import { navigateDemoAndRead, setDemoControl } from './session/demo-controls';
 import {test,expect} from '@playwright/test';
 import {startDemoServer} from './session/demo-server.mjs';
 
@@ -18,11 +18,8 @@ async function gotoDemo(page: import('@playwright/test').Page,path: string){
 }
 
 async function chooseMockOption(page: import('@playwright/test').Page,label: string,value: string){
-    if (['Vai trò mô phỏng', 'Trạng thái thử', 'Dataset mô phỏng'].includes(label)) await openDemoControls(page);
     await page.getByRole('combobox',{name:label}).click();
     await page.getByRole('option',{name:value,exact:true}).click();
-    // The selected label updates before the asynchronously loaded mock control applies.
-    if(label==='Trạng thái thử')await expect(page.getByRole('status').filter({hasText:'Trạng thái thử đã được áp dụng.'})).toBeVisible();
 }
 
 type ObservedRequest={method:string;path:string;body:string|null;headers:Record<string,string>};
@@ -91,7 +88,7 @@ test('customer create validates fields, submits through mock HTTP, and preserves
 
     const updatedName='Khách FE009 đổi tên';
     await page.getByLabel('Tên khách hàng').fill(updatedName);
-    await chooseMockOption(page,'Trạng thái thử','Xung đột lần ghi tiếp');
+    await setDemoControl(page, 'fault', 'conflict');
     const staleSave=page.waitForResponse(response=>response.request().method()==='PATCH'&&new URL(response.url()).pathname.includes('/shops/shop-demo/customers/'));
     await page.getByRole('button',{name:'Lưu thay đổi',exact:true}).click();
     expect((await staleSave).status()).toBe(412);
@@ -312,7 +309,7 @@ test('team invitation and membership revoke stay shop-scoped and protect the act
     expect(revokeCall).toBeDefined();
     expect(revokeCall?.headers['if-match']).toBeTruthy();
 
-    await chooseMockOption(page,'Vai trò mô phỏng','manager');
+    await setDemoControl(page, 'role', 'manager');
     await expect(page.getByRole('alert').filter({hasText:'Bạn không có quyền truy cập màn hình này'})).toBeVisible();
     await expect(page.getByRole('button',{name:'Mời nhân viên',exact:true})).toHaveCount(0);
 });

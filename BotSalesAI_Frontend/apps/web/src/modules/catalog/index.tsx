@@ -1,14 +1,14 @@
 import { listReturnState, useListReturn } from '@/shared/model/list-return';
 import { codePointLength } from '@/shared/model/format';
 import { ActionGroup, FieldGroup, FormFields } from '../../shared/ui/composition';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useId, useRef, useState } from 'react';
 import { visualSx } from '@/shared/ui/visual';
 import { layoutSx } from '@/shared/ui/layout';
 import { useLocation, useNavigate, useParams, useSearchParams, Link as RouterLink } from 'react-router-dom';
 import { useForm, useFieldArray, Controller, useWatch } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import { Alert, Box, Button, Checkbox, FormControlLabel, IconButton, MenuItem, Stack, TextField, Typography } from '@mui/material';
+import { Alert, Box, Button, Checkbox, FormControlLabel, IconButton, MenuItem, Stack, TextField, Typography, useMediaQuery } from '@mui/material';
 import AddRounded from '@mui/icons-material/AddRounded';
 import DeleteOutlineRounded from '@mui/icons-material/DeleteOutlineRounded';
 import type { Category, Product, ProductWritePatch } from '@botsales/contracts';
@@ -21,6 +21,7 @@ import { ApiError } from '@/shared/api/errors';
 import { draftEqual, useVersionedDraft } from '@/shared/model/versioned-draft';
 import { markDraftClean, useDraftForm } from '@/shared/model/dirty-drafts';
 import { DraftConflict } from '@/shared/ui/draft-conflict';
+import { tabletAndUpQuery } from '@/shared/ui/theme';
 import { PageHeader, Panel, DataTable, Status, Amount, QueryState, Toolbar, Pager, MutationButton, EditDialog, ErrorNotice, ConfirmDialog, RouteLink, LookupLoadMore } from '@/shared/ui/components';
 const productSchema = z.object({
     name: z.string().trim().min(1, 'Nhập tên sản phẩm').refine(value => codePointLength(value) <= 160, 'Tên sản phẩm tối đa 160 ký tự.'), description: z.string().refine(value => codePointLength(value) <= 20000, 'Mô tả tối đa 20.000 ký tự.'), categoryId: z.string(), status: z.enum(['draft', 'active']), variants: z.array(z.object({
@@ -33,6 +34,10 @@ export function ProductsPage() {
     const { shop } = useScope();
     const navigate = useNavigate();
     const [params, setParams] = useSearchParams();
+    const filterId = useId();
+    const wide = useMediaQuery(tabletAndUpQuery);
+    const [filtersOpen, setFiltersOpen] = useState(false);
+    const activeFilters = ['status', 'categoryId'].filter(key => params.get(key)).length;
     const location = useLocation();
     const newProductPath = `/s/${shop.id}/products/new`;
     const [categorySearchInput, setCategorySearchInput] = useState(''), [categorySearch, setCategorySearch] = useState('');
@@ -53,12 +58,17 @@ export function ProductsPage() {
         next.delete('cursor');
         setParams(next);
     };
+    const statusFilter = <TextField id="products-status" select size="small" label="Trạng thái" SelectProps={{ displayEmpty: true, SelectDisplayProps: { 'aria-labelledby': 'products-status-label' } }} value={params.get('status') || ''} onChange={event => setFilter('status', event.target.value)} sx={{ minWidth: 150 }}>
+        <MenuItem value="">Tất cả trạng thái</MenuItem><MenuItem value="draft">Bản nháp</MenuItem><MenuItem value="active">Đang bán</MenuItem><MenuItem value="archived">Đã ngừng bán</MenuItem>
+    </TextField>;
     return <><PageHeader title="Sản phẩm" subtitle="Một nguồn thông tin cho tư vấn, giá bán và các biến thể." actions={<MutationButton permission="catalog.write" onClick={() => navigate(newProductPath, { state: listReturnState(location.pathname, location.search, newProductPath) })} variant="contained">Thêm sản phẩm</MutationButton>}/><Panel>
         <Toolbar operation="listProducts" placeholder="Tìm tên hoặc SKU…"
-            extra={<TextField id="products-status" select size="small" label="Trạng thái" SelectProps={{ displayEmpty: true, SelectDisplayProps: { 'aria-labelledby': 'products-status-label' } }} value={params.get('status') || ''} onChange={event => setFilter('status', event.target.value)} sx={{ minWidth: 150 }}>
-                <MenuItem value="">Tất cả trạng thái</MenuItem><MenuItem value="draft">Bản nháp</MenuItem><MenuItem value="active">Đang bán</MenuItem><MenuItem value="archived">Đã ngừng bán</MenuItem>
-            </TextField>}
-            filters={<FormFields direction={{ xs: 'column', sm: 'row' }} alignItems={{ xs: 'stretch', sm: 'flex-start' }} role="group" aria-label="Bộ lọc danh mục">
+            extra={wide ? statusFilter : <Button type="button" aria-controls={filterId} aria-expanded={filtersOpen}
+                onClick={() => setFiltersOpen(open => !open)}>
+                {activeFilters ? `Bộ lọc (${activeFilters})` : 'Bộ lọc'}
+            </Button>}
+            filters={<div id={filterId} hidden={!wide && !filtersOpen}><FormFields direction={{ xs: 'column', sm: 'row' }} alignItems={{ xs: 'stretch', sm: 'flex-start' }} role="group" aria-label="Bộ lọc sản phẩm">
+                {!wide && statusFilter}
                 <FieldGroup geometry={{ flex: 1, minWidth: 0 }}>
                     <TextField size="small" label="Tìm danh mục" value={categorySearchInput} onChange={event => setCategorySearchInput(event.target.value)} helperText="Tìm danh mục trên toàn cửa hàng."/>
                 </FieldGroup>
@@ -71,7 +81,7 @@ export function ProductsPage() {
                     <LookupLoadMore label="danh mục" loadedCount={categories.loadedCount} hasMore={categories.hasMore} busy={categories.isLoadingMore} onLoadMore={categories.loadMore}/>
                     {categories.isError && <Button size="small" onClick={() => { void (categories.isFetchNextPageError ? categories.loadMore() : categories.refetch()); }}>Thử lại danh mục</Button>}
                 </FieldGroup>
-            </FormFields>}/>
+            </FormFields></div>}/>
         <QueryState query={list} pendingProfile="section">{list.data && <><DataTable mobile={{ layout: 'cards', titleKey: 'name', summaryKeys: ['price', 'status', 'variants'], actionKey: 'action' }} label="Danh sách sản phẩm" rows={list.data.data} rowKey={p => p.id} columns={[
         {
             key: 'name', label: 'Sản phẩm', render: p => <Stack><Typography fontWeight={visualSx.typography.fontWeight.strong}>{p.name}</Typography><Typography variant="caption" color="text.secondary">{p.variants.map(v => v.sku).join(' · ')}</Typography></Stack>
@@ -166,7 +176,7 @@ export function ProductEditorPage() {
         }
     });
     const pending = create.pending || update.pending || upload.pending;
-    return <><PageHeader title={productId ? 'Thông tin sản phẩm' : 'Thêm sản phẩm'} subtitle="Giá theo biến thể. Tồn kho được quản lý ở màn hình riêng." actions={<Button component={RouterLink} to={listHref}>Danh sách</Button>}/>{productId && product.isPending ? <QueryState query={product}>{null}</QueryState> : productId && product.isError ? <QueryState query={product}>{null}</QueryState> : <Box component="form" ref={form => { const element = form as HTMLFormElement | null; productElement.current = element; draftForm(element); }} data-draft-clean={!isDirty && !imagesDirty ? 'true' : undefined} onSubmit={save}>
+    return <><PageHeader title={productId ? 'Thông tin sản phẩm' : 'Thêm sản phẩm'} subtitle="Giá theo biến thể. Tồn kho được quản lý ở màn hình riêng." actions={<Button component={RouterLink} to={listHref}>Danh sách</Button>}/>{productId && product.isPending ? <QueryState query={product}>{null}</QueryState> : productId && product.isError ? <QueryState query={product}>{null}</QueryState> : <Box component="form" ref={form => { const element = form as HTMLFormElement | null; productElement.current = element; draftForm(element); }} data-draft-clean={!isDirty && !imagesDirty ? 'true' : undefined} onSubmit={save} sx={layoutSx.form.transactionWidth}>
  <ErrorNotice error={create.error || update.error || upload.error}/><DraftConflict editor={editor} labels={{ name: 'Tên sản phẩm', description: 'Mô tả', categoryId: 'Danh mục', status: 'Trạng thái', variants: 'Biến thể và giá', imageFileIds: 'Ảnh sản phẩm' }} busy={pending}/><Panel title="Thông tin bán hàng" bodyMode="inset"><FormFields ><TextField label="Tên sản phẩm" {...register('name')} error={!!errors.name} helperText={errors.name?.message} disabled={!canWrite}/><TextField label="Mô tả dùng cho AI tư vấn" multiline minRows={4} {...register('description')} disabled={!canWrite}/><TextField label="Tìm danh mục" size="small" value={categorySearch} onChange={event => setCategorySearch(event.target.value)} disabled={!canWrite} helperText="Tìm trên danh sách cửa hàng; có thể tải thêm khi cần."/><FieldGroup direction={{ xs: 'column', sm: 'row' }} alignItems={{ xs: 'stretch', sm: 'start' }}><Controller name="categoryId" control={control} render={({ field }) => <FieldGroup geometry={{flex: 1, minWidth: 0, width: '100%'}}><TextField id="product-category" select fullWidth label="Danh mục" SelectProps={{ displayEmpty: true, SelectDisplayProps: { 'aria-labelledby': 'product-category-label' } }} {...field} disabled={!canWrite}><MenuItem value="">Chưa phân loại</MenuItem>{selectedCategoryId && !categoryOnPage && <MenuItem value={selectedCategoryId}>{retainedCategory?.name || (selectedCategory.isError ? `Danh mục hiện tại (${selectedCategoryId})` : 'Đang tải danh mục hiện tại…')}</MenuItem>}{categories.data?.data.map(c => <MenuItem key={c.id} value={c.id}>{c.name}</MenuItem>)}</TextField><LookupLoadMore label="danh mục" loadedCount={categories.loadedCount} hasMore={categories.hasMore} busy={categories.isLoadingMore} onLoadMore={categories.loadMore}/>{categories.isPending && <Alert severity="info" role="status">Đang tải danh mục…</Alert>}{categories.isError && <Alert severity={categories.isFetchNextPageError ? 'warning' : 'error'} role="alert" action={<Button color="inherit" size="small" onClick={() => { void (categories.isFetchNextPageError ? categories.loadMore() : categories.refetch()); }}>Thử lại danh mục</Button>}>{categories.isFetchNextPageError ? `Không tải thêm được danh mục (HTTP ${categories.error instanceof ApiError ? categories.error.status : 'lỗi'}). Các lựa chọn đã tải vẫn dùng được.` : `Không tải được danh mục (HTTP ${categories.error instanceof ApiError ? categories.error.status : 'lỗi'}). ${categories.data ? 'Lựa chọn đã tải có thể đã cũ. ' : ''}Bản nháp được giữ; hãy thử lại hoặc chọn “Chưa phân loại”.`}</Alert>}{categories.data?.data.length === 0 && !categories.isFetching && <Alert severity="info" role="status">{categoryQuery ? 'Không tìm thấy danh mục phù hợp.' : 'Cửa hàng chưa có danh mục.'}</Alert>}{selectedCategory.isPending && selectedCategoryId && !categoryOnPage && <Alert severity="info" role="status">Đang tải tên danh mục đã gắn với sản phẩm…</Alert>}{selectedCategory.isError && selectedCategoryId && !categoryOnPage && <Alert severity="warning" role="alert" action={<Button color="inherit" size="small" onClick={() => { void selectedCategory.refetch(); }}>Thử lại danh mục đang chọn</Button>}>{selectedCategory.error instanceof ApiError && selectedCategory.error.status === 403 ? 'Không có quyền đọc danh mục hiện tại (403). ID đã chọn vẫn được giữ trong biểu mẫu.' : `Không tải được danh mục hiện tại (${selectedCategory.error instanceof ApiError ? selectedCategory.error.status : 'lỗi'}). ID đã chọn vẫn được giữ trong biểu mẫu.`}</Alert>}</FieldGroup>}/><Controller name="status" control={control} render={({ field }) => <TextField select fullWidth label="Trạng thái" {...field} disabled={!canWrite} sx={{ flex: 1, minWidth: 0 }}><MenuItem value="draft">Bản nháp</MenuItem><MenuItem value="active">Đang bán</MenuItem></TextField>}/></FieldGroup></FormFields></Panel>
  <Panel title="Biến thể và giá" bodyMode="inset" beforeGap={"section"} action={<Button startIcon={<AddRounded />} disabled={!canWrite} onClick={() => fieldArray.append({ sku: '', name: '', price: '', active: true })}>Thêm biến thể</Button>}><FormFields >{fieldArray.fields.map((field, index) => <FieldGroup key={field.id} direction={{ xs: 'column', md: 'row' }}  alignItems={{ xs: 'stretch', md: 'start' }} flexWrap="wrap"><TextField label="SKU" {...register(`variants.${index}.sku`)} error={!!errors.variants?.[index]?.sku} helperText={errors.variants?.[index]?.sku?.message} disabled={!canWrite} sx={{ width: { xs: '100%', md: 'auto' }, minWidth: 'min(100%, 12em)', maxWidth: '100%', flex: { xs: '0 1 auto', md: '1 1 12em' } }}/><TextField label="Tên / màu / kích cỡ" {...register(`variants.${index}.name`)} disabled={!canWrite} sx={{ width: { xs: '100%', md: 'auto' }, minWidth: 'min(100%, 12em)', maxWidth: '100%', flex: { xs: '0 1 auto', md: '1 1 12em' } }}/><TextField label={`Giá bán (${shop.currency})`} inputProps={{ inputMode: 'decimal' }} {...register(`variants.${index}.price`)} error={!!errors.variants?.[index]?.price} helperText={errors.variants?.[index]?.price?.message} disabled={!canWrite} sx={{ width: { xs: '100%', md: 'auto' }, minWidth: 'min(100%, 12em)', maxWidth: '100%', flex: { xs: '0 1 auto', md: '1 1 12em' } }}/><FormControlLabel label="Đang bán" control={<Checkbox defaultChecked={field.active} {...register(`variants.${index}.active`)} disabled={!canWrite}/>}/><IconButton aria-label={`Xóa biến thể ${index + 1}`} disabled={!canWrite || fieldArray.fields.length === 1} onClick={() => fieldArray.remove(index)}><DeleteOutlineRounded /></IconButton></FieldGroup>)}</FormFields></Panel>
  <Panel title="Ảnh sản phẩm" subtitle="Tải ảnh qua hệ thống; không dùng đường dẫn tùy ý hoặc thông tin bí mật." bodyMode="inset" beforeGap={"section"}><FormFields ><Typography variant="body2">{imageIds.length} tệp được gắn với sản phẩm</Typography><Button type="button" variant="outlined" disabled={!canWrite || pending} onClick={() => imageInput.current?.click()}>Chọn ảnh</Button><input ref={imageInput} hidden type="file" accept="image/png,image/jpeg,image/webp" onChange={async (e) => { const input = e.currentTarget; const file = input.files?.[0] || null; const error = productImageFileError(file, __MOCK__ ? PRODUCT_IMAGE_MAX_BYTES : undefined); setImageError(error); if (error) { input.value = ''; return; } if (!file) return; const form = new FormData(); form.append('file', file); form.append('purpose', 'product_image'); try {
@@ -209,7 +219,7 @@ export function CategoriesPage() {
             key: 'action', label: 'Thao tác', render: c => <Stack direction="row"><MutationButton permission="catalog.write" onClick={() => open(c)}>Sửa</MutationButton><MutationButton permission="catalog.write" color="error" onClick={() => setRemove(c)}>Ngừng dùng</MutationButton></Stack>
         }
     ]}/><Pager page={list.data.page}/></>}</QueryState></Panel>
- <EditDialog allowEditsWhileBusy open={edit !== undefined} title={edit ? 'Sửa danh mục' : 'Thêm danh mục'} onClose={() => setEdit(undefined)} busy={create.pending || update.pending || waitingForDetail} actions={<Button variant="contained" disabled={!name.trim() || create.pending || update.pending || waitingForDetail} onClick={async () => { try {
+ <EditDialog width="compact" allowEditsWhileBusy open={edit !== undefined} title={edit ? 'Sửa danh mục' : 'Thêm danh mục'} onClose={() => setEdit(undefined)} busy={create.pending || update.pending || waitingForDetail} actions={<Button variant="contained" disabled={!name.trim() || create.pending || update.pending || waitingForDetail} onClick={async () => { try {
         const submitted = { name, parentId };
         const body = { name: name.trim(), parentId: parentId || null };
         let result: Awaited<ReturnType<typeof create.execute>>;

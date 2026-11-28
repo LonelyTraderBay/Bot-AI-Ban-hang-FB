@@ -18,9 +18,14 @@ test('UX01 setup feedback CTA reaches review workflow rather than dynamic knowle
 test('UX02 stock warnings describe low/zero stock without implying a server block',async({page})=>{
  await page.goto(url+'/s/shop-demo/inventory');
  const table=page.getByRole('table',{name:'Tồn kho theo vị trí'});
- await expect(table.getByRole('row').filter({hasText:'QU-003'})).toContainText('Sắp hết hàng');
- await expect(table.getByRole('row').filter({hasText:'MU-006'})).toContainText('Hết hàng');
- await expect(table).not.toContainText('Bị chặn');
+ for (const [sku, status] of [['QU-003', 'Sắp hết hàng'], ['MU-006', 'Hết hàng']] as const) {
+  await table.getByRole('button', { name: `Xem chi tiết SKU ${sku}`, exact: true }).click();
+  const details = page.getByRole('dialog', { name: 'Chi tiết tồn kho' });
+  await expect(details.getByText(status, { exact: true })).toBeVisible();
+  await expect(details).not.toContainText('Bị chặn');
+  await page.keyboard.press('Escape');
+  await expect(details).toHaveCount(0);
+ }
 });
 test('UX02 inventory receipts and accounting open periods have domain-specific names',async({page})=>{
  await page.goto(url+'/s/shop-demo/inventory/movements');
@@ -154,7 +159,8 @@ test('UX06 AI capability names and states are readable in Vietnamese',async({pag
 test('UX15 detail captions reflow without splitting short words across all required viewports',async({page},info)=>{
  test.setTimeout(90000);
  await page.goto(url+'/s/shop-demo/inbox/cv1');
- const context=page.getByRole('complementary',{name:'Bối cảnh khách hàng',exact:true});
+ const context=page.getByRole('dialog',{name:'Thông tin khách',exact:true});
+ await page.getByRole('button',{name:'Thông tin khách',exact:true}).click();
  for(const width of [320,390,768,1280,1440]){
   await page.setViewportSize({width,height:900});
   const caption=context.getByText('Kênh',{exact:true});await expect(caption).toBeVisible();

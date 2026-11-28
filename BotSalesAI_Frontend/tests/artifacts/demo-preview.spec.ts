@@ -1,4 +1,4 @@
-import { navigateDemoAndRead, openDemoControls } from '../session/demo-controls';
+import { navigateDemoAndRead, setDemoControl } from '../session/demo-controls';
 import { expect, test } from '@playwright/test';
 import { preview } from 'vite';
 import type { PreviewServer } from 'vite';
@@ -41,7 +41,7 @@ test('the built demo artifact serves the React UI and synthetic API through prev
     const response = await navigateDemoAndRead(page, `${baseUrl}/s/shop-demo/overview`,
         response => new URL(response.url()).pathname === '/api/v2/session');
     expect(response.status()).toBe(200);
-    await expect(page.getByText('Dữ liệu mô phỏng', { exact: true })).toBeVisible();
+    await expect(page.getByRole('complementary', { name: 'Công cụ mô phỏng', exact: true })).toHaveCount(0);
     await expect(page.locator('main h1').first()).toBeVisible();
 
     const browserMetrics = await page.evaluate(() => {
@@ -102,11 +102,8 @@ test('the built demo artifact serves the React UI and synthetic API through prev
 
 test('a thousand synthetic customers remain API-paginated in the built demo artifact', async ({ page, browserName }) => {
     await page.goto(`${baseUrl}/s/shop-demo/overview`);
-    await expect(page.getByText('Dữ liệu mô phỏng', { exact: true })).toBeVisible();
-    await openDemoControls(page);
-    await page.getByRole('combobox', { name: 'Dataset mô phỏng' }).click();
-    await page.getByRole('option', { name: '1.000 khách hàng tổng hợp' }).click();
-    await expect(page.getByRole('status').filter({ hasText: /^Đã tải 1\.000 khách hàng/ })).toHaveText('Đã tải 1.000 khách hàng tổng hợp vào API mô phỏng.');
+    await expect(page.getByRole('complementary', { name: 'Công cụ mô phỏng', exact: true })).toHaveCount(0);
+    await setDemoControl(page, 'dataset', 'large-customers');
 
     const customersResponsePromise = page.waitForResponse(response => new URL(response.url()).pathname.startsWith('/api/v2/shops/shop-demo/customers'));
     const startedAt = Date.now();

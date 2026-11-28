@@ -31,11 +31,15 @@ async function interceptDetail(page: Page, detail: Detail, status = 0) {
             const method = init?.method || (input instanceof Request ? input.method : 'GET');
             const path = new URL(address, location.origin).pathname;
             if (method === 'GET' && path.startsWith('/api/v2/shops/shop-demo' + api) && !path.endsWith('/catalog') && !path.slice(('/api/v2/shops/shop-demo' + api).length).includes('/')) {
-                probe.calls++;
-                if (status) return new Response(JSON.stringify({ type: 'https://example.test/problems/detail', title: 'Detail unavailable', status, detail: 'DETAIL_FETCH_FAILURE', code: status === 403 ? 'FORBIDDEN' : status === 404 ? 'NOT_FOUND' : 'TEMPORARILY_UNAVAILABLE', requestId: 'completion-detail-test' }), { status, headers: { 'Content-Type': 'application/problem+json' } });
+                if (status) {
+                    probe.calls++;
+                    return new Response(JSON.stringify({ type: 'https://example.test/problems/detail', title: 'Detail unavailable', status, detail: 'DETAIL_FETCH_FAILURE', code: status === 403 ? 'FORBIDDEN' : status === 404 ? 'NOT_FOUND' : 'TEMPORARILY_UNAVAILABLE', requestId: 'completion-detail-test' }), { status, headers: { 'Content-Type': 'application/problem+json' } });
+                }
                 const response = await original(input, init);
                 if (!response.ok) return response;
                 const body = await response.json();
+                // Scope refresh can abort a fetch before any response reaches the detail.
+                probe.calls++;
                 body.data[field] = field === 'result' ? { type: 'stock', id: marker } : marker;
                 await new Promise<void>(resolve => { probe.release = resolve; });
                 return new Response(JSON.stringify(body), { status: response.status, headers: response.headers });

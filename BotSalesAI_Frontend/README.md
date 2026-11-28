@@ -58,7 +58,7 @@ Trên Windows có `START_WINDOWS.cmd` hỗ trợ cùng quy trình và dừng khi
 |---|---|
 | `npm run dev` | Frontend với MSW network mocks; không gửi dịch vụ ngoài. |
 | `npm run dev:live` | Frontend gọi API thật qua proxy, không có mock đăng nhập. |
-| `npm run build:demo` | Build review có mô phỏng vào `apps/web/dist-demo`, sau khi typecheck đạt. |
+| `npm run build:demo` | Build xem thử với dữ liệu mẫu vào `apps/web/dist-demo`, sau khi typecheck đạt. |
 | `npm run preview` | Mở build demo đã tạo trên cổng 4173. |
 | `npm run build` | Build không chứa nhánh MSW của demo; cần backend phù hợp để dùng nghiệp vụ. |
 | `npm run doctor` | Kiểm Node, dependencies, worker file và lockfile. |
@@ -100,13 +100,13 @@ Các màn hình có bảng, lọc, form hoặc hành động theo hợp đồng 
 
 ## 5. Thử nghiệp vụ với dữ liệu mẫu
 
-Chế độ demo tự dùng tài khoản mẫu. Có hai shop tách dữ liệu và bộ chọn vai trò/trạng thái mô phỏng trên thanh thông báo. Đơn `DH-1001`, hội thoại `cv1`, khách `c1` phục vụ luồng bán hàng.
+Chế độ demo tự dùng tài khoản mẫu. Có hai shop tách dữ liệu. Đơn `DH-1001`, hội thoại `cv1`, khách `c1` phục vụ luồng bán hàng.
 
 - Đơn hàng: báo giá → xác nhận khách mô phỏng (chỉ ở demo) → giữ hàng → nhận việc → lấy/đóng gói → tạo vận chuyển → bàn giao → ghi nhận giao thành công. Chỉ ghi tiền khi có bằng chứng thử theo form; không có giao dịch ngân hàng thật.
 - Mua hàng: nhà cung cấp/offer → đề nghị nhập/đơn mua → yêu cầu phê duyệt → duyệt → gửi mô phỏng → xác nhận nhà cung cấp → nhận một phần → ghi phiếu.
 - CSV: thử `samples/products.csv`, `samples/bank.csv`, `samples/cod.csv`. Form ngân hàng/COD dùng formatId `botsales-csv-v1`. COD chỉ nhận đơn đã được mô phỏng giao thành công.
 
-Nhãn demo luôn xuất hiện. Mua hàng, lệnh gửi, kiểm thử AI và scan tệp trong mock **không có tác động hoặc bằng chứng ngoài hệ thống**. Thời gian nghiệp vụ mẫu cố định ngày 29/09/2026 để tái lập kiểm tra. Tải lại trang mất thay đổi của mock. Góp ý có thể xuất JSON riêng; không nộp dữ liệu khách thật vào demo.
+Mua hàng, lệnh gửi, kiểm thử AI và scan tệp trong mock **không có tác động hoặc bằng chứng ngoài hệ thống**. Thời gian nghiệp vụ mẫu cố định ngày 29/09/2026 để tái lập kiểm tra. Tải lại trang mất thay đổi của mock. Chỉ dùng dữ liệu mẫu trong chế độ này.
 
 ## 6. Nối backend sau này
 

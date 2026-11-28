@@ -356,7 +356,7 @@ describe('Accessible shared presentation',()=>{
         expect(report.accessibilityPreferences.skipLinkBackground).toBe(report.accessibilityPreferences.systemHighlight);
         expect(report.accessibilityPreferences.skipLinkColor).toBe(report.accessibilityPreferences.systemHighlightText);
         expect(report.viewports.map(view=>[view.width,view.kpiColumns,view.documentWidth<=view.contentWidth])).toEqual([
-            [320,1,true],[390,1,true],[768,2,true],[1440,4,true],
+            [320,1,true],[390,2,true],[768,2,true],[1440,2,true],
         ]);
         expect(report.viewports[0].recentOrdersFit).toBe(true);
         expect(report.viewports[1].recentOrdersFit).toBe(true);

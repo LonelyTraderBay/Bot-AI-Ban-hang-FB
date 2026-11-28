@@ -1,4 +1,4 @@
-import { openDemoControls } from './session/demo-controls';
+import { setDemoControl } from './session/demo-controls';
 import { test, expect } from '@playwright/test';
 import { startDemoServer } from './session/demo-server.mjs';
 
@@ -18,7 +18,6 @@ async function gotoDemo(page: import('@playwright/test').Page, path: string) {
 }
 
 async function chooseOption(page: import('@playwright/test').Page, label: string, value: string | RegExp) {
-    if (['Vai trò mô phỏng', 'Trạng thái thử', 'Dataset mô phỏng'].includes(label)) await openDemoControls(page);
     await page.getByRole('combobox', { name: label }).click();
     await page.getByRole('option', { name: value, exact: true }).click();
 }
@@ -199,9 +198,7 @@ test('FE020.AC02/03 work-item actions follow allowedActions and operations healt
     await expect(page.getByText(/Chưa có API tạo\/sửa lịch bản tin/)).toBeVisible();
     await expect(page.getByText('Chưa kiểm tra thực tế', { exact: true }).first()).toBeVisible();
     await expect(page.getByRole('button', { name: /Tạo lịch bản tin|Lưu lịch bản tin/ })).toHaveCount(0);
-    await openDemoControls(page);
-    await page.getByLabel('Vai trò mô phỏng').click();
-    await page.getByRole('option', { name: 'viewer', exact: true }).click();
+    await setDemoControl(page, 'role', 'viewer');
     await expect(page.getByRole('button', { name: 'Tạm dừng vai trò' })).toHaveCount(0);
     await expect(page.getByRole('button', { name: 'Kiểm tra điều kiện tiếp tục' })).toHaveCount(0);
     const denied = await page.evaluate(async () => {
@@ -241,7 +238,7 @@ test('FE020.F03 operations exception filter groups overdue, blocked, and unclaim
     });
     await gotoDemo(page, '/s/shop-demo/operations');
     const panel = page.getByTestId('operation-exceptions');
-    await expect(panel).toContainText('Chỉ lọc trang dữ liệu hiện đang tải');
+    await expect(panel).toContainText('quá hạn hoặc sai lệch thanh toán trong trang hiện tại');
     await panel.getByRole('button', { name: /Chỉ xem ngoại lệ/ }).click();
     const table = page.getByRole('table', { name: 'Công việc vận hành', exact: true });
     for (const sourceRef of ['DEMO-SHIPMENT-LATE', 'DEMO-BANK-MISMATCH', 'DEMO-ORDER-UNCLAIMED'])

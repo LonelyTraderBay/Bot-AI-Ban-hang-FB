@@ -1,7 +1,7 @@
 import { randomUUID } from 'node:crypto';
 import { readFileSync } from 'node:fs';
 import { expect, test } from '@playwright/test';
-import { openDemoControls, waitForDemoMenu } from '../session/demo-controls';
+import { setDemoControl } from '../session/demo-controls';
 import { startDemoServer } from '../session/demo-server.mjs';
 
 type Role = 'owner' | 'manager' | 'sales' | 'warehouse' | 'accountant' | 'bot_admin';
@@ -29,24 +29,6 @@ function assertPermittedCommand(role: Role, routeId: string, operation: string) 
     expect(action, `${operation} should be a declared route action`).toBeTruthy();
     expect(operations[operation]?.responseSchema, `${operation} should return a command result`).toBe('CommandResponse');
     expect(!action?.permission || permissions.rolePresets[role]?.includes(action.permission), `${role} should be granted ${operation}`).toBe(true);
-}
-
-async function chooseMockOption(page: import('@playwright/test').Page, label: string, value: string) {
-    if (label === 'Vai trò mô phỏng' && value === 'owner') return;
-    if (label === 'Vai trò mô phỏng' || label === 'Trạng thái thử') await openDemoControls(page);
-    await page.getByRole('combobox', { name: label }).click();
-    await waitForDemoMenu(page, label);
-    await page.getByRole('option', { name: value, exact: true }).click();
-    const message = label === 'Vai trò mô phỏng' ? 'Vai trò mô phỏng đã được áp dụng.' : 'Trạng thái thử đã được áp dụng.';
-    await expect(page.getByRole('status').filter({ hasText: message })).toBeVisible();
-}
-
-async function chooseDemoDataset(page: import('@playwright/test').Page, value: string) {
-    await openDemoControls(page);
-    await page.getByRole('combobox', { name: 'Dataset mô phỏng' }).click();
-    await waitForDemoMenu(page, 'Dataset mô phỏng');
-    await page.getByRole('option', { name: value, exact: true }).click();
-    await expect(page.getByRole('status').filter({ hasText: /^Đã (tải|khôi phục)/ })).toBeVisible();
 }
 
 async function restartCommandDemoServer() {
@@ -122,7 +104,7 @@ async function createSeedShipmentFromOrder(page: import('@playwright/test').Page
     await page.goto(new URL('/s/shop-demo/orders', demoUrl).toString());
     await expect(page.locator('#main-content h1').first()).toBeVisible();
     await confirmSeedOrder(page);
-    if (fulfillmentRole !== 'owner') await chooseMockOption(page, 'Vai trò mô phỏng', fulfillmentRole);
+    if (fulfillmentRole !== 'owner') await setDemoControl(page, 'role', fulfillmentRole);
     await page.getByRole('link', { name: 'Chuẩn bị đơn' }).click();
     const prepRow = page.getByRole('row').filter({ hasText: 'DH-1001' });
     await expect(prepRow).toBeVisible();
@@ -268,11 +250,11 @@ test.describe('UIC07 real UI command result for additional route-role pairs', ()
                 label, recipient: 'Người nhận kiểm chứng', phone: '0000000000', line1: 'Địa chỉ tổng hợp',
                 ward: null, district: null, province: 'Địa bàn kiểm chứng', postalCode: null, countryCode: 'VN',
             });
-            await chooseMockOption(page, 'Vai trò mô phỏng', role);
+            await setDemoControl(page, 'role', role);
             await navigateInApp(page, `/s/shop-demo/customers/${customer.id}`);
             const row = page.getByRole('table', { name: 'Địa chỉ trong hồ sơ khách' }).getByRole('row').filter({ hasText: label });
             await expect(row).toBeVisible();
-            await chooseMockOption(page, 'Trạng thái thử', 'Kết quả ghi chưa rõ');
+            await setDemoControl(page, 'fault', 'unknown');
             await row.getByRole('button', { name: new RegExp(`Ngừng dùng ${label}`) }).click();
             const dialog = page.getByRole('dialog', { name: 'Ngừng dùng địa chỉ' });
             await dialog.getByLabel('Lý do').fill(`UIC07 unknown ${role}`);
@@ -293,11 +275,11 @@ test.describe('UIC07 real UI command result for additional route-role pairs', ()
                 variants: [{ sku, name: 'Phiên bản kiểm chứng', options: {}, price: { amount: '10000', currency: 'VND' }, active: true }],
                 imageFileIds: [],
             });
-            await chooseMockOption(page, 'Vai trò mô phỏng', role);
+            await setDemoControl(page, 'role', role);
             await navigateInApp(page, `/s/shop-demo/products/${product.id}`);
             const archiveButton = page.getByRole('button', { name: 'Ngừng bán', exact: true });
             await expect(archiveButton).toBeVisible();
-            await chooseMockOption(page, 'Trạng thái thử', 'Kết quả ghi chưa rõ');
+            await setDemoControl(page, 'fault', 'unknown');
             await archiveButton.click();
             const dialog = page.getByRole('dialog', { name: 'Ngừng bán sản phẩm' });
             await dialog.getByLabel('Lý do').fill(`UIC07 unknown ${role}`);
@@ -313,11 +295,11 @@ test.describe('UIC07 real UI command result for additional route-role pairs', ()
             await page.goto(new URL('/s/shop-demo/notifications', demoUrl).toString());
             const name = `UIC07 ${role} ${randomUUID().slice(0, 8)}`;
             const category = await createFixture(page, 'categories', { name, parentId: null });
-            await chooseMockOption(page, 'Vai trò mô phỏng', role);
+            await setDemoControl(page, 'role', role);
             await navigateInApp(page, '/s/shop-demo/categories');
             const row = page.getByRole('table', { name: 'Danh sách danh mục' }).getByRole('row').filter({ hasText: name });
             await expect(row).toBeVisible();
-            await chooseMockOption(page, 'Trạng thái thử', 'Kết quả ghi chưa rõ');
+            await setDemoControl(page, 'fault', 'unknown');
             await row.getByRole('button', { name: 'Ngừng dùng', exact: true }).click();
             const dialog = page.getByRole('dialog', { name: 'Ngừng dùng danh mục' });
             await dialog.getByLabel('Lý do').fill(`UIC07 unknown ${role}`);
@@ -333,11 +315,13 @@ test.describe('UIC07 real UI command result for additional route-role pairs', ()
         test(`R15 createInventoryAdjustment remains unknown for ${role}`, async ({ page }) => {
             assertPermittedCommand(role, 'R15', 'createInventoryAdjustment');
             await page.goto(new URL('/s/shop-demo/inventory', demoUrl).toString());
-            await chooseMockOption(page, 'Vai trò mô phỏng', role);
+            await setDemoControl(page, 'role', role);
+            await setDemoControl(page, 'fault', 'unknown');
             const row = page.getByRole('row').filter({ hasText: 'DEMO-001' }).first();
-            await expect(row.getByRole('button', { name: 'Điều chỉnh', exact: true })).toBeEnabled();
-            await chooseMockOption(page, 'Trạng thái thử', 'Kết quả ghi chưa rõ');
-            await row.getByRole('button', { name: 'Điều chỉnh', exact: true }).click();
+            await row.getByRole('button', { name: 'Xem chi tiết SKU DEMO-001', exact: true }).click();
+            const adjust = page.getByRole('dialog', { name: 'Chi tiết tồn kho' }).getByRole('button', { name: 'Điều chỉnh', exact: true });
+            await expect(adjust).toBeEnabled();
+            await adjust.click();
             const dialog = page.getByRole('dialog', { name: 'Điều chỉnh DEMO-001' });
             await dialog.getByLabel('Thay đổi số lượng').fill('1');
             await dialog.getByLabel('Lý do điều chỉnh').fill(`UIC07 unknown ${role}`);
@@ -354,8 +338,8 @@ test.describe('UIC07 real UI command result for additional route-role pairs', ()
             assertPermittedCommand(role, 'R06', 'sendMessage');
             await page.goto(new URL('/s/shop-demo/inbox/cv2', demoUrl).toString());
             await expect(page.locator('#main-content h1').first()).toBeVisible();
-            await chooseMockOption(page, 'Vai trò mô phỏng', role);
-            await chooseMockOption(page, 'Trạng thái thử', 'Kết quả ghi chưa rõ');
+            await setDemoControl(page, 'role', role);
+            await setDemoControl(page, 'fault', 'unknown');
             const reply = `UIC07 unknown ${role} ${randomUUID().slice(0, 8)}`;
             await page.getByRole('textbox', { name: 'Nội dung trả lời khách' }).fill(reply);
             const response = page.waitForResponse(candidate => candidate.request().method() === 'POST'
@@ -371,7 +355,7 @@ test.describe('UIC07 real UI command result for additional route-role pairs', ()
             assertPermittedCommand(role, 'R19', 'confirmOrder');
             await page.goto(new URL('/s/shop-demo/orders/DH-1001', demoUrl).toString());
             await expect(page.locator('#main-content h1').first()).toBeVisible();
-            await chooseMockOption(page, 'Vai trò mô phỏng', role);
+            await setDemoControl(page, 'role', role);
             const quoteResponse = page.waitForResponse(candidate => candidate.request().method() === 'POST'
                 && new URL(candidate.url()).pathname.endsWith('/orders/DH-1001/quote'));
             await page.getByRole('button', { name: 'Lấy báo giá hiện tại' }).click();
@@ -380,7 +364,7 @@ test.describe('UIC07 real UI command result for additional route-role pairs', ()
                 && new URL(candidate.url()).pathname.endsWith('/customer-confirmations'));
             await page.getByRole('button', { name: 'Mô phỏng khách đồng ý báo giá' }).click();
             expect((await confirmationResponse).status()).toBe(200);
-            await chooseMockOption(page, 'Trạng thái thử', 'Kết quả ghi chưa rõ');
+            await setDemoControl(page, 'fault', 'unknown');
             const confirm = page.getByRole('button', { name: 'Xác nhận đơn & giữ hàng', exact: true });
             await expect(confirm).toBeEnabled();
             const response = page.waitForResponse(candidate => candidate.request().method() === 'POST'
@@ -421,7 +405,7 @@ test.describe('UIC07 real UI command result for additional route-role pairs', ()
         await navigateInApp(page, '/s/shop-demo/overview');
         // MUI retains the publish dialog through its exit transition; let it leave before the next pointer action.
         await expect(publishDialog).toHaveCount(0);
-        await chooseMockOption(page, 'Trạng thái thử', 'Kết quả ghi chưa rõ');
+        await setDemoControl(page, 'fault', 'unknown');
         await page.getByRole('button', { name: 'Tạm dừng bot', exact: true }).click();
         const dialog = page.getByRole('dialog', { name: 'Tạm dừng trợ lý bán hàng' });
         await dialog.getByLabel('Lý do').fill('UIC07 đối chiếu kết quả tạm dừng');
@@ -436,7 +420,7 @@ test.describe('UIC07 real UI command result for additional route-role pairs', ()
         assertPermittedCommand('owner', 'R52', 'controlAutomation');
         await page.goto(new URL('/s/shop-demo/operations/digests', demoUrl).toString());
         await expect(page.locator('#main-content h1').first()).toBeVisible();
-        await chooseMockOption(page, 'Trạng thái thử', 'Kết quả ghi chưa rõ');
+        await setDemoControl(page, 'fault', 'unknown');
         await page.getByRole('button', { name: 'Kiểm tra điều kiện tiếp tục', exact: true }).first().click();
         const dialog = page.getByRole('dialog');
         await expect(dialog).toContainText('Kiểm tra điều kiện tiếp tục');
@@ -459,9 +443,9 @@ test.describe('UIC07 real UI command result for additional route-role pairs', ()
             await navigateInApp(page, '/s/shop-demo/notifications/devices');
             const row = page.getByRole('table', { name: 'Thiết bị nhận thông báo' }).getByRole('row').filter({ hasText: `UIC07 ${role}` });
             await expect(row).toBeVisible();
-            await chooseMockOption(page, 'Vai trò mô phỏng', role);
+            await setDemoControl(page, 'role', role);
             await expect(row).toBeVisible();
-            await chooseMockOption(page, 'Trạng thái thử', 'Kết quả ghi chưa rõ');
+            await setDemoControl(page, 'fault', 'unknown');
             const response = page.waitForResponse(candidate => candidate.request().method() === 'POST'
                 && new URL(candidate.url()).pathname.endsWith(`/devices/${device.id}/test`));
             await row.getByRole('button', { name: 'Kiểm tra mô phỏng', exact: true }).click();
@@ -473,8 +457,8 @@ test.describe('UIC07 real UI command result for additional route-role pairs', ()
     test('R19 payOrder remains unknown for accountant after a real order confirmation flow', async ({ page }) => {
         assertPermittedCommand('accountant', 'R19', 'payOrder');
         await confirmSeedOrder(page);
-        await chooseMockOption(page, 'Vai trò mô phỏng', 'accountant');
-        await chooseMockOption(page, 'Trạng thái thử', 'Kết quả ghi chưa rõ');
+        await setDemoControl(page, 'role', 'accountant');
+        await setDemoControl(page, 'fault', 'unknown');
         await page.getByRole('button', { name: 'Ghi nhận tiền đã thu', exact: true }).click();
         const dialog = page.getByRole('dialog', { name: 'Ghi nhận tiền đã thu' });
         await dialog.getByLabel('Mã tham chiếu giao dịch').fill(`UIC07-PAY-${randomUUID().slice(0, 8)}`);
@@ -490,8 +474,8 @@ test.describe('UIC07 real UI command result for additional route-role pairs', ()
     test('R19 handoverShipment remains unknown for warehouse from the order fulfillment journey', async ({ page }) => {
         assertPermittedCommand('warehouse', 'R19', 'handoverShipment');
         const shipmentId = await createSeedShipmentFromOrder(page);
-        await chooseMockOption(page, 'Vai trò mô phỏng', 'warehouse');
-        await chooseMockOption(page, 'Trạng thái thử', 'Kết quả ghi chưa rõ');
+        await setDemoControl(page, 'role', 'warehouse');
+        await setDemoControl(page, 'fault', 'unknown');
         const row = page.getByRole('row').filter({ hasText: 'DH-1001' });
         await expect(row).toBeVisible();
         await row.getByRole('button', { name: 'Bàn giao', exact: true }).click();
@@ -507,8 +491,8 @@ test.describe('UIC07 real UI command result for additional route-role pairs', ()
         test(`R42 handoverShipment remains unknown for ${role}`, async ({ page }) => {
             assertPermittedCommand(role, 'R42', 'handoverShipment');
             const shipmentId = await createSeedShipmentFromOrder(page, 'manager');
-            if (role === 'warehouse') await chooseMockOption(page, 'Vai trò mô phỏng', 'warehouse');
-            await chooseMockOption(page, 'Trạng thái thử', 'Kết quả ghi chưa rõ');
+            if (role === 'warehouse') await setDemoControl(page, 'role', 'warehouse');
+            await setDemoControl(page, 'fault', 'unknown');
             const row = page.getByRole('row').filter({ hasText: 'DH-1001' });
             await expect(row).toBeVisible();
             await row.getByRole('button', { name: 'Bàn giao', exact: true }).click();
@@ -526,8 +510,8 @@ test.describe('UIC07 real UI command result for additional route-role pairs', ()
             assertPermittedCommand(role, 'R26', 'pauseBot');
             await page.goto(new URL('/s/shop-demo/bot', demoUrl).toString());
             await expect(page.locator('#main-content h1').first()).toBeVisible();
-            await chooseMockOption(page, 'Vai trò mô phỏng', role);
-            await chooseMockOption(page, 'Trạng thái thử', 'Kết quả ghi chưa rõ');
+            await setDemoControl(page, 'role', role);
+            await setDemoControl(page, 'fault', 'unknown');
             await page.getByRole('button', { name: 'Tạm dừng bot', exact: true }).click();
             const dialog = page.getByRole('dialog', { name: 'Tạm dừng Admin AI' });
             await dialog.getByLabel('Lý do (ít nhất 5 ký tự)').fill(`UIC07 pauseBot ${role}`);
@@ -545,10 +529,10 @@ test.describe('UIC07 real UI command result for additional route-role pairs', ()
             assertPermittedCommand(role, 'R21', 'postFinanceEntry');
             await page.goto(new URL('/s/shop-demo/finance/entries', demoUrl).toString());
             await expect(page.locator('#main-content h1').first()).toBeVisible();
-            await chooseMockOption(page, 'Vai trò mô phỏng', role);
+            await setDemoControl(page, 'role', role);
             const description = `UIC07 postFinanceEntry ${role} ${randomUUID().slice(0, 8)}`;
             const entryId = await createFinanceEntryDraft(page, description);
-            await chooseMockOption(page, 'Trạng thái thử', 'Kết quả ghi chưa rõ');
+            await setDemoControl(page, 'fault', 'unknown');
             const row = page.getByRole('table', { name: 'Chứng từ thu chi' }).getByRole('row').filter({ hasText: entryId });
             await expect(row).toBeVisible();
             await row.getByRole('button', { name: 'Chi tiết', exact: true }).click();
@@ -577,11 +561,11 @@ test.describe('UIC07 real UI command result for additional route-role pairs', ()
                 return payload.data.find((item: { status: string }) => item.status === 'published')?.id as string | undefined;
             });
             expect(knowledgeId, 'the synthetic knowledge list must contain a published item').toBeTruthy();
-            await chooseMockOption(page, 'Vai trò mô phỏng', role);
+            await setDemoControl(page, 'role', role);
             await navigateInApp(page, `/s/shop-demo/knowledge/${knowledgeId}`);
             const retire = page.getByRole('button', { name: 'Ngừng sử dụng', exact: true });
             await expect(retire).toBeEnabled();
-            await chooseMockOption(page, 'Trạng thái thử', 'Kết quả ghi chưa rõ');
+            await setDemoControl(page, 'fault', 'unknown');
             await retire.click();
             const dialog = page.getByRole('dialog', { name: 'Ngừng sử dụng kiến thức' });
             await dialog.getByLabel('Lý do').fill(`UIC07 knowledge ${role}`);
@@ -599,7 +583,7 @@ test.describe('UIC07 real UI command result for additional route-role pairs', ()
         await expect(page.locator('#main-content h1').first()).toBeVisible();
         const disconnect = page.getByRole('button', { name: 'Ngắt kết nối', exact: true }).first();
         await expect(disconnect).toBeEnabled();
-        await chooseMockOption(page, 'Trạng thái thử', 'Kết quả ghi chưa rõ');
+        await setDemoControl(page, 'fault', 'unknown');
         await disconnect.click();
         const dialog = page.getByRole('dialog', { name: 'Ngắt kết nối Page' });
         await dialog.getByLabel('Lý do').fill('UIC07 xác minh trạng thái ngắt kết nối');
@@ -626,10 +610,10 @@ test.describe('UIC07 real UI command result for additional route-role pairs', ()
             assertPermittedCommand(role, 'R45', 'evaluateReorder');
             await page.goto(new URL('/s/shop-demo/replenishment', demoUrl).toString());
             await expect(page.locator('#main-content h1').first()).toBeVisible();
-            await chooseMockOption(page, 'Vai trò mô phỏng', role);
+            await setDemoControl(page, 'role', role);
             const evaluate = page.getByRole('button', { name: 'Đánh giá nhu cầu nhập', exact: true });
             await expect(evaluate).toBeEnabled();
-            await chooseMockOption(page, 'Trạng thái thử', 'Kết quả ghi chưa rõ');
+            await setDemoControl(page, 'fault', 'unknown');
             const response = page.waitForResponse(candidate => candidate.request().method() === 'POST'
                 && new URL(candidate.url()).pathname.endsWith('/purchase-suggestions/evaluate'));
             await evaluate.click();
@@ -642,8 +626,8 @@ test.describe('UIC07 real UI command result for additional route-role pairs', ()
             assertPermittedCommand(role, 'R47', 'postGoodsReceipt');
             const sourceDocumentRef = `UIC07-GR-${role}-${randomUUID().slice(0, 8)}`;
             const receiptId = await createGoodsReceiptDraft(page, sourceDocumentRef);
-            await chooseMockOption(page, 'Vai trò mô phỏng', role);
-            await chooseMockOption(page, 'Trạng thái thử', 'Kết quả ghi chưa rõ');
+            await setDemoControl(page, 'role', role);
+            await setDemoControl(page, 'fault', 'unknown');
             const row = page.getByRole('row').filter({ hasText: sourceDocumentRef });
             await expect(row).toBeVisible();
             await row.getByRole('button', { name: 'Xem / ghi nhận phiếu', exact: true }).click();
@@ -663,10 +647,10 @@ test.describe('UIC07 real UI command result for additional route-role pairs', ()
         assertPermittedCommand('accountant', 'R48', 'postJournal');
         await page.goto(new URL('/s/shop-demo/finance/journals', demoUrl).toString());
         await expect(page.locator('#main-content h1').first()).toBeVisible();
-        await chooseMockOption(page, 'Vai trò mô phỏng', 'accountant');
+        await setDemoControl(page, 'role', 'accountant');
         const sourceId = `UIC07-JOURNAL-${randomUUID().slice(0, 8)}`;
         const journalId = await createJournalDraft(page, sourceId);
-        await chooseMockOption(page, 'Trạng thái thử', 'Kết quả ghi chưa rõ');
+        await setDemoControl(page, 'fault', 'unknown');
         const row = page.getByRole('row').filter({ hasText: sourceId });
         await expect(row).toBeVisible();
         await row.getByRole('button', { name: 'Chi tiết', exact: true }).click();
@@ -686,8 +670,8 @@ test.describe('UIC07 real UI command result for additional route-role pairs', ()
             await page.goto(new URL('/s/shop-demo/finance/reconciliation', demoUrl).toString());
             await expect(page.locator('#main-content h1').first()).toBeVisible();
             const transactionId = await createBankReconciliationCase(page, `UIC07-BANK-${role}-${randomUUID().slice(0, 6)}`);
-            await chooseMockOption(page, 'Vai trò mô phỏng', role);
-            await chooseMockOption(page, 'Trạng thái thử', 'Kết quả ghi chưa rõ');
+            await setDemoControl(page, 'role', role);
+            await setDemoControl(page, 'fault', 'unknown');
             await page.getByRole('tab', { name: 'Chênh lệch cần xử lý' }).click();
             const row = page.getByRole('row').filter({ hasText: transactionId });
             await expect(row).toBeVisible();
@@ -710,7 +694,7 @@ test.describe('UIC07 real UI command result for additional route-role pairs', ()
             assertPermittedCommand(role, 'R50', 'closeAccountingPeriod');
             await page.goto(new URL('/s/shop-demo/finance/debts-periods', demoUrl).toString());
             await expect(page.locator('#main-content h1').first()).toBeVisible();
-            await chooseDemoDataset(page, 'Shop mở sổ mới (tổng hợp)');
+            await setDemoControl(page, 'dataset', 'finance-empty');
             const opening = await createFixture(page, 'finance/opening-balances', {
                 effectiveDate: '2026-09-01', policyVersion: 'synthetic-policy-1', lines: [], inventory: [],
                 reason: `UIC07 zero opening setup ${role}`,
@@ -726,8 +710,8 @@ test.describe('UIC07 real UI command result for additional route-role pairs', ()
             }, opening.id);
             expect(post.status).toBe(202);
             await expect(page.getByRole('row').filter({ hasText: '1/9/26 → 30/9/26' })).toBeVisible();
-            await chooseMockOption(page, 'Vai trò mô phỏng', role);
-            await chooseMockOption(page, 'Trạng thái thử', 'Kết quả ghi chưa rõ');
+            await setDemoControl(page, 'role', role);
+            await setDemoControl(page, 'fault', 'unknown');
             const period = page.getByRole('row').filter({ hasText: '1/9/26 → 30/9/26' });
             await period.getByRole('button', { name: 'Kiểm & khóa kỳ', exact: true }).click();
             const confirm = page.getByRole('dialog', { name: 'Khóa kỳ kế toán' });
@@ -755,8 +739,8 @@ test.describe('UIC07 real UI command result for additional route-role pairs', ()
             const createdResponse = await created;
             expect(createdResponse.status()).toBe(201);
             const accountId = (await createdResponse.json()).data.id as string;
-            await chooseMockOption(page, 'Vai trò mô phỏng', role);
-            await chooseMockOption(page, 'Trạng thái thử', 'Kết quả ghi chưa rõ');
+            await setDemoControl(page, 'role', role);
+            await setDemoControl(page, 'fault', 'unknown');
             const row = page.getByRole('row').filter({ hasText: code });
             await expect(row).toBeVisible();
             await row.getByRole('button', { name: `Ngừng dùng ${code}`, exact: true }).click();
@@ -775,10 +759,10 @@ test.describe('UIC07 real UI command result for additional route-role pairs', ()
             assertPermittedCommand(role, 'R57', 'postOpeningBalance');
             await page.goto(new URL('/s/shop-demo/finance/opening-balances', demoUrl).toString());
             await expect(page.locator('#main-content h1').first()).toBeVisible();
-            await chooseDemoDataset(page, 'Shop mở sổ mới (tổng hợp)');
+            await setDemoControl(page, 'dataset', 'finance-empty');
             const openingId = await createOpeningBalanceDraft(page, `UIC07 opening balance ${role}`);
-            await chooseMockOption(page, 'Vai trò mô phỏng', role);
-            await chooseMockOption(page, 'Trạng thái thử', 'Kết quả ghi chưa rõ');
+            await setDemoControl(page, 'role', role);
+            await setDemoControl(page, 'fault', 'unknown');
             const button = page.getByRole('button', { name: `Ghi mở sổ ${openingId}`, exact: true });
             await expect(button).toBeVisible();
             await button.click();

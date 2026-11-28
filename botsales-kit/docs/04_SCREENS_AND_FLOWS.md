@@ -1,5 +1,4 @@
 # 04 — Màn hình và luồng hiện hành
-
 <!-- BEGIN RELEASE META -->
 **Bộ chuẩn 2.1.1 · 2026-09-29 · Graphite Gold: ĐÃ DUYỆT · Token 2.1 · API 2.6.1 · Baseline nghiệp vụ 2.0.**
 Nguồn phiên bản: `release.json`; quyết định màu: `design/decision.json`. Phạm vi kiểm chứng là tài liệu/demo, không chứng nhận vận hành sản phẩm.
@@ -381,7 +380,7 @@ Mọi màn hình kế thừa Graphite Gold theo design/decision.json đã duyệ
 
 **Nội dung:** Order/customer refs, createdAt, order/fulfillment/payment states riêng, tổng tiền nếu được phép.
 
-**Hành vi:** Filter qua URL, tạo đơn tới R18, row tới R19; bulk mutation chưa hỗ trợ phải ẩn. V2: tách claim/pick/pack/handover/shipment/delivery/payment. Không dùng v1 fulfill tổng hợp; C07 returns theo từng dòng.
+**Hành vi:** Bộ lọc trạng thái đơn, giao hàng và thanh toán qua URL, tạo đơn tới R18, row tới R19; bulk mutation chưa hỗ trợ phải ẩn. V2: tách claim/pick/pack/handover/shipment/delivery/payment. Không dùng v1 fulfill tổng hợp; C07 returns theo từng dòng.
 
 **Trường hợp cần xử lý:** Enum mới fallback read-only; stale paid badge; redacted total; phân trang không tự cộng thành doanh thu shop.
 
@@ -410,6 +409,7 @@ Mọi màn hình kế thừa Graphite Gold theo design/decision.json đã duyệ
 
 | Hành động | operationId | Quyền |
 |---|---|---|
+| Tính dự toán | `estimateOrderDraft` | `orders.write` |
 | Tạo đơn nháp | `createOrder` | `orders.write` |
 
 **States:** loading, empty, error, forbidden, stale_or_offline, success, command_unknown, capability_unavailable

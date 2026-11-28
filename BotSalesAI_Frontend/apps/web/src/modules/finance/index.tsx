@@ -39,7 +39,24 @@ export function CashflowPage() {
     const report = useReportRange(shop.timezone);
     const data = useApi('getCashflow', { query: report.query }, report.valid);
     const c = data.data?.data;
-    return <><PageHeader title="Thu chi" subtitle="Tiền thực thu và thực chi, tách biệt doanh thu và lợi nhuận." actions={<RouteLink to={`/s/${shop.id}/finance/entries`}>Sổ thu chi</RouteLink>}/><ReportRangeFields range={report.range} timezone={shop.timezone} setFrom={report.setFrom} setTo={report.setTo}/>{report.valid ? <QueryState query={data} pendingProfile="section">{c && <><Stats><Stat title="Tiền đã thu" value={<Amount wrap value={c.receipts}/>}/><Stat title="Tiền đã chi" value={<Amount wrap value={c.disbursements}/>}/><Stat title="Biến động tiền thuần" value={<Amount wrap value={c.netCashMovement}/>} accent note="Không phải số dư tài khoản"/><Stat title="Múi giờ báo cáo" value={c.timezone}/></Stats><Panel title="Kỳ báo cáo" bodyMode="inset"><DetailLine label="Từ">{dateTime(c.from, shop.timezone)}</DetailLine><DetailLine label="Đến (không gồm)">{dateTime(c.to, shop.timezone)}</DetailLine><DetailLine label="Dữ liệu tại">{dateTime(c.asOf, shop.timezone)}</DetailLine><ReportWarnings warnings={c.warnings} severity="info"/></Panel></>}</QueryState> : <Alert severity="error">Ngày bắt đầu phải trước ngày kết thúc.</Alert>}</>;
+    return <>
+        <PageHeader title="Thu chi" subtitle="Tiền thực thu và thực chi, tách biệt doanh thu và lợi nhuận." actions={<RouteLink to={`/s/${shop.id}/finance/entries`}>Sổ thu chi</RouteLink>} />
+        <ReportRangeFields range={report.range} timezone={shop.timezone} setFrom={report.setFrom} setTo={report.setTo} />
+        {report.valid ? <QueryState query={data} pendingProfile="section">{c && <>
+            <Stats density="compact">
+                <Stat title="Tiền đã thu" value={<Amount wrap value={c.receipts} />} />
+                <Stat title="Tiền đã chi" value={<Amount wrap value={c.disbursements} />} />
+                <Stat title="Biến động tiền thuần" value={<Amount wrap value={c.netCashMovement} />} valueRole="primary" accent note="Không phải số dư tài khoản" />
+            </Stats>
+            <Panel title="Kỳ báo cáo" bodyMode="inset">
+                <DetailLine label="Từ">{dateTime(c.from, shop.timezone)}</DetailLine>
+                <DetailLine label="Đến (không gồm)">{dateTime(c.to, shop.timezone)}</DetailLine>
+                <DetailLine label="Múi giờ báo cáo">{c.timezone}</DetailLine>
+                <DetailLine label="Dữ liệu tại">{dateTime(c.asOf, shop.timezone)}</DetailLine>
+                <ReportWarnings warnings={c.warnings} severity="info" />
+            </Panel>
+        </>}</QueryState> : <Alert severity="error">Ngày bắt đầu phải trước ngày kết thúc.</Alert>}
+    </>;
 }
 export function EntriesPage() {
     const { shop } = useScope();
@@ -80,11 +97,11 @@ export function ProfitLossPage() {
         <ReportRangeFields range={report.range} timezone={shop.timezone} setFrom={value => { setGeneratedKey(''); report.setFrom(value); }} setTo={value => { setGeneratedKey(''); report.setTo(value); }} />
         {report.valid ? <QueryState query={data} pendingProfile="section">
             {p && <>
-                <Stats>
-                    <Stat title="Doanh thu thuần" value={<Amount wrap value={p.netSales} />} />
-                    <Stat title="Giá vốn" value={<Amount wrap value={p.cogs} />} />
-                    <Stat title="Lãi gộp" value={<Amount wrap value={p.grossProfit} />} accent={p.grossProfit != null} />
-                    <Stat title="Lợi nhuận vận hành" value={<Amount wrap value={p.operatingProfit} />} note="Chưa có chứng nhận kế toán pháp định" />
+                <Stats density="compact">
+                    <Stat title="Doanh thu thuần" value={<Amount wrap value={p.netSales} />} valueRole={p.netSales == null ? 'text' : 'metric'} />
+                    <Stat title="Giá vốn" value={<Amount wrap value={p.cogs} />} valueRole={p.cogs == null ? 'text' : 'metric'} />
+                    <Stat title="Lãi gộp" value={<Amount wrap value={p.grossProfit} />} valueRole={p.grossProfit == null ? 'text' : 'primary'} accent={p.grossProfit != null} />
+                    <Stat title="Lợi nhuận vận hành" value={<Amount wrap value={p.operatingProfit} />} valueRole={p.operatingProfit == null ? 'text' : 'metric'} note="Chưa có chứng nhận kế toán pháp định" />
                 </Stats>
                 <PageSections>
                     <Panel title="Chi tiết kết quả kinh doanh" action={<ActionGroup><Status value={p.completeness} /></ActionGroup>} bodyMode="inset">

@@ -11,12 +11,13 @@ async function openHeader(page: Page, width = 1440) {
     await page.setViewportSize({ width, height: width < 768 ? 844 : 900 });
     await page.goto(`${url}/s/shop-demo/shipments`);
     await expect(page.locator('main h1')).toBeVisible();
-    await expect(page.locator('header [aria-label="Dữ liệu mô phỏng"]')).toBeVisible();
+    await expect(page.getByRole('complementary', { name: 'Công cụ mô phỏng', exact: true })).toHaveCount(0);
 }
 
 test('header centers content across responsive breakpoints and preserves touch targets', async ({ page }) => {
     for (const width of [320, 390, 767, 768, 1199, 1200, 1440, 1920]) {
         await openHeader(page, width);
+        await expect(page.locator('header').getByText(/^(?:Demo|Dữ liệu mô phỏng)$/)).toHaveCount(0);
         const metrics = await page.locator('header').evaluate(header => {
             const h = header.getBoundingClientRect(), row = header.firstElementChild!.getBoundingClientRect();
             const controls = [...header.querySelectorAll('.MuiIconButton-root')].filter(element => element.getBoundingClientRect().width > 0);
@@ -82,11 +83,10 @@ test('header menu filter retains empty-state recovery and keyboard focus', async
 });
 
 for (const width of [320, 390]) {
-    test(`header preserves demo disclosure, mobile menu and filter recovery at ${width}px`, async ({ page }) => {
+    test(`header preserves mobile menu and filter recovery at ${width}px`, async ({ page }) => {
         await openHeader(page);
         await page.getByRole('textbox', { name: 'Tìm trong menu', exact: true }).fill('không-có-màn-hình-này');
         await page.setViewportSize({ width, height: 844 });
-        await expect(page.locator('header [aria-label="Dữ liệu mô phỏng"]')).toContainText('Demo');
         const menu = page.getByRole('button', { name: 'Mở menu', exact: true });
         await menu.click();
         const navigation = page.getByRole('navigation', { name: 'Điều hướng chính', exact: true }).filter({ visible: true });
@@ -105,7 +105,7 @@ test('header reflows long shop names and doubled text without overlap or clippin
     await page.locator('header').evaluate(header => {
         const shop = header.querySelector('nav a')!;
         shop.textContent = 'Cửa hàng Nguyễn Thị Minh Châu — Chi nhánh thành phố ' + 'TênCửaHàngRấtDài'.repeat(8);
-        const texts = header.querySelectorAll<HTMLElement>('nav a, nav [aria-current], input, .MuiChip-root');
+        const texts = header.querySelectorAll<HTMLElement>('nav a, nav [aria-current], input');
         for (const element of texts) element.style.fontSize = `${Number.parseFloat(getComputedStyle(element).fontSize) * 2}px`;
     });
     for (const width of [768, 1440]) {
@@ -114,14 +114,11 @@ test('header reflows long shop names and doubled text without overlap or clippin
             const h = header.getBoundingClientRect();
             const breadcrumb = header.querySelector('nav')!.getBoundingClientRect();
             const tools = header.querySelector('input')!.closest('.MuiStack-root')!.getBoundingClientRect();
-            const mode = header.querySelector('.MuiChip-root')!.getBoundingClientRect();
-            const modeText = header.querySelector('.MuiChip-label')!.getBoundingClientRect();
             return { overflow: document.documentElement.scrollWidth - document.documentElement.clientWidth,
                 separated: breadcrumb.right <= tools.left,
-                contained: breadcrumb.top >= h.top && breadcrumb.bottom <= h.bottom && tools.bottom <= h.bottom,
-                modeFits: modeText.height <= mode.height };
+                contained: breadcrumb.top >= h.top && breadcrumb.bottom <= h.bottom && tools.top >= h.top && tools.bottom <= h.bottom };
         });
-        expect(metrics).toEqual({ overflow: 0, separated: true, contained: true, modeFits: true });
+        expect(metrics).toEqual({ overflow: 0, separated: true, contained: true });
     }
     expect((await new AxeBuilder({ page }).include('header').analyze()).violations).toEqual([]);
 });

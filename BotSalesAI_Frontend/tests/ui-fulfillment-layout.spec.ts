@@ -62,7 +62,7 @@ test('Fulfillment R41/R42 preserve shell gutter and contain responsive route lay
             await gotoDemo(page, route.path);
             await expect(page.getByRole('heading', { name: route.heading, exact: true })).toBeVisible({ timeout: 15_000 });
             await expect(page.locator(`main [data-ui-table-layout="${width < 768 ? 'cards' : 'table'}"]`).first()).toBeVisible();
-            await expect(page.locator('main#main-content')).toHaveCSS('padding-left', width >= 768 ? '24px' : '16px');
+            await expect(page.locator('main#main-content')).toHaveCSS('padding-left', '8px');
             const geometry = await page.evaluate(() => ({
                 clientWidth: document.documentElement.clientWidth,
                 scrollWidth: document.documentElement.scrollWidth,

@@ -62,8 +62,8 @@ test('the titled Fulfillment Panel owns its body inset and keeps one 12px header
     const mismatches = observations.filter(item =>
         Math.abs(item.gap - 12) > 0.5 ||
         item.bodyPaddingTop !== 0 ||
-        item.bodyPaddingInlineStart !== (item.width < 768 ? 12 : 16) ||
-        item.bodyPaddingBottom !== (item.width < 768 ? 12 : 16) ||
+        item.bodyPaddingInlineStart !== 12 ||
+        item.bodyPaddingBottom !== 12 ||
         item.firstContentMarginTop !== 0,
     );
     expect(mismatches, JSON.stringify(observations)).toEqual([]);

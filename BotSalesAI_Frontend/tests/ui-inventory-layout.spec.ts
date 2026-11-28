@@ -31,8 +31,8 @@ test('Inventory R15/R16 preserve shared gutter and contain table overflow at 320
             await page.getByRole('progressbar', { name: 'Đang tải màn hình', exact: true }).waitFor({ state: 'hidden' });
             await expect(page.getByRole('heading', { name: route.heading, exact: true })).toBeVisible();
             const tableRegion = page.getByRole('region', { name: route.region });
-            await expect(tableRegion).toHaveAttribute('data-ui-table-layout', width < 768 ? 'cards' : 'table');
-            await expect(page.locator('main#main-content')).toHaveCSS('padding-left', width >= 768 ? '24px' : '16px');
+            await expect(tableRegion).toHaveAttribute('data-ui-table-layout', route.id === 'R16' && width < 768 ? 'cards' : 'table');
+            await expect(page.locator('main#main-content')).toHaveCSS('padding-left', '8px');
             const geometry = await page.evaluate(() => ({
                 clientWidth: document.documentElement.clientWidth,
                 scrollWidth: document.documentElement.scrollWidth,
@@ -43,7 +43,8 @@ test('Inventory R15/R16 preserve shared gutter and contain table overflow at 320
                 scrollWidth: element.scrollWidth,
             }));
             expect(tableGeometry.clientWidth, `${route.id} table region width at ${width}px`).toBeLessThanOrEqual(width);
-            if (width < 768) expect(tableGeometry.scrollWidth, `${route.id} cards fit at ${width}px`).toBeLessThanOrEqual(tableGeometry.clientWidth + 1);
+            if (width < 768 && route.id === 'R16') expect(tableGeometry.scrollWidth, `${route.id} cards fit at ${width}px`).toBeLessThanOrEqual(tableGeometry.clientWidth + 1);
+            if (width < 768 && route.id === 'R15') expect(tableGeometry.scrollWidth).toBeGreaterThan(tableGeometry.clientWidth);
             observations.push({ route: route.id, width, ...geometry, tableRegion: tableGeometry });
         }
     }
@@ -66,20 +67,22 @@ test('Inventory filters reset cursor and preserve other URL state; adjustment va
     const staleInventoryCursor = 'w12-stale-cursor-probe';
     const inventoryCursorRequest = page.waitForRequest(request => request.method() === 'GET' && new URL(request.url()).searchParams.get('cursor') === staleInventoryCursor);
     await page.goto(new URL(`/s/shop-demo/inventory?cursor=${staleInventoryCursor}&preserve=keep`, demoUrl).toString());
-    await page.getByRole('combobox', { name: 'Kho', exact: true }).waitFor({ state: 'visible' });
+    const stockFilters = page.getByRole('dialog', { name: 'Bộ lọc tồn kho' });
+    await page.getByRole('button', { name: 'Bộ lọc', exact: true }).click();
     await inventoryCursorRequest;
 
-    await page.getByRole('combobox', { name: 'Kho', exact: true }).click();
+    await stockFilters.getByRole('combobox', { name: 'Kho', exact: true }).click();
     await page.getByRole('option', { name: 'MAIN · Kho chính · dữ liệu tổng hợp', exact: true }).click();
     const filteredRequest = page.waitForRequest(request => request.method() === 'GET' && new URL(request.url()).searchParams.get('warehouseId') === 'warehouse-01');
-    await page.getByRole('button', { name: 'Áp dụng bộ lọc', exact: true }).click();
+    await stockFilters.getByRole('button', { name: 'Áp dụng bộ lọc', exact: true }).click();
     const request = await filteredRequest;
     const appliedQuery = new URL(request.url()).searchParams;
     expect(appliedQuery.get('warehouseId')).toBe('warehouse-01');
     expect(appliedQuery.has('cursor')).toBe(false);
     await expect(page).toHaveURL(/preserve=keep/);
     await expect(page).not.toHaveURL(/cursor=/);
-    await page.getByRole('button', { name: 'Xóa bộ lọc', exact: true }).click();
+    await page.getByRole('button', { name: 'Bộ lọc (1)', exact: true }).click();
+    await stockFilters.getByRole('button', { name: 'Đặt lại bộ lọc', exact: true }).click();
     await expect(page).toHaveURL(/preserve=keep/);
     await expect(page).not.toHaveURL(/warehouseId=/);
     await expect(page).not.toHaveURL(/cursor=/);
@@ -111,7 +114,8 @@ test('Inventory filters reset cursor and preserve other URL state; adjustment va
     for (const width of [390, 1280]) {
         await page.setViewportSize({ width, height: 844 });
         await page.goto(new URL('/s/shop-demo/inventory', demoUrl).toString());
-        await page.getByRole('button', { name: 'Điều chỉnh', exact: true }).first().click();
+        await page.getByRole('button', { name: /^Xem chi tiết SKU / }).first().click();
+        await page.getByRole('dialog', { name: 'Chi tiết tồn kho' }).getByRole('button', { name: 'Điều chỉnh', exact: true }).click();
         const dialog = page.getByRole('dialog');
         await expect(dialog).toBeVisible();
         const box = await dialog.boundingBox();

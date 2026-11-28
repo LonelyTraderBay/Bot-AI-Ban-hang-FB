@@ -3,7 +3,6 @@ import { readFile } from 'node:fs/promises';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { startDemoServer } from './session/demo-server.mjs';
-import { openDemoControls } from './session/demo-controls';
 
 const frontendRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const tokens = JSON.parse(await readFile(path.join(frontendRoot, 'packages/design-tokens/src/tokens.json'), 'utf8'));
@@ -161,15 +160,16 @@ async function exerciseOverlayConsumers(page: Page, width: 390 | 1440, baseUrl: 
         await expect(await visibleLast(surfacePage, '.MuiTooltip-popper')).toHaveCSS('z-index', String(tokens.zIndex.tooltip));
     }
 
-    await openDemoControls(surfacePage);
-    const roleSelect = surfacePage.locator('#mock-tools-controls [role="combobox"]').first();
-    await roleSelect.click();
+    await surfacePage.goto(new URL('/s/shop-demo/products', baseUrl).toString());
+    if (width < 768) await surfacePage.getByRole('button', { name: /^Bộ lọc/ }).click();
+    const statusSelect = surfacePage.getByRole('combobox', { name: 'Trạng thái', exact: true });
+    await statusSelect.click();
     await expect(await visibleLast(surfacePage, '.MuiPopover-root')).toHaveCSS('z-index', String(tokens.zIndex.modal));
     const selectBackdrop = await visibleLast(surfacePage, '.MuiBackdrop-root.MuiBackdrop-invisible');
     await expect(selectBackdrop).toHaveCSS('background-color', 'rgba(0, 0, 0, 0)');
     await surfacePage.keyboard.press('Escape');
     await expect(surfacePage.getByRole('listbox')).toBeHidden();
-    await expect(roleSelect).toBeFocused();
+    await expect(statusSelect).toBeFocused();
     await surfacePage.close();
 }
 

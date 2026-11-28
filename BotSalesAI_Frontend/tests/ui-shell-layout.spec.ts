@@ -1,4 +1,3 @@
-import { openDemoControls } from './session/demo-controls';
 import fs from 'node:fs';
 import path from 'node:path';
 import { expect, test } from '@playwright/test';
@@ -42,18 +41,18 @@ function profileFor(route: Route) {
     return 'collection-or-workflow';
 }
 
-test('Shell keeps header, banner, main and footer on one responsive gutter', async ({ page }) => {
-    for (const viewport of [{ width: 1280, height: 900, gutter: 24, header: 64 }, { width: 390, height: 844, gutter: 16, header: 56 }]) {
+test('Shell keeps an 8px content edge on desktop and mobile', async ({ page }) => {
+    for (const viewport of [{ width: 1280, height: 900, header: 64 }, { width: 390, height: 844, header: 56 }]) {
         await page.setViewportSize({ width: viewport.width, height: viewport.height });
         await page.goto(new URL('/s/shop-demo/overview', demoUrl).toString());
         await expect(page.locator('main#main-content')).toBeVisible();
+        await expect(page.getByRole('button', { name: /Công cụ demo/i })).toHaveCount(0);
 
         const metrics = await page.evaluate(() => {
             const header = document.querySelector('header')!;
             const headerContent = header.querySelector('.MuiStack-root')!;
             const main = document.querySelector('main#main-content')!;
             const footer = document.querySelector('footer')!;
-            const banner = header.nextElementSibling!.querySelector('.MuiAlert-root')!;
             const navigation = document.querySelector('nav')!;
             const account = navigation.querySelector('button[aria-label="Đăng xuất"]')!.parentElement!;
             const accountName = account.querySelector('p')!;
@@ -71,8 +70,7 @@ test('Shell keeps header, banner, main and footer on one responsive gutter', asy
                 mainRight: edge(main, 'right', 'paddingRight'),
                 footerLeft: edge(footer, 'left', 'paddingLeft'),
                 footerRight: edge(footer, 'right', 'paddingRight'),
-                bannerLeft: banner.getBoundingClientRect().left,
-                bannerRight: banner.getBoundingClientRect().right,
+                headerToMain: main.getBoundingClientRect().top - header.getBoundingClientRect().bottom,
                 footerBlockInset: getComputedStyle(footer).paddingTop,
                 mainFlexGrow: getComputedStyle(main).flexGrow,
                 mainBlockInset: [getComputedStyle(main).paddingTop, getComputedStyle(main).paddingBottom],
@@ -84,17 +82,16 @@ test('Shell keeps header, banner, main and footer on one responsive gutter', asy
         });
 
         expect(metrics.headerHeight).toBe(viewport.header);
-        expect(metrics.headerContentLeft).toBe(metrics.navigationWidth + viewport.gutter);
-        expect(metrics.headerContentRight).toBe(viewport.width - viewport.gutter);
-        expect(metrics.mainLeft).toBe(metrics.navigationWidth + viewport.gutter);
-        expect(metrics.mainRight).toBe(viewport.width - viewport.gutter);
-        expect(metrics.bannerLeft).toBe(metrics.navigationWidth + viewport.gutter);
-        expect(metrics.bannerRight).toBe(viewport.width - viewport.gutter);
-        expect(metrics.footerLeft).toBe(metrics.navigationWidth + viewport.gutter);
-        expect(metrics.footerRight).toBe(viewport.width - viewport.gutter);
+        expect(metrics.headerContentLeft).toBe(metrics.navigationWidth + 8);
+        expect(metrics.headerContentRight).toBe(viewport.width - 8);
+        expect(metrics.mainLeft).toBe(metrics.navigationWidth + 8);
+        expect(metrics.mainRight).toBe(viewport.width - 8);
+        expect(metrics.headerToMain).toBeCloseTo(0, 0);
+        expect(metrics.footerLeft).toBe(metrics.navigationWidth + 8);
+        expect(metrics.footerRight).toBe(viewport.width - 8);
         expect(metrics.footerBlockInset).toBe('8px');
         expect(metrics.mainFlexGrow).toBe('1');
-        expect(metrics.mainBlockInset).toEqual(['16px', '16px']);
+        expect(metrics.mainBlockInset).toEqual(['8px', '8px']);
         expect(metrics.contentColumn).toEqual({ display: 'flex', direction: 'column' });
         expect(metrics.document.scrollWidth).toBe(metrics.document.clientWidth);
         expect(metrics.accountName.whiteSpace).toBe('normal');
@@ -103,25 +100,7 @@ test('Shell keeps header, banner, main and footer on one responsive gutter', asy
     }
 });
 
-test('demo controls stay discoverable on mobile and usable on desktop', async ({ page }) => {
-    await page.setViewportSize({ width: 390, height: 844 });
-    await page.goto(new URL('/s/shop-demo/overview', demoUrl).toString());
-    const toggle = page.getByRole('button', { name: 'Công cụ demo' });
-    const controls = page.locator('#mock-tools-controls');
-    await expect(toggle).toBeVisible();
-    await expect(controls).toBeHidden();
-    await toggle.click();
-    await expect(page.getByRole('button', { name: 'Ẩn công cụ demo' })).toHaveAttribute('aria-expanded', 'true');
-    await expect(page.getByRole('combobox', { name: 'Vai trò mô phỏng' })).toBeVisible();
-    await expect(page.getByRole('combobox', { name: 'Trạng thái thử' })).toBeVisible();
-    await expect(page.getByRole('combobox', { name: 'Dataset mô phỏng' })).toBeVisible();
-
-    await page.setViewportSize({ width: 1280, height: 900 });
-    await expect(toggle).toBeVisible();
-    await expect(controls).toBeVisible();
-});
-
-test('SPC-055/057 demo-control labels keep a clear gap on every Shell route consumer', async ({ page }) => {
+test('Every shop route renders without demo controls', async ({ page }) => {
     test.setTimeout(300_000);
     await page.setViewportSize({ width: 806, height: 884 });
 
@@ -129,21 +108,9 @@ test('SPC-055/057 demo-control labels keep a clear gap on every Shell route cons
         const pathname = routePath(route);
         await page.goto(new URL(pathname, demoUrl).toString(), { waitUntil: 'domcontentloaded' });
         await page.getByRole('progressbar', { name: 'Đang tải cửa hàng', exact: true }).waitFor({ state: 'hidden', timeout: 30000 });
-        const alert = page.locator('header').locator('xpath=following-sibling::*[1]').locator('.MuiAlert-root');
-        const controls = page.locator('#mock-tools-controls');
-        await expect(alert).toBeVisible({ timeout: 30000 });
-        await page.locator('button[aria-controls="mock-tools-controls"]').click();
-        await expect(controls).toBeVisible();
-
-        const visibleGap = await page.evaluate(() => {
-            const banner = document.querySelector('header')?.nextElementSibling?.querySelector('.MuiAlert-root');
-            const label = document.querySelector('#mock-tools-controls label.MuiInputLabel-root');
-            if (!banner || !label) return null;
-            return label.getBoundingClientRect().top - banner.getBoundingClientRect().bottom;
-        });
-
-        expect(visibleGap, `${route.id} (${profileFor(route)}) ${pathname}: visible gap from demo review alert to control label`).not.toBeNull();
-        expect(visibleGap, `${route.id} (${profileFor(route)}) ${pathname}: visible gap from demo review alert to control label`).toBeGreaterThanOrEqual(8);
+        await expect(page.locator('#main-content'), route.id + ' ' + profileFor(route) + ' ' + pathname).toBeVisible({ timeout: 30_000 });
+        await expect(page.getByRole('complementary', { name: 'Công cụ mô phỏng', exact: true })).toHaveCount(0);
+        await expect(page.getByRole('button', { name: /Công cụ demo/i })).toHaveCount(0);
     }
 });
 
@@ -152,6 +119,6 @@ test('unmatched route fallback owns its page gutter without horizontal overflow'
     await page.goto(new URL('/w09-unmatched-route', demoUrl).toString());
     await expect(page.getByRole('heading', { name: 'Không tìm thấy trang' })).toBeVisible();
     const fallback = page.locator('main#main-content');
-    await expect(fallback).toHaveCSS('padding-left', '16px');
+    await expect(fallback).toHaveCSS('padding-left', '8px');
     expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBe(390);
 });

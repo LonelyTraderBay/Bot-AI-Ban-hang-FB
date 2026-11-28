@@ -63,7 +63,7 @@ test('built demo artifact loads React and its synthetic API from the isolated Vi
     expect(documentResponse?.status()).toBe(200);
     expect(sessionResponse.status()).toBe(200);
     await expect(page.locator('main#main-content h1').first()).toBeVisible();
-    await expect(page.locator('[aria-label="Dữ liệu mô phỏng"]')).toBeVisible();
+    await expect(page.getByRole('complementary', { name: 'Công cụ mô phỏng', exact: true })).toHaveCount(0);
     const workerResponse = await page.request.get(new URL('/mockServiceWorker.js', page.url()).toString());
     expect(workerResponse.status()).toBe(200);
     const browserAssets = await page.evaluate(() => performance.getEntriesByType('resource')
@@ -102,7 +102,7 @@ for (const viewport of [{ width: 390, height: 844 }, { width: 1440, height: 900 
                     const main = page.locator('main#main-content');
                     await main.waitFor({ state: 'visible', timeout: 15_000 });
                     await main.getByRole('heading').first().waitFor({ state: 'visible', timeout: 15_000 });
-                    await page.locator('[aria-label="Dữ liệu mô phỏng"]').waitFor({ state: 'visible', timeout: 15_000 });
+                    await page.locator('#main-content').waitFor({ state: 'visible', timeout: 15_000 });
                     if (await page.getByRole('heading', { name: 'Không thể mở màn hình', exact: true }).count())
                         issues.push(`${route.id} ${pathName}: router error boundary rendered`);
                 } else if (await page.getByRole('heading', { name: 'Không tìm thấy trang', exact: true }).count()) {
@@ -129,7 +129,7 @@ for (const viewport of [{ width: 390, height: 844 }, { width: 1440, height: 900 
                     };
                 });
                 if (route.path.startsWith('/s/')) {
-                    const expectedGutter = viewport.width < 768 ? 16 : 24;
+                    const expectedGutter = 8;
                     if (geometry.mainPaddingInlineStart !== expectedGutter || geometry.mainPaddingInlineEnd !== expectedGutter)
                         issues.push(`${route.id} ${pathName}: shell gutter ${geometry.mainPaddingInlineStart}/${geometry.mainPaddingInlineEnd}px, expected ${expectedGutter}px`);
                 }

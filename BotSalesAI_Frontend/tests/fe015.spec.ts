@@ -1,4 +1,4 @@
-import { openDemoControls } from './session/demo-controls';
+import { setDemoControl } from './session/demo-controls';
 import { test, expect } from '@playwright/test';
 import { startDemoServer } from './session/demo-server.mjs';
 import { dateTime, formatMoney } from '../apps/web/src/shared/model/format';
@@ -20,12 +20,9 @@ async function gotoDemo(page: import('@playwright/test').Page, path: string) {
 }
 
 async function chooseOption(page: import('@playwright/test').Page, label: string, value: string | RegExp, within?: import('@playwright/test').Locator) {
-    if (['Vai trò mô phỏng', 'Trạng thái thử', 'Dataset mô phỏng'].includes(label)) await openDemoControls(page);
     await (within || page).getByRole('combobox', { name: label }).click();
     await page.getByRole('option', { name: value, exact: typeof value === 'string' }).click();
     await expect(page.getByRole('listbox')).toBeHidden();
-    if (label === 'Dataset mô phỏng')
-        await expect(page.getByRole('status').filter({ hasText: /^Đã (tải|khôi phục)/ })).toBeVisible();
 }
 
 async function previewCsv(page: import('@playwright/test').Page, kind: 'bank' | 'cod', accountOrCarrier: string, batch: string, contents: string) {
@@ -254,7 +251,7 @@ test('FE015.AC02 journal rejects unbalanced decimal lines before POST and sends 
 
 test('FE015.AC02 closed accounting period is visible and disables journal draft creation', async ({ page }) => {
     await gotoDemo(page, '/s/shop-demo/finance/debts-periods');
-    await chooseOption(page,'Dataset mô phỏng','Shop mở sổ mới (tổng hợp)');
+    await setDemoControl(page, 'dataset', 'finance-empty');
     const opening=await page.evaluate(async()=>{const session=(await (await fetch('/api/v2/session')).json()).data;const write=async(path:string,body:unknown)=>{const r=await fetch('/api/v2/shops/shop-demo/'+path,{method:'POST',headers:{'Content-Type':'application/json','X-CSRF-Token':session.csrfToken,'Idempotency-Key':crypto.randomUUID()},body:JSON.stringify(body)});if(!r.ok)throw new Error('Fixture opening failed '+r.status);return (await r.json()).data;};const o=await write('finance/opening-balances',{effectiveDate:'2026-09-01',policyVersion:'synthetic-policy-1',lines:[],inventory:[],reason:'Mở sổ zero cho kiểm khóa kỳ'});await write('finance/opening-balances/'+o.id+'/post',{expectedVersion:o.version});return o.id;});expect(opening).toBeTruthy();
     const period = page.getByRole('row').filter({ hasText: '1/9/26 → 30/9/26' });
     await expect(period).toBeVisible();
@@ -566,7 +563,7 @@ test('FE015.AC03 unknown journal posting is not resent from the same draft', asy
     const created = page.waitForResponse(response => response.request().method() === 'POST' && new URL(response.url()).pathname.endsWith('/journals'));
     await draft.getByRole('button', { name: 'Lưu nháp' }).click();
     expect((await created).status()).toBe(201);
-    await chooseOption(page, 'Trạng thái thử', 'Kết quả ghi chưa rõ');
+    await setDemoControl(page, 'fault', 'unknown');
     const row = page.getByRole('row').filter({ hasText: 'FE015-UNKNOWN-POST' });
     await expect(row).toBeVisible();
     await row.getByRole('button', { name: 'Chi tiết' }).click();

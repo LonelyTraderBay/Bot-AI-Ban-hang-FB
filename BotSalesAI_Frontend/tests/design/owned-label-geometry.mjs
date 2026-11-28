@@ -1,10 +1,10 @@
 /** Label/value geometry; allFields also covers the shared outlined theme profile. */
 export function ownedLabelGeometry(allFields = false) {
     return [...document.querySelectorAll(allFields
-        ? 'main .MuiTextField-root .MuiInputLabel-outlined, #mock-tools-controls .MuiInputLabel-outlined'
-        : 'main form .MuiInputLabel-shrink, #mock-tools-controls .MuiInputLabel-shrink')]
+        ? 'main .MuiTextField-root .MuiInputLabel-outlined'
+        : 'main form .MuiInputLabel-shrink')]
         .filter(label => label.getClientRects().length && getComputedStyle(label).visibility !== 'hidden')
-        .filter(label => allFields || label.closest('#mock-tools-controls') || label.textContent === 'Tìm kiếm')
+        .filter(label => allFields || label.textContent === 'Tìm kiếm')
         .map(label => {
             const field = label.closest('.MuiTextField-root');
             const control = field?.querySelector('input, textarea, .MuiSelect-select');
@@ -34,7 +34,7 @@ export function ownedLabelGeometry(allFields = false) {
                 return sum + rect.height + (parseFloat(style.marginTop) || 0) + (parseFloat(style.marginBottom) || 0);
             }, 0);
             const legends = [...field.querySelectorAll('legend')].map(legend => parseFloat(getComputedStyle(legend).maxWidth));
-            return { label: label.textContent, owner: label.closest('#mock-tools-controls') ? 'demo-tools' : label.textContent === 'Tìm kiếm' ? 'toolbar' : 'outlined-field',
+            return { label: label.textContent, owner: label.textContent === 'Tìm kiếm' ? 'toolbar' : 'outlined-field',
                 labelBounds: { left: labelRect.left, right: labelRect.right, top: labelRect.top, bottom: labelRect.bottom },
                 valueBounds: { left: valueRect.left, right: valueRect.right, top: valueRect.top, bottom: valueRect.bottom },
                 fieldBounds: { left: fieldRect.left, right: fieldRect.right, height: fieldRect.height }, naturalHeight, legends,

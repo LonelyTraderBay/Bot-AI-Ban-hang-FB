@@ -49,6 +49,8 @@ export function OperationsPage() {
     const [exceptionsOnly, setExceptionsOnly] = useState(false);
     const canManageMembers = useCan('members.manage');
     const canReadCommands = useCan('jobs.read');
+    const canClaimWork = useCan('operations.claim');
+    const canManageWork = useCan('operations.manage');
     const [memberSearchInput, setMemberSearchInput] = useState(''), [memberSearch, setMemberSearch] = useState('');
     useEffect(() => {
         const timer = window.setTimeout(() => setMemberSearch(memberSearchInput.trim()), 250);
@@ -66,13 +68,34 @@ export function OperationsPage() {
     };
     const exceptionItems = workItems.filter(isException);
     const visibleItems = exceptionsOnly ? exceptionItems : workItems;
+    const rowActions = (task: WorkItem) => {
+        const updateActions = task.allowedActions.filter(candidate => workItemActions.includes(candidate as WorkItemAction));
+        const take = canClaimWork && task.allowedActions.includes('claim') ? <MutationButton permission="operations.claim"
+            allowedActions={task.allowedActions} action="claim" busy={claim.pending}
+            onClick={() => void claim.execute({ path: { resourceId: task.id }, body: { expectedVersion: task.version } }).catch(() => undefined)}>
+            Tôi nhận việc
+        </MutationButton> : null;
+        const prepare = task.kind === 'prepare_order' ? <RouteLink to={`/s/${shop.id}/fulfillment`}>Chuẩn bị hàng</RouteLink> : null;
+        const manage = task.kind !== 'prepare_order' && canManageWork && updateActions.length > 0 ? <MutationButton permission="operations.manage"
+            onClick={() => {
+                setItem(task);
+                setReason('');
+                setAssignee('');
+                setAction(updateActions[0] as WorkItemAction);
+                update.clearError();
+            }}>Cập nhật</MutationButton> : null;
+        const allowed = <Typography variant="caption" color="text.secondary" sx={{ alignSelf: 'center' }}>
+            Được phép: {task.allowedActions.length ? task.allowedActions.join(' · ') : 'Không có hành động'}
+        </Typography>;
+        return { take, prepare, manage, allowed };
+    };
 
     return <>
         <PageHeader title="Công việc hôm nay" subtitle="Giao việc → nhận việc → hoàn thành → kiểm tra kết quả."
             actions={<RouteLink to={`/s/${shop.id}/operations/exceptions`}>Ngoại lệ và tác vụ nền</RouteLink>} />
         {__MOCK__ && <Alert severity="info" sx={layoutSx.notice.afterGap}>Dữ liệu vận hành và trạng thái dịch vụ đang được mô phỏng; chưa xác minh worker hoặc backend thật.</Alert>}
         <QueryState query={summary} pendingProfile="section">
-            {summary.data && <Stats>
+            {summary.data && <Stats density="compact" appearance="strip">
                 <Stat title="Chưa có người nhận" value={summary.data.data.queuedTasks} accent />
                 <Stat title="Quá hạn" value={summary.data.data.overdueTasks} />
                 <Stat title="Chờ phê duyệt" value={summary.data.data.pendingApprovals} />
@@ -81,11 +104,12 @@ export function OperationsPage() {
         </QueryState>
         <ErrorNotice error={claim.error} />
         <Panel>
+            <Toolbar operation="listWorkItems" />
             <SurfaceContent bodyMode="insetDivider" data-testid="operation-exceptions">
                 <Stack direction={{ xs: 'column', sm: 'row' }} justifyContent="space-between" alignItems={{ xs: 'stretch', sm: 'center' }} sx={layoutSx.surface.headerFlowGap}>
                     <Box>
                         <Typography fontWeight={visualSx.typography.fontWeight.strong}>Giám sát ngoại lệ</Typography>
-                        <Typography variant="body2" color="text.secondary">Quá hạn theo thời điểm API; gồm việc bị chặn, chưa nhận, đến hạn hoặc sai lệch thanh toán. Chỉ lọc trang dữ liệu hiện đang tải.</Typography>
+                        <Typography variant="body2" color="text.secondary">Lọc việc bị chặn, chưa nhận, quá hạn hoặc sai lệch thanh toán trong trang hiện tại.</Typography>
                     </Box>
                     <Button variant={exceptionsOnly ? 'contained' : 'outlined'} aria-pressed={exceptionsOnly} onClick={() => setExceptionsOnly(value => !value)}>
                         {exceptionsOnly ? `Hiện mọi công việc (${workItems.length})` : `Chỉ xem ngoại lệ (${exceptionItems.length})`}
@@ -93,10 +117,17 @@ export function OperationsPage() {
                 </Stack>
                 {exceptionsOnly && exceptionItems.length === 0 && <Alert severity="success">Không có ngoại lệ trong trang dữ liệu hiện tại.</Alert>}
             </SurfaceContent>
-            <Toolbar operation="listWorkItems" />
             <QueryState query={list} pendingProfile="section">
                 {list.data && <>
-                    <DataTable mobile={{ layout: 'cards', titleKey: 'task', summaryKeys: ['status', 'assigned', 'due'], actionKey: 'actions' }} label="Công việc vận hành" rows={visibleItems} rowKey={task => task.id} columns={[
+                    <DataTable mobile={{ layout: 'cards', titleKey: 'task', statusKey: 'status', summaryKeys: ['assigned', 'due'], actionKey: 'actions',
+                        splitActions: task => {
+                            const { take, prepare, manage, allowed } = rowActions(task);
+                            const primary = take ?? prepare ?? manage;
+                            return { primary, secondary: <ActionGroup>
+                                {prepare !== primary && prepare}{manage !== primary && manage}{allowed}
+                            </ActionGroup> };
+                        },
+                    }} label="Công việc vận hành" rows={visibleItems} rowKey={task => task.id} columns={[
                         {
                             key: 'task', label: 'Công việc', render: task => <Stack>
                                 <Typography fontWeight={visualSx.typography.fontWeight.strong}>{task.kind === 'prepare_order' ? 'Chuẩn bị đơn hàng' : task.kind === 'customer_handoff' ? 'Tiếp quản khách hàng' : task.kind === 'payment_mismatch' ? 'Sai lệch thanh toán' : task.kind === 'late_shipment' ? 'Vận đơn quá hạn' : businessLabel(task.kind)}</Typography>
@@ -109,19 +140,8 @@ export function OperationsPage() {
                         { key: 'reason', label: 'Vướng mắc', render: task => task.blockedReason || '—' },
                         {
                             key: 'actions', label: 'Thao tác', render: task => {
-                                const updateActions = task.allowedActions.filter(candidate => workItemActions.includes(candidate as WorkItemAction));
-                                return <ActionGroup direction="row" >
-                                    <MutationButton permission="operations.claim" allowedActions={task.allowedActions} action="claim" busy={claim.pending} onClick={() => void claim.execute({ path: { resourceId: task.id }, body: { expectedVersion: task.version } }).catch(() => undefined)}>Tôi nhận việc</MutationButton>
-                                    {task.kind === 'prepare_order' && <RouteLink to={`/s/${shop.id}/fulfillment`}>Chuẩn bị hàng</RouteLink>}
-                                    {task.kind !== 'prepare_order' && updateActions.length > 0 && <MutationButton permission="operations.manage" onClick={() => {
-                                        setItem(task);
-                                        setReason('');
-                                        setAssignee('');
-                                        setAction(updateActions[0] as WorkItemAction);
-                                        update.clearError();
-                                    }}>Cập nhật</MutationButton>}
-                                    <Typography variant="caption" color="text.secondary" sx={{ alignSelf: 'center' }}>Được phép: {task.allowedActions.length ? task.allowedActions.join(' · ') : 'Không có hành động'}</Typography>
-                                </ActionGroup>;
+                                const { take, prepare, manage, allowed } = rowActions(task);
+                                return <ActionGroup direction="row">{take}{prepare}{manage}{allowed}</ActionGroup>;
                             },
                         },
                     ]} />
@@ -250,12 +270,12 @@ export function DigestsPage() {
         <PageHeader title="Bản tin & sức khỏe" subtitle="Những việc quan trọng cần chủ shop quyết định; không thay thế người trực thực tế."
             actions={canReadEvaluations && <RouteLink to={`/s/${shop.id}/bot/evaluations`}>Đánh giá chất lượng AI</RouteLink>} />
         {__MOCK__ && <Alert severity="info" sx={layoutSx.notice.afterGap}>Đây là dữ liệu mô phỏng. Trạng thái “chưa xác minh” không chứng minh backend, provider hoặc worker đã sẵn sàng.</Alert>}
-        <SectionGrid columns={{ xs: '1fr', lg: '1.5fr 1fr' }}>
+        <SectionGrid alignItems="start" columns={{ xs: '1fr', lg: '1.5fr 1fr' }}>
             <Panel title="Bản tin điều hành" bodyMode="inset">
                 <QueryState query={list}>
                     <SurfaceContent >
                         {list.data?.data.map(digest => <Box key={digest.id} sx={[layoutSx.detail.relatedItemInset, { border: 1, borderColor: 'divider', borderRadius: visualSx.radius.card }]}>
-                            <Stack direction="row" justifyContent="space-between" sx={layoutSx.surface.headerFlowGap}><Stack><Typography component="div" variant="subtitle2">{dateTime(digest.periodStart, shop.timezone)} → {dateTime(digest.periodEnd, shop.timezone)}</Typography><Typography variant="caption" color="text.secondary">{digest.id} · phiên bản {digest.version}</Typography></Stack><Status value={digest.status} /></Stack>
+                            <Stack direction="row" justifyContent="space-between" sx={layoutSx.surface.headerFlowGap}><Stack><Typography component="div" variant="subtitle2">{dateTime(digest.periodStart, shop.timezone)} → {dateTime(digest.periodEnd, shop.timezone)}</Typography><Typography variant="caption" color="text.secondary">{digest.id} · phiên bản {digest.version}</Typography></Stack><Status value={digest.status} density="compact" /></Stack>
                             <Typography sx={[layoutSx.surface.sectionBefore, { whiteSpace: 'pre-wrap' }]}>{digest.text}</Typography>
                             <DetailLine label="Thời điểm tạo / cập nhật">{dateTime(digest.createdAt, shop.timezone)} / {dateTime(digest.updatedAt, shop.timezone)}</DetailLine>
                             {digest.workSummary

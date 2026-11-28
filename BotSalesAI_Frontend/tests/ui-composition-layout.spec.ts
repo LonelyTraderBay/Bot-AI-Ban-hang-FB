@@ -64,7 +64,7 @@ async function verifyCompositionRouteMatrix(page: Page, info: TestInfo, viewport
             expect(group.gap, `${context} ${group.owner}`).toBe(expected);
             for (const margins of group.childMargins) expect(margins, `${context} ${group.owner} child boundary`).toEqual(['0px', '0px']);
         }
-        if (pathname.startsWith('/s/')) expect(result.inset, `${context} Shell main`).toEqual(['16px', '16px']);
+        if (pathname.startsWith('/s/')) expect(result.inset, `${context} Shell main`).toEqual(['8px', '8px']);
         expect(result.document[0], `${context} page overflow`).toBeLessThanOrEqual(result.document[1]);
         observations.push({ route: route.id, pathname, viewport, ...result });
     }

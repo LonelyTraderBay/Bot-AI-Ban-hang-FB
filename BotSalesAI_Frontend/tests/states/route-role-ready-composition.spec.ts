@@ -1,4 +1,4 @@
-import { openDemoControls, waitForDemoMenu, navigateDemoAndRead } from '../session/demo-controls';
+import { navigateDemoAndRead, setDemoControl } from '../session/demo-controls';
 import { readFileSync } from 'node:fs';
 import { test, expect } from '@playwright/test';
 import { startDemoServer } from '../session/demo-server.mjs';
@@ -38,12 +38,7 @@ function canRead(route: Route, role: string) {
 
 async function chooseRole(page: import('@playwright/test').Page, role: string) {
     if (role === 'owner') return;
-    await openDemoControls(page);
-    await page.getByRole('combobox', { name: 'Vai trò mô phỏng' }).click();
-    await waitForDemoMenu(page, 'Vai trò mô phỏng');
-    await page.getByRole('option', { name: role, exact: true }).click();
-    await expect(page.getByRole('status').filter({ hasText: 'Vai trò mô phỏng đã được áp dụng.' })).toBeVisible();
-    await expect(page.getByRole('combobox', { name: 'Vai trò mô phỏng' })).toHaveText(role);
+    await setDemoControl(page, 'role', role);
 }
 
 let demoUrl = '';
@@ -87,10 +82,7 @@ test.describe('ready route content renders for every role granted read access by
             expect(bootstrapRead.status()).toBe(200);
             expect(await bootstrapRead.finished()).toBeNull();
             await chooseRole(page, role);
-            await openDemoControls(page);
-            await page.getByRole('combobox', { name: 'Trạng thái thử' }).click();
-            await waitForDemoMenu(page, 'Trạng thái thử');
-            await page.getByRole('option', { name: 'Bình thường', exact: true }).click();
+            await setDemoControl(page, 'fault', 'normal');
 
             for (const route of readableRoutes) {
                 // Marketing normalizes its URL from the first response, then loads a second query.
@@ -138,11 +130,7 @@ test.describe('ready route content renders for every role granted read access by
                 console.log(`ROLE_READY_NOT_APPLICABLE=${role}:${noSeedRoutes.map(route => route.id).join(',')} REASON=mock-no-resource-404`);
 
             const routeOwnedData = readableRoutes.filter(route => route.id !== 'R33' && !noSeedJobRoutes.has(route.id));
-            await openDemoControls(page);
-            await page.getByRole('combobox', { name: 'Trạng thái thử' }).click();
-            await waitForDemoMenu(page, 'Trạng thái thử');
-            await page.getByRole('option', { name: 'Lỗi API kéo dài', exact: true }).click();
-            await expect(page.getByRole('status').filter({ hasText: 'Trạng thái thử đã được áp dụng.' })).toBeVisible();
+            await setDemoControl(page, 'fault', 'error_persistent_all');
             // useApi owns a 5-second staleTime; let every cached route query cross it before remounting.
             await page.clock.fastForward(5_200);
             for (const route of routeOwnedData) {

@@ -1,6 +1,6 @@
 import { readFileSync } from 'node:fs';
 import { expect, test } from '@playwright/test';
-import { openDemoControls } from '../session/demo-controls';
+import { setDemoControl } from '../session/demo-controls';
 import { startDemoServer } from '../session/demo-server.mjs';
 
 type Role = 'owner' | 'manager';
@@ -32,15 +32,9 @@ test.beforeAll(async () => {
 
 test.afterAll(async () => stopDemo?.());
 
-async function chooseMockOption(page: import('@playwright/test').Page, label: string, value: string) {
-    await openDemoControls(page);
-    await page.getByRole('combobox', { name: label }).click();
-    await page.getByRole('option', { name: value, exact: true }).click();
-}
-
 async function chooseRole(page: import('@playwright/test').Page, role: Role) {
     if (role === 'owner') return;
-    await chooseMockOption(page, 'Vai trò mô phỏng', role);
+    await setDemoControl(page, 'role', role);
 }
 
 for (const role of roles) {
@@ -63,7 +57,7 @@ for (const role of roles) {
         expect(createResponse.status()).toBe(201);
         const createdWarehouse = (await createResponse.json()).data as { id: string };
         await expect(page.getByRole('row').filter({ hasText: code })).toBeVisible();
-        await chooseMockOption(page, 'Trạng thái thử', 'Kết quả ghi chưa rõ');
+        await setDemoControl(page, 'fault', 'unknown');
 
         const row = page.getByRole('row').filter({ hasText: code });
         await row.getByRole('button', { name: `Ngừng dùng ${code}`, exact: true }).click();

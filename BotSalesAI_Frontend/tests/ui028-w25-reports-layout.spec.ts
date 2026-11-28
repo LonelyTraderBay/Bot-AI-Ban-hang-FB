@@ -1,4 +1,4 @@
-import { openDemoControls } from './session/demo-controls';
+import { setDemoControl } from './session/demo-controls';
 import { test, expect } from '@playwright/test';
 import { startDemoServer } from './session/demo-server.mjs';
 
@@ -46,7 +46,7 @@ test('UI028.W25 Reports semantic spacing stays stable at mobile, tablet and desk
                 dateFieldGap: styleOf('[data-testid="reports-date-filters"]').gap,
             };
         });
-        const inset = width < 768 ? '12px' : '16px';
+        const inset = '12px';
         expect(spacing).toEqual({
             pageGridGap: '16px',
             sectionGap: '16px',
@@ -124,9 +124,7 @@ test('UI028.W25 Reports semantic spacing stays stable at mobile, tablet and desk
 
 test('UI028.W25 authorized report download link retains its 44px hit target', async ({ page }) => {
     await page.goto(new URL('/s/shop-demo/overview', demoUrl).toString());
-    await openDemoControls(page);
-    await page.getByLabel('Vai trò mô phỏng').click();
-    await page.getByRole('option', { name: 'owner', exact: true }).click();
+    await setDemoControl(page, 'role', 'owner');
     await page.goto(new URL('/s/shop-demo/reports', demoUrl).toString());
     await expect(page.getByRole('heading', { name: 'Tạo tệp báo cáo' })).toBeVisible();
     await page.getByLabel('Từ ngày').fill('2026-09-29');

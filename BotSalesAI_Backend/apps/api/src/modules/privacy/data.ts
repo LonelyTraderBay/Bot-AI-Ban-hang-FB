@@ -1,6 +1,7 @@
 import { Prisma, type PrivacyRequest, type PrismaClient } from '../../generated/prisma/client.js';
 import { recordAudit } from '../../platform/audit/index.js';
 import { serializable } from '../../platform/database/transactions.js';
+import { clearDraftLease } from '../../platform/database/draft-lease.js';
 import type { JobHandler } from '../../platform/jobs/index.js';
 import { enqueueResourceUpdate } from '../../platform/outbox/index.js';
 import { addressView, customerView } from '../customers/index.js';
@@ -67,6 +68,8 @@ export function erasedCustomer(now: Date) {
 export async function eraseSubject(tx: Prisma.TransactionClient, shopId: string, customerId: string, now: Date, evidence: WithdrawalEvidence) {
     const key = { shopId, customerId };
     await tx.customer.update({ where: privacyKey(shopId, customerId), data: { ...erasedCustomer(now), version: { increment: 1 } } });
+    await tx.conversationOrderDraft.updateMany({ where: { ...key, state: 'active' },
+        data: { ...clearDraftLease, values: Prisma.DbNull, state: 'discarded', editEpoch: { increment: 1 }, version: { increment: 1 } } });
     await tx.customerAddress.updateMany({ where: key, data: { label: null, recipient: null, phone: null, line1: null, ward: null,
         district: null, province: null, postalCode: null, countryCode: null, status: 'archived', version: { increment: 1 } } });
     const identities = await tx.customerIdentity.findMany({ where: key });

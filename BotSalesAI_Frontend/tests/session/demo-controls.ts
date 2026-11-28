@@ -1,12 +1,18 @@
 import {expect} from '@playwright/test';
 import type {Page,Response} from '@playwright/test';
 
-/** Exercise the same public disclosure before operating synthetic demo controls. */
-export async function openDemoControls(page:Page){
-    const toggle=page.locator('button[aria-controls="mock-tools-controls"]');
-    await expect(toggle).toBeVisible();
-    if(await toggle.getAttribute('aria-expanded')!=='true')await toggle.click();
-    await expect(page.locator('#mock-tools-controls')).toBeVisible();
+type MockControlWindow = Window & {
+    __setMockControl?: (key: string, value: string) => Promise<void>;
+};
+
+/** Configure this page's mock service after the shop shell has bootstrapped. */
+export async function setDemoControl(page: Page, key: 'role' | 'fault' | 'dataset', value: string) {
+    await expect(page.getByRole('banner')).toBeVisible({ timeout: 15_000 });
+    await page.evaluate(async ({ key, value }) => {
+        const apply = (window as MockControlWindow).__setMockControl;
+        if (!apply) throw new Error('Build the demo with VITE_E2E_MOCK_CONTROL=1 for this test.');
+        await apply(key, value);
+    }, { key, value });
 }
 
 /** A compositor transition can move an option after pointer actionability checks. */

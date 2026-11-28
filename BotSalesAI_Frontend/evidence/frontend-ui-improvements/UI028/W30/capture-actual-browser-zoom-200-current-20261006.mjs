@@ -299,7 +299,9 @@ try {
         const focusedScreenshotPath = path.join(root, `evidence/frontend-ui-improvements/UI028/W30/actual-browser-zoom-200-${scenario.id}-focused-${evidenceRunId}.png`);
         const focusedScreenshotBytes = await page.screenshot({ fullPage: false });
         fs.writeFileSync(focusedScreenshotPath, focusedScreenshotBytes);
-        await page.keyboard.press('Tab');
+        // These targets are the last enabled controls. Move toward the preceding form control.
+        const reverseTab = scenario.id === 'form-error-short' || scenario.id === 'inbox-long-composer';
+        await page.keyboard.press(reverseTab ? 'Shift+Tab' : 'Tab');
         const measurements = await measure(page, fixture.targets);
         const screenshotPath = path.join(root, `evidence/frontend-ui-improvements/UI028/W30/actual-browser-zoom-200-${scenario.id}-after-tab-${evidenceRunId}.png`);
         const screenshotBytes = await page.screenshot({ fullPage: false });

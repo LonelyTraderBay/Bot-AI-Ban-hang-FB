@@ -16,6 +16,7 @@ export async function requireCustomerConversation(tx: Prisma.TransactionClient, 
 }
 
 export { inboxCommands, inboxModule } from './conversations.js';
+export { conversationInShop, updateConversation } from './message-data.js';
 export { dispatchMessengerMessages } from './dispatch.js';
 export { processBotInbound } from './bot-inbound.js';
 export { marketingConversationSignals } from './marketing.js';

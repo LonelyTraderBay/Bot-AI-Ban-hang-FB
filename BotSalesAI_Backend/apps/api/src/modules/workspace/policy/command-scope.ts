@@ -7,17 +7,20 @@ import { lockShopClosure, requireOpenShop } from '../../../platform/database/sho
 import { serializable } from '../../../platform/database/transactions.js';
 import type { AuthConfig } from '../auth/config.js';
 import { headerValue, requireMutationCsrf, requireSessionToken } from '../auth/session-tokens.js';
-import { requireShopAccess, sessionPrincipal } from './access.js';
+import { requireShopAccess, sessionIdentity } from './access.js';
 
 export type ShopScope = Awaited<ReturnType<typeof requireShopAccess>>;
 
 export function writeAsSession<T>(db: PrismaClient | undefined, config: AuthConfig | undefined, headers: IncomingHttpHeaders,
-    apply: (tx: Prisma.TransactionClient, userId: string, config: AuthConfig, token: string) => Promise<T>,
+    apply: (tx: Prisma.TransactionClient, userId: string, config: AuthConfig, token: string, sessionId: string) => Promise<T>,
     isolation: 'Serializable' | 'ReadCommitted' = 'Serializable') {
     const token = requireSessionToken(headers);
     if (!db || !config) throw new ServiceUnavailableException();
     requireMutationCsrf(config, headers, token);
-    const run = async (tx: Prisma.TransactionClient) => apply(tx, await sessionPrincipal(tx, token), config, token);
+    const run = async (tx: Prisma.TransactionClient) => {
+        const session = await sessionIdentity(tx, token);
+        return apply(tx, session.userId, config, token, session.id);
+    };
     return isolation === 'ReadCommitted' ? db.$transaction(run, { isolationLevel: isolation }) : serializable(db, run, true);
 }
 

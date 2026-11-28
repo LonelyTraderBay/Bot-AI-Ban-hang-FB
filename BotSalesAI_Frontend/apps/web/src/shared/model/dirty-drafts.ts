@@ -12,6 +12,22 @@ export function useDraftForm(dirty: boolean) {
 
 let pendingSubmitAt = 0;
 let pendingSubmitForm: HTMLFormElement | null = null;
+const saveBeforeLeaving = new Map<HTMLFormElement, () => Promise<boolean>>();
+
+export function registerDraftFlush(form: HTMLFormElement, save: () => Promise<boolean>) {
+    saveBeforeLeaving.set(form, save);
+    return () => { saveBeforeLeaving.delete(form); };
+}
+
+export function flushDirtyDrafts(): Promise<boolean> | undefined {
+    const saves = [...saveBeforeLeaving].filter(([form]) => form.isConnected && form.dataset.draftDirty === 'true');
+    if (!saves.length) return;
+    return Promise.all(saves.map(async ([form, save]) => {
+        if (!await save()) return false;
+        markDraftClean(form);
+        return true;
+    })).then(results => results.every(Boolean) && !hasUnsavedFormDraft());
+}
 
 function isDirty(control: DraftControl) {
     if (control.disabled)

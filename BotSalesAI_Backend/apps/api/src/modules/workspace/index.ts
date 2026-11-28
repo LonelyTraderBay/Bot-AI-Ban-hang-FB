@@ -14,7 +14,7 @@ export { OidcClient } from './auth/oidc.js';
 export { requireMutationCsrf, requirePublicBrowserCsrf, requireSessionToken } from './auth/session-tokens.js';
 export { consumeStepUp } from './auth/step-up.js';
 export { canInShop, permissionsFor, readAsSession, requireShopAccess, sessionPrincipal } from './policy/access.js';
-export { requireIdempotencyKey, writeShopCommand, type ShopScope } from './policy/command-scope.js';
+export { requireIdempotencyKey, writeAsSession, writeShopCommand, type ShopScope } from './policy/command-scope.js';
 export { visibleUnknownCommandCount } from './activity/activity-service.js';
 
 @Module({})

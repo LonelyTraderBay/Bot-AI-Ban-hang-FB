@@ -57,13 +57,12 @@ async function searchGeometry(page: Page) {
     });
 }
 
-test('Shared Toolbar and demo tools keep labels clear when text doubles', async ({ page }, info) => {
+test('Shared Toolbar keeps labels clear when text doubles', async ({ page }, info) => {
     test.setTimeout(300_000);
     const observations = [];
     for (const width of [320, 390, 1280, 1440]) {
         await page.setViewportSize({ width, height: 1000 });
         await ready(page, '/s/shop-demo/inbox', '/api/v2/shops/shop-demo/conversations');
-        await page.locator('button[aria-controls="mock-tools-controls"]').click();
         // Deterministic layout stress; native Firefox text zoom is verified separately.
         await page.evaluate(() => {
             const sizes = [...document.querySelectorAll<HTMLElement>('*')].map(element => [element, parseFloat(getComputedStyle(element).fontSize)] as const);
@@ -72,7 +71,6 @@ test('Shared Toolbar and demo tools keep labels clear when text doubles', async 
         const labels = await page.evaluate(ownedLabelGeometry);
         observations.push({ width, labels });
         await info.attach(`doubled-labels-${width}`, { body: JSON.stringify(labels), contentType: 'application/json' });
-        expect(labels.filter(label => label.owner === 'demo-tools')).toHaveLength(3);
         expect(labels.filter(label => label.owner === 'toolbar')).toHaveLength(1);
         expect(labels.filter(label => label.overlaps || label.outsideField)).toEqual([]);
         for (const label of labels) {
@@ -96,7 +94,7 @@ test('Toolbar geometry: multiline category lookup cannot stretch the search butt
     const primary = page.getByRole('textbox', { name: 'Tìm kiếm', exact: true }).locator('xpath=ancestor::form');
     await expect(primary.getByRole('combobox', { name: 'Trạng thái', exact: true })).toBeVisible();
     await expect(primary.getByRole('textbox', { name: 'Tìm danh mục', exact: true })).toHaveCount(0);
-    const filters = page.getByRole('group', { name: 'Bộ lọc danh mục', exact: true });
+    const filters = page.getByRole('group', { name: 'Bộ lọc sản phẩm', exact: true });
     await expect(filters).toBeVisible();
     const search = await primary.boundingBox(), secondary = await filters.boundingBox();
     expect(secondary!.y).toBeGreaterThanOrEqual(search!.y + search!.height);
@@ -118,9 +116,13 @@ test('Shared consolidation Inbox filters share Toolbar ownership and stay outsid
         if (hiddenList) {
             await expect(filters).toBeHidden();
         } else {
+            if (route.includes('/') || width < 1280) {
+                await expect(filters).toBeHidden();
+                await page.getByRole('button', { name: 'Bộ lọc', exact: true }).click();
+            }
             await expect(filters).toBeVisible();
             const geometry = await filters.evaluate(element => {
-                const toolbar = element.parentElement!;
+                const toolbar = element.closest('.MuiStack-root')!;
                 const form = toolbar.querySelector('form')!;
                 const box = (node: Element) => { const r = node.getBoundingClientRect(); return { left: r.left, right: r.right, top: r.top, bottom: r.bottom }; };
                 const controls = [...element.querySelectorAll('.MuiTextField-root')].map(box);
@@ -229,7 +231,12 @@ test('Toolbar preserves Products URL filters, search submit, clear and independe
 test('Toolbar keeps Inventory apply/reset separate from search submission', async ({ page }) => {
     for (const route of ['/s/shop-demo/inventory', '/s/shop-demo/inventory/movements']) {
         await ready(page, route);
-        const warehouse = page.getByRole('combobox', { name: /^Kho(?: |$)/ });
+        const popupInventory = route.endsWith('/inventory');
+        const dialog = page.getByRole('dialog', { name: 'Bộ lọc tồn kho' });
+        const openFilters = () => page.getByRole('button', { name: /^Bộ lọc(?: \(\d+\))?$/ }).click();
+        if (popupInventory) await openFilters();
+        const surface = popupInventory ? dialog : page;
+        const warehouse = surface.getByRole('combobox', { name: /^Kho(?: |$)/ });
         await warehouse.click();
         await page.getByRole('option', { name: 'MAIN · Kho chính · dữ liệu tổng hợp', exact: true }).click();
         await warehouse.press('Enter');
@@ -238,11 +245,13 @@ test('Toolbar keeps Inventory apply/reset separate from search submission', asyn
         await expect(page.getByRole('listbox')).toHaveCount(0);
         expect(new URL(page.url()).searchParams.has('q')).toBe(false);
         expect(new URL(page.url()).searchParams.has('warehouseId')).toBe(false);
-        await page.getByRole('button', { name: 'Áp dụng bộ lọc', exact: true }).click();
-        expect(new URL(page.url()).searchParams.get('warehouseId')).toBe('warehouse-01');
-        await page.getByRole('button', { name: 'Xóa bộ lọc', exact: true }).click();
-        expect(new URL(page.url()).searchParams.has('warehouseId')).toBe(false);
-        await expect(warehouse.locator('..').locator('input')).toHaveValue('');
+        await surface.getByRole('button', { name: 'Áp dụng bộ lọc', exact: true }).click();
+        await expect(page).toHaveURL(url => url.searchParams.get('warehouseId') === 'warehouse-01');
+        if (popupInventory) await openFilters();
+        await surface.getByRole('button', { name: popupInventory ? 'Đặt lại bộ lọc' : 'Xóa bộ lọc', exact: true }).click();
+        await expect(page).toHaveURL(url => !url.searchParams.has('warehouseId'));
+        if (popupInventory) await openFilters();
+        await expect(warehouse.locator('..').locator('input')).toHaveValue(popupInventory ? 'all' : '');
     }
 });
 

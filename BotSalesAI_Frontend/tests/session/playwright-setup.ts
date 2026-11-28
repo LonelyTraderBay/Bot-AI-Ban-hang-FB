@@ -25,7 +25,12 @@ export default async function setup(config:FullConfig) {
         if(errors.length)throw new AggregateError(errors,'Playwright server cleanup failed.');
     };
     try {
-        server=await createServer({configFile:path.join(root,'apps/web/vite.config.ts'),root:path.join(root,'apps/web'),mode:'demo',server:{host:url.hostname,port:runtime==='preview'?0:Number(url.port),strictPort:runtime==='dev'},cacheDir:process.env.BOTSALES_VITE_CACHE_DIR,logLevel:'error'});
+        server=await createServer({
+            configFile:path.join(root,'apps/web/vite.config.ts'),root:path.join(root,'apps/web'),mode:'demo',
+            define: { 'import.meta.env.VITE_E2E_MOCK_CONTROL': '"1"' },
+            server:{host:url.hostname,port:runtime==='preview'?0:Number(url.port),strictPort:runtime==='dev'},
+            cacheDir:process.env.BOTSALES_VITE_CACHE_DIR,logLevel:'error',
+        });
         await server.listen();
         // One optimizer owner per run. Browser pages keep their own MSW state.
         const address=server.httpServer!.address();

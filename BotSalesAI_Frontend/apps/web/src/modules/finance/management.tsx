@@ -1,22 +1,72 @@
 import {useRef,useState} from 'react';
+import type { ReactNode } from 'react';
 import {useSearchParams} from 'react-router-dom';
-import {Alert,Button,MenuItem,TextField} from '@mui/material';
+import {Alert,Button,MenuItem,TextField,Typography,useMediaQuery} from '@mui/material';
 import {useForm,useWatch,useFieldArray} from 'react-hook-form';
 import {zodResolver} from '@hookform/resolvers/zod';
 import {z} from 'zod';
-import type {OpeningBalance,OpeningBalanceWrite} from '@botsales/contracts';
+import type {Money,OpeningBalance,OpeningBalanceWrite} from '@botsales/contracts';
 import {useApi,useCommand,usePagedApi} from '@/shared/api/hooks';
-import {useScope,useCanWrite} from '@/shared/model/scope';
+import {useScope,useCan,useCanWrite} from '@/shared/model/scope';
 import {useListQuery} from '@/shared/model/filters';
 import {useDraftForm,markDraftClean} from '@/shared/model/dirty-drafts';
 import {useVersionedDraft,draftEqual} from '@/shared/model/versioned-draft';
-import {dateTime,dateOnlyInTimezone,isValidDateOnly,codePointLength,formatDateOnly} from '@/shared/model/format';
+import {dateTime,dateOnlyInTimezone,isValidDateOnly,codePointLength,formatDateOnly,formatMoney} from '@/shared/model/format';
 import {DraftConflict} from '@/shared/ui/draft-conflict';
 import {ActionGroup,FormFields,SurfaceContent} from '@/shared/ui/composition';
 import {Amount,ConfirmDialog,DataTable,DetailLine,EditDialog,ErrorNotice,LookupLoadMore,MutationButton,PageHeader,Pager,Panel,QueryState,RouteLink,Stat,Stats,Status,Toolbar} from '@/shared/ui/components';
+import {layoutSx} from '@/shared/ui/layout';
+import {tabletAndUpQuery} from '@/shared/ui/theme';
 import {useReportRange,ReportRangeFields} from './report-range';
 import {accountGroupName} from './accounts';
 import {ReportWarnings} from './report-warnings';
+
+type BookCell = { label: string; value: string; display: string; fullText?: string; to?: string };
+
+function amountCell(money: Money, label: string): BookCell {
+    return { label, value: money.amount, display: formatMoney(money), fullText: `${money.amount} ${money.currency}` };
+}
+
+function useBookCell() {
+    const [selected, setSelected] = useState<BookCell | null>(null);
+    const [copyStatus, setCopyStatus] = useState('');
+    const cell = (value: BookCell, fillNumericCell = false) => <Button size="small" color="inherit" aria-haspopup="dialog"
+        aria-label={`${value.label}: ${value.fullText ?? value.display}. Xem đầy đủ`}
+        sx={[{ minWidth: 0, maxWidth: '100%' }, fillNumericCell && layoutSx.table.reconciliationAmount]} onClick={() => { setCopyStatus(''); setSelected(value); }}>
+        <Typography component="span" variant="inherit" noWrap>{value.display}</Typography>
+    </Button>;
+    const dialog = <EditDialog open={selected !== null} title={selected?.label ?? 'Giá trị đầy đủ'} onClose={() => setSelected(null)}
+        dirtyGuard={false} width="compact" actions={<Button variant="contained" onClick={async () => {
+            if (!selected) return;
+            try {
+                await navigator.clipboard.writeText(selected.value);
+                setCopyStatus('Đã sao chép.');
+            } catch {
+                setCopyStatus('Hãy chọn giá trị để sao chép.');
+            }
+        }}>Sao chép</Button>}>
+        {selected && <SurfaceContent>
+            <Typography sx={{ overflowWrap: 'anywhere' }}>{selected.fullText ?? selected.display}</Typography>
+            {selected.to && <RouteLink to={selected.to}>Mở chứng từ</RouteLink>}
+            {copyStatus && <Typography role="status" variant="body2">{copyStatus}</Typography>}
+        </SurfaceContent>}
+    </EditDialog>;
+    return { cell, dialog };
+}
+
+function BookDisclosure({ title, description, children }: { title: string; description?: string; children: ReactNode }) {
+    const [open, setOpen] = useState(false);
+    return <>
+        <Button size="small" variant="outlined" aria-haspopup="dialog" onClick={() => setOpen(true)}>{title}</Button>
+        <EditDialog open={open} width="compact" title={title} description={description} onClose={() => setOpen(false)} dirtyGuard={false} actions={null}>
+            {children}
+        </EditDialog>
+    </>;
+}
+
+function periodSummary(range: { from: string; to: string }, valid: boolean) {
+    return valid ? `Từ ${formatDateOnly(range.from)} đến trước ${formatDateOnly(range.to)}` : 'Chọn kỳ báo cáo hợp lệ.';
+}
 
 export function BookProvenance({report}: {report:{asOf:string;policyVersion?:string;completeness?:string;warnings:string[];sourceJournalIds?:string[]}}) {
     const {shop}=useScope();
@@ -29,34 +79,153 @@ export function BookProvenance({report}: {report:{asOf:string;policyVersion?:str
     </SurfaceContent>;
 }
 export function LedgerPage() {
-    const {shop}=useScope(),range=useReportRange(shop.timezone),[params,setParams]=useSearchParams();
-    const accountId=params.get('accountId')||undefined,cursor=params.get('cursor')||undefined;
-    const accounts=usePagedApi('listAccounts');
-    const query=useApi('getLedger',{query:{...range.query,accountId,cursor,limit:20}},range.valid),report=query.data?.data;
-    return <><PageHeader title="Sổ cái" subtitle="Tổng Nợ, Có và số dư lấy từ toàn bộ chứng từ trong khoảng; phân trang chỉ áp dụng các dòng chi tiết."/>
-        <ReportRangeFields range={range.range} timezone={shop.timezone} setFrom={range.setFrom} setTo={range.setTo}/>
-        <FormFields afterGap="section"><TextField id="ledger-account" select label="Tài khoản sổ cái" SelectProps={{ displayEmpty: true, SelectDisplayProps: { 'aria-labelledby': 'ledger-account-label' } }} value={accountId||''} onChange={e=>{const next=new URLSearchParams(params);next.delete('cursor');if(e.target.value)next.set('accountId',e.target.value);else next.delete('accountId');setParams(next);}}>
-            <MenuItem value="">Tất cả tài khoản</MenuItem>{accountId&&!accounts.data?.data.some(a=>a.id===accountId)&&<MenuItem value={accountId}>Đang giữ tài khoản {accountId}</MenuItem>}{accounts.data?.data.map(a=><MenuItem key={a.id} value={a.id}>{a.code} · {a.name}</MenuItem>)}</TextField><ErrorNotice error={accounts.error}/><LookupLoadMore label="tài khoản" loadedCount={accounts.loadedCount} hasMore={accounts.hasMore} busy={accounts.isLoadingMore} onLoadMore={accounts.loadMore}/>{accounts.data?.data.length === 0 && !accounts.isError && <Alert severity="info" role="status">Chưa có tài khoản sổ cái để lọc; báo cáo vẫn hiển thị tất cả chứng từ.</Alert>}</FormFields>
-        {range.valid?<QueryState query={query} pendingProfile="section">{report&&<><Stats><Stat title="Số dư đầu khoảng (Nợ − Có)" value={<Amount wrap value={report.openingBalance}/>}/><Stat title="Tổng phát sinh Nợ" value={<Amount wrap value={report.totalDebit}/>}/><Stat title="Tổng phát sinh Có" value={<Amount wrap value={report.totalCredit}/>}/><Stat title="Số dư cuối khoảng (Nợ − Có)" value={<Amount wrap value={report.closingBalance}/>}/></Stats><Panel title="Các dòng sổ cái"><DataTable mobile={{ layout: 'comparison' }} label="Sổ cái theo chứng từ" rows={report.entries} rowKey={r=>r.id} columns={[
-            {key:'date',label:'Ngày hiệu lực',render:r=>formatDateOnly(r.effectiveDate)},{key:'account',label:'Tài khoản',render:r=>`${r.accountCode} · ${r.accountName}`},{key:'note',label:'Diễn giải',render:r=>r.description},{key:'debit',label:'Nợ',render:r=><Amount value={r.debit}/>},{key:'credit',label:'Có',render:r=><Amount value={r.credit}/>},{key:'balance',label:'Số dư tài khoản (Nợ − Có)',render:r=><Amount value={r.balance}/>},{key:'source',label:'Chứng từ',render:r=><RouteLink to={`/s/${shop.id}/finance/journals?journalId=${r.journalId}`}>Mã chứng từ: {r.journalId}</RouteLink>},
+    const { shop } = useScope();
+    const canInventory = useCan('inventory.read');
+    const narrow = !useMediaQuery(tabletAndUpQuery);
+    const range = useReportRange(shop.timezone);
+    const [params, setParams] = useSearchParams();
+    const accountId = params.get('accountId') || undefined;
+    const cursor = params.get('cursor') || undefined;
+    const accounts = usePagedApi('listAccounts');
+    const query = useApi('getLedger', { query: { ...range.query, accountId, cursor, limit: 20 } }, range.valid);
+    const report = query.data?.data;
+    const { cell, dialog } = useBookCell();
+    const summary = 'Tổng Nợ, Có và số dư lấy từ toàn bộ chứng từ trong kỳ. Phân trang áp dụng cho các dòng chi tiết.';
+    const filters = <>
+        <ReportRangeFields density="compact" range={range.range} timezone={shop.timezone} setFrom={range.setFrom} setTo={range.setTo}/>
+        <FormFields density="compact" afterGap="section">
+            <TextField id="ledger-account" select label="Tài khoản sổ cái" SelectProps={{ displayEmpty: true, SelectDisplayProps: { 'aria-labelledby': 'ledger-account-label' } }}
+                value={accountId || ''} onChange={event => {
+                    const next = new URLSearchParams(params);
+                    next.delete('cursor');
+                    if (event.target.value) next.set('accountId', event.target.value);
+                    else next.delete('accountId');
+                    setParams(next);
+                }}>
+                <MenuItem value="">Tất cả tài khoản</MenuItem>
+                {accountId && !accounts.data?.data.some(account => account.id === accountId) && <MenuItem value={accountId}>Đang giữ tài khoản {accountId}</MenuItem>}
+                {accounts.data?.data.map(account => <MenuItem key={account.id} value={account.id}>{account.code} · {account.name}</MenuItem>)}
+            </TextField>
+            <ErrorNotice error={accounts.error}/>
+            <LookupLoadMore label="tài khoản" loadedCount={accounts.loadedCount} hasMore={accounts.hasMore} busy={accounts.isLoadingMore} onLoadMore={accounts.loadMore}/>
+            {accounts.data?.data.length === 0 && !accounts.isError && <Alert severity="info" role="status">Chưa có tài khoản sổ cái để lọc. Báo cáo hiển thị tất cả chứng từ.</Alert>}
+        </FormFields>
+    </>;
+    const totals = report && <Stats density="compact" afterGap={narrow ? 'none' : 'section'}>
+        <Stat title="Số dư đầu khoảng (Nợ − Có)" value={<Amount wrap value={report.openingBalance}/>} />
+        <Stat title="Tổng phát sinh Nợ" value={<Amount wrap value={report.totalDebit}/>} />
+        <Stat title="Tổng phát sinh Có" value={<Amount wrap value={report.totalCredit}/>} />
+        <Stat title="Số dư cuối khoảng (Nợ − Có)" value={<Amount wrap value={report.closingBalance}/>} valueRole="primary" />
+    </Stats>;
+    const activeAccount = accounts.data?.data.find(account => account.id === accountId);
+    const dateSummary = periodSummary(range.range, range.valid);
+    return <><PageHeader title="Sổ cái"
+        subtitle={narrow ? (accountId ? `${dateSummary} · Tài khoản ${activeAccount?.code ?? accountId}` : dateSummary) : summary}
+        actions={<ActionGroup flexWrap="wrap">
+            {narrow && <BookDisclosure title="Kỳ và tài khoản">{filters}</BookDisclosure>}
+            {narrow && totals && <BookDisclosure title="Tổng kỳ" description={summary}>{totals}</BookDisclosure>}
+            {canInventory && <RouteLink to={`/s/${shop.id}/inventory`}>Tồn kho</RouteLink>}
+        </ActionGroup>}/>
+        {!narrow && filters}
+        {range.valid?<QueryState query={query} pendingProfile="section">{report&&<>
+        {!narrow && totals}
+        <Panel title="Các dòng sổ cái"><DataTable density="compact" mobile={{ layout: 'comparison', appearance: 'grid' }} label="Sổ cái theo chứng từ" rows={report.entries} rowKey={r=>r.id} columns={[
+            { key: 'date', label: 'Ngày', width: 65, render: r => formatDateOnly(r.effectiveDate) },
+            { key: 'source', label: 'Chứng từ', width: 64, render: r => cell({
+                label: 'Mã chứng từ', value: r.journalId, display: r.journalId, to: `/s/${shop.id}/finance/journals?journalId=${encodeURIComponent(r.journalId)}`,
+            }) },
+            { key: 'debit', label: 'Nợ', align: 'right', width: 46, gridAction: true, render: r => cell(amountCell(r.debit, 'Nợ'), true) },
+            { key: 'credit', label: 'Có', align: 'right', width: 46, gridAction: true, render: r => cell(amountCell(r.credit, 'Có'), true) },
+            { key: 'balance', label: 'Số dư', align: 'right', width: 73, gridAction: true, render: r => cell(amountCell(r.balance, 'Số dư'), true) },
+            { key: 'account', label: 'Tài khoản', width: 145, render: r => `${r.accountCode} · ${r.accountName}` },
+            { key: 'note', label: 'Diễn giải', width: 180, render: r => r.description },
         ]}/><Pager page={report.page}/></Panel><Panel title="Nguồn và giới hạn" bodyMode="inset" beforeGap="section"><BookProvenance report={report}/></Panel></>}</QueryState>:<Alert severity="error">Ngày bắt đầu phải trước ngày kết thúc.</Alert>}
+        {dialog}
     </>;
 }
 export function TrialBalancePage() {
-    const {shop}=useScope(),range=useReportRange(shop.timezone),query=useApi('getTrialBalance',{query:range.query},range.valid),report=query.data?.data;
-    return <><PageHeader title="Cân đối phát sinh" subtitle="Số dư đầu, phát sinh và số dư cuối do read-model tổng hợp đầy đủ theo tài khoản."/><ReportRangeFields range={range.range} timezone={shop.timezone} setFrom={range.setFrom} setTo={range.setTo}/>
-        {range.valid?<QueryState query={query} pendingProfile="section">{report&&<><Stats><Stat title="Phát sinh Nợ" value={<Amount wrap value={report.totalDebit}/>}/><Stat title="Phát sinh Có" value={<Amount wrap value={report.totalCredit}/>}/><Stat title="Chênh lệch cuối" value={<Amount wrap value={report.difference}/>}/><Stat title="Kiểm cân bằng" value={report.balanced?'Cân bằng':'Không cân bằng'}/></Stats><Panel title="Cân đối theo tài khoản"><DataTable mobile={{ layout: 'comparison' }} label="Cân đối phát sinh các tài khoản" rows={report.rows} rowKey={r=>r.accountId} columns={[
-            {key:'code',label:'Tài khoản',render:r=><RouteLink to={`/s/${shop.id}/finance/ledger?accountId=${r.accountId}&fromDate=${range.range.from}&toDate=${range.range.to}`}>{r.code} · {r.name}</RouteLink>},{key:'openingDebit',label:'Đầu kỳ Nợ',render:r=><Amount value={r.openingDebit}/>},{key:'openingCredit',label:'Đầu kỳ Có',render:r=><Amount value={r.openingCredit}/>},{key:'debit',label:'Phát sinh Nợ',render:r=><Amount value={r.debit}/>},{key:'credit',label:'Phát sinh Có',render:r=><Amount value={r.credit}/>},{key:'closingDebit',label:'Cuối kỳ Nợ',render:r=><Amount value={r.closingDebit}/>},{key:'closingCredit',label:'Cuối kỳ Có',render:r=><Amount value={r.closingCredit}/>},
-        ]}/></Panel><Panel title="Nguồn và giới hạn" bodyMode="inset" beforeGap="section"><BookProvenance report={report}/></Panel></>}</QueryState>:<Alert severity="error">Ngày bắt đầu phải trước ngày kết thúc.</Alert>}
+    const { shop } = useScope();
+    const narrow = !useMediaQuery(tabletAndUpQuery);
+    const range = useReportRange(shop.timezone);
+    const query = useApi('getTrialBalance', { query: range.query }, range.valid);
+    const report = query.data?.data;
+    const { cell, dialog } = useBookCell();
+    const period = <ReportRangeFields density="compact" range={range.range} timezone={shop.timezone} setFrom={range.setFrom} setTo={range.setTo}/>;
+    const summary = 'Số dư đầu kỳ, phát sinh và số dư cuối kỳ được tổng hợp theo tài khoản.';
+    const totals = report && <Stats density="compact" afterGap={narrow ? 'none' : 'section'}>
+        <Stat title="Phát sinh Nợ" value={<Amount wrap value={report.totalDebit}/>} />
+        <Stat title="Phát sinh Có" value={<Amount wrap value={report.totalCredit}/>} />
+        <Stat title="Chênh lệch cuối" value={<Amount wrap value={report.difference}/>} />
+        <Stat title="Kiểm cân bằng" valueRole="text" value={<Status value={report.balanced ? 'succeeded' : 'needs_check'}
+            labelText={report.balanced ? 'Cân bằng' : 'Không cân bằng'} />} />
+    </Stats>;
+    return <>
+        <PageHeader title="Cân đối phát sinh" subtitle={narrow ? periodSummary(range.range, range.valid) : summary}
+            actions={narrow && <ActionGroup flexWrap="wrap">
+                <BookDisclosure title="Kỳ báo cáo">{period}</BookDisclosure>
+                {totals && <BookDisclosure title="Tổng kỳ" description={summary}>{totals}</BookDisclosure>}
+            </ActionGroup>}/>
+        {!narrow && period}
+        {range.valid ? <QueryState query={query} pendingProfile="section">{report && <>
+            {!narrow && totals}
+            <Panel title="Cân đối theo tài khoản">
+                {narrow && !report.balanced && <Alert severity="warning">Không cân bằng · Chênh lệch <Amount wrap value={report.difference}/></Alert>}
+                <DataTable density="compact" mobile={{ layout: 'comparison', appearance: 'grid', pinnedKey: 'code' }} label="Cân đối phát sinh các tài khoản" rows={report.rows} rowKey={row => row.accountId} columns={[
+                    { key: 'code', label: 'Tài khoản', width: 144, render: row => <RouteLink to={`/s/${shop.id}/finance/ledger?accountId=${encodeURIComponent(row.accountId)}&fromDate=${range.range.from}&toDate=${range.range.to}`}>{row.code} · {row.name}</RouteLink> },
+                    { key: 'openingDebit', label: 'Đầu kỳ Nợ', align: 'right', render: row => cell(amountCell(row.openingDebit, 'Đầu kỳ Nợ')) },
+                    { key: 'openingCredit', label: 'Đầu kỳ Có', align: 'right', render: row => cell(amountCell(row.openingCredit, 'Đầu kỳ Có')) },
+                    { key: 'debit', label: 'Phát sinh Nợ', align: 'right', render: row => cell(amountCell(row.debit, 'Phát sinh Nợ')) },
+                    { key: 'credit', label: 'Phát sinh Có', align: 'right', render: row => cell(amountCell(row.credit, 'Phát sinh Có')) },
+                    { key: 'closingDebit', label: 'Cuối kỳ Nợ', align: 'right', render: row => cell(amountCell(row.closingDebit, 'Cuối kỳ Nợ')) },
+                    { key: 'closingCredit', label: 'Cuối kỳ Có', align: 'right', render: row => cell(amountCell(row.closingCredit, 'Cuối kỳ Có')) },
+                ]}/>
+            </Panel>
+            <Panel title="Nguồn và giới hạn" bodyMode="inset" beforeGap="section"><BookProvenance report={report}/></Panel>
+        </>}</QueryState> : <Alert severity="error">Ngày bắt đầu phải trước ngày kết thúc.</Alert>}
+        {dialog}
     </>;
 }
 export function BalanceSheetPage() {
-    const {shop}=useScope(),[params,setParams]=useSearchParams();const atDate=params.get('atDate')??dateOnlyInTimezone(new Date(),shop.timezone),valid=isValidDateOnly(atDate);
-    const query=useApi('getBalanceSheet',{query:{atDate}},valid),report=query.data?.data;
-    return <><PageHeader title="Cân đối quản trị" subtitle="Tài sản = nợ phải trả + vốn chủ sở hữu + kết quả lũy kế; đây là báo cáo quản trị theo chính sách của shop."/><FormFields afterGap="section"><TextField type="date" label="Tại ngày" value={atDate} helperText={valid ? `Ngày báo cáo: ${formatDateOnly(atDate)}` : undefined} onChange={e=>{const next=new URLSearchParams(params);next.set('atDate',e.target.value);setParams(next);}}/></FormFields>
-        {valid?<QueryState query={query} pendingProfile="section">{report&&<><Stats><Stat title="Tài sản" value={<Amount wrap value={report.assets}/>}/><Stat title="Nợ phải trả" value={<Amount wrap value={report.liabilities}/>}/><Stat title="Vốn chủ sở hữu" value={<Amount wrap value={report.equity}/>}/><Stat title="Kết quả lũy kế" value={<Amount wrap value={report.retainedProfit}/>}/></Stats><Panel title="Kiểm cân đối" bodyMode="inset"><DetailLine label="Cân bằng">{report.balanced?'Có':'Không'}</DetailLine><DetailLine label="Chênh lệch"><Amount wrap value={report.difference}/></DetailLine></Panel><Panel title="Số dư theo nhóm" beforeGap="section"><DataTable mobile={{ layout: 'comparison' }} label="Tài khoản của báo cáo cân đối quản trị" rows={report.rows} rowKey={r=>r.accountId} columns={[
-            {key:'code',label:'Tài khoản',render:r=><RouteLink to={`/s/${shop.id}/finance/ledger?accountId=${r.accountId}`}>{r.code} · {r.name}</RouteLink>},{key:'group',label:'Nhóm',render:r=>accountGroupName[r.group]},{key:'balance',label:'Số dư theo chiều nhóm',render:r=><Amount value={r.balance}/>},
-        ]}/></Panel><Panel title="Nguồn và giới hạn" bodyMode="inset" beforeGap="section"><BookProvenance report={report}/></Panel></>}</QueryState>:<Alert severity="error">Chọn ngày hợp lệ.</Alert>}
+    const { shop } = useScope();
+    const narrow = !useMediaQuery(tabletAndUpQuery);
+    const [params, setParams] = useSearchParams();
+    const atDate = params.get('atDate') ?? dateOnlyInTimezone(new Date(), shop.timezone);
+    const valid = isValidDateOnly(atDate);
+    const query = useApi('getBalanceSheet', { query: { atDate } }, valid);
+    const report = query.data?.data;
+    const { cell, dialog } = useBookCell();
+    const date = <FormFields afterGap="section">
+        <TextField type="date" label="Tại ngày" value={atDate} slotProps={{ inputLabel: { shrink: true } }}
+            helperText={valid ? `Ngày báo cáo: ${formatDateOnly(atDate)}` : undefined}
+            onChange={event => { const next = new URLSearchParams(params); next.set('atDate', event.target.value); setParams(next); }}/>
+    </FormFields>;
+    const summary = 'Tài sản = nợ phải trả + vốn chủ sở hữu + kết quả lũy kế theo chính sách của shop.';
+    const totals = report && <Stats density="compact" afterGap={narrow ? 'none' : 'section'}>
+        <Stat title="Tài sản" value={<Amount wrap value={report.assets}/>} />
+        <Stat title="Nợ phải trả" value={<Amount wrap value={report.liabilities}/>} />
+        <Stat title="Vốn chủ sở hữu" value={<Amount wrap value={report.equity}/>} />
+        <Stat title="Kết quả lũy kế" value={<Amount wrap value={report.retainedProfit}/>} />
+    </Stats>;
+    return <>
+        <PageHeader title="Cân đối quản trị" subtitle={narrow ? (valid ? `Tại ngày ${formatDateOnly(atDate)}` : undefined) : summary}
+            actions={narrow && <ActionGroup flexWrap="wrap">
+                <BookDisclosure title="Ngày báo cáo">{date}</BookDisclosure>
+                {totals && <BookDisclosure title="Tổng số dư" description={summary}>{totals}</BookDisclosure>}
+            </ActionGroup>}/>
+        {!narrow && date}
+        {valid ? <QueryState query={query} pendingProfile="section">{report && <>
+            {!narrow && totals}
+            <Panel title="Số dư theo nhóm" subtitle={report.balanced ? `Cân bằng · Chênh lệch ${formatMoney(report.difference)}` : undefined}>
+                {!report.balanced && <Alert severity="warning">Không cân bằng · Chênh lệch <Amount wrap value={report.difference}/></Alert>}
+                <DataTable density="compact" mobile={{ layout: 'comparison', appearance: 'grid', pinnedKey: 'code' }} label="Tài khoản của báo cáo cân đối quản trị" rows={report.rows} rowKey={row => row.accountId} columns={[
+                    { key: 'code', label: 'Tài khoản', width: 144, render: row => <RouteLink to={`/s/${shop.id}/finance/ledger?accountId=${encodeURIComponent(row.accountId)}`}>{row.code} · {row.name}</RouteLink> },
+                    { key: 'balance', label: 'Số dư theo chiều nhóm', width: 128, align: 'right', render: row => cell(amountCell(row.balance, 'Số dư theo chiều nhóm')) },
+                    { key: 'group', label: 'Nhóm', render: row => accountGroupName[row.group] },
+                ]}/>
+            </Panel>
+            <Panel title="Nguồn và giới hạn" bodyMode="inset" beforeGap="section"><BookProvenance report={report}/></Panel>
+        </>}</QueryState> : <Alert severity="error">Chọn ngày hợp lệ.</Alert>}
+        {dialog}
     </>;
 }
 const exact=z.string().regex(/^\d+(\.\d{1,4})?$/,'Nhập số không âm, tối đa 4 chữ số thập phân.');

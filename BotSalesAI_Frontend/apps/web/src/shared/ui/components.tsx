@@ -12,6 +12,7 @@ import { operations } from '@botsales/contracts';
 import type { Page, Money } from '@botsales/contracts';
 import type { QueryOperationId } from '../api/client';
 import { currentSearchParams } from '../model/filters';
+import type { ToolbarFilterGroup } from './internal/compact-toolbar';
 import { colors, tokens } from '@botsales/tokens';
 import { layoutSx } from './layout';
 import { ApiError, UnknownResultError, errorMessage } from '../api/errors';
@@ -22,15 +23,23 @@ import { permitsClosedShopWrite } from '../model/shop-lifecycle';
 import { useScope, useCan } from '../model/scope';
 import type { MobileCards, TableColumn } from './internal/table-cards';
 import { tabletAndUpQuery } from './theme';
-export function PageHeader({ title, subtitle, actions, eyebrow }: {
+export function PageHeader({ title, subtitle, primaryAction, actions, eyebrow }: {
     title: string;
     subtitle?: string;
+    primaryAction?: ReactNode;
     actions?: ReactNode;
     eyebrow?: string;
 }) {
     return <Stack direction={{ xs: 'column', md: 'row' }} justifyContent="space-between" alignItems={{ xs: 'stretch', md: 'center' }} sx={[layoutSx.pageHeader.columnsGap, layoutSx.pageHeader.afterGap]}>
-        <Box sx={{ minWidth: 0 }}>{eyebrow && <Typography variant="overline" sx={{ color: 'primary.main', letterSpacing: visualSx.typography.letterSpacing.overline }}>{eyebrow}</Typography>}<Typography component="h1" variant="h4">{title}</Typography>{subtitle && <Typography color="text.secondary" sx={[layoutSx.pageHeader.titleDescriptionGap, { maxWidth: 760 }]}>{subtitle}</Typography>}</Box>
-        <Stack direction="row" sx={layoutSx.pageHeader.actionsGap}>{actions}</Stack>
+        <Box sx={{ minWidth: 0, flex: '1 1 auto' }}>
+            {eyebrow && <Typography variant="overline" sx={{ color: 'primary.main', letterSpacing: visualSx.typography.letterSpacing.overline }}>{eyebrow}</Typography>}
+            <Stack direction="row" alignItems="center" justifyContent="space-between" sx={layoutSx.pageHeader.actionsGap}>
+                <Typography component="h1" variant="h4" data-ui-page-title sx={{ fontSize: visualSx.typography.screenTitle, minWidth: 0, overflowWrap: 'anywhere' }}>{title}</Typography>
+                {primaryAction}
+            </Stack>
+            {subtitle && <Typography color="text.secondary" sx={[layoutSx.pageHeader.titleDescriptionGap, { maxWidth: 760 }]}>{subtitle}</Typography>}
+        </Box>
+        {actions && <Stack direction="row" sx={layoutSx.pageHeader.actionsGap}>{actions}</Stack>}
     </Stack>;
 }
 type LayoutBreakpoint = 'xs' | 'sm' | 'md' | 'lg' | 'xl';
@@ -39,6 +48,7 @@ type PanelGeometry = {
     display?: ResponsiveGeometry<CSSProperties['display']>;
     flexDirection?: ResponsiveGeometry<CSSProperties['flexDirection']>;
     height?: CSSProperties['height'];
+    overflowY?: 'auto';
     gridColumn?: ResponsiveGeometry<CSSProperties['gridColumn']>;
 };
 export function Panel({ title, subtitle, children, action, bodyMode = 'flush', density = 'compact', beforeGap, afterGap, geometry }: {
@@ -53,7 +63,7 @@ export function Panel({ title, subtitle, children, action, bodyMode = 'flush', d
     geometry?: PanelGeometry;
 }) {
     const body = bodyMode === 'inset'
-        ? <Box sx={title ? (density === 'comfortable' ? layoutSx.surface.comfortableBodyInsetAfterHeader : layoutSx.surface.bodyInsetAfterHeader) : (density === 'comfortable' ? layoutSx.surface.comfortableInset : layoutSx.surface.inset)}>{children}</Box>
+        ? <Box sx={title ? (density === 'comfortable' ? layoutSx.surface.comfortableBodyInsetAfterHeader : layoutSx.surface.bodyInsetAfterHeader) : (density === 'comfortable' ? layoutSx.surface.comfortableInset : layoutSx.surface.compactInset)}>{children}</Box>
         : children;
     return <Paper variant="outlined" data-ui-density={density} sx={[
         { borderRadius: `${tokens.radius.card}px`, overflow: 'hidden' },
@@ -64,26 +74,73 @@ export function Panel({ title, subtitle, children, action, bodyMode = 'flush', d
             display: geometry?.display,
             flexDirection: geometry?.flexDirection,
             height: geometry?.height,
+            overflowY: geometry?.overflowY,
             gridColumn: geometry?.gridColumn,
         },
     ]}>
-        {title && <Stack direction={{ xs: 'column', sm: 'row' }} justifyContent="space-between" alignItems={{ xs: 'stretch', sm: 'center' }} sx={[density === 'comfortable' ? layoutSx.surface.comfortableHeaderInset : layoutSx.surface.headerInset, layoutSx.surface.headerFlowGap]}><Box sx={{ minWidth: 0 }}><Typography component="h2" variant="h6">{title}</Typography>{subtitle && <Typography variant="body2" color="text.secondary" sx={layoutSx.surface.titleDescriptionGap}>{subtitle}</Typography>}</Box>{action}</Stack>}
+        {title && <Stack direction={{ xs: 'column', sm: 'row' }} justifyContent="space-between" alignItems={{ xs: 'stretch', sm: 'center' }} sx={[density === 'comfortable' ? layoutSx.surface.comfortableHeaderInset : layoutSx.surface.headerInset, layoutSx.surface.headerFlowGap]}><Box sx={{ minWidth: 0 }}><Typography component="h2" variant="h6" sx={{ fontSize: visualSx.typography.panelTitle }}>{title}</Typography>{subtitle && <Typography variant="body2" color="text.secondary" sx={layoutSx.surface.titleDescriptionGap}>{subtitle}</Typography>}</Box>{action}</Stack>}
         {body}
     </Paper>;
 }
-export function Stat({ title, value, note, accent = false, icon }: {
+export function Stat({ title, value, note, accent = false, icon, valueRole = 'metric' }: {
     title: string;
     value: ReactNode;
     note?: string;
     accent?: boolean;
     icon?: ReactNode;
+    valueRole?: 'metric' | 'primary' | 'text';
 }) {
-    return <Paper variant="outlined" sx={[layoutSx.surface.inset, { borderRadius: `${tokens.radius.card}px`, minWidth: 0 }]}><Stack direction="row" justifyContent="space-between" sx={layoutSx.stats.titleGap}><Typography color="text.secondary" variant="body2">{title}</Typography>{icon && <Box sx={{ color: accent ? 'primary.main' : 'text.secondary' }}>{icon}</Box>}</Stack><Typography component="div" variant="h4" sx={[layoutSx.stats.valueGap, { display: 'flex', alignItems: 'center', minHeight: tokens.fontSizes.pageTitle * tokens.lineHeights.display, fontVariantNumeric: 'tabular-nums', color: accent ? 'primary.main' : undefined, overflowWrap: 'anywhere' }]}>{value}</Typography>{note && <Typography variant="caption" color="text.secondary" sx={[layoutSx.stats.noteGap, { display: 'block' }]}>{note}</Typography>}</Paper>;
+    return <Paper variant="outlined" data-ui-stat={valueRole} sx={[layoutSx.surface.inset, { borderRadius: visualSx.radius.card, minWidth: 0 }]}>
+        <Stack direction="row" justifyContent="space-between" sx={layoutSx.stats.titleGap}>
+            <Typography color="text.secondary" variant="body2" sx={{ minWidth: 0, overflowWrap: 'anywhere' }}>{title}</Typography>
+            {icon && <Box sx={{ color: accent ? 'primary.main' : 'text.secondary' }}>{icon}</Box>}
+        </Stack>
+        <Typography component="div" variant={valueRole === 'primary' ? 'h4' : 'body2'} data-ui-stat-value sx={[
+            layoutSx.stats.valueGap,
+            valueRole === 'metric' && {
+                fontSize: visualSx.typography.metricValue.fontSize,
+                fontWeight: visualSx.typography.metricValue.fontWeight,
+                lineHeight: visualSx.typography.metricValue.lineHeight,
+            },
+            { fontVariantNumeric: 'tabular-nums', color: accent ? 'primary.main' : undefined, overflowWrap: 'anywhere' },
+        ]}>{value}</Typography>
+        {note && <Typography variant="caption" color="text.secondary" data-ui-stat-note sx={[layoutSx.stats.noteGap, { display: 'block', overflowWrap: 'anywhere' }]}>{note}</Typography>}
+    </Paper>;
 }
-export function Stats({ children, afterGap = 'section' }: {
+export function Stats({ children, afterGap = 'section', density = 'standard', appearance = 'cards' }: {
     children: ReactNode;
     afterGap?: 'section' | 'none';
-}) { return <Box sx={[layoutSx.stats.gutter, afterGap === 'section' && layoutSx.stats.afterGap, { display: 'grid', gridTemplateColumns: { xs: '1fr', md: 'repeat(2,1fr)', lg: 'repeat(4,1fr)' } }]}>{children}</Box>; }
+    density?: 'standard' | 'compact';
+    appearance?: 'cards' | 'strip';
+}) {
+    const strip = appearance === 'strip';
+    const grid = <Box data-ui-stats={density} data-ui-stats-appearance={strip ? appearance : undefined} sx={[
+        strip ? layoutSx.stats.strip : density === 'compact' ? layoutSx.stats.compactGutter : layoutSx.stats.gutter,
+        afterGap === 'section' && layoutSx.stats.afterGap,
+        { display: 'grid', '&:empty': { display: 'none' } },
+        strip ? {
+            border: '1px solid', borderColor: colors.borderDecorative, borderRadius: visualSx.radius.card, overflow: 'clip',
+            gridTemplateColumns: 'minmax(0, 1fr)',
+            '& > [data-ui-stat]': { border: 0, borderRadius: '0px', borderBlockEnd: '1px solid', borderColor: colors.borderDecorative },
+            '& > [data-ui-stat]:last-child': { borderBlockEnd: 0 },
+            '@container (min-width: 20em)': {
+                gridTemplateColumns: 'repeat(2, minmax(0, 1fr))',
+                '& > [data-ui-stat]:nth-child(odd):not(:last-child)': { borderInlineEnd: '1px solid', borderColor: colors.borderDecorative },
+                '& > [data-ui-stat]:nth-child(odd):nth-last-child(2)': { borderBlockEnd: 0 },
+            },
+            '@container (min-width: 55em)': {
+                gridTemplateColumns: 'repeat(4, minmax(0, 1fr))',
+                '& > [data-ui-stat]:not(:nth-child(4n)):not(:last-child)': { borderInlineEnd: '1px solid', borderColor: colors.borderDecorative },
+                '& > [data-ui-stat]:nth-child(4n + 1):nth-last-child(-n + 4), & > [data-ui-stat]:nth-child(4n + 1):nth-last-child(-n + 4) ~ [data-ui-stat]': { borderBlockEnd: 0 },
+            },
+        } : { gridTemplateColumns: {
+            xs: density === 'compact' ? 'repeat(auto-fit, minmax(min(100%, 10em), 1fr))' : 'minmax(0, 1fr)',
+            md: `repeat(auto-fit, minmax(min(100%, max(10em, calc((100% - ${tokens.space.lg}px) / 2))), 1fr))`,
+            lg: `repeat(auto-fit, minmax(min(100%, max(10em, calc((100% - ${3 * tokens.space.lg}px) / 4))), 1fr))`,
+        } },
+    ]}>{children}</Box>;
+    return strip ? <Box sx={{ containerType: 'inline-size' }}>{grid}</Box> : grid;
+}
 const amountWrap = { whiteSpace: 'normal', overflowWrap: 'anywhere' } as const;
 
 export function Amount({ value, wrap = false }: {
@@ -130,9 +187,9 @@ export function Status({ value, domain, labelText, density = 'standard' }: {
 export type Column<T> = TableColumn<T>;
 const TableCards = lazy(() => import('./internal/table-cards')) as typeof import('./internal/table-cards').default;
 
-type MobileTable<T> = MobileCards<T> | { layout: 'comparison'; actionKey?: string };
+type MobileTable<T> = MobileCards<T> | { layout: 'comparison'; actionKey?: string; appearance?: 'grid'; pinnedKey?: string };
 
-export function DataTable<T>({ rows, columns, rowKey, empty = 'Chưa có dữ liệu phù hợp.', emptyAction, mobile, label: tableLabel = 'Dữ liệu' }: {
+export function DataTable<T>({ rows, columns, rowKey, empty = 'Chưa có dữ liệu phù hợp.', emptyAction, mobile, label: tableLabel = 'Dữ liệu', density }: {
     rows: readonly T[];
     columns: readonly Column<T>[];
     rowKey: (row: T) => string;
@@ -140,10 +197,27 @@ export function DataTable<T>({ rows, columns, rowKey, empty = 'Chưa có dữ li
     emptyAction?: ReactNode;
     mobile: MobileTable<T>;
     label?: string;
+    density?: 'standard' | 'compact';
 }) {
     const regionId = useId();
     const narrow = !useMediaQuery(tabletAndUpQuery);
-    if (narrow && mobile.layout === 'cards') {
+    const cards = narrow && mobile.layout === 'cards';
+    const grid = mobile.layout === 'comparison' && mobile.appearance === 'grid';
+    const compactRows = (density ?? (mobile.layout === 'cards' ? 'compact' : 'standard')) === 'compact';
+    const region = useRef<HTMLDivElement>(null);
+    const [overflows, setOverflows] = useState(false);
+    useLayoutEffect(() => {
+        const element = region.current;
+        const table = element?.querySelector('table');
+        if (!grid || !element || !table) return;
+        const measure = () => setOverflows(element.scrollWidth > element.clientWidth + 1);
+        measure();
+        const observer = new ResizeObserver(measure);
+        observer.observe(element);
+        observer.observe(table);
+        return () => observer.disconnect();
+    }, [grid, cards, columns.length, rows.length]);
+    if (cards && mobile.layout === 'cards') {
         return <Box component="section" id={regionId} aria-label={tableLabel} tabIndex={0} data-ui-table-layout="cards">
             {rows.length > 0 ? <Suspense fallback={<Typography role="status" color="text.secondary" sx={layoutSx.surface.inset}>Đang tải dữ liệu</Typography>}>
                 <TableCards rows={rows} columns={columns} rowKey={rowKey} mobile={mobile} />
@@ -154,23 +228,33 @@ export function DataTable<T>({ rows, columns, rowKey, empty = 'Chưa có dữ li
     const pinnedAction = { position: { xs: 'sticky', md: 'static' }, right: 0, backgroundColor: 'background.paper' } as const;
     const actionKey = mobile.layout === 'comparison' ? mobile.actionKey : undefined;
     const stickyColumn = actionKey !== undefined && columns.at(-1)?.key === actionKey ? actionKey : undefined;
-    const tableMinWidth = Math.max(600, Math.min(760, columns.length * tokens.layout.touchTarget * 3));
+    const pinned = mobile.layout === 'comparison' && columns[0]?.key === mobile.pinnedKey ? mobile.pinnedKey : undefined;
+    const widths = columns.map(column => column.width ?? 104);
+    const gridWidth = `${widths.reduce((sum, width) => sum + width, 0) / 16}rem`;
+    const tableMinWidth = grid ? gridWidth : Math.max(600, Math.min(760, columns.length * tokens.layout.touchTarget * 3));
+    const gridCell = { borderInlineEnd: 1, borderColor: 'divider', overflowWrap: 'anywhere', fontVariantNumeric: 'tabular-nums',
+        '&:last-child': { borderInlineEnd: 0 } } as const;
+    const pinnedStart = { position: 'sticky', insetInlineStart: 0, zIndex: tokens.zIndex.sticky, backgroundColor: 'background.paper' } as const;
     return <>
-        <Typography variant="caption" color="text.secondary" sx={[layoutSx.table.mobileHintInset, { display: { xs: 'block', md: 'none' } }]}>Cuộn ngang để xem đủ cột.</Typography>
-        <TableContainer id={regionId} sx={{ maxWidth: '100%' }} tabIndex={0} role="region" aria-label={tableLabel} data-ui-table-layout="table" onKeyDown={event => {
+        {(!grid || (overflows && rows.length > 0)) && <Typography variant="caption" color="text.secondary"
+            sx={[layoutSx.table.mobileHintInset, { display: grid ? 'block' : { xs: 'block', md: 'none' } }]}>Cuộn ngang để xem đủ cột.</Typography>}
+        <TableContainer id={regionId} ref={region} sx={{ maxWidth: '100%', isolation: grid ? 'isolate' : undefined }} tabIndex={0} role="region" aria-label={tableLabel} data-ui-table-layout="table" onKeyDown={event => {
             if ((event.key === 'ArrowRight' || event.key === 'ArrowLeft') && event.target === event.currentTarget
                 && event.currentTarget.scrollWidth > event.currentTarget.clientWidth) {
                 event.preventDefault();
                 event.currentTarget.scrollBy({ left: event.key === 'ArrowRight' ? 40 : -40 });
             }
         }}>
-            <Table size="small" aria-label={tableLabel} sx={{ minWidth: tableMinWidth }}>
+            <Table size="small" aria-label={tableLabel} sx={{ minWidth: tableMinWidth, tableLayout: grid ? 'fixed' : undefined }}>
+                {grid && <colgroup>{columns.map(column => <col key={column.key} style={{ width: `${(column.width ?? 104) / 16}rem` }} />)}</colgroup>}
                 <TableHead><TableRow>
-                    {columns.map(column => <TableCell key={column.key} align={column.align} sx={column.key === stickyColumn ? pinnedAction : {}}>{column.label}</TableCell>)}
+                    {columns.map(column => <TableCell key={column.key} align={column.align}
+                        sx={[grid && layoutSx.table.reconciliationCell, grid && gridCell, column.key === stickyColumn && pinnedAction, column.key === pinned && pinnedStart]}>{column.label}</TableCell>)}
                 </TableRow></TableHead>
                 <TableBody>
                     {rows.map(row => <TableRow key={rowKey(row)} hover>
-                        {columns.map(column => <TableCell key={column.key} align={column.align} sx={column.key === stickyColumn ? pinnedAction : {}}>
+                        {columns.map(column => <TableCell key={column.key} align={column.align}
+                            sx={[grid && layoutSx.table.reconciliationCell, grid && column.gridAction === true && layoutSx.table.reconciliationActionCell, compactRows && layoutSx.table.compactDataCell, grid && gridCell, column.key === stickyColumn && pinnedAction, column.key === pinned && pinnedStart]}>
                             {column.render(row)}
                         </TableCell>)}
                     </TableRow>)}
@@ -223,17 +307,28 @@ export function ErrorNotice({ error, fieldLabels }: {
         if (!validationFields?.length || !alertRef.current)
             return;
         const scope = alertRef.current.closest('[role="dialog"]') || alertRef.current.closest('form') || alertRef.current.closest('main') || document;
-        const names = validationFields.flatMap(field => {
-            const normalized = field.path.replace(/^\//, '').replace(/~1/g, '/').replace(/~0/g, '~');
-            const lastSegment = normalized.split(/[./]/).flatMap(segment => segment.split('[').flatMap(part => part.split(']'))).filter(Boolean).at(-1) || normalized;
-            return [normalized, lastSegment];
-        });
-        const firstInvalid = Array.from(scope.querySelectorAll<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>('[name]'))
-            .find(control => names.includes(control.name));
-        if (firstInvalid) {
-            firstInvalid.setAttribute('aria-invalid', 'true');
-            firstInvalid.focus();
+        const controls = Array.from(scope.querySelectorAll<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>('input[name], textarea[name], select[name]'));
+        for (const field of validationFields) {
+            const parts = field.path.replace(/^\//, '').replace(/~1/g, '/').replace(/~0/g, '~').split(/[./[\]]+/).filter(Boolean);
+            const names = [parts.join('.'), parts.at(-1)];
+            for (const name of names) {
+                const control = controls.find(candidate => candidate.name === name && !candidate.disabled);
+                if (!control) continue;
+                const target = control.getAttribute('aria-hidden') === 'true'
+                    ? control.parentElement?.querySelector<HTMLElement>('[role="combobox"]') : control;
+                if (!target) continue;
+                const previous = target.getAttribute('aria-invalid');
+                const restore = () => {
+                    if (previous === null) target.removeAttribute('aria-invalid');
+                    else target.setAttribute('aria-invalid', previous);
+                };
+                target.setAttribute('aria-invalid', 'true');
+                target.focus();
+                if (target.ownerDocument.activeElement === target) return restore;
+                restore();
+            }
         }
+        alertRef.current.focus();
     }, [error, validationFields]);
     if (!error)
         return null;
@@ -250,13 +345,14 @@ export function ErrorNotice({ error, fieldLabels }: {
         return <div key={field.path}><strong>{t('state.field')} {label}:</strong> {field.message}</div>;
     })}{error instanceof UnknownResultError && error.commandId && <Typography component="div" variant="body2" sx={layoutSx.notice.contentGap}>{t('state.command')}: <Box component="code" sx={{ overflowWrap: 'anywhere' }}>{error.commandId}</Box></Typography>}</Alert>;
 }
-export function Toolbar({ operation, placeholder = 'Tìm kiếm...', extra, filters, cursorParam = 'cursor' }: {
+const CompactToolbar = lazy(() => import('./internal/compact-toolbar'));
+
+export function Toolbar({ operation, placeholder = 'Tìm kiếm...', extra, filters, filterGroup, cursorParam = 'cursor' }: {
     operation: QueryOperationId;
     placeholder?: string;
     extra?: ReactNode;
-    filters?: ReactNode;
     cursorParam?: string;
-}) {
+} & ({ filters?: ReactNode; filterGroup?: never } | { filters?: never; filterGroup: ToolbarFilterGroup })) {
     const [params, setParams] = useSearchParams();
     const location = useLocation();
     const query = params.get('q') || '';
@@ -279,15 +375,18 @@ export function Toolbar({ operation, placeholder = 'Tìm kiếm...', extra, filt
         inputRef.current?.focus();
     };
     const supportsSearch = operations[operation].queryParameters.some(parameter => parameter.name === 'q');
-    if (!supportsSearch)
-        return extra || filters ? <>{extra}{filters}</> : null;
-    return <Stack sx={[layoutSx.toolbar.inset, layoutSx.toolbar.controlGap]}>
- <Stack component="form" onSubmit={e => { e.preventDefault(); updateSearch(draft); }} direction={{ xs: 'column', md: 'row' }} alignItems={{ xs: 'stretch', md: 'flex-end' }} sx={[layoutSx.toolbar.controlGap, { flexWrap: 'wrap' }]}>
+    const search = supportsSearch && <Stack component="form" onSubmit={e => { e.preventDefault(); updateSearch(draft); }}
+        direction={filterGroup ? 'row' : { xs: 'column', md: 'row' }} alignItems={filterGroup ? 'flex-end' : { xs: 'stretch', md: 'flex-end' }}
+        sx={[layoutSx.toolbar.controlGap, filterGroup ? { flex: '1 1 13em', minWidth: 'min(100%, 13em)' } : { flexWrap: 'wrap' }]}>
  <TextField inputRef={inputRef} label="Tìm kiếm" placeholder={placeholder} size="small" value={draft} onChange={e => setDraft(e.target.value)} slotProps={{
      htmlInput: { onKeyDown: (event: ReactKeyboardEvent<HTMLInputElement>) => { if (event.key === 'Enter' && event.nativeEvent.isComposing) event.preventDefault(); } },
      input: { startAdornment: <InputAdornment position="start"><SearchRounded fontSize="small"/></InputAdornment>, endAdornment: draft ? <InputAdornment position="end"><IconButton aria-label="Xóa tìm kiếm" edge="end" onMouseDown={event => event.preventDefault()} onClick={clearSearch}><CloseRounded fontSize="small"/></IconButton></InputAdornment> : undefined }
- }} sx={{ width: '100%', minWidth: 'min(100%, 12em)', flex: { xs: '1 1 auto', md: '1 1 12em' } }}/><Button type="submit" variant="outlined">Tìm kiếm</Button>{extra}</Stack>
- {filters}</Stack>;
+ }} sx={filterGroup ? { flex: 1, minWidth: 0 } : { width: '100%', minWidth: 'min(100%, 12em)', flex: { xs: '1 1 auto', md: '1 1 12em' } }}/><Button type="submit" variant="outlined">Tìm kiếm</Button>{extra}</Stack>;
+    if (filterGroup) return <Suspense fallback={<Stack sx={layoutSx.toolbar.inset}>{search}</Stack>}>
+        <CompactToolbar operation={operation} group={filterGroup} cursorParam={cursorParam} search={search} Dialog={EditDialog} />
+    </Suspense>;
+    if (!supportsSearch) return extra || filters ? <>{extra}{filters}</> : null;
+    return <Stack sx={[layoutSx.toolbar.inset, layoutSx.toolbar.controlGap]}>{search}{filters}</Stack>;
 }
 const cursorHistoryByList = new Map<string, Array<string | null>>();
 const MAX_CURSOR_HISTORY_LISTS = 100;
@@ -366,11 +465,12 @@ export function RouteLink({ to, children }: {
     to: string;
     children: ReactNode;
 }) { const location=useLocation(); return <Button component={RouterLink} to={to} state={listReturnState(location.pathname,location.search,to)} size="small" endIcon={<ArrowForwardRounded fontSize="small"/>}>{children}</Button>; }
-export function MutationButton({ permission, allowedActions, action, busy, children, ...props }: {
+export function MutationButton({ permission, allowedActions, action, busy, children, appearance, ...props }: {
     permission: string | null;
     allowedActions?: string[];
     action?: string;
     busy?: boolean;
+    appearance?: 'compactFace';
     children: ReactNode;
     onClick?: () => void;
     variant?: 'contained' | 'outlined' | 'text';
@@ -383,7 +483,8 @@ export function MutationButton({ permission, allowedActions, action, busy, child
     const readOnly = shop.status === 'closed' && !permitsClosedShopWrite(action);
     if (!can)
         return null;
-    return <Button onClick={props.onClick} variant={props.variant} color={props.color} type={props.type} disabled={props.disabled || busy || !online || readOnly} startIcon={busy ? <CircularProgress size={16}/> : undefined}>{children}</Button>;
+    return <Button onClick={props.onClick} variant={props.variant} color={props.color} type={props.type} disabled={props.disabled || busy || !online || readOnly}
+        sx={[appearance === 'compactFace' && props.variant === 'contained' && layoutSx.actions.compactFace]} startIcon={busy ? <CircularProgress size={16}/> : undefined}>{children}</Button>;
 }
 function draftControlValue(control: HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement) {
     if (control instanceof HTMLInputElement && (control.type === 'checkbox' || control.type === 'radio'))
@@ -394,7 +495,7 @@ function draftControlValue(control: HTMLInputElement | HTMLSelectElement | HTMLT
         return `selected:${Array.from(control.selectedOptions).map(option => option.value).join('|')}`;
     return control.value;
 }
-export function EditDialog({ open, title, description, onClose, children, actions, busy = false, dirtyGuard = true, draftCommit, allowEditsWhileBusy = false, density = 'compact' }: {
+export function EditDialog({ open, title, description, onClose, children, actions, busy = false, dirtyGuard = true, draftCommit, allowEditsWhileBusy = false, density = 'compact', width = 'standard' }: {
     open: boolean;
     title: string;
     description?: string;
@@ -404,6 +505,7 @@ export function EditDialog({ open, title, description, onClose, children, action
     busy?: boolean;
     dirtyGuard?: boolean;
     density?: 'compact' | 'comfortable';
+    width?: 'compact' | 'standard';
     /** Enable only when the editor preserves changes made after its submitted snapshot. */
     allowEditsWhileBusy?: boolean;
     /** Mark controls within one persisted draft scope clean after its mutation succeeds. */
@@ -548,7 +650,7 @@ export function EditDialog({ open, title, description, onClose, children, action
         setDiscardOpen(false);
     };
     return <>
-        <Dialog open={open} onClose={requestClose} onTransitionExited={restoreTableFocus} fullWidth maxWidth="sm" aria-labelledby={titleId} aria-describedby={descriptionId} slotProps={{ paper: { sx: layoutSx.dialog.viewportMargin }, transition: { onEntered: () => { if (!interactionRef.current) refreshBaseline(); } } }}><DialogTitle id={`${titleId}-heading`} aria-labelledby={titleId} sx={[density === 'comfortable' ? layoutSx.dialog.inset : layoutSx.dialog.compactInset, { display: 'flex', alignItems: 'center' }]}><Box component="span" id={titleId} sx={{ minWidth: 0, flex: 1, overflowWrap: 'anywhere' }}>{title}</Box><IconButton aria-label={t('app.close')} disabled={busy} onClick={requestClose} sx={{ flexShrink: 0 }}><CloseRounded /></IconButton></DialogTitle>{busy && <LinearProgress aria-label="Đang lưu"/>}<DialogContent ref={contentRef} tabIndex={0} role="region" aria-labelledby={titleId} inert={busy && !allowEditsWhileBusy} dividers sx={density === 'comfortable' ? layoutSx.dialog.inset : layoutSx.dialog.compactInset} onFocusCapture={event => { establishBaseline(); if (event.target instanceof Element && event.target.matches('input, select, textarea, [role="combobox"]')) interactionRef.current = true; }} onBeforeInputCapture={establishBaseline} onChangeCapture={updateAfterInteraction} onClickCapture={updateAfterInteraction}>{description && <Typography id={descriptionId} color="text.secondary" sx={layoutSx.dialog.descriptionAfterGap}>{description}</Typography>}{children}</DialogContent><DialogActions disableSpacing sx={[layoutSx.dialog.actionsInset, layoutSx.dialog.actionsGap]}><Button onClick={requestClose} disabled={busy}>{t('app.cancel')}</Button>{typeof actions === 'function' ? actions({ requestClose, busy }) : actions}</DialogActions></Dialog>
+        <Dialog open={open} onClose={requestClose} onTransitionExited={restoreTableFocus} fullWidth maxWidth="sm" aria-labelledby={titleId} aria-describedby={descriptionId} slotProps={{ paper: { sx: [layoutSx.dialog.viewportMargin, width === 'compact' && layoutSx.dialog.compactWidth] }, transition: { onEntered: () => { if (!interactionRef.current) refreshBaseline(); } } }}><DialogTitle id={`${titleId}-heading`} aria-labelledby={titleId} sx={[density === 'comfortable' ? layoutSx.dialog.inset : layoutSx.dialog.compactInset, { display: 'flex', alignItems: 'center' }]}><Box component="span" id={titleId} sx={{ minWidth: 0, flex: 1, overflowWrap: 'anywhere' }}>{title}</Box><IconButton aria-label={t('app.close')} disabled={busy} onClick={requestClose} sx={{ flexShrink: 0 }}><CloseRounded /></IconButton></DialogTitle>{busy && <LinearProgress aria-label="Đang lưu"/>}<DialogContent ref={contentRef} tabIndex={0} role="region" aria-labelledby={titleId} inert={busy && !allowEditsWhileBusy} dividers sx={density === 'comfortable' ? layoutSx.dialog.inset : layoutSx.dialog.compactInset} onFocusCapture={event => { establishBaseline(); if (event.target instanceof Element && event.target.matches('input, select, textarea, [role="combobox"]')) interactionRef.current = true; }} onBeforeInputCapture={establishBaseline} onChangeCapture={updateAfterInteraction} onClickCapture={updateAfterInteraction}>{description && <Typography id={descriptionId} color="text.secondary" sx={layoutSx.dialog.descriptionAfterGap}>{description}</Typography>}{children}</DialogContent><DialogActions disableSpacing sx={[layoutSx.dialog.actionsInset, layoutSx.dialog.actionsGap]}><Button onClick={requestClose} disabled={busy}>{t('app.cancel')}</Button>{typeof actions === 'function' ? actions({ requestClose, busy }) : actions}</DialogActions></Dialog>
         <Dialog open={open && discardOpen} onClose={() => setDiscardOpen(false)} aria-labelledby={`${titleId}-draft-warning`} aria-describedby={`${titleId}-draft-description`} slotProps={{ paper: { sx: layoutSx.dialog.viewportMargin }, transition: { onExited: () => {
             if (!discardConfirmedRef.current)
                 return;
@@ -570,16 +672,18 @@ export function CapabilityUnavailable({ children }: { children?: ReactNode }) {
     const { t } = useTranslation();
     return <Alert severity="info" role="status">{children || t('state.capabilityUnavailable')}</Alert>;
 }
-export function ConfirmDialog({ open, title, description, onClose, onConfirm, confirmLabel = 'Xác nhận', busy, error, requireReason = false }: {
+export function ConfirmDialog({ open, title, description, summary, onClose, onConfirm, confirmLabel = 'Xác nhận', busy, error, requireReason = false, width = 'standard' }: {
     open: boolean;
     title: string;
     description: string;
+    summary?: ReactNode;
     onClose: () => void;
     onConfirm: (reason: string) => Promise<unknown>;
     confirmLabel?: string;
     busy?: boolean;
     error?: unknown;
     requireReason?: boolean;
+    width?: 'standard' | 'compact';
 }) {
     const [reason, setReason] = useState('');
     const [submitting, setSubmitting] = useState(false);
@@ -614,7 +718,7 @@ export function ConfirmDialog({ open, title, description, onClose, onConfirm, co
             if (started.active && generation.current === started) setSubmitting(false);
         }
     };
-    return <EditDialog density="comfortable" open={open} title={title} description={description} onClose={onClose} busy={busy || submitting} actions={<Button variant="contained" disabled={busy || submitting || (requireReason && codePointLength(reason.trim()) < 5)} onClick={() => void submit()}>{confirmLabel}</Button>}><ErrorNotice error={error || failure}/>{requireReason && <TextField label="Lý do (ít nhất 5 ký tự)" value={reason} onChange={e => setReason(e.target.value)} fullWidth multiline minRows={2}/>}</EditDialog>;
+    return <EditDialog density={width === 'compact' ? 'compact' : 'comfortable'} width={width} open={open} title={title} description={description} onClose={onClose} busy={busy || submitting} actions={<Button variant="contained" disabled={busy || submitting || (requireReason && codePointLength(reason.trim()) < 5)} onClick={() => void submit()}>{confirmLabel}</Button>}><ErrorNotice error={error || failure}/>{summary}{requireReason && <TextField label="Lý do (ít nhất 5 ký tự)" value={reason} onChange={e => setReason(e.target.value)} fullWidth multiline minRows={2}/>}</EditDialog>;
 }
 export function DetailLine({ label: caption, children }: {
     label: string;

@@ -457,6 +457,7 @@ test('UI012 human-confirmation policy copy wraps inside its alert at a 320 CSS-p
 
 test('UI012 dashboard CTA separates hover and pressed feedback while keeping keyboard focus visible', async ({ page }) => {
     await page.goto(new URL('/s/shop-demo/overview', demoUrl).toString());
+    await expect(page.getByRole('heading', { name: 'Tổng quan', exact: true })).toBeVisible({ timeout: 15_000 });
     const action = page.getByRole('link', { name: 'Xem việc cần làm', exact: true });
     await expect(action).toBeVisible();
 

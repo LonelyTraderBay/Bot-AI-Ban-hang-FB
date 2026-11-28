@@ -65,19 +65,20 @@ export async function runDesignBrowserAudit() {
         for (const width of [320,390,768,1440]) {
             await page.setViewportSize({width,height:1000});
             if (width === 320 || width === 390) {
-                await page.getByRole('region', {name: 'Đơn hàng gần đây'}).getByRole('listitem').first().waitFor();
+                await page.getByRole('heading', { name: 'Đơn chờ', exact: true }).locator('xpath=../../..').getByRole('link', { name: /^DH-/ }).first().waitFor();
             }
             const observed = await page.evaluate(()=>{
-                const grid = [...document.querySelectorAll('.MuiBox-root')].find(element=>{
-                    const text=element.textContent||'';
-                    return getComputedStyle(element).display==='grid'&&text.includes('Hội thoại đang mở')&&text.includes('Trợ lý bán hàng');
-                });
+                const grid = document.querySelector('[data-ui-stats-appearance="strip"]');
                 return {
                     width:window.innerWidth,
                     documentWidth:document.documentElement.scrollWidth,
                     contentWidth:document.documentElement.clientWidth,
                     kpiColumns:grid?getComputedStyle(grid).gridTemplateColumns.trim().split(/\s+/).length:0,
-                    recentOrdersFit:(()=>{const cards=document.querySelector('main#main-content [data-ui-table-layout="cards"][aria-label="Đơn hàng gần đây"]');return Boolean(cards?.querySelector('li')&&cards.scrollWidth<=cards.clientWidth);})(),
+                    recentOrdersFit:(()=>{
+                        const title=[...document.querySelectorAll('main#main-content h2')].find(element=>element.textContent==='Đơn chờ');
+                        const summary=title?.closest('.MuiPaper-root');
+                        return Boolean(summary?.querySelector('a[href*="/orders/DH-"]')&&summary.scrollWidth<=summary.clientWidth);
+                    })(),
                 };
             });
             viewports.push(observed);

@@ -1,4 +1,4 @@
-import { navigateDemoAndRead, openDemoControls } from './session/demo-controls';
+import { navigateDemoAndRead, setDemoControl } from './session/demo-controls';
 import { readFileSync } from 'node:fs';
 import { test, expect } from '@playwright/test';
 import { startDemoPreview, startDemoServer, startLiveServer } from './session/demo-server.mjs';
@@ -33,19 +33,13 @@ async function gotoDemo(page: import('@playwright/test').Page, path: string) {
     await page.goto(new URL(path, demoUrl).toString());
 }
 
-async function chooseMockOption(page: import('@playwright/test').Page, label: string, value: string) {
-    if (['Vai trò mô phỏng', 'Trạng thái thử', 'Dataset mô phỏng'].includes(label)) await openDemoControls(page);
-    await page.getByRole('combobox', { name: label }).click();
-    await page.getByRole('option', { name: value, exact: true }).click();
-}
-
 test('catalog create uses the HTTP mock and successful save clears the draft guard', async ({ page }) => {
     const products = await navigateDemoAndRead(page, new URL('/s/shop-demo/products', demoUrl).toString(), response =>
         response.request().method() === 'GET' && new URL(response.url()).pathname === '/api/v2/shops/shop-demo/products');
     expect(products.status()).toBe(200);
     expect(await products.finished()).toBeNull();
     await expect(page.getByRole('heading', { name: 'Sản phẩm', exact: true })).toBeVisible();
-    await expect(page.getByText('Dữ liệu mô phỏng', { exact: true })).toBeVisible();
+    await expect(page.getByRole('complementary', { name: 'Công cụ mô phỏng', exact: true })).toHaveCount(0);
 
     await page.getByRole('button', { name: 'Thêm sản phẩm', exact: true }).click();
     await page.getByLabel('Tên sản phẩm', { exact: true }).fill('Sản phẩm kiểm thử');
@@ -122,7 +116,7 @@ test('all canonical routes render inside the real React demo application', async
                         await expect(page).toHaveTitle(`${menuTitle} · BotSales AI`);
                     }
                     await expect(main.getByRole('heading', { name: 'Không thể mở màn hình', exact: true }), `${route.id} should not fall through to the router error boundary`).toHaveCount(0);
-                    await expect(page.getByText('Dữ liệu mô phỏng', { exact: true }), `${route.id} should disclose the synthetic data source`).toBeVisible();
+                    await expect(page.getByRole('complementary', { name: 'Công cụ mô phỏng', exact: true }), `${route.id} should render without demo tools`).toHaveCount(0);
                 } else {
                     await page.goto(url);
                     const heading = page.getByRole('heading').first();
@@ -143,7 +137,7 @@ test('all canonical routes render inside the real React demo application', async
 
 test('switching shops cancels a delayed request and loads only the new shop scope', async ({ page }) => {
     await gotoDemo(page, '/s/shop-demo/overview');
-    await chooseMockOption(page, 'Trạng thái thử', 'Tải chậm');
+    await setDemoControl(page, 'fault', 'slow');
     await page.getByRole('navigation', { name: 'Điều hướng chính' }).getByRole('link', { name: 'Sản phẩm' }).click();
     await expect(page).toHaveURL(/\/shop-demo\/products$/);
     await page.getByRole('navigation', { name: 'Điều hướng chính' }).getByRole('link', { name: /Joker Studio/ }).click();
@@ -161,7 +155,7 @@ test('switching shops cancels a delayed request and loads only the new shop scop
 
 test('role changes remove restricted navigation and the route guard explains denied access', async ({ page }) => {
     await gotoDemo(page, '/s/shop-demo/overview');
-    await chooseMockOption(page, 'Vai trò mô phỏng', 'viewer');
+    await setDemoControl(page, 'role', 'viewer');
     await expect(page.getByRole('navigation', { name: 'Điều hướng chính' }).getByRole('link', { name: 'Lợi nhuận' })).toHaveCount(0);
 
     await page.evaluate(() => {
@@ -182,7 +176,7 @@ test('deep links survive browser refresh and logout clears the mock session', as
     await page.getByRole('button', { name: 'Đăng xuất' }).click();
     expect((await logoutResponse).status()).toBe(204);
     await expect(page.getByRole('heading', { name: 'Đăng nhập BotSales AI' })).toBeVisible();
-    await expect(page.getByText('Dữ liệu mô phỏng', { exact: true })).toHaveCount(0);
+    await expect(page.getByRole('complementary', { name: 'Công cụ mô phỏng', exact: true })).toHaveCount(0);
 });
 
 test('logout asks before discarding a draft and retains the session when logout fails', async ({ browser }) => {
@@ -296,8 +290,9 @@ test('chunk loading errors use the route recovery boundary', async ({ browser })
 });
 
 test('live mode reports an unavailable session API without enabling mock data', async ({ page }) => {
+    await page.route('**/api/v2/session', route => route.abort('failed'));
     await page.goto(new URL('/s/shop-demo/overview', liveUrl).toString());
     await expect(page.getByRole('alert').filter({ hasText: 'Không thể kết nối API phiên đăng nhập' })).toBeVisible();
-    await expect(page.getByText('Dữ liệu mô phỏng', { exact: true })).toHaveCount(0);
+    await expect(page.getByRole('complementary', { name: 'Công cụ mô phỏng', exact: true })).toHaveCount(0);
     await expect(page.getByText(/không tự chuyển sang dữ liệu mô phỏng/)).toBeVisible();
 });

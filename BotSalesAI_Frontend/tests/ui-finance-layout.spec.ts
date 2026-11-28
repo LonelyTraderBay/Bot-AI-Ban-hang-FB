@@ -49,7 +49,7 @@ test('Finance R20/R21/R22/R48/R49/R50 route layouts retain shell gutter without 
         for (const route of routes) {
             await gotoDemo(page, route.path);
             await expect(page.getByRole('heading', { name: route.heading, exact: true })).toBeVisible({ timeout: 30_000 });
-            await expect(page.locator('main#main-content')).toHaveCSS('padding-left', width >= 768 ? '24px' : '16px');
+            await expect(page.locator('main#main-content')).toHaveCSS('padding-left', '8px');
             const geometry = await page.evaluate(() => ({
                 clientWidth: document.documentElement.clientWidth,
                 scrollWidth: document.documentElement.scrollWidth,
@@ -124,8 +124,8 @@ test('titled Finance Panels keep one 12px header-to-first-content boundary', asy
         item.detailRowPaddingTop !== (cases.find(testCase => testCase.heading === item.heading)?.detailRowPaddingTop ?? null) ||
         item.detailDividers !== (item.detailRowPaddingTop === null ? null : 1) ||
         item.hasAction !== cases.find(testCase => testCase.heading === item.heading)?.hasAction ||
-        item.bodyPaddingInlineStart !== (item.width < 768 ? 12 : 16) ||
-        item.bodyPaddingBottom !== (item.width < 768 ? 12 : 16),
+        item.bodyPaddingInlineStart !== 12 ||
+        item.bodyPaddingBottom !== 12,
     );
     expect(mismatches, JSON.stringify(observations)).toEqual([]);
 });

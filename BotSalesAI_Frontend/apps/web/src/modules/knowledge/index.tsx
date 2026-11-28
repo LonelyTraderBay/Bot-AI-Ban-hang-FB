@@ -94,7 +94,7 @@ function ProductContentMockPreview() {
     const [preview, setPreview] = useState<ProductContentFields | null>(null);
     const valid = draft.productName.trim().length > 0 && draft.features.trim().length > 0 && draft.sourceOwner.trim().length > 0;
     const hasChanges = !preview || Object.keys(draft).some(key => draft[key as keyof ProductContentFields] !== preview[key as keyof ProductContentFields]);
-    return <Panel title="Nội dung sản phẩm · xem trước cục bộ" subtitle="Các thuộc tính mẫu chưa có trong DTO sản phẩm hiện hành." bodyMode="inset">
+    return <PageSections geometry={{ maxWidth: layoutSx.form.standardWidth.maxWidth }}><Panel title="Nội dung sản phẩm · xem trước cục bộ" subtitle="Các thuộc tính mẫu chưa có trong DTO sản phẩm hiện hành." bodyMode="inset">
         <FormFields  data-testid="product-content-preview">
             <Alert severity="info">Bạn có thể rà soát nội dung, kích cỡ, bảo hành, sản phẩm thay thế và điều không được hứa. “Lưu bản xem trước” chỉ giữ state trong trang này; không gửi API và sẽ mất khi tải lại.</Alert>
             <TextField label="Tên sản phẩm mẫu" value={draft.productName} onChange={event => setDraft(current => ({ ...current, productName: limitCodePoints(event.target.value, 180) }))}  />
@@ -106,7 +106,7 @@ function ProductContentMockPreview() {
                 <Alert severity="warning" sx={layoutSx.notice.contentGap}>Bản xem trước chưa được duyệt; không dùng làm lời hứa bán hàng hoặc dữ liệu đã lưu.</Alert>
             </Box>}
         </FormFields>
-    </Panel>;
+    </Panel></PageSections>;
 }
 
 export function KnowledgePage() {

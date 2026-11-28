@@ -1,6 +1,6 @@
 import { ConflictException, ForbiddenException, NotFoundException, UnprocessableEntityException } from '@nestjs/common';
 import type { IncomingHttpHeaders } from 'node:http';
-import { Prisma, type PrismaClient, type OrderCustomerConfirmation, type OrderState, type SalesOrder } from '../../generated/prisma/client.js';
+import { Prisma, type PrismaClient, type OrderCustomerConfirmation, type OrderState, type OrderFulfillmentState, type OrderPaymentState, type SalesOrder } from '../../generated/prisma/client.js';
 import { OrderState as States } from '../../generated/prisma/enums.js';
 import { DomainConflict } from '../../http/contracts.js';
 import { listQuery, paging, validUuid } from '../../http/query.js';
@@ -8,15 +8,16 @@ import { requireIfMatch, requireVersion } from '../../http/response.js';
 import { recordAudit } from '../../platform/audit/index.js';
 import { commandDto, type ResourceRef } from '../../platform/commands/index.js';
 import { enqueueResourceUpdate } from '../../platform/outbox/index.js';
+import { requireOpenShop } from '../../platform/database/shop-lifecycle.js';
 import type { MetaInboundConfig } from '../channels/index.js';
 import { addressRedactions, addressSnapshotView, createAddressForCustomer, type AddressInput } from '../customers/index.js';
 import { cancelPlannedShipment, cancelPreparation, estimatedShipping, provisionPreparation } from '../fulfillment/index.js';
 import { requireQuoteEvidence } from '../inbox/index.js';
 import { reserveStock, settleStockReservation } from '../inventory/index.js';
-import { readAsSession, requireShopAccess, writeShopCommand, type AuthConfig, type ShopScope } from '../workspace/index.js';
+import { readAsSession, requireShopAccess, writeAsSession, writeShopCommand, type AuthConfig, type ShopScope } from '../workspace/index.js';
 import { canCancelOrder, draftDetails, lineIndex, orderDetails, orderInShop, orderKey, orderView, requireDraft,
     saveOrderLines, type OrderDetails } from './order-data.js';
-import { orderMoney, orderQuoteHash, priceOrder, quoteWarnings, type DraftOrder } from './pricing.js';
+import { estimateOrderPricing, orderMoney, orderQuoteHash, priceOrder, quoteWarnings, type DraftOrder } from './pricing.js';
 
 export type DraftPatch = Partial<Omit<DraftOrder, 'paymentMethod'>>;
 export type CustomerEvidence = { quoteId: string; quoteHash: string; quoteVersion: number; customerIdentityId: string; sourceMessageId: string };
@@ -196,7 +197,9 @@ export class OrdersService {
             const scope = await requireShopAccess(tx, userId, shopId, 'orders.read');
             const query = listQuery(raw, 'orders');
             if (query.status && !Object.hasOwn(States, query.status)) throw new UnprocessableEntityException();
-            const page = paging(query, ['orders', shopId, userId, String(scope.permissionVersion), query.customerId ?? '']);
+            const stateFilters = query.fulfillmentState || query.paymentState
+                ? [query.fulfillmentState ?? '', query.paymentState ?? ''] : [];
+            const page = paging(query, ['orders', shopId, userId, String(scope.permissionVersion), query.customerId ?? '', ...stateFilters]);
             const id = query.q?.trim();
             const search = page.keyword ? { OR: [
                 { lines: { some: { retiredAt: null, sku: { contains: page.keyword, mode: 'insensitive' as const } } } },
@@ -205,6 +208,8 @@ export class OrdersService {
             const result = page.result(await tx.salesOrder.findMany({
                 where: {
                     shopId, customerId: query.customerId, orderState: query.status as OrderState | undefined,
+                    fulfillmentState: query.fulfillmentState as OrderFulfillmentState | undefined,
+                    paymentState: query.paymentState as OrderPaymentState | undefined,
                     AND: [search, page.after ?? {}],
                 },
                 orderBy: page.orderBy, take: page.limit + 1, include: orderDetails,
@@ -217,6 +222,14 @@ export class OrdersService {
         return readAsSession(this.db, headers, async (tx, userId) => {
             const scope = await requireShopAccess(tx, userId, shopId, 'orders.read');
             return orderView(await orderInShop(tx, shopId, id), scope);
+        });
+    }
+
+    estimate(headers: IncomingHttpHeaders, shopId: string, draft: DraftOrder) {
+        return writeAsSession(this.db, this.config, headers, async (tx, userId) => {
+            await requireShopAccess(tx, userId, shopId, 'orders.write');
+            await requireOpenShop(tx, shopId);
+            return estimateOrderPricing(tx, shopId, draft);
         });
     }
 

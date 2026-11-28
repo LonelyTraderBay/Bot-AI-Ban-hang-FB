@@ -89,7 +89,7 @@ test('UI61 A03 delegation notice and actions share one header boundary and mobil
             const bottom = Math.max(...[...header.children].map(child => child.getBoundingClientRect().bottom));
             return { left: n.left - p.left - 1, right: p.right - n.right - 1, headerGap: n.top - bottom, actionLeft: action.getBoundingClientRect().left - n.left };
         });
-        expect(geometry.left).toBe(width < 768 ? 12 : 16); expect(geometry.right).toBe(width < 768 ? 12 : 16);
+        expect(geometry.left).toBe(12); expect(geometry.right).toBe(12);
         // Firefox DOMRect coordinates can differ by <0.001px after long-page layout.
         expect(geometry.headerGap).toBeCloseTo(12,3); expect(geometry.actionLeft).toBe(0);
     }

@@ -46,6 +46,7 @@ for (const entry of [
 const env = {
     ...process.env,
     PATH: pathEntries.join(path.delimiter),
+    VITE_E2E_MOCK_CONTROL: '1',
 };
 
 const stages = [
