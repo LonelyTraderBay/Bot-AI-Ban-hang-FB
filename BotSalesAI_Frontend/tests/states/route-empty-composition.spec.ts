@@ -35,6 +35,10 @@ test('empty collection responses render accessible empty states on canonical lis
         await setDemoControl(page, 'fault', 'empty_persistent');
 
         for (const route of listRoutes) {
+            const inboxRead = route.id === 'R05' ? page.waitForResponse(response =>
+                response.request().method() === 'GET' && new URL(response.url()).pathname === '/api/v2/shops/shop-demo/conversations',
+            { timeout: 15_000 }) : undefined;
+            void inboxRead?.catch(() => undefined);
             await page.evaluate(nextPath => {
                 window.history.pushState({}, '', nextPath);
                 window.dispatchEvent(new PopStateEvent('popstate', { state: window.history.state }));
@@ -42,6 +46,11 @@ test('empty collection responses render accessible empty states on canonical lis
 
             const main = page.locator('main#main-content');
             await expect(main, `${route.id} should keep its page visible with empty API results`).toBeVisible();
+            if (inboxRead) {
+                const response = await inboxRead;
+                expect(response.status()).toBe(200);
+                expect((await response.json()).data).toEqual([]);
+            }
             if (route.id === 'R29' || route.id === 'R30') {
                 const emptyCopy = route.id === 'R29' ? 'Chưa có Page kết nối.' : 'Chưa có kết nối AI.';
                 const actionName = route.id === 'R29' ? 'Kết nối Page' : 'Thêm kết nối AI';

@@ -272,8 +272,8 @@ test('FE016 expired reply keeps chat space and records only the authorized inter
     });
     await page.setViewportSize({ width: 1280, height: 900 });
     await gotoDemo(page, '/s/shop-demo/inbox/cv4');
-    await expect(page.getByRole('alert')).toContainText('Đã hết thời hạn trả lời trên kênh này.');
     const thread = page.getByTestId('inbox-thread');
+    await expect(thread.getByRole('alert').filter({ hasText: 'Đã hết thời hạn trả lời trên kênh này.' })).toBeVisible();
     const history = thread.getByRole('region', { name: 'Lịch sử tin nhắn' });
     await expect(history.getByText('Mình sẽ nhắn lại sau nhé.')).toBeVisible();
     expect((await thread.boundingBox())!.width).toBeGreaterThanOrEqual(700);

@@ -1,6 +1,7 @@
 import { setDemoControl } from '../session/demo-controls';
 import { test, expect } from '@playwright/test';
 import { startDemoServer } from '../session/demo-server.mjs';
+import { holdRouteReads } from '../session/read-barrier';
 
 let demoUrl = '';
 let stopDemo: (() => Promise<void>) | undefined;
@@ -78,11 +79,20 @@ test('FE023.S04 delayed requests show loading and failed refresh keeps a retry p
     const pageErrors: string[] = [];
     page.on('pageerror', error => pageErrors.push(error.stack || error.message));
     await page.goto(new URL('/s/shop-demo/overview', demoUrl).toString());
-    await setDemoControl(page, 'fault', 'slow');
-    await page.getByRole('navigation', { name: 'Điều hướng chính' }).getByRole('link', { name: 'Danh mục' }).click();
-    await expect(page.getByRole('status').filter({ hasText: 'Đang tải dữ liệu' })).toBeVisible();
-    await expect(page.getByRole('heading', { name: 'Danh mục', exact: true })).toBeVisible();
-    await expect(page.getByRole('status').filter({ hasText: 'Đang tải dữ liệu' })).toHaveCount(0);
+    await expect(page.getByRole('heading', { name: 'Tổng quan', exact: true })).toBeVisible();
+    const main = page.getByRole('main');
+    const loading = main.getByRole('progressbar', { name: 'Đang tải dữ liệu', exact: true });
+    const categories = await holdRouteReads(page, ['^/api/v2/shops/shop-demo/categories$']);
+    try {
+        await page.getByRole('navigation', { name: 'Điều hướng chính' }).getByRole('link', { name: 'Danh mục' }).click();
+        await expect(main.getByRole('heading', { name: 'Danh mục', exact: true })).toBeVisible();
+        await expect.poll(categories.entered).toBe(1);
+        await expect(loading).toBeVisible();
+    } finally {
+        await categories.release();
+    }
+    await expect(main.getByRole('region', { name: 'Danh sách danh mục' })).toBeVisible();
+    await expect(loading).toHaveCount(0);
 
     await setDemoControl(page, 'fault', 'error_persistent');
     await page.getByRole('navigation', { name: 'Điều hướng chính' }).getByRole('link', { name: 'Điện thoại & lịch trực' }).click();

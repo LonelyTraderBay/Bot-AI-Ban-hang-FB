@@ -76,9 +76,14 @@ test('Orders draft, versioned quote, canonical address snapshot and return dialo
     expect((await orderDetail).status()).toBe(200);
     await page.locator('main#main-content').getByRole('progressbar', { name: 'Đang tải dữ liệu', exact: true }).waitFor({ state: 'hidden' });
     await expect(page.getByText('Phiên bản 1', { exact: true })).toBeVisible();
-    const quoteResponse = page.waitForResponse(response => response.request().method() === 'POST' && new URL(response.url()).pathname.endsWith('/orders/DH-1001/quote'));
-    await page.getByRole('button', { name: 'Lấy báo giá hiện tại', exact: true }).click();
-    expect((await quoteResponse).status()).toBe(200);
+    const quote = page.getByRole('button', { name: 'Lấy báo giá hiện tại', exact: true });
+    await expect(quote).toBeEnabled();
+    const [quoteResponse] = await Promise.all([
+        page.waitForResponse(response => response.request().method() === 'POST' && new URL(response.url()).pathname.endsWith('/orders/DH-1001/quote'),
+            { timeout: 15_000 }),
+        quote.press('Enter'),
+    ]);
+    expect(quoteResponse.status()).toBe(200);
     await expect(page.getByText(/Bản đơn 1 · Hết hạn/)).toBeVisible();
     await expect(page.getByRole('button', { name: 'Xác nhận đơn & giữ hàng' })).toBeDisabled();
     expect(writes.filter(path => path.endsWith('/orders/DH-1001/confirm'))).toEqual([]);

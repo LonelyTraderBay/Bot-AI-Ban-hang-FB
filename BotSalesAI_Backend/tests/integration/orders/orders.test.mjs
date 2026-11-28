@@ -1798,14 +1798,19 @@ test('SC-022 R17-FILTERS: shipping and payment states filter each shop before pa
     }
 });
 
-test('SC-022 R18-ESTIMATE: unsaved drafts use exact current pricing and shipping without creating records in either shop', async () => {
+test('SC-022 R18-ESTIMATE: unsaved drafts use exact current pricing and shipping without creating records in either shop', async t => {
     for (const [shop, actor, foreignActor] of [[shopA, owner, other], [shopB, other, owner]]) {
         const client = await customer(shop, actor);
         const { variants: [variant] } = await product(shop, actor);
         const endpoint = 'orders/estimate';
         const policy = await json(await request(route('shipping-policy', shop), actor), 200, 'ShippingPolicyResponse');
         const rules = [{ countryCode: 'VN', province: 'Hà Nội', serviceName: 'Giao chuẩn', amount: '17.5' }];
-        await json(await send('shipping-policy', { rules }, { method: 'PUT', version: policy.version, shop, actor }), 200, 'ShippingPolicyResponse');
+        const estimatePolicy = await json(await send('shipping-policy', { rules }, { method: 'PUT', version: policy.version, shop, actor }),
+            200, 'ShippingPolicyResponse');
+        t.after(async () => {
+            await json(await send('shipping-policy', { rules: policy.rules }, { method: 'PUT', version: estimatePolicy.version, shop, actor }),
+                200, 'ShippingPolicyResponse');
+        });
         const where = { shopId: shop.id };
         const counts = () => db.$transaction([db.salesOrder.count({ where }), db.orderQuote.count({ where }), db.addressSnapshot.count({ where }),
             db.command.count({ where }), db.stockReservation.count({ where }), db.stockMovement.count({ where }), db.financeJournal.count({ where })]);

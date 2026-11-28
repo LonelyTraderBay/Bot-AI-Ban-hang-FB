@@ -10,6 +10,10 @@ Lượt đầu dừng sau khi gói JavaScript mở Tổng quan đạt 512.491 by
 
 Phạm vi E2E là Frontend preview cục bộ với API mô phỏng. Phần R17 và R18 bên dưới lưu bằng chứng React → API → PostgreSQL cho hai shop VND và LAK. Chủ shop quyết định nghiệm thu sau khi xem kết quả.
 
+Trên PR nháp #45, CI của commit `b2b2ac42` phát hiện các ca Frontend dùng trạng thái tải hoặc cảnh báo quá rộng, thao tác trước khi bản nháp tải xong, và dữ liệu kiểm thử thời gian thực bị cập nhật ngoài hàng đợi. Bộ Orders cũng thay chính sách giao hàng mẫu mà ca báo giá AI dùng sau đó. Bản sửa đồng bộ các ca Frontend với phản hồi và điều khiển cần kiểm, đồng thời khôi phục chính sách giao hàng sau ca R18. Giữ nguyên 1.406 lượt kiểm và các gate. [CI Frontend lượt đầu](https://github.com/LonelyTraderBay/Bot-AI-Ban-hang-FB/actions/runs/46108281467) · [CI Backend lượt đầu](https://github.com/LonelyTraderBay/Bot-AI-Ban-hang-FB/actions/runs/46108281492)
+
+Sau sửa, hồi quy cục bộ đạt 18/18 ca Frontend. Hai bộ Orders và AI chạy liên tiếp trên cùng PostgreSQL thử đạt 29/29 và 13/13 ca. Danh sách E2E trước và sau sửa khớp đủ 1.406 ca. [Nhật ký Frontend](<D:/BotSalesAI/artifacts/ui-delivery-r17-r18-20261128/frontend-ci-final.log>) · [Nhật ký Orders và AI](<D:/BotSalesAI/artifacts/ui-delivery-r17-r18-20261128/backend-ci-confirm/backend-run.log>)
+
 ## R17 và R18 · 28/11/2026
 
 Đường cơ sở là lượt nghiệm thu preview 1.402 ca bên dưới. R17 có bộ lọc trạng thái đơn, còn API chưa nhận trạng thái giao hàng hoặc thanh toán. R18 dùng chung form Orders và đã tính tiền khi lưu đơn, còn thao tác dự toán trước khi lưu chưa có. Đợt này giữ `Toolbar` và các trường nhập hiện có. OpenAPI sở hữu tham số và payload, module Orders sở hữu lọc trước phân trang và tính tiền, MSW mô phỏng cùng hợp đồng.

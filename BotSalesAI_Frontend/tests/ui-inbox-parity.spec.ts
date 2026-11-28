@@ -65,7 +65,7 @@ test('realtime can reorder the desktop queue without switching the preview', asy
     });
     const server = await startDemoServer({ runtime: 'dev' });
     try {
-        await page.goto(new URL('/s/shop-demo/inbox', server.url).toString());
+        await page.goto(new URL('/s/shop-demo/inbox?status=open', server.url).toString());
         const identity = page.getByTestId('inbox-thread').getByRole('heading').first();
         await expect(identity).toBeVisible();
         const currentName = await identity.textContent();
@@ -86,20 +86,27 @@ test('realtime can reorder the desktop queue without switching the preview', asy
         await expect(identity).toHaveText(currentName!);
 
         const pinnedHref = await queue.locator('[aria-current="true"]').getAttribute('href');
-        const pinnedId = pinnedHref?.split('/').at(-1);
+        expect(pinnedHref).toBeTruthy();
+        const pinnedId = new URL(pinnedHref!, server.url).pathname.split('/').at(-1);
         await page.evaluate(async id => {
             const { db } = await import('/src/mocks/database.ts');
-            const index = db.conversations.findIndex((row: { id: string }) => row.id === id);
-            db.conversations.splice(index, 1);
+            const { CSRF, handle } = await import('/src/mocks/service.ts');
+            const pinned = db.conversations.find((row: { id: string }) => row.id === id);
+            if (!id || !pinned) throw new Error('The pinned conversation is missing from the fixture.');
+            // Resolve through the serialized mock command while background reads are still active.
+            const result = await handle({ op: 'resolveConversation', path: { shopId: 'shop-demo', conversationId: id },
+                headers: { 'x-csrf-token': CSRF, 'if-match': String(pinned.version) } });
+            if (result.status !== 202) throw new Error('The pinned conversation was not resolved.');
             (window as PreviewStream).publishInboxEvent?.({
                 eventId: 'event-inbox-preview-removal', type: 'conversation.updated', schemaVersion: 2, shopId: 'shop-demo',
                 resourceType: 'conversation', resourceId: id, resourceVersion: 2, occurredAt: '2030-01-02T00:00:00Z', sequence: 2,
             });
         }, pinnedId);
+        await expect(queue.getByRole('link').filter({ hasText: currentName! })).toHaveCount(0);
         await expect(identity).toHaveText('Khách xếp đầu mới');
 
         await queue.getByRole('link', { name: /Khách xếp đầu mới/ }).click();
-        await expect(page).toHaveURL(/\/inbox\/cv-preview-new$/);
+        await expect(page).toHaveURL(/\/inbox\/cv-preview-new\?status=open$/);
         await expect(identity).toHaveText('Khách xếp đầu mới');
     } finally {
         await server.close();
@@ -177,8 +184,19 @@ for (const estimateAvailable of [true, false]) {
         const draft = page.getByRole('complementary', { name: 'Đơn đang nhập' });
         const create = draft.getByRole('button', { name: 'Tạo đơn', exact: true });
         await create.click();
-        await draft.getByRole('textbox', { name: 'Tìm sản phẩm hoặc SKU' }).fill('AO-002');
-        const product = draft.getByRole('button', { name: 'Áo thun Essential · AO-002' });
+        await expect(draft.getByRole('status').filter({ hasText: /^Đã lưu$/ })).toBeVisible();
+        const productSearch = draft.getByRole('textbox', { name: 'Tìm sản phẩm hoặc SKU' });
+        const [products] = await Promise.all([
+            page.waitForResponse(response => {
+                const url = new URL(response.url());
+                return response.request().method() === 'GET' && url.pathname === '/api/v2/shops/shop-demo/products' && url.searchParams.get('q') === 'AO-002';
+            }, { timeout: 15_000 }),
+            productSearch.fill('AO-002'),
+        ]);
+        expect(products.status()).toBe(200);
+        await expect(productSearch).toHaveValue('AO-002');
+        const product = draft.getByRole('button', { name: 'Áo thun Essential · AO-002', exact: true });
+        await expect(product).toBeEnabled();
         await product.click();
         await draft.getByRole('textbox', { name: 'Số lượng' }).fill('2');
         if (estimateAvailable) {
