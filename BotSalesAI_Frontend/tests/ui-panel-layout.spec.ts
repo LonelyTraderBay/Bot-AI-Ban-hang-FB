@@ -23,11 +23,16 @@ test('the titled Fulfillment Panel owns its body inset and keeps one 12px header
         await page.goto(route.toString());
         await expect(page).toHaveURL(route.toString());
         await expect(page.getByRole('heading', { name: 'Vận đơn & giao hàng', exact: true })).toBeVisible();
-        await page.getByRole('button', { name: 'Mở bản xem thử phí giao hàng', exact: true }).click();
+        await expect(page.getByRole('region', { name: 'Danh sách vận đơn', exact: true })).toBeVisible();
         const heading = page.getByRole('heading', { name: 'Xem thử phí và vùng giao hàng', exact: true });
         await expect(heading).toBeVisible();
-        await expect(page.getByRole('combobox', { name: 'Vùng giao thử' })).toBeVisible();
-        await expect(page.getByRole('combobox', { name: 'Kích cỡ kiện thử' })).toBeVisible();
+        const toggle = page.locator('button[aria-controls="shipment-fee-preview"]');
+        await expect(toggle).toHaveAccessibleName('Mở bản xem thử phí giao hàng');
+        await toggle.press('Enter');
+        await expect(toggle).toHaveAttribute('aria-expanded', 'true');
+        const preview = page.getByRole('region', { name: 'Bản xem thử phí giao hàng', exact: true });
+        await expect(preview.getByRole('combobox', { name: 'Vùng giao thử' })).toBeVisible();
+        await expect(preview.getByRole('combobox', { name: 'Kích cỡ kiện thử' })).toBeVisible();
 
         const geometry = await heading.locator('xpath=ancestor::*[contains(@class,"MuiPaper-root")][1]').evaluate(panel => {
             const header = [...panel.children].find(child => child.querySelector('h2'));

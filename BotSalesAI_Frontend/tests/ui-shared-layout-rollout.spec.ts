@@ -80,9 +80,13 @@ test('the inbox draft opener fits its content before expanding into the editor',
     const notes = draft.getByRole('textbox', { name: 'Ghi chú giao hàng' });
     await expect(notes).toBeEditable();
     await expect(draft.getByText('Tạm tính tiền hàng', { exact: true })).toBeVisible();
-    const footer = await create.evaluate(element => element.closest('[data-ui-density]')!.getBoundingClientRect().bottom);
-    const thread = await page.getByTestId('inbox-thread').evaluate(element => element.getBoundingClientRect().bottom);
-    expect(footer).toBeCloseTo(thread, 0);
+    await expect(page.getByTestId('inbox-thread')).toBeVisible();
+    await expect.poll(() => create.evaluate(element => {
+        const footer = element.closest('[data-ui-density]')?.getBoundingClientRect();
+        const thread = element.ownerDocument.querySelector('[data-testid="inbox-thread"]')?.getBoundingClientRect();
+        if (!footer?.height || !thread?.height) return Number.POSITIVE_INFINITY;
+        return Math.abs(footer.bottom - thread.bottom);
+    })).toBeLessThan(0.5);
 });
 
 test('the inbox claims once then keeps the saved draft when returning from messages', async ({ page }) => {
