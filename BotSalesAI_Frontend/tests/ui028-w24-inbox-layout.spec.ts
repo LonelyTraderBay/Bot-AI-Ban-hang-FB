@@ -24,6 +24,16 @@ test('UI028.W24 Inbox spacing roles remain consistent across breakpoints without
         await page.setViewportSize({ width, height: 844 });
         await page.goto(new URL('/s/shop-demo/inbox', demoUrl).toString());
         await expect(page.getByRole('link', { name: /Linh \(khách mẫu\)/ })).toBeVisible();
+        if (width !== 768) {
+            if (width === 390) await page.getByRole('button', { name: 'Bộ lọc', exact: true }).click();
+            const filters = page.getByRole('group', { name: 'Bộ lọc hội thoại' });
+            const filterRowTops = await filters.getByRole('combobox').evaluateAll(controls =>
+                controls.map(control => control.getBoundingClientRect().top));
+            expect(filterRowTops).toHaveLength(4);
+            expect(filterRowTops[0]).toBe(filterRowTops[1]);
+            expect(filterRowTops[2]).toBe(filterRowTops[3]);
+            expect(filterRowTops[0]).toBeLessThan(filterRowTops[2]);
+        }
         const listSpacing = await page.evaluate(() => {
             const row = document.querySelector<HTMLElement>('a.MuiListItemButton-root[href*="/inbox/cv"]');
             const unread = document.querySelector<HTMLElement>('[data-testid="inbox-unread-count"]');
@@ -45,8 +55,10 @@ test('UI028.W24 Inbox spacing roles remain consistent across breakpoints without
         await page.goto(new URL('/s/shop-demo/inbox/cv1', demoUrl).toString());
         const composer = page.getByRole('textbox', { name: 'Nội dung trả lời khách' });
         await expect(composer).toBeVisible();
-        await expect(page.getByTestId('inbox-context-panel')).toBeAttached();
         await expect(page.getByTestId('inbox-message-bubble').first()).toBeVisible();
+        await page.getByRole('button', { name: 'Thông tin khách' }).click();
+        const drawer = page.getByRole('dialog', { name: 'Thông tin khách' });
+        await expect(drawer).toBeVisible();
         const spacing = await page.evaluate(() => {
             const styleOf = (selector: string) => {
                 const element = document.querySelector<HTMLElement>(selector);
@@ -74,8 +86,10 @@ test('UI028.W24 Inbox spacing roles remain consistent across breakpoints without
             messageMetaGap: '8px',
             messageGroupGap: '12px',
             composerInset: '12px',
-            contextInset: width < 768 ? '12px' : '16px',
+            contextInset: width < 768 ? '0px 12px 12px' : '0px 16px 16px',
         });
+        await drawer.getByRole('button', { name: 'Đóng', exact: true }).click();
+        await expect(drawer).toBeHidden();
         const draft = `W24 draft ${width}`;
         await composer.fill(draft);
         await page.setViewportSize({ width: width < 768 ? 768 : 390, height: 844 });

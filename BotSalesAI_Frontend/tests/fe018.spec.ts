@@ -1,4 +1,4 @@
-import { navigateDemoAndRead, openDemoControls } from './session/demo-controls';
+import { navigateDemoAndRead, setDemoControl } from './session/demo-controls';
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { test, expect } from '@playwright/test';
@@ -27,20 +27,14 @@ async function gotoBotConfigReady(page: import('@playwright/test').Page) {
     expect(await response.finished()).toBeNull();
 }
 
-async function chooseMockOption(page: import('@playwright/test').Page, label: string, option: string) {
-    if (['Vai trò mô phỏng', 'Trạng thái thử', 'Dataset mô phỏng'].includes(label)) await openDemoControls(page);
-    await page.getByRole('combobox').nth(label === 'Vai trò mô phỏng' ? 0 : 1).click();
-    await page.getByRole('option', { name: option, exact: true }).click();
-}
-
 async function navigateToBotConfig(page: import('@playwright/test').Page) {
     await page.getByRole('link', { name: 'Cấu hình Admin' }).click();
-    await expect(page.getByRole('heading', { name: 'Điều khiển Admin AI' })).toBeVisible();
+    await expect(page.getByRole('heading', { name: 'Cấu hình Admin' })).toBeVisible();
 }
 
 async function navigateToBotTeam(page: import('@playwright/test').Page) {
     await page.getByRole('link', { name: 'Bốn nhân viên AI' }).click();
-    await expect(page.getByRole('heading', { name: 'Đội ngũ AI' })).toBeVisible();
+    await expect(page.getByRole('heading', { name: 'Bốn nhân viên AI' })).toBeVisible();
 }
 
 async function createEvaluation(page: import('@playwright/test').Page, datasetVersion = 'fe018-synthetic-dataset') {
@@ -107,11 +101,11 @@ type EvaluationListEnvelope = {
 
 async function openEvaluationList(page: import('@playwright/test').Page, count: number) {
     await gotoDemo(page, '/s/shop-demo/bot');
-    await expect(page.getByRole('heading', { name: 'Điều khiển Admin AI' })).toBeVisible();
+    await expect(page.getByRole('heading', { name: 'Cấu hình Admin' })).toBeVisible();
     const createdIds = await seedEvaluationRows(page, count);
     const listResponse = page.waitForResponse(response => response.request().method() === 'GET' && new URL(response.url()).pathname.endsWith('/bot/evaluations'));
     await page.getByRole('link', { name: 'Chất lượng AI' }).click();
-    await expect(page.getByRole('heading', { name: 'Đánh giá AI' })).toBeVisible();
+    await expect(page.getByRole('heading', { name: 'Chất lượng AI' })).toBeVisible();
     const response = await listResponse;
     expect(response.status()).toBe(200);
     return { createdIds, firstPage: await response.json() as EvaluationListEnvelope };
@@ -183,7 +177,7 @@ test('FE018.AC01/04 draft saves use the contract version and keep human order co
     expect(response.status()).toBe(200);
     expect((await response.json()).data).toMatchObject({ draftRevision: 2, version: 2, instructions, requireHumanOrderConfirmation: true });
 
-    await chooseMockOption(page, 'Trạng thái thử', 'Xung đột lần ghi tiếp');
+    await setDemoControl(page, 'fault', 'conflict');
     await page.getByRole('button', { name: 'Sửa bản nháp' }).click();
     const staleDialog = page.getByRole('dialog', { name: 'Cấu hình bản nháp' });
     const edited = 'Bản sửa phải được giữ lại khi máy chủ báo xung đột.';
@@ -343,7 +337,7 @@ test('FE018.S03 synthetic budget and tool denials retain the prompt and never sh
     const prompt = 'Kiểm tra tình huống dừng an toàn trong sandbox.';
     const input = page.getByLabel('Nội dung khách hỏi');
     await input.fill(prompt);
-    await chooseMockOption(page, 'Trạng thái thử', 'Hết hạn mức AI mô phỏng');
+    await setDemoControl(page, 'fault', 'budget_exceeded');
     const budgetWait = page.waitForResponse(response => response.request().method() === 'POST' && new URL(response.url()).pathname.endsWith('/bot/playground'));
     await page.getByRole('button', { name: 'Chạy thử' }).click();
     const budgetResponse = await budgetWait;
@@ -355,7 +349,7 @@ test('FE018.S03 synthetic budget and tool denials retain the prompt and never sh
     await expect(input).toHaveValue(prompt);
     await expect(page.getByText('Chạy câu hỏi để xem câu trả lời, nguồn và cảnh báo. Không có điểm chất lượng tự tạo.')).toBeVisible();
 
-    await chooseMockOption(page, 'Trạng thái thử', 'Công cụ bị từ chối');
+    await setDemoControl(page, 'fault', 'tool_denied');
     const toolWait = page.waitForResponse(response => response.request().method() === 'POST' && new URL(response.url()).pathname.endsWith('/bot/playground'));
     await page.getByRole('button', { name: 'Chạy thử' }).click();
     const toolResponse = await toolWait;
@@ -468,7 +462,7 @@ test('FE018.AC02 expired, wrong-scope, and matching approvals produce honest bud
 
 test('FE018.AC05 manager and bot-admin roles cannot use operations outside their canonical permissions', async ({ page }) => {
     await gotoDemo(page, '/s/shop-demo/bot');
-    await chooseMockOption(page, 'Vai trò mô phỏng', 'manager');
+    await setDemoControl(page, 'role', 'manager');
     await expect(page.getByRole('button', { name: 'Sửa bản nháp' })).toHaveCount(0);
     await expect(page.getByRole('button', { name: 'Duyệt & xuất bản' })).toHaveCount(0);
     const deniedDraft = await page.evaluate(async () => {
@@ -482,7 +476,7 @@ test('FE018.AC05 manager and bot-admin roles cannot use operations outside their
     expect(deniedDraft).toBe(403);
     expect(await readApi<{ instructions: string; draftRevision: number }>(page, '/api/v2/shops/shop-demo/bot/config')).toMatchObject({ draftRevision: 1 });
 
-    await chooseMockOption(page, 'Vai trò mô phỏng', 'bot_admin');
+    await setDemoControl(page, 'role', 'bot_admin');
     await navigateToBotTeam(page);
     await expect(page.getByRole('button', { name: 'Đổi có phê duyệt' })).toHaveCount(0);
     const deniedBudget = await page.evaluate(async () => {
@@ -500,7 +494,7 @@ test('FE018.AC05 manager and bot-admin roles cannot use operations outside their
 
 test('FE018.AC05 unknown role command stays unresolved and does not claim successful resumption', async ({ page }) => {
     await gotoDemo(page, '/s/shop-demo/bot/team');
-    await chooseMockOption(page, 'Trạng thái thử', 'Kết quả ghi chưa rõ');
+    await setDemoControl(page, 'fault', 'unknown');
     await page.getByRole('button', { name: 'Đề nghị tiếp tục' }).first().click();
     const dialog = page.getByRole('dialog', { name: 'Kiểm điều kiện để tiếp tục' });
     await dialog.getByLabel('Lý do (ít nhất 5 ký tự)').fill('Lệnh cần đối soát');
@@ -575,8 +569,7 @@ test('UI004 105 evaluations: cursor traversal reaches every record and retains t
     cursorRequests.push(firstPage.page.nextCursor!);
     allVisible.push(...current.data.map(row => row.id));
 
-    await chooseMockOption(page, 'Trạng thái thử', 'Lỗi API kéo dài');
-    await expect(page.getByRole('status')).toContainText('Trạng thái thử đã được áp dụng.');
+    await setDemoControl(page, 'fault', 'error_persistent_all');
     const failedCursor = current.page.nextCursor!;
     const failedResponseWait = page.waitForResponse(response => {
         const url = new URL(response.url());
@@ -588,8 +581,7 @@ test('UI004 105 evaluations: cursor traversal reaches every record and retains t
     await expect.poll(() => new URL(page.url()).searchParams.get('cursor')).toBe(failedCursor);
     await expect(page.getByRole('alert').filter({ hasText: 'API mô phỏng đang lỗi liên tục.' })).toBeVisible({ timeout: 15_000 });
     await expect(page.getByRole('row')).toHaveCount(0);
-    await chooseMockOption(page, 'Trạng thái thử', 'Bình thường');
-    await expect(page.getByRole('status')).toContainText('Trạng thái thử đã được áp dụng.');
+    await setDemoControl(page, 'fault', 'normal');
 
     const retryResponseWait = page.waitForResponse(response => {
         const url = new URL(response.url());

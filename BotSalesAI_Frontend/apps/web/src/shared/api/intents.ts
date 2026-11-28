@@ -1,3 +1,4 @@
+import { sha256Text } from './sha256';
 import { operations, type OperationId } from '@botsales/contracts';
 
 /** Live recovery keeps a digest and scoped references for the lifetime of the tab. */
@@ -37,13 +38,13 @@ function matches(candidate: UnresolvedIntent, expected: UnresolvedIntent | strin
 
 function updateStorage(next: UnresolvedIntent[]) {
     persisted = next;
+    if (__MOCK__) return;
     try { sessionStorage.setItem(storageKey, JSON.stringify(next)); }
     catch { /* Recovery remains available in memory when storage is blocked. */ }
 }
 
 export async function prepareIntent(actorId: string, shopId: string, operation: OperationId, key: string): Promise<UnresolvedIntent> {
-    const digest = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(key));
-    const intentId = [...new Uint8Array(digest)].map(byte => byte.toString(16).padStart(2, '0')).join('');
+    const intentId = await sha256Text(key);
     return { actorId, shopId, operation, intentId, commandId: null };
 }
 
@@ -66,7 +67,7 @@ export function resolveObservedIntent(intent: UnresolvedIntent | string) {
 }
 
 export const intentInScope = (intent: UnresolvedIntent, shopId: string, actorId: string) =>
-    intent.shopId === shopId && (__MOCK__ || intent.actorId === actorId);
+    intent.shopId === shopId && (intent.actorId ? intent.actorId === actorId : __MOCK__);
 
 export const hasUnknownIntent = (shopId: string, operation: OperationId, actorId: string) =>
     snapshot.some(intent => intentInScope(intent, shopId, actorId) && intent.operation === operation);

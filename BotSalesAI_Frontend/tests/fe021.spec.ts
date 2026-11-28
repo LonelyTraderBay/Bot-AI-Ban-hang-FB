@@ -1,4 +1,4 @@
-import { openDemoControls } from './session/demo-controls';
+import { setDemoControl } from './session/demo-controls';
 import { test, expect } from '@playwright/test';
 import { startDemoServer } from './session/demo-server.mjs';
 
@@ -18,17 +18,13 @@ async function gotoDemo(page: import('@playwright/test').Page, route: string) {
 }
 
 async function chooseOption(page: import('@playwright/test').Page, label: string, value: string | RegExp) {
-    if (['Vai trò mô phỏng', 'Trạng thái thử', 'Dataset mô phỏng'].includes(label)) await openDemoControls(page);
     await page.getByRole('combobox', { name: label }).click();
     await page.getByRole('option', { name: value, exact: true }).click();
-    const applied = label === 'Vai trò mô phỏng' ? 'Vai trò mô phỏng đã được áp dụng.'
-        : label === 'Trạng thái thử' ? 'Trạng thái thử đã được áp dụng.' : undefined;
-    if (applied) await expect(page.getByRole('status').filter({ hasText: applied })).toBeVisible();
 }
 
 async function setDemoRole(page: import('@playwright/test').Page, role: 'owner' | 'viewer' | 'accountant') {
-    await chooseOption(page, 'Vai trò mô phỏng', 'viewer');
-    if (role !== 'viewer') await chooseOption(page, 'Vai trò mô phỏng', role);
+    await setDemoControl(page, 'role', 'viewer');
+    if (role !== 'viewer') await setDemoControl(page, 'role', role);
 }
 
 test('FE021 dashboard keeps independent panels usable and hides finance fields without finance.read', async ({ page }) => {
@@ -39,7 +35,7 @@ test('FE021 dashboard keeps independent panels usable and hides finance fields w
     await expect(page.getByRole('heading', { name: 'Tình hình hiện tại' })).toBeVisible();
     await expect(page.getByRole('link', { name: 'Xem việc cần làm', exact: true })).toBeVisible();
     await expect(page.getByRole('link', { name: 'Tạo đơn hàng', exact: true })).toHaveCount(0);
-    await expect(page.getByRole('link', { name: 'Tất cả đơn', exact: true })).toBeVisible();
+    await expect(page.getByRole('link', { name: 'Xem danh sách', exact: true }).first()).toBeVisible();
     await expect(page.getByText('Dữ liệu cập nhật', { exact: false })).toBeVisible();
 });
 
@@ -336,7 +332,7 @@ test('FE021 export uses inclusive shop-local boundaries, safe CSV, API jobs and 
 test('FE021 mock rejects an export when reports.export lacks the source permission', async ({ page }) => {
     test.setTimeout(45_000);
     await gotoDemo(page, '/s/shop-demo/reports');
-    await chooseOption(page, 'Vai trò mô phỏng', 'accountant');
+    await setDemoControl(page, 'role', 'accountant');
     const denied = await page.evaluate(async (csrfToken) => {
         const response = await fetch('/api/v2/shops/shop-demo/exports', {
             method: 'POST',
@@ -376,7 +372,7 @@ test('FE021 mock rejects an invalid report timezone before creating an export jo
 test('FE021 ambiguous export result preserves the selected dates and never exposes a download', async ({ page }) => {
     await gotoDemo(page, '/s/shop-demo/reports');
     await expect(page.getByRole('combobox', { name: 'Báo cáo' })).toBeVisible();
-    await chooseOption(page, 'Trạng thái thử', 'Lỗi truy vấn tiếp');
+    await setDemoControl(page, 'fault', 'error');
     await page.getByLabel('Từ ngày').fill('2026-09-28');
     await page.getByLabel('Đến ngày').fill('2026-09-28');
     await page.getByRole('button', { name: 'Tạo tệp báo cáo CSV' }).click();
@@ -408,7 +404,7 @@ test('FE021 empty report and marketing payloads render explicit empty states', a
 test('FE021 stale export conflict preserves dates and never exposes a download', async ({ page }) => {
     await gotoDemo(page, '/s/shop-demo/reports');
     await expect(page.getByRole('combobox', { name: 'Báo cáo' })).toBeVisible();
-    await chooseOption(page, 'Trạng thái thử', 'Xung đột lần ghi tiếp');
+    await setDemoControl(page, 'fault', 'conflict');
     await page.getByLabel('Từ ngày').fill('2026-09-27');
     await page.getByLabel('Đến ngày').fill('2026-09-28');
     const conflict = page.waitForResponse(response => response.request().method() === 'POST'

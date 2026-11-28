@@ -23,7 +23,7 @@ const membership: Membership = {
 const session: Session = { user, memberships: [membership], csrfToken: 'csrf-fixture-123456', expiresAt: '2026-10-01T00:00:00.000Z' };
 const shop: Shop = {
     id: 'shop-1', name: 'Shop thử', currency: 'VND', timezone: 'Asia/Vientiane', locale: 'vi-VN',
-    defaultWarehouseId: 'warehouse-1', version: 3, policyVersion: 'policy-1',
+    status: 'active', closedAt: null, defaultWarehouseId: 'warehouse-1', version: 3, policyVersion: 'policy-1',
 };
 const scope: Scope = { session, shop, membership, online: true, refreshSession: async () => undefined };
 const wrapper = ({ children }: PropsWithChildren) => (

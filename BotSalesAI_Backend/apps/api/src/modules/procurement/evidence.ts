@@ -4,6 +4,7 @@ import type { Prisma, PrismaClient, ProcurementEvidenceKind } from '../../genera
 import { validUuid } from '../../http/query.js';
 import { requireVersion } from '../../http/response.js';
 import { recordAudit } from '../../platform/audit/index.js';
+import { requireOpenShop } from '../../platform/database/shop-lifecycle.js';
 import { serializable } from '../../platform/database/transactions.js';
 import { requireShopAccess } from '../workspace/index.js';
 import { procurementText } from './access.js';
@@ -52,6 +53,7 @@ export function recordManualEvidence(db: PrismaClient, input: Attestation, attes
             if (prior.attestationHash !== attestationHash) throw new ConflictException();
             return prior.id;
         }
+        await requireOpenShop(tx, shopId);
         requireVersion(order.version, expectedVersion);
         if (isConfirmation) {
             if (order.status !== 'unknown') throw new ConflictException();

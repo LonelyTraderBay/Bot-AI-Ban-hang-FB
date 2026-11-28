@@ -1,9 +1,10 @@
-import { openDemoControls } from './session/demo-controls';
+import { setDemoControl } from './session/demo-controls';
 import { readFileSync } from 'node:fs';
 import { test, expect } from '@playwright/test';
 import { startDemoServer } from './session/demo-server.mjs';
+import { expectedDocumentTitle } from './session/document-title';
 
-type Route = { id: string; path: string; readPermission: string | null };
+type Route = { id: string; title: string; path: string; readPermission: string | null };
 type RouteManifest = { routes: Route[] };
 type PermissionCatalog = { rolePresets: Record<string, string[]> };
 
@@ -29,12 +30,6 @@ test.afterAll(async () => {
     await stopDemo?.();
 });
 
-async function chooseRole(page: import('@playwright/test').Page, role: string) {
-    await openDemoControls(page);
-    await page.getByRole('combobox', { name: 'Vai trò mô phỏng' }).click();
-    await page.getByRole('option', { name: role, exact: true }).click();
-}
-
 function routePath(path: string) {
     return path
         .replace(':shopId', 'shop-demo')
@@ -42,6 +37,7 @@ function routePath(path: string) {
 }
 
 test('route read access matches canonical permissions for every demo role', async ({ page }) => {
+    test.setTimeout(600_000);
     expect(privateRoutes.length).toBeGreaterThan(0);
     expect(roles.length).toBeGreaterThan(0);
 
@@ -50,10 +46,9 @@ test('route read access matches canonical permissions for every demo role', asyn
 
     for (const role of roles) {
         await page.goto(new URL('/s/shop-demo/overview', demoUrl).toString());
-        await openDemoControls(page);
-        await expect(page.getByRole('combobox', { name: 'Vai trò mô phỏng' })).toBeVisible();
+        await expect(page.locator('#main-content')).toBeVisible();
         if (role !== 'owner')
-            await chooseRole(page, role);
+            await setDemoControl(page, 'role', role);
         const permissions = permissionCatalog.rolePresets[role];
 
         for (const route of privateRoutes) {
@@ -63,11 +58,14 @@ test('route read access matches canonical permissions for every demo role', asyn
                 window.history.pushState({}, '', nextPath);
                 window.dispatchEvent(new PopStateEvent('popstate', { state: window.history.state }));
             }, path);
+            await expect(page).toHaveTitle(expectedDocumentTitle(route));
 
             if (expectedDenied)
-                await expect(deniedMessage).toBeVisible();
-            else
+                await expect(deniedMessage, `${role} · ${route.id}`).toBeVisible();
+            else {
                 await expect(deniedMessage).toHaveCount(0);
+                await expect(page.locator('main#main-content').getByRole('heading').first()).toBeVisible();
+            }
 
             checks += 1;
         }

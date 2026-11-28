@@ -24,7 +24,7 @@ function show(canRead: boolean) {
  return render(<ThemeProvider theme={theme}><MemoryRouter><ScopeContext.Provider value={scope}><TeamPage /></ScopeContext.Provider></MemoryRouter></ThemeProvider>);
 }
 describe('staff names', () => {
- it('uses an authorized directory name', () => { show(true); expect(state.metadataEnabled).toBe(true); expect(screen.getByText('Mai Nguyễn')).toBeInTheDocument(); });
- it('does not expose cached directory names without permission', () => { show(false); expect(state.metadataEnabled).toBe(false); expect(screen.queryByText('Mai Nguyễn')).not.toBeInTheDocument(); expect(screen.getByText('Mã nhân sự: user-2')).toBeInTheDocument(); });
- it('falls back to ID when the lookup fails', () => { state.metadataError = true; show(true); expect(screen.queryByText('Mai Nguyễn')).not.toBeInTheDocument(); expect(screen.getByText('Mã nhân sự: user-2')).toBeInTheDocument(); });
+ it('uses an authorized directory name', async () => { show(true); expect(state.metadataEnabled).toBe(true); expect(await screen.findByText('Mai Nguyễn')).toBeInTheDocument(); });
+ it('does not expose cached directory names without permission', async () => { show(false); expect(state.metadataEnabled).toBe(false); expect(await screen.findByText('Mã nhân sự: user-2')).toBeInTheDocument(); expect(screen.queryByText('Mai Nguyễn')).not.toBeInTheDocument(); });
+ it('falls back to ID when the lookup fails', async () => { state.metadataError = true; show(true); expect(await screen.findByText('Mã nhân sự: user-2')).toBeInTheDocument(); expect(screen.queryByText('Mai Nguyễn')).not.toBeInTheDocument(); });
 });

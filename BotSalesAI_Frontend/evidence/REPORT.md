@@ -1,5 +1,194 @@
 # Báo cáo Frontend — nguồn kết quả hiện hành
 
+## Nghiệm thu E2E bản cuối có R17 và R18 · 28/11/2026
+
+**Đạt 1.406/1.406 ca E2E trong một lượt preview**, gồm **703 Chromium** và **703 Firefox**. `npm run test:e2e` chạy toàn bộ danh sách với ba worker và kết thúc mã thoát 0 sau khoảng 41 phút tính cả chuẩn bị và build. Lượt này giữ đủ 1.402 ca của đường cơ sở và thêm bốn lượt kiểm mới, mỗi trình duyệt một ca lọc Giao hàng/Thanh toán của R17 và một ca dự toán đơn nháp độc lập của R18. [Nhật ký E2E](<D:/BotSalesAI/artifacts/ui-acceptance-r17-r18-final-20261128/frontend-preview.log>) · [Đối chiếu danh sách ca](<D:/BotSalesAI/artifacts/ui-acceptance-r17-r18-final-20261128/frontend-inventory-delta.json>)
+
+Ma trận 67 màn hình đạt **268/268 lượt** ở 1.440 × 900 và 390 × 844 trên hai trình duyệt, không ghi nhận lỗi trang hay lỗi đo bố cục. Dấu vân tay của 712 tệp nguồn, cấu hình và kiểm thử trên worktree `codex/ui-consistency` khớp trước và sau lượt chạy. [Kết quả và dấu vân tay](<D:/BotSalesAI/artifacts/ui-acceptance-r17-r18-final-20261128/frontend-results.json>)
+
+Lượt đầu dừng sau khi gói JavaScript mở Tổng quan đạt 512.491 byte gzip, vượt ngưỡng 512.000 byte. Bản cuối chỉ tải nhóm thao tác mô phỏng phụ khi cần đến. Cả hai trình duyệt đo được 507.504 byte gzip với cùng ngưỡng kiểm. [Ghi nhận lỗi ban đầu](<D:/BotSalesAI/artifacts/ui-acceptance-r17-r18-20261128/bundle-baseline.md>) · [Số đo Chromium](<D:/BotSalesAI/artifacts/ui-acceptance-r17-r18-final-20261128/frontend-file-artifacts/ui-governance-rollout-20261007/S19-demo-preview-metrics-chromium-acceptance-orders-final.json>) · [Số đo Firefox](<D:/BotSalesAI/artifacts/ui-acceptance-r17-r18-final-20261128/frontend-file-artifacts/ui-governance-rollout-20261007/S19-demo-preview-metrics-firefox-acceptance-orders-final.json>)
+
+Phạm vi E2E là Frontend preview cục bộ với API mô phỏng. Phần R17 và R18 bên dưới lưu bằng chứng React → API → PostgreSQL cho hai shop VND và LAK. Chủ shop quyết định nghiệm thu sau khi xem kết quả.
+
+Trên PR nháp #45, CI của commit `b2b2ac42` phát hiện các ca Frontend dùng trạng thái tải hoặc cảnh báo quá rộng, thao tác trước khi bản nháp tải xong, và dữ liệu kiểm thử thời gian thực bị cập nhật ngoài hàng đợi. Bộ Orders cũng thay chính sách giao hàng mẫu mà ca báo giá AI dùng sau đó. Bản sửa đồng bộ các ca Frontend với phản hồi và điều khiển cần kiểm, đồng thời khôi phục chính sách giao hàng sau ca R18. Giữ nguyên 1.406 lượt kiểm và các gate. [CI Frontend lượt đầu](https://github.com/LonelyTraderBay/Bot-AI-Ban-hang-FB/actions/runs/46108281467) · [CI Backend lượt đầu](https://github.com/LonelyTraderBay/Bot-AI-Ban-hang-FB/actions/runs/46108281492)
+
+Sau sửa, hồi quy cục bộ đạt 18/18 ca Frontend. Hai bộ Orders và AI chạy liên tiếp trên cùng PostgreSQL thử đạt 29/29 và 13/13 ca. Danh sách E2E trước và sau sửa khớp đủ 1.406 ca. [Nhật ký Frontend](<D:/BotSalesAI/artifacts/ui-delivery-r17-r18-20261128/frontend-ci-final.log>) · [Nhật ký Orders và AI](<D:/BotSalesAI/artifacts/ui-delivery-r17-r18-20261128/backend-ci-confirm/backend-run.log>)
+
+CI trên `a7d38c20` đạt Backend và Repository Hygiene. Hai ca Frontend còn lỗi vì đo khi Hộp thư đang tải lại và mở khung phí giao khi danh sách vận đơn chưa ổn định. Ca Hộp thư giờ đo hai khung đồng thời với dung sai vẫn dưới 0,5 px. Ca Vận đơn đợi danh sách hiển thị và xác nhận khung phí đã mở trước khi đo. Cả hai ca đạt 12/12 lượt lặp cục bộ trên Chromium và Firefox. [CI Frontend](https://github.com/LonelyTraderBay/Bot-AI-Ban-hang-FB/actions/runs/46109366874) · [Nhật ký đo lại](<D:/BotSalesAI/artifacts/ui-delivery-r17-r18-20261128/frontend-ci-final-layout.log>)
+
+## R17 và R18 · 28/11/2026
+
+Đường cơ sở là lượt nghiệm thu preview 1.402 ca bên dưới. R17 có bộ lọc trạng thái đơn, còn API chưa nhận trạng thái giao hàng hoặc thanh toán. R18 dùng chung form Orders và đã tính tiền khi lưu đơn, còn thao tác dự toán trước khi lưu chưa có. Đợt này giữ `Toolbar` và các trường nhập hiện có. OpenAPI sở hữu tham số và payload, module Orders sở hữu lọc trước phân trang và tính tiền, MSW mô phỏng cùng hợp đồng.
+
+- **R17 Đơn hàng** gửi `fulfillmentState` và `paymentState` từ hộp thoại **Bộ lọc**. API áp dụng hai điều kiện trước khi phân trang. Đổi hoặc xóa điều kiện đưa về trang đầu. Tải lại URL khôi phục lựa chọn. Các bộ lọc này thuộc tab danh sách đơn.
+- **R18 Tạo đơn nháp** có nút **Tính dự toán** dùng sản phẩm, số lượng, kho và phương thức giao đang nhập. API dùng hàm định giá Orders và trả chuỗi tiền chính xác theo tiền tệ của shop. Khi chưa định giá được phí giao, giao diện ghi rõ và chỉ hiện tạm tính tiền hàng. Thay đổi dữ liệu ảnh hưởng đến giá sẽ ẩn dự toán cũ. Đơn chỉ được ghi khi người dùng thực hiện thao tác lưu.
+
+| Shop mẫu | R17 qua React → API → PostgreSQL | R18 qua React → API → PostgreSQL |
+|---|---|---|
+| BotSales P0 A (VND) | Đạt. Hai điều kiện cùng trả một đơn khớp. [Ảnh R17](<D:/BotSalesAI/artifacts/orders-r17-r18-20261128/live-pass/R17-VND.png>) | Đạt. Tiền hàng 2.000, phí giao 125, tổng 2.125 VND. [Ảnh R18](<D:/BotSalesAI/artifacts/orders-r17-r18-20261128/live-pass/R18-VND.png>) |
+| BotSales P0 B (LAK) | Đạt. Hai điều kiện cùng trả một đơn khớp. [Ảnh R17](<D:/BotSalesAI/artifacts/orders-r17-r18-20261128/live-pass/R17-LAK.png>) | Đạt. Tiền hàng 2.000, phí giao 125, tổng 2.125 LAK. [Ảnh R18](<D:/BotSalesAI/artifacts/orders-r17-r18-20261128/live-pass/R18-LAK.png>) |
+
+Ở cả hai shop, đổi số lượng ẩn kết quả cũ và số đơn giữ nguyên khi chỉ tính dự toán. [Kết quả kiểm hai shop](<D:/BotSalesAI/artifacts/orders-r17-r18-20261128/live-pass/results.json>)
+
+**Hồi quy Orders đạt 29/29 ca tích hợp PostgreSQL**. R17 kiểm từng bộ lọc, lọc kết hợp qua hai trang, từ chối giá trị không hợp lệ, con trỏ từ bộ lọc cũ và truy cập chéo shop. R18 kiểm tiền có nhiều chữ số thập phân, cả trường hợp có và chưa có giá giao hàng, quyền ghi, kho thuộc shop và truy cập chéo shop. Số bản ghi đơn, báo giá, snapshot địa chỉ, lệnh, giữ tồn, biến động kho và bút toán giữ nguyên sau dự toán. [Nhật ký Orders](<D:/BotSalesAI/artifacts/orders-r17-r18-20261128/backend-verified/backend-orders.log>)
+
+**Hồi quy Frontend đạt 16/16 ca**, gồm 8 Chromium và 8 Firefox, trên bản preview với dữ liệu kiểm thử. Kiểm thao tác chọn và xóa bộ lọc, tải lại URL, dự toán lại sau khi đổi số lượng và các bố cục Orders từ 320 đến 1.440 px. [Nhật ký Playwright](<D:/BotSalesAI/artifacts/orders-r17-r18-20261128/frontend-final.log>)
+
+`npm run verify` đạt ở cả Frontend và Backend. Kiểm tra hợp đồng xác nhận OpenAPI JSON và YAML tương đương, với 270 thao tác và 398 schema. [Kiểm Frontend](<D:/BotSalesAI/artifacts/orders-r17-r18-20261128/frontend-verify.log>) · [Kiểm Backend](<D:/BotSalesAI/artifacts/orders-r17-r18-20261128/backend-verified/backend-verify.log>)
+
+Hai thay đổi dùng schema cơ sở dữ liệu hiện hành. Phần này ghi kết quả chạy trên hai shop PostgreSQL thử riêng và hồi quy Orders cục bộ. Kết quả đầy đủ trên bản cuối nằm ở mục đầu báo cáo.
+
+## Nghiệm thu lại bản tích hợp · 28/11/2026
+
+**E2E đạt 1.402/1.402 ca trong một lượt preview liền mạch**, gồm 701 ca Chromium và 701 ca Firefox. Lệnh `npm run test:e2e` chạy theo cấu hình preview của CI với ba worker, kết thúc mã 0 sau 40,7 phút. Danh sách bản cuối giữ đủ 1.398 ca của lượt trước và thêm hai ca cho mỗi trình duyệt. Hai ca mới kiểm focus khi quyền sửa bản nháp thay đổi ở Hộp thư và khi API trả lỗi trường nhập 422 ở R18. Ma trận 67 màn đạt 268/268 lượt. Dấu vân tay của 703 tệp nguồn và kiểm thử trên `codex/ui-consistency` khớp trước và sau lượt chạy. [Nhật ký E2E](<D:/BotSalesAI/artifacts/ui-acceptance-final-20261128/frontend-preview.log>) · [Kết quả và dấu vân tay](<D:/BotSalesAI/artifacts/ui-acceptance-final-20261128/frontend-results.json>)
+
+Lượt dev trước đó được dừng sau khi Chromium báo `ERR_NO_BUFFER_SPACE` lúc tải trang Tạo đơn. Ca này và toàn bộ danh sách kiểm thử đều đạt trong lượt preview. [Nhật ký lượt dev](<D:/BotSalesAI/artifacts/ui-acceptance-final-20261128/frontend-full.log>)
+
+**Backend đạt 92/92 ca tích hợp** trên PostgreSQL thử riêng, áp đủ 62 migration và nạp hai shop BotSales P0 A (VND) và BotSales P0 B (LAK). Workspace đạt trên một cơ sở dữ liệu mới nạp fixture vì lượt chạy chung trước đó có thêm shop do bộ Orders tạo.
+
+| Bộ kiểm | Kết quả | Nội dung xác minh |
+|---|---:|---|
+| PostgreSQL | 7/7 | Seed, kết nối ứng dụng và giới hạn quyền của vai trò DB runtime |
+| Inbox | 11/11 | Phân công, thu hồi thao tác cũ và cách ly dữ liệu theo shop |
+| Orders | 27/27 | Nhận đồng thời, chuyển quyền giữa thiết bị và nhân viên, tạo đơn lặp, đóng và mở shop, xóa dữ liệu khách |
+| Workspace | 25/25 | Phạm vi của hai shop, quyền thành viên và đóng/mở shop |
+| Privacy | 4/4 | Trạng thái quyền riêng tư, dữ liệu và báo cáo theo phạm vi shop |
+| Finance | 18/18 | Sổ cái có bút toán, tổng kỳ, phân trang, chứng từ cân đối và dữ liệu từng shop |
+
+Hai phép thử bổ sung đạt ở cả VND và LAK. Quyền sửa có thời hạn khoảng 60 giây. Ghi và gia hạn sau khi hết quyền trả 409. Phiên đăng nhập hết hạn trả 401. Thiết bị tiếp theo nhận đúng nội dung đã lưu. Lưu bản đang nhập giữ nguyên số đơn, số giữ tồn, biến động kho và bút toán. [Kết quả Backend](<D:/BotSalesAI/artifacts/ui-acceptance-final-20261128/backend-results.json>) · [Nhật ký kiểm hết hạn](<D:/BotSalesAI/artifacts/ui-acceptance-final-20261128/backend-draft-lifecycle-clean/draft-lifecycle.log>)
+
+Lượt 1.402 ca là đường cơ sở trước hai thay đổi API R17 và R18. Bản cuối đã được kiểm lại toàn bộ theo kết quả ở mục đầu báo cáo.
+
+## Đối chiếu và áp dụng chuẩn 8 mẫu · 28/11/2026
+
+Phạm vi 67 tuyến trên worktree `codex/ui-consistency`, với 8 màn mẫu và 59 màn kế thừa theo họ. Đường cơ sở gồm trạng thái worktree, SHA nguồn, bản phác và ảnh rà soát tại `D:/BotSalesAI/artifacts/ui-standard-rollout-20261128/baseline.json`. Đợt này áp dụng chuẩn Frontend bằng API hiện có. Các vai trò chữ, khoảng cách và điều khiển thuộc thành phần dùng chung, các nhóm nội dung và quyền thuộc module.
+
+Shell giữ lề nội dung 8 px và menu thu gọn 64 px. Tiêu đề trang dùng 22 px trên máy tính, 20 px trên điện thoại. Tiêu đề khối dùng 16 px. Hàng bảng gọn và mặt nút Tạo đơn, Lưu đơn nháp 32 px vẫn có vùng thao tác 44 px. R04 ưu tiên KPI, đơn chờ, dòng tiền, đơn hoàn tất và tồn khả dụng. R05 mở bản xem trước hội thoại đầu tiên trong kết quả trên máy tính. Nhân viên mở R06 để thao tác với tin nhắn hoặc dùng nút Tạo đơn để nhận hội thoại và mở nháp. Trên điện thoại, R05 mở danh sách và gom lọc phụ. R06 giữ ô trả lời ở chân vùng chat, Tạm tính sát ghi chú và cho đổi tab sang bản nháp. R17–R19 chia sẻ chuẩn danh sách, form và chi tiết. R15/R58–R60 dùng bảng đối chiếu có đường phân ô. R15 ghim SKU trên điện thoại. R58 mở số tiền và mã chứng từ đầy đủ từ từng ô, lấy chuỗi gốc khi sao chép.
+
+Ma trận đạt 268/268 lượt với 67 ID ở mỗi tổ hợp Chromium/Firefox và 1.440 × 900/390 × 844. Bộ đo ghi lề từng cạnh, cỡ tiêu đề, trạng thái yêu cầu dữ liệu chính, lỗi trang, tràn ngang và số dòng danh sách thấy trước khi cuộn trên máy tính. Bảng nghiệm thu CSV và 536 ảnh trước–sau nằm trong `D:/BotSalesAI/artifacts/ui-standard-rollout-20261128/doi-chieu-67-man.html`. Trạng thái mã hợp lệ của R14, R36 và R61 được kiểm riêng ở hai trình duyệt. 96 lượt đo ở nhóm mẫu, sáu ca Chrome zoom 200%, năm ca Firefox phóng riêng chữ 200% và phép đo vùng chạm Nợ/Có ở 320/390 px nằm cùng thư mục. Ma trận quyền đạt 441 lượt trên mỗi trình duyệt với bảy vai trò và 63 tuyến trong shop. [Ma trận route](../tests/ui028-w28-routes.spec.ts) · [Bảng đối chiếu](../tests/ui-comparison-parity.spec.ts) · [Tạo đơn nháp](../tests/ui-order-parity.spec.ts)
+
+Ca Hộp thư dùng React, Nest và PostgreSQL thử trên hai shop VND và LAK. Kiểm bản xem trước chỉ đọc, một lần bấm nhận hội thoại và mở bản nháp, chuyển quyền sang phiên mobile, khôi phục sau mất mạng, tạm tính từ máy chủ, tạo đơn lặp sau khi mất phản hồi và cách ly hai shop. Tồn kho tải qua Backend ở cả hai shop. Sổ cái trả HTTP 200 ở cả hai shop và hiển thị trạng thái rỗng vì fixture chưa có bút toán. Ca có số dài, số âm và sao chép nguyên chuỗi dùng dữ liệu tổng hợp của Frontend. Ba hộp thoại chuẩn đạt sáu phép đo trên máy tính và điện thoại, có ảnh và kết quả trả focus trong thư mục `dialogs` của bộ bằng chứng.
+
+`npm run verify` đạt ở Frontend và Backend trong đợt áp dụng chuẩn 8 mẫu. Frontend ghi 291 ca đơn vị, các kiểm nguồn, layout, composition và `test:evidence`. Backend ghi 45 ca đơn vị. R19 hiển thị mã đầy đủ hiện được API trả về. Kiểm trình đọc màn hình, triển khai thực tế và các tình huống backend nâng cao cần bằng chứng riêng cho đợt này.
+
+Trước lần nghiệm thu lại, `npm run test:e2e` đã chạy đủ 1.398 ca. Lượt rộng đạt 1.390 ca và ghi 8 lỗi. Cả tám ca đạt khi chạy lại sau chỉnh sửa hoặc cô lập điều kiện gây lỗi. Hai ca Hộp thư về giữ vị trí đọc và tách phân trang danh sách/tin nhắn đạt đủ tám lượt lặp trên hai trình duyệt. Nhật ký lượt rộng và đối chiếu lần chạy lại nằm trong `D:/BotSalesAI/artifacts/ui-standard-rollout-20261128/e2e-results.json`. Kết quả E2E liền mạch và bộ tích hợp Backend mới nhất nằm trong mục **Nghiệm thu lại bản tích hợp** ở trên.
+
+## Thu gọn cột Đơn đang nhập ở R06
+
+Phạm vi là trạng thái chưa có nháp của Chi tiết hội thoại và hàng thao tác khi chuyển sang chỉnh sửa. Mẫu 8 px dùng nút mở nháp có viền, mặt cao 32 px trong vùng bấm 44 px. `ConversationDraftPanel` quyết định khi nào khung cần đủ chiều cao, `ActionGroup` quản lý khoảng cách và `layoutSx.actions.compactFace` quản lý mặt nút. Ảnh nền từ Firefox ở viewport 1.920 × 947 và log tái hiện được lưu tại `D:/BotSalesAI/artifacts/layout-rollout-20261127/inbox-compact-followup`. Trước sửa, Chromium đo nút mở rộng 374 px trong khung 400 px ở viewport 1.440 × 900. [Ca hồi quy](../tests/ui-shared-layout-rollout.spec.ts)
+
+Trên Frontend chạy với Backend và PostgreSQL thử, Firefox đo nút rộng 68 px, vùng bấm 44 px, mặt 32 px và lề dưới vùng bấm 13 px ở cả 1.920 × 947 và 390 × 844. Khung chưa có nháp cao lần lượt 147 và 143 px. Hội thoại thử mới có trạng thái chưa có nháp để chủ shop kiểm tra. Chromium và Firefox đạt 12/12 ca trong bộ hồi quy dùng mock, gồm đo nút tại 1.440, 705 và 390 px, mở bằng Enter, giữ Tạm tính trong biểu mẫu, căn đáy hai khung khi chỉnh sửa, tự lưu và chuyển tab. Kết quả áp dụng cho lần sửa cột Đơn đang nhập.
+
+## Bộ mẫu dùng chung 8 px cho 67 màn hình · 27/11/2026
+
+Đường cơ sở lấy từ `15c65419` cùng các thay đổi có trước trong worktree `codex/ui-consistency`. Bảng nghiệm thu liên kết manifest, component React, họ bố cục, trạng thái dữ liệu, kích thước và ảnh trước–sau. Bản đo có 67 ID ở mỗi tổ hợp Chromium/Firefox và 1.440 × 900/390 × 844. Mỗi route kiểm tiêu đề tài liệu, heading của trang, kết thúc trạng thái tải và phản hồi GET chính khi route trong shop. R14 và R36 dùng fixture mã tác vụ chưa tồn tại. R61 mở trạng thái chưa có mã xác nhận. Đường dẫn bằng chứng trên máy kiểm thử là `D:/BotSalesAI/artifacts/layout-rollout-20261127/frontend/layout-8px/doi-chieu-67-man.html`. [Ma trận route](../tests/ui028-w28-routes.spec.ts)
+
+Shell sở hữu lề 8 px ở cả bốn mép. Menu desktop có hai trạng thái, mở rộng và biểu tượng. R04 dùng dải KPI 2 × 2 cạnh đơn chờ khi đủ chỗ, dòng tiền và hai khối ngắn bên dưới. R05/R06 giữ lịch sử cuộn riêng, ô trả lời ở chân khung và dùng tab khi thiếu chiều rộng. R17 có bộ lọc phụ trong hộp thoại và tab Đang nhập. R15/R58–R60 dùng kẻ ô và vùng cuộn có tên. R15 ghim SKU và giữ khe 12 px giữa Khả dụng và Kho. R58 dùng hộp thoại xem và sao chép đúng giá trị gốc. Mặt nút chính của nháp là 32 px trong vùng bấm 44 px. [Quy định spacing](../docs/FRONTEND_SPACING_STANDARD.md) · [Kiểm thao tác theo mẫu](../tests/ui-shared-layout-rollout.spec.ts)
+
+Luồng bản đang nhập chạy với hai shop tổng hợp trên PostgreSQL thử riêng. Kiểm trình duyệt dùng các phiên độc lập, chuyển quyền từ desktop sang điện thoại, hai thiết bị cùng nhìn bản đã lưu, đổi qua lại giữa Tin nhắn và Đơn đang nhập, dự toán giá từ máy chủ, kiểm kết quả sau khi mất phản hồi và tải lại, đồng thời xác nhận đúng một đơn được tạo. Phiên ở shop A nhận 404 khi đọc bản nháp shop B. Bộ tích hợp Orders kiểm nhận đồng thời, bàn giao A → B → A, hết hạn quyền sửa, thay đổi vai trò, đóng/mở shop, xóa dữ liệu khách và khả năng thử lại cùng khóa. Cơ sở dữ liệu thử do đợt kiểm dựng riêng kể cả bước áp migration. Nhật ký và ảnh luồng thật nằm trong `D:/BotSalesAI/artifacts/layout-rollout-20261127/browser-live`. Migration bổ sung đã chạy sau 61 migration nền. Bộ kiểm Backend hiện hành đạt 45 kiểm tra đơn vị, 27 Orders, 25 Workspace, 11 Inbox, 4 Privacy và 7 PostgreSQL trên fixture sạch theo từng bộ.
+
+Ma trận 268/268 lượt sau sửa và 536 ảnh trước–sau không ghi nhận tràn ngang cấp trang hoặc lỗi JavaScript. Chạy 30 ca chốt route và Tồn kho, 32 ca bố cục hồi quy, 8 ca chốt Hộp thư và 6 ca bộ lọc/quyền trên Chromium và Firefox. Cả hai bộ kiểm native đạt 5/5 kịch bản đại diện ở 200%. Ca R37 tái hiện trên đường cơ sở ghi một GET đã hủy và một GET thành công. Bộ kiểm đã phân biệt hai lần này và ca mục tiêu đạt trên cả hai trình duyệt.
+
+Bộ hồi quy E2E được đối chiếu theo hai trình duyệt, tổng cộng 1.370 ca đã chạy, mỗi trình duyệt 685 ca. Lượt rộng ghi 11 lỗi Chromium và 3 lỗi Firefox. Tất cả ca đó đạt khi kiểm lại sau sửa. Ca rời Hộp thư trong lúc máy chủ đang xác nhận lưu được chạy với phản hồi giữ chậm có chủ đích. Nhóm kiểm lại luồng nháp, quyền ở Quyền riêng tư và focus của nút Tổng quan đạt 18/18. E2E dùng kết quả lượt rộng và các lượt kiểm lại, chưa có một lượt chạy liền mạch trên bản cuối. Log nằm tại `D:/BotSalesAI/artifacts/layout-rollout-20261127`.
+
+## Bộ lọc R63, dải KPI và thẻ danh sách · 26/11/2026
+
+Đường cơ sở là bản demo từ worktree `codex/ui-consistency` trước khi triển khai. Vùng tìm và lọc R63 Công việc cao 172 px ở 1.440 px, 193 px khi thu gọn và 523 px khi mở ở 390 px. Các ô chọn cao 53 px. Phạm vi đối chiếu gồm ba tab R63, R04, R17, R37 và các consumer Toolbar đại diện R05, R09, R15.
+
+`Toolbar` sở hữu bố cục, vùng chạm, mở/đóng, tóm tắt và đặt lại nhóm lọc. R63 khai báo lựa chọn và giá trị mặc định theo `listWorkItems`, `listJobs` và `listCommands`. URL là nguồn trạng thái tìm, lọc và phân trang. `Stats` sở hữu dải KPI R04. `TableCards` sở hữu bố cục trạng thái và thao tác mobile. Module sở hữu nội dung, quyền và hành vi thao tác. Bản demo trước và sau dùng cùng dữ liệu, quyền và viewport.
+
+Thanh tìm và lọc của cả ba tab R63 giảm từ 172 còn 89 px ở desktop. Ở 390 px, tab Công việc khi thu gọn giảm từ 193 còn 89 px và khi mở giảm từ 523 còn 236 px. Hai tab Tác vụ nền và Thao tác cần đối chiếu còn 115 px ở trạng thái mặc định và 189 px khi mở ở 390 px. Dòng tóm tắt hiển thị các điều kiện đang áp dụng trong phần mở rộng. Dải KPI R04 giảm từ 114 còn 106 px trên desktop và từ 202 còn 189 px ở 390 px. Trung vị ba thẻ R17 giảm từ 178 còn 170 px. Trung vị bốn thẻ Công việc vận hành R37 giảm từ 230 còn 159 px.
+
+Đã chụp 12 cặp ảnh ở 390×844 và 1.440×900 cùng ba cặp trạng thái mở lọc trên điện thoại. Ca kiểm R63 dùng dữ liệu demo để đối chiếu URL, request, trạng thái mặc định, Tất cả, đặt lại và quyền xem tab. Ca R37 dùng một dòng mẫu cho phép nhận việc để kiểm thao tác chính và liên kết phụ trong disclosure. [Ca kiểm bộ lọc và mật độ](../tests/ui-stat-density.spec.ts)
+
+`npm run verify` đạt, gồm 291 bài Vitest. Bộ hồi quy Chrome và Firefox đạt 92 ca, sau đó 14 ca trọng tâm đạt trên bản cuối. Bản demo cuối có 48 lượt mở ở các độ rộng 320–1.920 px và không ghi nhận lỗi JavaScript hoặc tràn ngang cấp trang. Sáu màn và tab đại diện đạt riêng kiểm Chrome zoom trang 200% và Firefox phóng chữ 200%. Kết quả dùng dữ liệu mẫu trên trình duyệt.
+
+## Khung nội dung, thẻ mobile, KPI và form · 26/11/2026
+
+Đường cơ sở là bản demo `94e11b1d` ở worktree `codex/ui-consistency`. Ma trận 67 route có 268 lượt đo và 2.803 phép đo khung. Ở 1.440 px, phần kéo cao của bốn khung R53, R27, R35, R52 lần lượt là 1.339, 450, 203 và 282 px. Trung vị thẻ ở 390 px là 340 px ở R15, 307 px ở R17 và 322 px ở R37. Lưới KPI R04, R20, R22 và R53 cao 408, 310, 382 và 463 px.
+
+Thực hiện lần lượt theo trách nhiệm của `SectionGrid`, `TableCards` và bộ lọc của R09, `Stats`, sau đó là bố cục form và `EditDialog`. Các ca kiểm theo từng đợt đối chiếu cùng bộ dữ liệu, quyền, thứ tự thao tác và kích thước. Bản nháp, phép gửi biểu mẫu, API và quyền dùng hợp đồng hiện hành.
+
+Ở 1.440 px, chiều cao các khung R53, R27, R35 và R52 giảm lần lượt từ 1.515 còn 176 px, từ 541 còn 91 px, từ 531 còn 328 px và từ 705 còn 423 px. Ở 390 px, trung vị chiều cao thẻ R15, R17 và R37 giảm lần lượt còn 222, 178 và 256 px. Lưới KPI R04, R20, R22 và R53 còn 202, 206, 212 và 260 px. Form R10/R11/R18 rộng tối đa 64rem. Hộp thoại R12/R55 rộng tối đa 36rem.
+
+`npm run verify` và 74 ca Playwright chọn lọc đạt. Bản demo mở đủ 67 route ở 390 và 1.440 px trên Chrome và Firefox, tổng cộng 268 lượt. Thêm 232 lượt kiểm trên Chrome ở 320, 768, 1.280 và 1.920 px. Các lượt này ghi nhận 0 lỗi JavaScript cấp trang và 0 tràn ngang cấp trang. Đã đối chiếu 134 ảnh trước và 134 ảnh sau. 12 route đại diện qua kiểm zoom trang Chrome 200% và phóng chữ Firefox 200%. Các phép đo trình duyệt dùng dữ liệu demo. [Ca hồi quy mật độ khung](../tests/ui-frame-density.spec.ts)
+
+## Mật độ thống kê, công việc và sổ kế toán · 26/11/2026
+
+Đường cơ sở là bản demo tại `15c65419` cùng các chỉnh sửa giao diện đã có trong worktree. Bản đo 67 route ở 390×844 và 1.440×900 có 134 ảnh. Tại 390 px, ô tìm của R37 ở y = 939 px, vùng công việc R63 ở y = 969 px, và bảng ở R58–R60 ở y = 1.140, 990 và 947 px.
+
+`Stat` sở hữu ba vai trò giá trị số thường, số trọng tâm và mô tả. `Stats` sở hữu lưới tóm tắt gọn cho R37 và R58–R60. Diện ảnh hưởng gồm R04, R20, R22, R37, R53, R58, R59 và R60. R63 sở hữu thao tác mở bộ lọc công việc và trạng thái lọc trong URL. Module tài chính sở hữu kỳ báo cáo, trạng thái cân đối và thứ tự bảng. Bằng chứng cần đối chiếu gồm dữ liệu dài, chế độ rỗng, bảng cuộn riêng, chỉnh kỳ, bộ lọc theo URL, vùng chạm và mốc nhìn đầu tiên.
+
+Ứng dụng đổi số thường sang token 24 px, giữ số trọng tâm 28 px và chuyển thông tin phụ hoặc thiếu dữ liệu về vai trò chữ 14 px. R37 đưa ô tìm kiếm lên trước bộ lọc ngoại lệ. R63 thu gọn bộ lọc công việc trên điện thoại và hiện số điều kiện đang áp dụng. R58–R60 giữ cột đối chiếu và gom số liệu vào lưới tóm tắt.
+
+Ở 390×844, ô tìm R37 chuyển từ y = 939 lên y = 547 px tính từ mép trên. Vùng danh sách R63 chuyển từ y = 969 lên y = 691 px. Mép trên bảng R58–R60 chuyển tương ứng từ y = 1.140, 990 và 947 lên y = 817, 627 và 595 px. Kỳ mặc định của R58 có bảng rỗng. Ở 320 px, R58 và R59 vẫn cần cuộn để tới bảng. Khi phóng chữ 200% trên Firefox, nền nhãn cân bằng tăng theo chiều cao dòng chữ. Phép đo dùng dữ liệu frontend demo. [Ca hồi quy mật độ thống kê](../tests/ui-stat-density.spec.ts)
+
+`npm run verify` đạt. 22 ca hồi quy chọn lọc đạt trên Chrome và Firefox. Bản demo cuối tải đủ 67 route ở 390 và 1.440 px trên hai trình duyệt, tổng 268 lượt mở, với 0 lỗi JavaScript cấp trang và 0 tràn ngang cấp trang. Đã chụp 134 ảnh trước và 134 ảnh sau ở cùng kích thước. Chín route đã qua kiểm zoom Chrome 200% và phóng chữ Firefox 200%.
+
+## Hộp thư hai cột và thông tin khách theo nhu cầu · 26/11/2026
+
+R06 dùng hai cột từ breakpoint 1.280 px. Shell, chiều cao vùng làm việc và quyền gửi tiếp tục dùng các chủ sở hữu hiện có. Module Hộp thư sở hữu Drawer thông tin khách, phần tư vấn mẫu, bộ lọc thu gọn và nội dung hướng dẫn soạn tin. R05 là màn đối chiếu. Các cổng kiểm xác minh phân trang, lịch sử, bản nháp, phân công và quyền trong cùng phạm vi shop.
+
+Đường cơ sở trên bản xem thử cổng 5174, hội thoại Hà. Ở 1.280 × 900, chat rộng 372 px và vùng đọc cao 189 px. Ở 1.680 × 900, chat rộng 759 px. Đã ghi ảnh và số đo trước sửa ở bảy viewport. FE016 và UI028.W24 đạt 52/52 lượt trên Chromium và Firefox, gồm phân trang qua hai shop mẫu.
+
+Bản cuối trên cổng 5174 cho khung chat rộng 728 px và vùng đọc cao 325 px ở 1.280 × 900. Ở 1.680 × 900, chat rộng 1.128 px. Bảy viewport từ 320 đến 1.680 px không tràn ngang. Ở 1.440 × 620, cuộn vùng làm việc tới nút gửi đưa đáy nút vào y = 553 px. Drawer thông tin khách rộng 420 px trên desktop và toàn bề ngang trên điện thoại. Drawer tư vấn rộng 640 px trên desktop và cả bốn tab thao tác được bằng bàn phím ở 390 px.
+
+`npm run verify` đạt. Chromium và Firefox qua 72/72 lượt hồi quy, gồm bộ lọc, hai shop mẫu, giữ bản nháp và tệp, chặn rời hội thoại khi đang soạn, phân công đúng một lần và giữ vị trí đọc. Hội thoại hết hạn chỉ tạo ghi chú nội bộ, với 0 yêu cầu gửi tin cho khách. Bản đã dựng đạt 6/6 lượt và mở đủ 67 màn hình trên cả hai trình duyệt ở 390 và 1.440 px. Ô soạn và Drawer đạt kiểm tra Chrome zoom toàn trang 200% và Firefox zoom chữ 200%. Các thử nghiệm nghiệp vụ dùng dữ liệu mẫu. [Ca kiểm Hộp thư](../tests/fe016.spec.ts)
+
+## Chiều cao vùng làm việc Hộp thư · 26/11/2026
+
+Phạm vi là R06 Chi tiết hội thoại. Mốc desktop dùng breakpoint hiện có 1.280 px. Shell dành phần chiều cao còn lại cho ba cột, sau tiêu đề trang và trước chân trang. Danh sách, lịch sử tin và nội dung bối cảnh giữ cuộn riêng. Chiều cao tối thiểu bảo đảm có chỗ đọc và soạn tin khi cửa sổ thấp. R05 Danh sách hội thoại và bố cục dưới 1.280 px tiếp tục theo luồng hiện có.
+
+Đo bản trước sửa trên cổng 5174 với phiên mẫu Linh. Cả ba cột dừng ở 650 px. Khoảng từ đáy cột tới chân trang là 53,4 px ở 1.680 × 900 và 273,4 px ở 1.600 × 1.120. Ở 1.440 × 768, nút gửi kết thúc tại y = 795,6 px. Mã nguồn trước sửa: `Shell.tsx` SHA-256 `f99aa19dffa001d9c34c4648cfaa3a4292ec1001abca335f75276f83d027b08d`, `inbox/index.tsx` SHA-256 `53eb151edc46f6599388d4a06a2bc6a0c84c726d9ac98b4ada1d3f1d8f1bed6f`. Kiểm lại theo chiều cao, cuộn bằng bàn phím, chữ phóng lớn, lưu nháp và hành vi tải lịch sử tin.
+
+Bản xem thử sau sửa có cùng đáy cho cả ba cột và khoảng đệm 16 px ở 1.280 × 800, 1.440 × 768, 1.680 × 900 và 1.600 × 1.120. Nút gửi kết thúc tại y = 701 px ở 1.440 × 768. Ở 1.440 × 620, phím End cuộn 105 px trong vùng làm việc và đưa nút gửi vào tầm nhìn. Các kích thước này giữ scroll ngang bằng 0 cho trang và vùng làm việc. Kiểm lại 320 và 390 px giữ luồng xếp dọc. `npm run verify` đạt. Chromium và Firefox qua 58 ca hồi quy Hộp thư và bố cục. Sáu ca bố cục được chạy lại trên mã cuối. Ca soạn nháp dài đạt ở 200% zoom toàn trang Chrome và 200% zoom chữ Firefox. Các kết quả dùng API mô phỏng. [Ca kiểm Hộp thư](../tests/fe016.spec.ts)
+
+## Gỡ thanh thông báo demo và góp ý giao diện · 26/11/2026
+
+Ở `15c65419`, Shell hiển thị thanh thông báo xanh phía trên Công cụ demo và hai nút mở biểu mẫu góp ý ở thanh thông báo và chân trang. Theo yêu cầu, Shell gỡ thanh và biểu mẫu, giữ Công cụ demo, nhận diện nguồn dữ liệu và cảnh báo nghiệp vụ. Ca kiểm đối chiếu giao diện trước và sau tại 390, 806 và 1440 px. [Ca kiểm Công cụ demo](../tests/ui-density-layout.spec.ts)
+
+Trước khi sửa, ca kiểm phát hiện thanh thông báo vẫn hiển thị. Sau khi dựng bản demo mới, 16/16 ca chọn lọc Chromium và Firefox đạt, gồm kiểm khoảng cách, đổi bộ dữ liệu và tách bản production khỏi API mô phỏng. Bản đang chạy ở cổng 5174 đã kiểm trực tiếp tại 390 và 1440 px.
+
+Yêu cầu tiếp theo gỡ nhãn `Demo` trên mobile và `Dữ liệu mô phỏng` trên desktop. Cả hai là cùng một nhãn ở đầu trang do Shell hiển thị. Ca kiểm đầu trang đo lại tám chiều rộng và xác nhận Công cụ demo vẫn hiện trong bản demo. [Ca kiểm đầu trang](../tests/ui-header.spec.ts)
+
+Bản cập nhật qua `npm run verify`, 42 ca trình duyệt chọn lọc và 6 ca trên bản demo đã build. Kiểm trực tiếp đường dẫn Sổ thu chi trên cổng 5174 ở 390 và 1440 px xác nhận thanh đầu trang hết nhãn và ba trường Công cụ demo vẫn mở được.
+
+Yêu cầu tiếp theo gỡ nút Công cụ demo và dòng vai trò, trạng thái, bộ dữ liệu khỏi bản xem thử mặc định. Ở đường cơ sở, trang Tổng quan trên cổng 5174 vẫn hiện vùng Công cụ demo. Shell chỉ hiện vùng này trong bản mô phỏng dùng cho kiểm thử khi có `VITE_E2E_DEMO_TOOLS=1`.
+
+Bản xem thử mặc định đã kiểm trực tiếp ở 824 và 390 px. Trang Tổng quan tải phiên mẫu với HTTP 200 và đã gỡ nút cùng dòng tóm tắt Công cụ demo. `npm run verify` và 20 ca Chromium, Firefox chọn lọc trên cấu hình kiểm thử đều đạt.
+
+Yêu cầu hiện tại gỡ toàn bộ Công cụ demo. Ảnh người dùng tại cổng 5174 cho thấy hàng Công cụ demo và dòng tóm tắt nằm giữa header và nội dung Tổng quan. Source trước sửa vẫn dựng được khối này khi bật cờ kiểm thử. Shell sở hữu khối đó và áp khoảng cách riêng từ `layoutSx.shell`. Xóa cả khối lẫn các khoảng cách của nó ở mọi route dùng Shell. Ca thử quyền, lỗi và dữ liệu mẫu tiếp tục thiết lập MSW qua mã kiểm thử. Đo cạnh dưới header và cạnh trên `main` trên bản đã dựng, rồi đối chiếu cổng 5174.
+
+Đã gỡ các điều khiển và dòng tóm tắt khỏi Shell. `npm run verify` đạt. Có 68/68 ca chọn lọc và 6/6 ca trên bản demo đã dựng đạt ở Chromium và Firefox. Ma trận bản đã dựng mở đủ 67 màn hình ở 390 và 1440 px trên cả hai trình duyệt. Trang Tổng quan trên cổng 5174 mở bằng bản xem thử mặc định ở 390, 824 và 1440 px, phiên mẫu trả HTTP 200. Cạnh trên `main` chạm cạnh dưới header và trang giữ khoảng đệm nội dung hiện có. [Ca kiểm Shell](../tests/ui-shell-layout.spec.ts)
+
+## Chuẩn hóa giao diện 67 màn hình · 26/11/2026
+
+Đối chiếu 67 route và 54 mục menu từ `685dab0a` cùng bản chỉnh Hộp thư hiện hành. Bản sao kiểm thử bật demo với dữ liệu mẫu, chụp đường cơ sở ở 390 và 1440 px trước khi sửa. Mỗi route có mẫu bố cục, nhóm, màn tham chiếu và phạm vi kiểm. [Ma trận 67 route](ui-consistency-20261126/route-profiles.md)
+
+`DataTable` hiện nhận cấu hình mobile tại cả 78 điểm dùng. Có 66 bảng hiển thị thẻ gọn, với nhận diện, trường chính, nút theo dòng và phần mở thêm. Có 12 bảng giữ cột để đối chiếu và cuộn trong vùng riêng. R21, R44 và R48 đã đưa nút vào vùng nhìn thấy ở 320 và 390 px. Khi đóng hộp thoại sau khi vùng hiển thị đổi từ bảng sang thẻ, tiêu điểm về danh sách. R17 giữ ngày tạo trong thẻ và R53 giữ bảng đối chiếu trong khung ở mobile. Tiêu đề của 22 màn khớp tên menu, cùng quy tắc cho breadcrumb và tiêu đề trình duyệt. [Chuẩn khoảng cách và thẻ](../docs/FRONTEND_SPACING_STANDARD.md) · [Ca kiểm nút và trả tiêu điểm](../tests/ui-table-mobile-actions.spec.ts)
+
+Ma trận demo có 268 lượt render tại 390 và 1440 px trên Chromium và Firefox, với 0 lượt lỗi hoặc tràn ngang toàn trang. Kiểm tra live đọc Đơn hàng, Sổ thu chi và Hộp thư của hai shop mẫu. Sáu giao dịch đọc trả HTTP 200, mỗi màn đã được xem ở hai khổ màn hình. Kiểm thử ghi dữ liệu sử dụng demo mô phỏng. [Phạm vi theo đợt](../docs/FRONTEND_UI_IMPROVEMENT_PLAN.md#chuẩn-hóa-danh-sách-và-cách-ghép-màn-hình--26112026)
+
+`npm run verify` đạt, gồm 291 kiểm thử Vitest, kiểm token, kiểm thành phần, kiểm bố cục, S17 và build production. Bộ hồi quy chọn lọc trên bản demo đã build đạt 128/128 ca Chromium và Firefox, gồm phím, bản nháp Hộp thư, báo cáo, thẻ và chín độ rộng từ 320 đến 1920 px. Hai trình duyệt cùng đo 511.779 byte JavaScript gzip tải đầu trang Tổng quan so với ngưỡng 512.000 byte. Chrome zoom trang 200% và Firefox phóng riêng chữ 200% cùng đạt ba ca gồm thẻ Sổ thu chi, bản nháp dài trong Hộp thư và hộp thoại lý do dài.
+
+CI của `fb6bffd7` phát hiện một số phép kiểm còn dùng tiêu đề trước khi đồng bộ. Các ma trận tải, sẵn sàng, dữ liệu cũ và phục hồi kết quả chưa rõ hiện đối chiếu tên menu với tiêu đề trình duyệt, dùng tên manifest cho route ngoài menu. Ca bố cục AI và bản tin dùng tiêu đề màn hiện hành. Ca trạng thái rỗng R52 trên Firefox ghi nhận mục chọn chưa ổn định rồi rời DOM. Bộ kiểm dùng `waitForDemoMenu` và đợi xác nhận vai trò trước khi chọn dữ liệu rỗng. Các kiểm tra quyền, phản hồi HTTP, trạng thái, kích thước và hộp thoại vẫn được thực hiện. [Lượt CI đầu của PR #45](https://github.com/LonelyTraderBay/Bot-AI-Ban-hang-FB/actions/runs/45752807156)
+
+CI của `40bdba81` tìm thấy ca Mở sổ và Danh mục sản phẩm vẫn chờ thẻ HTML `<table>` ở chiều rộng mobile. Ca Mở sổ hiện kiểm vùng thẻ và thông báo rỗng, đồng thời giữ kiểm bảng cho desktop và các báo cáo đối chiếu. Ca Danh mục kiểm danh sách hoặc bảng theo chiều rộng và giữ khẳng định phân trang cùng vùng nội dung. Ca Đơn hàng và Khách hàng kiểm vùng bấm và mở chi tiết bằng Enter. Ca cuộn ngang bằng phím dùng bảng đối chiếu Sổ cái. [Lượt CI của `40bdba81`](https://github.com/LonelyTraderBay/Bot-AI-Ban-hang-FB/actions/runs/45753725630)
+
+CI của `a8817d1a` ghi nhận ca bố cục Hộp thư vẫn chờ `FieldGroup` ở vùng bộ lọc. Ca kiểm hiện dùng `SectionGrid` với nhịp khoảng cách `content` như giao diện đang chạy. Các khẳng định về quan hệ với form tìm kiếm, bốn trường lọc, kích thước, các khổ 320–1440 px và axe vẫn được thực hiện. Sau sửa, chạy cục bộ Chromium 7/9 đạt 92/92 ca và ca Hộp thư trên Firefox đạt 1/1. [Job Chromium](https://github.com/LonelyTraderBay/Bot-AI-Ban-hang-FB/actions/runs/45754757530/job/139690797142)
+
+Kết quả của đợt này có phạm vi kiểm tự động cục bộ và đọc API ở môi trường mẫu. CI từ xa, kiểm bằng trình đọc màn hình, thiết bị thật và nghiệm thu người dùng còn chờ thực hiện.
+
+## Cân chỉnh bố cục Hộp thư R05 và R06 · 25/11/2026
+
+Hộp thư dùng lại các token Graphite Gold và thành phần dùng chung. Danh sách nhóm bộ lọc theo cột thích ứng. Khung chi tiết dành thêm chỗ cho lịch sử, đặt nút đính kèm và gửi trên cùng một hàng, rồi đưa mã hội thoại sang bối cảnh khách. Nguồn tham chiếu có thể mở bằng bàn phím. Thanh phát tin thoại trong bản nháp có hàng riêng để tên tệp và trạng thái vẫn đọc được ở khung hẹp. [Danh sách và chi tiết](../apps/web/src/modules/inbox/index.tsx) · [Thành phần hội thoại](../apps/web/src/modules/inbox/conversation-components.tsx)
+
+Firefox với API thật tải được hộp thư ở hai shop mẫu tại 1716×950 và 390×844. Trên shop B ở desktop, nút đính kèm thu từ 810 xuống 93 px, lịch sử tăng từ 273 lên 318 px và khung bối cảnh rộng từ 260 lên 311 px. Không có cuộn ngang ở hai kích thước đã kiểm. Bộ kiểm Chromium và Firefox chạy 54/54 lượt Inbox với dữ liệu mô phỏng. Bản build chạy 6/6 phép kiểm preview, tải đầu 511.390 byte gzip so với ngưỡng 512.000. Chrome zoom trang 200% và Firefox chỉ phóng chữ 200% đều đạt hai ca soạn bản nháp và nhập lý do tiếp quản. Kiểm tra trên shop thật chỉ đọc, các luồng gửi và đính kèm dùng API mô phỏng. [Ca FE016](../tests/fe016.spec.ts) · [Bố cục theo kích thước](../tests/ui028-w24-inbox-layout.spec.ts) · [Chữ phóng to](../tests/ui-inbox-text-resize.spec.ts)
+
+## Đóng và mở lại cửa hàng · 25/11/2026
+
+Luồng chọn shop, xác nhận của chủ shop, nhóm công việc cản trở và xử lý tab cũ đã chạy trên hai trình duyệt với bản demo dựng cục bộ. Các phép kiểm, kích thước trang đầu và giới hạn nghiệm thu được ghi trong [kết quả đóng cửa hàng](shop-closure-20261125.md).
+
 ## Nhập mã vận đơn thủ công C05 · 25/11/2026
 
 Ứng viên R55 từ `a44f8f77` dùng ô mã vận đơn trong hộp thoại R42. Hợp đồng nhận mã tùy chọn khi tạo vận đơn. Giao diện bỏ khoảng trắng ở hai đầu, giữ chế độ giao thủ công và hiện mã đã lưu trong bảng. [Form R42](../apps/web/src/modules/fulfillment/index.tsx) · [Phép kiểm FE013](../tests/fe013.spec.ts)
@@ -357,7 +546,7 @@ Kết quả đối chiếu tài liệu/code/runtime trên checkout 08/10/2026 đ
 
 **Gate verdict:** FE-G01/02/03/04/06/07 đạt trong scope; FE-G08 đạt bằng local equivalent được rubric cho phép, hosted Actions vẫn `NOT_RUN`; FE-G05 **CHƯA ĐẠT ĐẦY ĐỦ** vì thiếu Narrator transcript/broad human conformance; FE-G09 **CHƯA XÁC MINH** vì người dùng chưa ghi quyết định cuối. Kết quả tổng là 7/9 gate đạt trong phạm vi, không phải % code hay readiness toàn sản phẩm.
 
-**Tài liệu run/API/reset:** `npm run dev` dùng MSW/seed trong bộ nhớ. Công cụ demo có selector `Dataset mô phỏng → Dataset mặc định`, gọi `setMockControl`/`resetService()` nội bộ để khôi phục seed; reload app cũng khởi tạo lại seed. Không có HTTP endpoint hoặc CLI reset được công bố. `build:demo` ghi `apps/web/dist-demo`, `preview` phục vụ bản đó; `build` tạo production `apps/web/dist` không có MSW fallback. Contract sinh base path same-origin `/api/v2`; `API_PROXY_TARGET` chỉ điều khiển proxy ở `dev:live`, không có `VITE_API_BASE_URL`. Xem [README](../README.md), [FE028 architecture review](../../botsales-kit/execution/frontend-evidence/FE028/architecture-review-current-20261008.md) và [handoff](../../botsales-kit/execution/frontend-evidence/FE028/handoff.md).
+**Chạy frontend và khôi phục dữ liệu mẫu.** `npm run dev` dùng MSW với dữ liệu trong bộ nhớ. Tải lại trang để khôi phục dữ liệu mẫu. `build:demo` ghi vào `apps/web/dist-demo` để chạy với `preview`. `build` tạo production `apps/web/dist` và dùng API thật cùng origin qua `/api/v2`. `API_PROXY_TARGET` chỉ điều khiển proxy ở `dev:live`. [README](../README.md) · [FE028 architecture review](../../botsales-kit/execution/frontend-evidence/FE028/architecture-review-current-20261008.md) · [Handoff](../../botsales-kit/execution/frontend-evidence/FE028/handoff.md)
 
 **Nguồn evidence:** [FE026 clean artifact manifest](../../botsales-kit/execution/frontend-evidence/FE026/clean-artifacts-current-20261008-attempt03.json), [registered verify](../../botsales-kit/execution/frontend-evidence/FE026/registered-verify-current-20261008.log), [FE027 UAT matrix](../../botsales-kit/execution/frontend-evidence/FE027/uat-matrix-current-20261008.json), [FE028 gate matrix](../../botsales-kit/execution/frontend-evidence/FE028/quality-gate-matrix-current-20261008.json), [architecture review](../../botsales-kit/execution/frontend-evidence/FE028/architecture-review-current-20261008.md), [Production Claim Gate](../../botsales-kit/execution/frontend-evidence/FE028/production-claim-review-current-20261008.json). FE tracker status sau FE028 checkpoints được sinh từ `botsales-kit/execution/frontend-progress.json`; đọc từ `node botsales-kit/scripts/progress.mjs status`, không suy từ narrative hoặc snapshot cũ.
 

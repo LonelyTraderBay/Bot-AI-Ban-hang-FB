@@ -95,7 +95,7 @@ export async function runMockNetworkScenarios({ root = process.cwd() } = {}) {
             assert.match(main, /if\s*\(__MOCK__\)[\s\S]*?import\('\.\/mocks\/browser'\)/);
             assert.match(viteConfig, /const mocks\s*=\s*mode\s*===\s*'demo'/);
             assert.match(viteConfig, /mode\s*===\s*'production'[\s\S]*?VITE_ENABLE_MOCKS\s*===\s*'true'/);
-            assert.match(fs.readFileSync(path.join(root, 'apps/web/src/app/Shell.tsx'), 'utf8'), /Dữ liệu mô phỏng/);
+            assert.doesNotMatch(fs.readFileSync(path.join(root, 'apps/web/src/app/Shell.tsx'), 'utf8'), /MockTools|mock-tools-controls|Công cụ demo/);
         });
 
         await run('Covers the canonical route, feature, shop, and role catalogs', async () => {

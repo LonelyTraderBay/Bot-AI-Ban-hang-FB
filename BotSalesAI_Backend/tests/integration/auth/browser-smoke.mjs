@@ -23,7 +23,7 @@ import { configureTelegramBrowserFixture, verifyOrdersFlow, verifyTelegramBrowse
 import { pushConfigEnv } from '../notifications/web-push-fixture.mjs';
 import { verifyPrivacyFlow } from '../privacy/browser-cases.mjs';
 import { provisionManualSupplier, verifyProcurementFlow } from '../procurement/browser-cases.mjs';
-import { verifyCommandRecovery, verifyWorkspaceSelection } from '../workspace/browser-cases.mjs';
+import { verifyCommandRecovery, verifyShopClosure, verifyWorkspaceSelection } from '../workspace/browser-cases.mjs';
 import { assertFixtureDatabase, fixtureSession } from '../workspace/session-fixture.mjs';
 import { configureLocalPilot, verifyLocalPilot } from './pilot-cases.mjs';
 
@@ -441,6 +441,7 @@ async function smoke() {
     if (workspace) {
         await verifyWorkspaceSelection(browser, page, cookie);
         await verifyCommandRecovery(page);
+        await verifyShopClosure(page);
         await page.goto(appOrigin + returnPath);
         await landing.waitFor();
     }

@@ -1439,9 +1439,9 @@ Ghim baseline tại commit `e22bb99d6839df9943308556c94499c04e7b7f85`. Khi ngu�
 
 | Nguồn | Số mục | SHA-256 |
 |---|---:|---|
-| [openapi.json](../botsales-kit/contracts/openapi.json) | 260 thao tác / 384 schema | `7bf7d94093b27c9aed01f7fc9adad9cf252785b21145512d3e33852c5da3a549` |
-| [operation-index.json](../botsales-kit/contracts/operation-index.json) | 260 thao tác | `5b05395589c0c0e3c94cd5fa775f2a2debbc12c74b62bc6712b46890fd76d3e8` |
-| [route-manifest.json](../botsales-kit/contracts/route-manifest.json) | 67 màn / 16 module | `48005a97b71bd7b1931e0ec54ec173a37ab4ff63437d1503042ee473866633a1` |
+| [openapi.json](../botsales-kit/contracts/openapi.json) | 270 thao tác / 398 schema | `3e939c504e947043bcd04b1b8ccfbb45c724f4c7f5c7cc9d49c3df38e6bfc023` |
+| [operation-index.json](../botsales-kit/contracts/operation-index.json) | 270 thao tác | `b0de2eea6abf78e9f28696703309dc720ccac441c28cb687dfe86e031e7215a3` |
+| [route-manifest.json](../botsales-kit/contracts/route-manifest.json) | 67 màn hình | `5c88685178b373ac698a181e345570cac0917a7316f5426b724ab2d8126ca532` |
 | [feature-catalog.json](../botsales-kit/contracts/feature-catalog.json) | 64 tính năng | `0b3f6c8a1fa8739d7ecd53937d40bfe54559c4d8e274e27bb7c4542171b654b0` |
 | [permission-catalog.json](../botsales-kit/contracts/permission-catalog.json) | 56 quyền / 7 preset / 4 vai trò AI | `144ff0315d2510e2a0c55df1d3eaa82730bf6b7b678461d548229939d2e29acd` |
 | [events.schema.json](../botsales-kit/contracts/events.schema.json) | 32 loại sự kiện phân biệt | `7b67ae36fabe0b22978fbb47e897b635ca4b7518b7599eee486d3a1af23f18fc` |
@@ -1460,7 +1460,7 @@ Các cột đọc, ghi và ca chuẩn lấy từ route manifest. Cột thêm t�
 | R03 Thiết lập cửa hàng | `workspace` | [BE-21](#be-21) | `getSession` | `createShop` | — | `SC-001`, `SC-002`, `SC-003`, `SC-004`, `SC-005`, `SC-006`, `SC-007`, `SC-008`, `SC-009`, `SC-010`, `SC-011`, `SC-054`, `SC-055` |
 | R04 Tổng quan | `dashboard` | [BE-07](#be-07) | `getDashboard`, `getShop` | `pauseBot` | — | `SC-001`, `SC-002`, `SC-003`, `SC-004`, `SC-006`, `SC-007`, `SC-008`, `SC-010`, `SC-011`, `SC-053` |
 | R05 Hộp thư | `inbox` | [BE-18](#be-18) | `listConversations`, `getInboxMetadata` | — | — | `SC-001`, `SC-002`, `SC-003`, `SC-004`, `SC-006`, `SC-007`, `SC-008`, `SC-010`, `SC-011`, `SC-033`, `SC-034`, `SC-035`, `SC-036`, `SC-037` |
-| R06 Chi tiết hội thoại | `inbox` | [BE-18](#be-18) | `getConversation`, `listMessages`, `getCommand`, `getInboxMetadata`, `getFile`, `listPromotions` | `sendMessage`, `addInternalNote`, `takeoverConversation`, `releaseConversation`, `assignConversation`, `resolveConversation`, `createFeedback`, `uploadFile` | — | `SC-001`, `SC-002`, `SC-003`, `SC-004`, `SC-006`, `SC-007`, `SC-008`, `SC-010`, `SC-011`, `SC-033`, `SC-034`, `SC-035`, `SC-036`, `SC-037` |
+| R06 Chi tiết hội thoại | `inbox` | [BE-18](#be-18) | `getConversation`, `listMessages`, `getCommand`, `getInboxMetadata`, `getFile`, `listPromotions` | `sendMessage`, `addInternalNote`, `takeoverConversation`, `releaseConversation`, `assignConversation`, `resolveConversation`, `createFeedback`, `uploadFile` | `getConversationOrderDraft`, `accessConversationOrderDraft`, `saveConversationOrderDraft`, `discardConversationOrderDraft`, `convertConversationOrderDraft`, `estimateConversationOrderDraft` | `SC-001`, `SC-002`, `SC-003`, `SC-004`, `SC-006`, `SC-007`, `SC-008`, `SC-010`, `SC-011`, `SC-033`, `SC-034`, `SC-035`, `SC-036`, `SC-037` |
 | R07 Khách hàng | `customers` | [BE-08](#be-08) | `listCustomers` | `createCustomer` | — | `SC-001`, `SC-002`, `SC-003`, `SC-004`, `SC-006`, `SC-007`, `SC-008`, `SC-010`, `SC-011`, `SC-038` |
 | R08 Hồ sơ khách | `customers` | [BE-08](#be-08) | `getCustomer`, `listCustomerAddresses`, `getCustomerAddress` | `updateCustomer`, `createCustomerAddress`, `updateCustomerAddress`, `archiveCustomerAddress` | — | `SC-001`, `SC-002`, `SC-003`, `SC-004`, `SC-006`, `SC-007`, `SC-008`, `SC-010`, `SC-011`, `SC-038`, `SC2-C05-ADDRESS` |
 | R09 Sản phẩm | `catalog` | [BE-07](#be-07) | `listProducts`, `listCategories` | — | — | `SC-001`, `SC-002`, `SC-003`, `SC-004`, `SC-006`, `SC-007`, `SC-008`, `SC-010`, `SC-011`, `SC-012`, `SC-013`, `SC-014`, `SC-015`, `SC-016`, `SC-017`, `SC-018` |
@@ -1471,8 +1471,8 @@ Các cột đọc, ghi và ca chuẩn lấy từ route manifest. Cột thêm t�
 | R14 Kết quả nhập dữ liệu | `catalog` | [BE-08](#be-08) | `getJob` | `commitProductImport` | — | `SC-001`, `SC-002`, `SC-003`, `SC-004`, `SC-006`, `SC-007`, `SC-008`, `SC-010`, `SC-011`, `SC-012`, `SC-013`, `SC-014`, `SC-015`, `SC-016`, `SC-017`, `SC-018` |
 | R15 Tồn kho | `inventory` | [BE-09](#be-09) | `listStockSnapshots`, `getShop` | `createInventoryAdjustment` | — | `SC-001`, `SC-002`, `SC-003`, `SC-004`, `SC-006`, `SC-007`, `SC-008`, `SC-010`, `SC-011`, `SC-019`, `SC-020`, `SC-021` |
 | R16 Lịch sử kho | `inventory` | [BE-09](#be-09) | `listStockMovements` | — | — | `SC-001`, `SC-002`, `SC-003`, `SC-004`, `SC-006`, `SC-007`, `SC-008`, `SC-010`, `SC-011`, `SC-019`, `SC-020`, `SC-021` |
-| R17 Đơn hàng | `orders` | [BE-11](#be-11) | `listOrders` | — | — | `SC-001`, `SC-002`, `SC-003`, `SC-004`, `SC-006`, `SC-007`, `SC-008`, `SC-010`, `SC-011`, `SC-022`, `SC-023`, `SC-024`, `SC-025`, `SC-026`, `SC-027` |
-| R18 Tạo đơn nháp | `orders` | [BE-11](#be-11) | `listCustomers`, `listProducts`, `getShop`, `listPromotions` | `createOrder` | `listWarehouses`, `listCustomerAddresses` | `SC-001`, `SC-002`, `SC-003`, `SC-004`, `SC-006`, `SC-007`, `SC-008`, `SC-010`, `SC-011`, `SC-022`, `SC-023`, `SC-024`, `SC-025`, `SC-026`, `SC-027` |
+| R17 Đơn hàng | `orders` | [BE-11](#be-11) | `listOrders` | — | `listConversationOrderDrafts` | `SC-001`, `SC-002`, `SC-003`, `SC-004`, `SC-006`, `SC-007`, `SC-008`, `SC-010`, `SC-011`, `SC-022`, `SC-023`, `SC-024`, `SC-025`, `SC-026`, `SC-027` |
+| R18 Tạo đơn nháp | `orders` | [BE-11](#be-11) | `listCustomers`, `listProducts`, `getShop`, `listPromotions` | `estimateOrderDraft`, `createOrder` | `listWarehouses`, `listCustomerAddresses` | `SC-001`, `SC-002`, `SC-003`, `SC-004`, `SC-006`, `SC-007`, `SC-008`, `SC-010`, `SC-011`, `SC-022`, `SC-023`, `SC-024`, `SC-025`, `SC-026`, `SC-027` |
 | R19 Chi tiết đơn hàng | `orders` | [BE-11](#be-11) | `getOrder`, `getCommand` | `updateOrderDraft`, `quoteOrder`, `confirmOrder`, `handoverShipment`, `cancelOrder`, `createReturnCase`, `payOrder`, `refundOrder` | `recordCustomerConfirmation`, `listPromotions` | `SC-001`, `SC-002`, `SC-003`, `SC-004`, `SC-006`, `SC-007`, `SC-008`, `SC-010`, `SC-011`, `SC-022`, `SC-023`, `SC-024`, `SC-025`, `SC-026`, `SC-027` |
 | R20 Thu/chi tổng quan | `finance` | [BE-17](#be-17) | `getCashflow` | — | — | `SC-001`, `SC-002`, `SC-003`, `SC-004`, `SC-006`, `SC-007`, `SC-008`, `SC-010`, `SC-011`, `SC-028`, `SC-029`, `SC-030`, `SC-031`, `SC-032` |
 | R21 Sổ thu/chi | `finance` | [BE-12](#be-12) | `listFinanceEntries`, `getFinanceEntry`, `getCommand` | `createFinanceEntry`, `updateFinanceEntry`, `postFinanceEntry`, `reverseFinanceEntry` | — | `SC-001`, `SC-002`, `SC-003`, `SC-004`, `SC-006`, `SC-007`, `SC-008`, `SC-010`, `SC-011`, `SC-028`, `SC-029`, `SC-030`, `SC-031`, `SC-032` |
@@ -1487,7 +1487,7 @@ Các cột đọc, ghi và ca chuẩn lấy từ route manifest. Cột thêm t�
 | R30 Nhà cung cấp AI | `integrations` | [BE-19](#be-19) | `listAIConnections`, `getAIConnection`, `getProviderCatalog`, `getJob` | `createAIConnection`, `updateAIConnection`, `testAIConnection`, `deleteAIConnection` | — | `SC-001`, `SC-002`, `SC-003`, `SC-004`, `SC-006`, `SC-007`, `SC-008`, `SC-010`, `SC-011`, `SC-047`, `SC-048`, `SC-049`, `SC-050` |
 | R31 Báo cáo và xuất dữ liệu | `reports` | [BE-17](#be-17) | `getReportSummary`, `listJobs` | `createExport` | — | `SC-001`, `SC-002`, `SC-003`, `SC-004`, `SC-006`, `SC-007`, `SC-008`, `SC-010`, `SC-011`, `SC-051`, `SC-052` |
 | R32 Nhân sự và quyền | `workspace` | [BE-05](#be-05) | `listMembers`, `getMember` | `inviteMember`, `updateMemberRoles`, `revokeMembership` | — | `SC-001`, `SC-002`, `SC-003`, `SC-004`, `SC-005`, `SC-006`, `SC-007`, `SC-008`, `SC-009`, `SC-010`, `SC-011`, `SC-054`, `SC-055` |
-| R33 Thiết lập cửa hàng | `workspace` | [BE-21](#be-21) | `getShop` | `updateShop` | — | `SC-001`, `SC-002`, `SC-003`, `SC-004`, `SC-005`, `SC-006`, `SC-007`, `SC-008`, `SC-009`, `SC-010`, `SC-011`, `SC-054`, `SC-055` |
+| R33 Thiết lập cửa hàng | `workspace` | [BE-21](#be-21) | `getShop` | `updateShop` | `closeShop`, `reopenShop` | `SC-001`, `SC-002`, `SC-003`, `SC-004`, `SC-005`, `SC-006`, `SC-007`, `SC-008`, `SC-009`, `SC-010`, `SC-011`, `SC-054`, `SC-055` |
 | R34 Nhật ký kiểm toán | `workspace` | [BE-06](#be-06) | `listAuditEvents` | — | — | `SC-001`, `SC-002`, `SC-003`, `SC-004`, `SC-005`, `SC-006`, `SC-007`, `SC-008`, `SC-009`, `SC-010`, `SC-011`, `SC-054`, `SC-055` |
 | R35 Quyền riêng tư và lưu trữ | `workspace` | [BE-21](#be-21) | `getPrivacyPolicy`, `listPrivacyRequests`, `getCommand` | `updatePrivacyPolicy`, `createPrivacyRequest`, `stepUp`, `approvePrivacyRequest` | — | `SC-001`, `SC-002`, `SC-003`, `SC-004`, `SC-005`, `SC-006`, `SC-007`, `SC-008`, `SC-009`, `SC-010`, `SC-011`, `SC-054`, `SC-055` |
 | R36 Theo dõi công việc nền | `workspace` | [BE-10](#be-10) | `getJob` | — | — | `SC-001`, `SC-002`, `SC-003`, `SC-004`, `SC-005`, `SC-006`, `SC-007`, `SC-008`, `SC-009`, `SC-010`, `SC-011`, `SC-054`, `SC-055` |
@@ -1627,6 +1627,8 @@ Bảng màn hình truy vết ca SC và SC2 từ nguồn. Bảng tính năng truy
 | `createShop` | `POST /shops` | [BE-21](#be-21) | — | CSRF, IK | 201 | R03 |
 | `getShop` | `GET /shops/{shopId}` | [BE-05](#be-05) | — | — | 200 | R04, R15, R18, R33, Global |
 | `updateShop` | `PATCH /shops/{shopId}` | [BE-21](#be-21) | `shop.manage` | CSRF, IK, Ver | 200 | R33 |
+| `closeShop` | `POST /shops/{shopId}/close` | [BE-21](#be-21) | `shop.manage` | CSRF, IK, Ver | 200 | R33 |
+| `reopenShop` | `POST /shops/{shopId}/reopen` | [BE-21](#be-21) | `shop.manage` | CSRF, IK, Ver | 200 | R33 |
 | `beginLogin` | `POST /auth/start` | [BE-04](#be-04) | — | CSRF, IK | 200 | R01 |
 | `completeLogin` | `GET /auth/callback` | [BE-04](#be-04) | — | — | 302 | — |
 
@@ -1700,8 +1702,16 @@ Bảng màn hình truy vết ca SC và SC2 từ nguồn. Bảng tính năng truy
 |---|---|---|---|---|---|---|
 | `listOrders` | `GET /shops/{shopId}/orders` | [BE-11](#be-11) | `orders.read` | — | 200 | R17 |
 | `createOrder` | `POST /shops/{shopId}/orders` | [BE-11](#be-11) | `orders.write` | CSRF, IK | 201 | R18 |
+| `estimateOrderDraft` | `POST /shops/{shopId}/orders/estimate` | [BE-11](#be-11) | `orders.write` | CSRF | 200 | R18 |
 | `getOrder` | `GET /shops/{shopId}/orders/{orderId}` | [BE-11](#be-11) | `orders.read` | — | 200 | R19 |
 | `updateOrderDraft` | `PATCH /shops/{shopId}/orders/{orderId}` | [BE-11](#be-11) | `orders.write` | CSRF, IK, Ver | 200 | R19 |
+| `listConversationOrderDrafts` | `GET /shops/{shopId}/conversation-order-drafts` | [BE-11](#be-11) | `orders.read` | — | 200 | R17 |
+| `getConversationOrderDraft` | `GET /shops/{shopId}/conversations/{conversationId}/order-draft` | [BE-11](#be-11) | `orders.read` | — | 200 | R06 |
+| `accessConversationOrderDraft` | `POST /shops/{shopId}/conversations/{conversationId}/order-draft/access` | [BE-11](#be-11) | `orders.write` | CSRF, IK | 200 | R06 |
+| `saveConversationOrderDraft` | `PATCH /shops/{shopId}/conversations/{conversationId}/order-draft/{draftId}` | [BE-11](#be-11) | `orders.write` | CSRF, IK, Ver | 200 | R06 |
+| `discardConversationOrderDraft` | `POST /shops/{shopId}/conversations/{conversationId}/order-draft/{draftId}/discard` | [BE-11](#be-11) | `orders.write` | CSRF, IK, Ver | 200 | R06 |
+| `convertConversationOrderDraft` | `POST /shops/{shopId}/conversations/{conversationId}/order-draft/{draftId}/convert` | [BE-11](#be-11) | `orders.write` | CSRF, IK, Ver | 201 | R06 |
+| `estimateConversationOrderDraft` | `GET /shops/{shopId}/conversations/{conversationId}/order-draft/{draftId}/estimate` | [BE-11](#be-11) | `orders.read` | — | 200 | R06 |
 | `quoteOrder` | `POST /shops/{shopId}/orders/{orderId}/quote` | [BE-11](#be-11) | `orders.write` | CSRF, IK | 200 | R19 |
 | `confirmOrder` | `POST /shops/{shopId}/orders/{orderId}/confirm` | [BE-11](#be-11) | `orders.confirm` | CSRF, IK | 202 | R19 |
 | `cancelOrder` | `POST /shops/{shopId}/orders/{orderId}/cancel` | [BE-11](#be-11) | `orders.write` | CSRF, IK | 202 | R19 |

@@ -1,3 +1,4 @@
+import { lockShopClosure } from '../../platform/database/shop-lifecycle.js';
 import { Prisma, type PrismaClient, type WorkItemKind } from '../../generated/prisma/client.js';
 import { serializable } from '../../platform/database/transactions.js';
 import { lockAutomationFence } from '../operations/index.js';
@@ -19,10 +20,11 @@ const notices: readonly {
 
 export async function publishOperationNotices(db: PrismaClient, now = new Date()) {
     const policies = await db.notificationPolicy.findMany({
-        where: { enabled: true, NOT: { eventPriorities: { equals: Prisma.DbNull } } }, select: { shopId: true },
+        where: { enabled: true, shop: { closedAt: null }, NOT: { eventPriorities: { equals: Prisma.DbNull } } }, select: { shopId: true },
     });
     for (const { shopId } of policies) {
         await serializable(db, async tx => {
+            if (await lockShopClosure(tx, shopId)) return;
             if ((await lockAutomationFence(tx, shopId)).paused) return;
             const policy = await tx.notificationPolicy.findUnique({ where: { shopId } });
             if (!policy?.enabled) return;

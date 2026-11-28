@@ -9,9 +9,10 @@ import { setTimeout as delay } from 'node:timers/promises';
 import { createApp } from '../../../apps/api/dist/app.js';
 import { readDatabaseUrl } from '../../../apps/api/dist/config.js';
 import { createContractValidator, schemaFromContract } from '../../../apps/api/dist/http/contracts.js';
+import { fileStorageBacklog, transferFileObjects } from '../../../apps/api/dist/modules/files/index.js';
 import { readAuthConfig } from '../../../apps/api/dist/modules/workspace/index.js';
 import { Database } from '../../../apps/api/dist/platform/database/client.js';
-import { runJob, scheduleJob } from '../../../apps/api/dist/platform/jobs/index.js';
+import { dueJobs, runJob, scheduleJob } from '../../../apps/api/dist/platform/jobs/index.js';
 import { fixtureShops } from '../../../apps/api/prisma/p0-fixture.mjs';
 import { assertFixtureDatabase, fixtureSession } from '../workspace/session-fixture.mjs';
 
@@ -101,6 +102,73 @@ async function jobFixture(shop, actor, scenario, dueAt = new Date()) {
 function loadJob(job) {
     return db.job.findUniqueOrThrow({ where: { shopId_id: { shopId: job.shopId, id: job.id } } });
 }
+
+test('a stale queue delivery cannot start a closed shop job and the peer job still runs', async () => {
+    const first = await jobFixture(shopA, ownerA, 'closed-shop');
+    const second = await jobFixture(shopB, ownerB, 'active-shop');
+    const calls = [];
+    const perform = job => runJob(db, { shopId: job.shopId, id: job.id, sourceOperation }, async claimed => {
+        calls.push(claimed.shopId);
+        return { status: 'succeeded', completed: 1, total: 1, errorCount: 0 };
+    }, async () => true);
+    await db.shop.update({ where: { id: shopA.id }, data: { closedAt: new Date() } });
+    try {
+        const listed = await dueJobs(db, [sourceOperation]);
+        assert.ok(!listed.some(job => job.id === first.id));
+        assert.ok(listed.some(job => job.id === second.id));
+        await perform(first);
+        await perform(second);
+        assert.deepEqual(calls, [shopB.id]);
+        assert.equal((await loadJob(first)).attempts, 0);
+    } finally {
+        await db.shop.update({ where: { id: shopA.id }, data: { closedAt: null } });
+        await perform(first);
+    }
+});
+
+async function stageStorageFile(shop, actor, purpose, expiresAt = null) {
+    const bytes = Buffer.from('synthetic transfer');
+    const sha256 = createHash('sha256').update(bytes).digest('hex');
+    const row = await db.fileObject.create({ data: { shopId: shop.id, uploaderId: actor.userId, purpose, name: 'fixture.txt',
+        mimeType: 'text/plain', sizeBytes: bytes.length, sha256, status: 'ready', expiresAt } });
+    await db.fileBlob.create({ data: { shopId: shop.id, fileId: row.id, bytes } });
+    return row.id;
+}
+
+test('closed shops report actionable storage backlog and still monitor overdue purge', async () => {
+    const setClosed = closedAt => db.shop.update({ where: { id: shopA.id }, data: { closedAt } });
+    await setClosed(new Date());
+    try {
+        const now = new Date();
+        const baseline = await fileStorageBacklog(db, now);
+        await stageStorageFile(shopA, ownerA, 'product_import');
+        await stageStorageFile(shopA, ownerA, 'privacy_export');
+        await stageStorageFile(shopB, ownerB, 'product_import');
+        await stageStorageFile(shopA, ownerA, 'product_import', now);
+        const backlog = await fileStorageBacklog(db, now);
+        assert.equal(backlog.waitingToTransfer - baseline.waitingToTransfer, 2);
+        assert.equal(backlog.retiredAwaitingPurge - baseline.retiredAwaitingPurge, 1);
+    } finally {
+        await setClosed(null);
+    }
+});
+
+test('a retired file cannot start a PUT after the bucket probe', async () => {
+    const fileId = await stageStorageFile(shopA, ownerA, 'product_import');
+    const key = { shopId: shopA.id, id: fileId };
+    // Only expose this test's file to the synthetic transport on the shared integration fixture.
+    const scoped = db.$extends({ query: { fileObject: { findMany({ args, query }) {
+        return query({ ...args, where: { AND: [args.where, key] } });
+    } } } });
+    const writes = [];
+    const store = { id: createHash('sha256').update('worker-fixture').digest('hex'), checkBucket: async () => {
+        await db.fileObject.update({ where: { shopId_id: key }, data: { expiresAt: new Date(0) } });
+    }, write: async file => { writes.push(file.id); }, remove: async () => {} };
+    await transferFileObjects(scoped, store);
+    assert.deepEqual(writes, []);
+    const lease = await db.fileStorage.findUniqueOrThrow({ where: { shopId_fileId: { shopId: shopA.id, fileId } } });
+    assert.equal(lease.leaseUntil, null);
+});
 
 async function expireClaim(job) {
     const { count } = await db.job.updateMany({

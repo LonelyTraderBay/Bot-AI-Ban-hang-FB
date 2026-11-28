@@ -22,10 +22,14 @@ export function membershipDto({ id, shopId, userId, status, roles, permissionVer
     return { id, shopId, userId, status, roles, permissionVersion, permissions: status === 'active' ? permissionsFor(roles) : [] };
 }
 
-export async function sessionPrincipal(tx: Prisma.TransactionClient, token: string): Promise<string> {
-    const current = await tx.session.findFirst({ where: activeSession(token), select: { userId: true } });
+export async function sessionIdentity(tx: Prisma.TransactionClient, token: string) {
+    const current = await tx.session.findFirst({ where: activeSession(token), select: { id: true, userId: true } });
     if (!current) throw new UnauthorizedException();
-    return current.userId;
+    return current;
+}
+
+export async function sessionPrincipal(tx: Prisma.TransactionClient, token: string): Promise<string> {
+    return (await sessionIdentity(tx, token)).userId;
 }
 
 export function readAsSession<T>(db: PrismaClient | undefined, headers: IncomingHttpHeaders,

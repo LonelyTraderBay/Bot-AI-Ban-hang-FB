@@ -103,7 +103,7 @@ test('UI012 keyboard-only finance edit handles select, discard warning and focus
 test('UIC08 reconciliation tabs expose their name and keep keyboard focus visible at 320px', async ({ page }, info) => {
     await page.setViewportSize({ width: 320, height: 480 });
     await page.goto(new URL('/s/shop-demo/finance/reconciliation', demoUrl).toString());
-    await expect(page.getByRole('heading', { name: 'Đối soát ngân hàng & COD', exact: true })).toBeVisible();
+    await expect(page.getByRole('heading', { name: 'Đối soát', exact: true })).toBeVisible();
 
     const tablist = page.getByRole('tablist', { name: 'Nhóm đối soát ngân hàng và COD', exact: true });
     await expect(tablist).toBeVisible();
@@ -270,7 +270,7 @@ test('UI012 keyboard activates the CSV chooser and discards its selected file wi
     });
     await page.goto(new URL('/s/shop-demo/finance/reconciliation', demoUrl).toString());
     const main = page.locator('main#main-content');
-    await expect(page.getByRole('heading', { name: 'Đối soát ngân hàng & COD', exact: true })).toBeVisible();
+    await expect(page.getByRole('heading', { name: 'Đối soát', exact: true })).toBeVisible();
     const skipLink = page.getByRole('link', { name: 'Đến nội dung chính', exact: true });
     await page.keyboard.press('Tab');
     await expect(skipLink).toBeFocused();
@@ -303,16 +303,15 @@ test('UI012 keyboard activates the CSV chooser and discards its selected file wi
     expect(writes).toEqual([]);
 });
 
-test('UI012 keyboard can reach and horizontally scroll the marketing chart data alternative', async ({ page }) => {
+test('UI012 keyboard can reach the marketing chart data alternative without horizontal scrolling', async ({ page }) => {
     await page.setViewportSize({ width: 320, height: 900 });
     await page.goto(new URL('/s/shop-demo/reports/marketing', demoUrl).toString());
     const main = page.locator('main#main-content');
-    await expect(page.getByRole('heading', { name: 'Thông tin cho marketing', exact: true })).toBeVisible();
+    await expect(page.getByRole('heading', { name: 'Thông tin marketing', exact: true })).toBeVisible();
     const chart = page.getByRole('img', { name: /Biểu đồ lý do không chốt đơn/ });
-    const table = page.getByRole('table', { name: 'Lý do không chốt đơn' });
     const region = page.getByRole('region', { name: 'Lý do không chốt đơn' });
     await expect(chart).toBeVisible();
-    await expect(table.getByRole('row').nth(1)).toBeVisible();
+    await expect(region.getByRole('listitem').first()).toBeVisible();
     await expect(region).toBeVisible();
 
     const skipLink = page.getByRole('link', { name: 'Đến nội dung chính', exact: true });
@@ -322,11 +321,7 @@ test('UI012 keyboard can reach and horizontally scroll the marketing chart data 
     await expect(main).toBeFocused();
     await tabUntilFocused(page, region);
     await expect(region).toBeFocused();
-    const before = await region.evaluate(element => (element as HTMLElement).scrollLeft);
-    expect(await region.evaluate(element => (element as HTMLElement).scrollWidth > (element as HTMLElement).clientWidth)).toBe(true);
-    await page.keyboard.press('ArrowRight');
-    const after = await region.evaluate(element => (element as HTMLElement).scrollLeft);
-    expect(after).toBeGreaterThan(before);
+    expect(await region.evaluate(element => element.scrollWidth <= element.clientWidth)).toBe(true);
     expect(await page.evaluate(() => document.documentElement.scrollLeft)).toBe(0);
 });
 
@@ -347,13 +342,14 @@ test('UI012 marketing chart keeps every category label visible beside its data t
         await page.goto(new URL('/s/shop-demo/reports/marketing', demoUrl).toString());
         expect((await canonicalResponse).status()).toBe(200);
         const chart = page.getByRole('img', { name: 'Biểu đồ lý do không chốt đơn, 3 nhóm' });
-        const table = page.getByRole('table', { name: 'Lý do không chốt đơn' });
+        const region = page.getByRole('region', { name: 'Lý do không chốt đơn' });
         await expect(chart).toBeVisible();
-        await expect(table).toBeVisible();
+        await expect(region).toBeVisible();
 
         const chartLabels = (await chart.locator('svg text').allTextContents()).map(label => label.replace(/\s+/gu, ' ').trim());
         expect(chartLabels).toEqual(expect.arrayContaining(expectedLabels));
-        await expect(table.getByRole('row')).toHaveCount(4);
+        if (viewport.width < 768) await expect(region.getByRole('listitem')).toHaveCount(expectedLabels.length);
+        else await expect(region.getByRole('row')).toHaveCount(expectedLabels.length + 1);
 
         await chart.scrollIntoViewIfNeeded();
         const chartBounds = await chart.boundingBox();
@@ -461,6 +457,7 @@ test('UI012 human-confirmation policy copy wraps inside its alert at a 320 CSS-p
 
 test('UI012 dashboard CTA separates hover and pressed feedback while keeping keyboard focus visible', async ({ page }) => {
     await page.goto(new URL('/s/shop-demo/overview', demoUrl).toString());
+    await expect(page.getByRole('heading', { name: 'Tổng quan', exact: true })).toBeVisible({ timeout: 15_000 });
     const action = page.getByRole('link', { name: 'Xem việc cần làm', exact: true });
     await expect(action).toBeVisible();
 

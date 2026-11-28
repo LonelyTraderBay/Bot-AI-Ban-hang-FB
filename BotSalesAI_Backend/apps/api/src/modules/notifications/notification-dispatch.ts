@@ -1,3 +1,4 @@
+import { lockShopClosure } from '../../platform/database/shop-lifecycle.js';
 import type { AppNotification, Prisma, PrismaClient } from '../../generated/prisma/client.js';
 import { serializable } from '../../platform/database/transactions.js';
 import { enqueueResourceUpdate } from '../../platform/outbox/index.js';
@@ -28,6 +29,7 @@ async function activeWork(tx: Prisma.TransactionClient, notice: AppNotification,
 async function currentTarget(db: PrismaClient, notification: AppNotification, now: Date, providers: NotificationProviders) {
     const { shopId, id, recipientUserId } = notification;
     return db.$transaction(async tx => {
+        if (await lockShopClosure(tx, shopId)) return undefined;
         const current = await tx.appNotification.findUnique({
             where: { shopId_id: { shopId, id } }, include: { pushDevice: true },
         });
@@ -63,7 +65,7 @@ async function queueFallback(tx: Prisma.TransactionClient, notice: AppNotificati
 
 export async function dispatchExternalNotifications(db: PrismaClient, providers: NotificationProviders, now = new Date(), request = fetch) {
     const due = await db.appNotification.findFirst({
-        where: { ...unsent, OR: [{ deliveryStartedAt: null }, { deliveryStartedAt: { lte: new Date(now.getTime() - 60_000) } }] },
+        where: { ...unsent, recipient: { shop: { closedAt: null } }, OR: [{ deliveryStartedAt: null }, { deliveryStartedAt: { lte: new Date(now.getTime() - 60_000) } }] },
         orderBy: [{ createdAt: 'asc' }, { shopId: 'asc' }, { id: 'asc' }],
     });
     if (!due) return;
@@ -71,10 +73,14 @@ export async function dispatchExternalNotifications(db: PrismaClient, providers:
     // An indeterminate attempt is settled after its deadline without an additional provider call.
     const started = due.deliveryStartedAt ?? now;
     if (!due.deliveryStartedAt) {
-        const claim = await db.appNotification.updateMany({
-            where: { ...unsent, shopId, id, deliveryStartedAt: null }, data: { deliveryStartedAt: started },
+        const claimed = await db.$transaction(async tx => {
+            if (await lockShopClosure(tx, shopId)) return false;
+            const claim = await tx.appNotification.updateMany({
+                where: { ...unsent, shopId, id, deliveryStartedAt: null }, data: { deliveryStartedAt: started },
+            });
+            return claim.count === 1;
         });
-        if (!claim.count) return;
+        if (!claimed) return;
     }
     const target = !due.deliveryStartedAt ? await currentTarget(db, due, now, providers) : undefined;
     const result = target
@@ -83,6 +89,7 @@ export async function dispatchExternalNotifications(db: PrismaClient, providers:
         }, target.ttl, request)
         : due.deliveryStartedAt ? uncertainty : failed;
     await serializable(db, async tx => {
+        const closedAt = await lockShopClosure(tx, shopId);
         const [updated] = await tx.appNotification.updateManyAndReturn({
             where: { ...unsent, shopId, id, deliveryStartedAt: started },
             data: { deliveryStatus: result.status, version: { increment: 1 } },
@@ -94,6 +101,6 @@ export async function dispatchExternalNotifications(db: PrismaClient, providers:
                 version: { increment: 1 } },
         });
         await enqueueResourceUpdate(tx, 'notification.updated', updated);
-        if (target && due.channel === 'web_push' && result.status === 'failed') await queueFallback(tx, due, now, providers);
+        if (!closedAt && target && due.channel === 'web_push' && result.status === 'failed') await queueFallback(tx, due, now, providers);
     }, true);
 }

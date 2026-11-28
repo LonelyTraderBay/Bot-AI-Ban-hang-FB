@@ -19,7 +19,7 @@ test('Orders R17/R18/R19/R43 preserve responsive page geometry at 320-1440px', a
         { id: 'R17', path: '/s/shop-demo/orders', heading: 'Đơn hàng' },
         { id: 'R18', path: '/s/shop-demo/orders/new', heading: 'Tạo đơn hàng' },
         { id: 'R19', path: '/s/shop-demo/orders/DH-1001', heading: 'Đơn DH-1001' },
-        { id: 'R43', path: '/s/shop-demo/returns', heading: 'Đổi và trả hàng' },
+        { id: 'R43', path: '/s/shop-demo/returns', heading: 'Đổi trả' },
     ];
     const observations = [];
 
@@ -33,7 +33,7 @@ test('Orders R17/R18/R19/R43 preserve responsive page geometry at 320-1440px', a
             await expect(page.locator('main .MuiCircularProgress-root,main .MuiLinearProgress-root')).toHaveCount(0, { timeout: 30_000 });
             await expect(page.getByRole('heading', { name: route.heading, exact: true })).toBeVisible({ timeout: 30_000 });
             const main = page.locator('main#main-content');
-            await expect(main).toHaveCSS('padding-left', width >= 768 ? '24px' : '16px');
+            await expect(main).toHaveCSS('padding-left', '8px');
             const geometry = await page.evaluate(() => ({
                 clientWidth: document.documentElement.clientWidth,
                 scrollWidth: document.documentElement.scrollWidth,
@@ -76,9 +76,14 @@ test('Orders draft, versioned quote, canonical address snapshot and return dialo
     expect((await orderDetail).status()).toBe(200);
     await page.locator('main#main-content').getByRole('progressbar', { name: 'Đang tải dữ liệu', exact: true }).waitFor({ state: 'hidden' });
     await expect(page.getByText('Phiên bản 1', { exact: true })).toBeVisible();
-    const quoteResponse = page.waitForResponse(response => response.request().method() === 'POST' && new URL(response.url()).pathname.endsWith('/orders/DH-1001/quote'));
-    await page.getByRole('button', { name: 'Lấy báo giá hiện tại', exact: true }).click();
-    expect((await quoteResponse).status()).toBe(200);
+    const quote = page.getByRole('button', { name: 'Lấy báo giá hiện tại', exact: true });
+    await expect(quote).toBeEnabled();
+    const [quoteResponse] = await Promise.all([
+        page.waitForResponse(response => response.request().method() === 'POST' && new URL(response.url()).pathname.endsWith('/orders/DH-1001/quote'),
+            { timeout: 15_000 }),
+        quote.press('Enter'),
+    ]);
+    expect(quoteResponse.status()).toBe(200);
     await expect(page.getByText(/Bản đơn 1 · Hết hạn/)).toBeVisible();
     await expect(page.getByRole('button', { name: 'Xác nhận đơn & giữ hàng' })).toBeDisabled();
     expect(writes.filter(path => path.endsWith('/orders/DH-1001/confirm'))).toEqual([]);
@@ -100,7 +105,8 @@ test('Orders draft, versioned quote, canonical address snapshot and return dialo
         await page.keyboard.press('Escape');
 
         await page.goto(new URL('/s/shop-demo/returns', demoUrl).toString());
-        const row = page.getByRole('row').filter({ hasText: 'seed-returncase-10036' });
+        const row = page.getByRole('region', { name: 'Yêu cầu đổi trả', exact: true })
+            .getByRole(width < 768 ? 'listitem' : 'row').filter({ hasText: 'seed-returncase-10036' });
         await row.getByRole('button', { name: 'Kiểm nhận' }).click();
         const inspectionDialog = page.getByRole('dialog', { name: 'Kiểm nhận hàng trả' });
         await expect(inspectionDialog).toBeVisible();

@@ -5,7 +5,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import type { Warehouse } from '@botsales/contracts';
 import { useApi, useCommand } from '@/shared/api/hooks';
-import { useScope, useCan } from '@/shared/model/scope';
+import { useScope, useCanWrite } from '@/shared/model/scope';
 import { useListQuery } from '@/shared/model/filters';
 import { useVersionedDraft, draftEqual } from '@/shared/model/versioned-draft';
 import { useDraftForm, markDraftClean } from '@/shared/model/dirty-drafts';
@@ -20,7 +20,7 @@ const empty:Fields={code:'',name:'',addressLine:''};
 const snapshot=(warehouse:Warehouse)=>({version:warehouse.version,values:{code:warehouse.code,name:warehouse.name,addressLine:warehouse.addressLine}});
 
 export function WarehousesPage() {
-    const {shop}=useScope(),canEdit=useCan("warehouses.manage");
+    const {shop}=useScope(),canEdit=useCanWrite("warehouses.manage");
     const list=useApi('listWarehouses',{query:useListQuery('listWarehouses')});
     const [open,setOpen]=useState(false),[selected,setSelected]=useState<Warehouse|null>(null),[archive,setArchive]=useState<Warehouse|null>(null),[success,setSuccess]=useState('');
     const detail=useApi('getWarehouse',{path:{warehouseId:selected?.id||''}},open&&Boolean(selected));
@@ -42,11 +42,11 @@ export function WarehousesPage() {
         <PageHeader title="Quản trị kho" subtitle="Một danh mục kho dùng chung cho đơn hàng, tồn kho và mua hàng; ngừng dùng giữ nguyên lịch sử." actions={<MutationButton permission="warehouses.manage" variant="contained" onClick={()=>{setSelected(null);form.reset(empty);setOpen(true);}}>Thêm kho</MutationButton>}/>
         {success&&<Alert severity="success" role="status">{success}</Alert>}
         <Panel><Toolbar operation="listWarehouses" placeholder="Tìm mã hoặc tên kho…"/><QueryState query={list} pendingProfile="section">{list.data&&<>
-            <DataTable label="Danh mục kho" rows={list.data.data} rowKey={warehouse=>warehouse.id} columns={[
+            <DataTable mobile={{ layout: 'cards', titleKey: 'code', summaryKeys: ['name', 'address', 'status'], actionKey: 'edit' }} label="Danh mục kho" rows={list.data.data} rowKey={warehouse=>warehouse.id} columns={[
                 {key:'code',label:'Mã kho',render:w=>w.code},{key:'name',label:'Tên kho',render:w=>w.name},{key:'address',label:'Địa điểm',render:w=>w.addressLine},{key:'status',label:'Trạng thái',render:w=><Status value={w.status}/>},
                 {key:'edit',label:'Thao tác',render:w=>w.status==='active'?<ActionGroup><MutationButton permission="warehouses.manage" onClick={()=>{setSelected(w);form.reset(snapshot(w).values);setOpen(true);}}>Sửa kho {w.code}</MutationButton><MutationButton permission="warehouses.manage" onClick={()=>setArchive(w)}>Ngừng dùng {w.code}</MutationButton></ActionGroup>:'Lịch sử được giữ'},
             ]}/><Pager page={list.data.page}/></>}</QueryState></Panel>
-        <EditDialog open={open} title={selected?`Sửa kho ${selected.name}`:'Thêm kho'} busy={busy} onClose={()=>setOpen(false)} actions={<Button type="submit" form="warehouse-editor" variant="contained" disabled={busy||blocked||!canEdit||(Boolean(selected)&&!editor.dirty)}>Lưu kho</Button>}>
+        <EditDialog width="compact" open={open} title={selected?`Sửa kho ${selected.name}`:'Thêm kho'} busy={busy} onClose={()=>setOpen(false)} actions={<Button type="submit" form="warehouse-editor" variant="contained" disabled={busy||blocked||!canEdit||(Boolean(selected)&&!editor.dirty)}>Lưu kho</Button>}>
             <ErrorNotice error={create.error||update.error||detail.error}/><DraftConflict editor={editor} labels={{code:'Mã kho',name:'Tên kho',addressLine:'Địa điểm kho'}} busy={busy}/>
             <FormFields component="form" id="warehouse-editor" noValidate ref={node=>{formRef.current=node;bindDraft(node);}} onSubmit={submit} data-draft-clean={!dirty?'true':undefined}>
                 {(['code','name','addressLine'] as const).map((key,i)=><TextField key={key} label={['Mã kho','Tên kho','Địa điểm kho'][i]} {...form.register(key)} disabled={busy||!canEdit} error={Boolean(form.formState.errors[key])} helperText={form.formState.errors[key]?.message}/>)}

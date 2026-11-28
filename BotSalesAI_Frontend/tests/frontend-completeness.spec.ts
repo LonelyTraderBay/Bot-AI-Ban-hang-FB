@@ -8,11 +8,11 @@ test.beforeAll(async () => { const server = await startDemoServer({ cacheIsolati
 test.afterAll(async () => close?.());
 
 const details = [
-    { id: 'R26', path: '/bot', heading: 'Điều khiển Admin AI', api: '/bot/revisions/', button: 'Xem phiên bản', title: 'Chi tiết phiên bản AI', field: 'instructions' },
-    { id: 'R28', path: '/bot/evaluations', heading: 'Đánh giá AI', api: '/bot/evaluations/', button: '', title: 'Chi tiết đánh giá', field: 'datasetVersion' },
+    { id: 'R26', path: '/bot', heading: 'Cấu hình Admin', api: '/bot/revisions/', button: 'Xem phiên bản', title: 'Chi tiết phiên bản AI', field: 'instructions' },
+    { id: 'R28', path: '/bot/evaluations', heading: 'Chất lượng AI', api: '/bot/evaluations/', button: '', title: 'Chi tiết đánh giá', field: 'datasetVersion' },
     { id: 'R29', path: '/integrations/channels', heading: 'Kết nối Facebook', api: '/integrations/channels/', button: 'Chi tiết kết nối', title: 'Chi tiết kết nối Facebook', field: 'name' },
     { id: 'R30', path: '/integrations/ai', heading: 'Nhà cung cấp AI', api: '/integrations/ai/', button: 'Chi tiết kết nối', title: 'Chi tiết kết nối AI', field: 'name' },
-    { id: 'R32', path: '/settings/team', heading: 'Nhân sự & phân quyền', api: '/members/', button: 'Chi tiết nhân sự', title: 'Chi tiết nhân sự', field: 'userId' },
+    { id: 'R32', path: '/settings/team', heading: 'Nhân sự & quyền', api: '/members/', button: 'Chi tiết nhân sự', title: 'Chi tiết nhân sự', field: 'userId' },
     { id: 'R39', path: '/notifications', heading: 'Trung tâm thông báo', api: '/notifications/', button: 'Chi tiết thông báo', title: 'Chi tiết thông báo', field: 'title' },
     { id: 'R54', path: '/service-cases', heading: 'Chăm sóc sau bán', api: '/service-cases/', button: 'Chi tiết yêu cầu', title: 'Chi tiết yêu cầu sau bán', field: 'summary' },
     { id: 'R37', path: '/operations', heading: 'Công việc hôm nay', api: '/commands/', button: 'Chi tiết thao tác', title: 'Chi tiết trạng thái thao tác', field: 'result' },
@@ -31,11 +31,15 @@ async function interceptDetail(page: Page, detail: Detail, status = 0) {
             const method = init?.method || (input instanceof Request ? input.method : 'GET');
             const path = new URL(address, location.origin).pathname;
             if (method === 'GET' && path.startsWith('/api/v2/shops/shop-demo' + api) && !path.endsWith('/catalog') && !path.slice(('/api/v2/shops/shop-demo' + api).length).includes('/')) {
-                probe.calls++;
-                if (status) return new Response(JSON.stringify({ type: 'https://example.test/problems/detail', title: 'Detail unavailable', status, detail: 'DETAIL_FETCH_FAILURE', code: status === 403 ? 'FORBIDDEN' : status === 404 ? 'NOT_FOUND' : 'TEMPORARILY_UNAVAILABLE', requestId: 'completion-detail-test' }), { status, headers: { 'Content-Type': 'application/problem+json' } });
+                if (status) {
+                    probe.calls++;
+                    return new Response(JSON.stringify({ type: 'https://example.test/problems/detail', title: 'Detail unavailable', status, detail: 'DETAIL_FETCH_FAILURE', code: status === 403 ? 'FORBIDDEN' : status === 404 ? 'NOT_FOUND' : 'TEMPORARILY_UNAVAILABLE', requestId: 'completion-detail-test' }), { status, headers: { 'Content-Type': 'application/problem+json' } });
+                }
                 const response = await original(input, init);
                 if (!response.ok) return response;
                 const body = await response.json();
+                // Scope refresh can abort a fetch before any response reaches the detail.
+                probe.calls++;
                 body.data[field] = field === 'result' ? { type: 'stock', id: marker } : marker;
                 await new Promise<void>(resolve => { probe.release = resolve; });
                 return new Response(JSON.stringify(body), { status: response.status, headers: response.headers });

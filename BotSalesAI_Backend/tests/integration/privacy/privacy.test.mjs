@@ -11,7 +11,7 @@ import { currentMarketingConsent } from '../../../apps/api/dist/modules/privacy/
 import { privacyRequestHandler, runPrivacyMaintenance } from '../../../apps/api/dist/modules/privacy/index.js';
 import { canInShop, readAuthConfig } from '../../../apps/api/dist/modules/workspace/index.js';
 import { Database } from '../../../apps/api/dist/platform/database/client.js';
-import { runJob } from '../../../apps/api/dist/platform/jobs/index.js';
+import { dueJobs, runJob } from '../../../apps/api/dist/platform/jobs/index.js';
 import { fixtureIssuer, fixtureShops } from '../../../apps/api/prisma/p0-fixture.mjs';
 import { fixtureWriter, orderConversation } from '../orders/fixtures.mjs';
 import { assertFixtureDatabase, fixtureSession } from '../workspace/session-fixture.mjs';
@@ -204,17 +204,25 @@ test('SC2-G05: step-up is session bound and single use; export, hold, erasure an
     await post(shopPath('privacy/requests'), { kind: 'delete', customerId: held.id, reason: 'Kiểm trùng yêu cầu' }, 'Problem', { status: 409 });
     for (let i = 0; i < 5; i++) await post('/auth/step-up', { password: 'Sai mật khẩu' }, 'Problem', { actor: secondSession, status: 403 });
     await post('/auth/step-up', { password }, 'Problem', { actor: secondSession, status: 429 });
-    const proof = await stepUp();
-    const payload = approval(exporting, proof.reauthToken);
-    const path = shopPath('privacy/requests/' + exporting.id + '/approve');
-    await post(path, payload, 'Problem', { actor: secondSession, status: 403 });
-    await post(path, { ...payload, expectedVersion: exporting.version + 1 }, 'Problem', { status: 412 });
-    const idem = randomUUID();
-    const accepted = await approve(exporting, payload, { idem });
-    assert.equal((await approve(exporting, payload, { idem })).id, accepted.id);
-    await post(shopPath('privacy/requests/' + deletion.id + '/approve'), approval(deletion, proof.reauthToken), 'Problem', { status: 403 });
-    const exportedJob = (await privacyRow(exporting.id)).jobId;
-    await perform(exportedJob, 'approvePrivacyRequest', privacyRequestHandler(auth));
+    let exportedJob;
+    await db.shop.update({ where: { id: shopId }, data: { closedAt: new Date() } });
+    try {
+        const proof = await stepUp();
+        const payload = approval(exporting, proof.reauthToken);
+        const path = shopPath('privacy/requests/' + exporting.id + '/approve');
+        await post(path, payload, 'Problem', { actor: secondSession, status: 403 });
+        await post(path, { ...payload, expectedVersion: exporting.version + 1 }, 'Problem', { status: 412 });
+        const idem = randomUUID();
+        const accepted = await approve(exporting, payload, { idem });
+        assert.equal((await approve(exporting, payload, { idem })).id, accepted.id);
+        await post(shopPath('privacy/requests/' + deletion.id + '/approve'), approval(deletion, proof.reauthToken), 'Problem', { status: 403 });
+        exportedJob = (await privacyRow(exporting.id)).jobId;
+        const due = await dueJobs(db, ['approvePrivacyRequest']);
+        assert.ok(due.some(row => row.shopId === shopId && row.id === exportedJob));
+        await perform(exportedJob, 'approvePrivacyRequest', privacyRequestHandler(auth));
+    } finally {
+        await db.shop.update({ where: { id: shopId }, data: { closedAt: null } });
+    }
     const job = await call(shopPath('jobs/' + exportedJob), 'JobResponse');
     assert.equal(job.status, 'succeeded');
     assert.ok(job.downloadUrl);

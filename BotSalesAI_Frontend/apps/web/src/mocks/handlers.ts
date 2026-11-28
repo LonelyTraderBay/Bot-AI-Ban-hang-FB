@@ -39,20 +39,24 @@ export const handlers = Object.entries(operations).filter(([id]) => id !== 'subs
                 if (header.required && !request.headers.get(header.name))
                     return failure(header.name.toLowerCase() === 'if-match' ? 428 : header.name.toLowerCase() === 'x-csrf-token' ? 403 : 400, header.name.toLowerCase() === 'x-csrf-token' ? 'CSRF_INVALID' : 'REQUIRED_HEADER', `Thiếu ${header.name}.`, requestId);
             const result = await handle({ op, path, body, form, query: url.searchParams, headers: Object.fromEntries(request.headers.entries()), origin: url.origin });
+            if (result.dropResponse) return HttpResponse.error();
             if (result.status === 204)
                 return new HttpResponse(null, { status: 204 });
             let data = result.data;
             let page: Record<string, unknown> | undefined;
             if (spec.responseSchema?.endsWith('ListResponse') && Array.isArray(data)) {
                 const limit = Math.min(100, Math.max(1, Number(url.searchParams.get('limit')) || 20));
-                const key = (item: unknown, index: number) => { if (item && typeof item === 'object')
+                const key = (item: unknown, index: number) => {
+                    if (op === 'listShops' && item && typeof item === 'object' && 'id' in item)
+                        return (url.searchParams.get('status') ?? 'active') + ':' + item.id;
+                    if (item && typeof item === 'object')
                     return String('id' in item ? item.id : 'providerId' in item ? item.providerId : index); return String(index); };
                 const cursor = url.searchParams.get('cursor');
                 let offset = 0;
                 if (cursor) {
                     const index = data.findIndex((item, i) => key(item, i) === cursor);
                     if (index < 0)
-                        return failure(422, 'INVALID_CURSOR', 'Cursor không còn phù hợp. Mở lại đầu danh sách.', requestId);
+                        return failure(op === 'listShops' ? 400 : 422, 'INVALID_CURSOR', 'Cursor không còn phù hợp. Mở lại đầu danh sách.', requestId);
                     offset = index + 1;
                 }
                 const count = data.length;
@@ -64,7 +68,9 @@ export const handlers = Object.entries(operations).filter(([id]) => id !== 'subs
             const envelope = { data, meta: { requestId, asOf: now() }, ...(page ? { page } : {}) };
             if (spec.responseSchema)
                 assertSchema(spec.responseSchema, envelope);
-            return HttpResponse.json(envelope, { status: result.status });
+            const etag = spec.responseSchema === 'ShopResponse' && data && typeof data === 'object' && 'version' in data
+                ? { ETag: '"' + data.version + '"' } : undefined;
+            return HttpResponse.json(envelope, { status: result.status, headers: etag });
         }
         catch (error) {
             if (error instanceof MockFailure)

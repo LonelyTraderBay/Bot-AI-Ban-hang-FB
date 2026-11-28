@@ -1,7 +1,16 @@
 import { test, expect } from '@playwright/test';
 import { startDemoServer } from './demo-server.mjs';
-import { openDemoControls } from './demo-controls';
+import { setDemoControl } from './demo-controls';
 import { holdRouteReads } from './read-barrier';
+
+async function sessionRole(page: import('@playwright/test').Page) {
+    return page.evaluate(async () => {
+        const response = await fetch('/api/v2/session');
+        if (!response.ok) throw new Error('Mock session request failed: ' + response.status);
+        const { data } = await response.json();
+        return data.memberships.find((membership: { shopId: string }) => membership.shopId === 'shop-demo')?.roles[0];
+    });
+}
 
 test('built demo borrowers retain their owner and isolate role state between pages', async ({ browser }) => {
     const first = await startDemoServer({ runtime: 'preview' });
@@ -11,14 +20,12 @@ test('built demo borrowers retain their owner and isolate role state between pag
     try {
         const page = await one.newPage(), other = await two.newPage();
         await page.goto(first.url + '/s/shop-demo/notifications');
-        await openDemoControls(page);
-        await page.getByRole('combobox', { name: 'Vai trò mô phỏng' }).click();
-        await page.getByRole('option', { name: 'viewer', exact: true }).click();
-        await expect(page.getByRole('status').filter({ hasText: 'Vai trò mô phỏng đã được áp dụng.' })).toBeVisible();
+        await setDemoControl(page, 'role', 'viewer');
+        expect(await sessionRole(page)).toBe('viewer');
         await first.close();
         await other.goto(second.url + '/s/shop-demo/notifications');
-        await openDemoControls(other);
-        await expect(other.getByRole('combobox', { name: 'Vai trò mô phỏng' })).toHaveText('owner');
+        await expect(other.locator('main h1')).toBeVisible();
+        expect(await sessionRole(other)).toBe('owner');
         expect((await other.request.get(second.url)).ok()).toBe(true);
         const scripts = await other.locator('script[src]').evaluateAll(nodes => nodes.map(node => node.getAttribute('src')));
         expect(scripts).toEqual(expect.arrayContaining([expect.stringMatching(/^\/assets\//)]));

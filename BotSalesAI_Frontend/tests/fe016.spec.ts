@@ -1,6 +1,7 @@
-import { openDemoControls } from './session/demo-controls';
+import { setDemoControl } from './session/demo-controls';
 import path from 'node:path';
 import { test, expect } from '@playwright/test';
+import type { Page } from '@playwright/test';
 import { startDemoServer } from './session/demo-server.mjs';
 
 let demoUrl = '';
@@ -16,6 +17,21 @@ test.afterAll(async () => closeDemo?.());
 
 async function gotoDemo(page: import('@playwright/test').Page, route: string) {
     await page.goto(new URL(route, demoUrl).toString());
+}
+
+async function openCustomerDetails(page: Page) {
+    await page.getByRole('button', { name: 'Thông tin khách', exact: true }).click();
+    const drawer = page.getByRole('dialog', { name: 'Thông tin khách', exact: true });
+    await expect(drawer).toBeVisible();
+    return drawer;
+}
+
+async function openSalesPreview(page: Page) {
+    const details = await openCustomerDetails(page);
+    await details.getByRole('button', { name: 'Luồng tư vấn mẫu', exact: true }).click();
+    const preview = page.getByRole('dialog', { name: 'Luồng tư vấn mẫu', exact: true });
+    await expect(preview).toBeVisible();
+    return preview;
 }
 
 async function seedInboxCursorFixture(page: import('@playwright/test').Page, newestFirst = false) {
@@ -61,78 +77,70 @@ async function seedInboxCursorFixture(page: import('@playwright/test').Page, new
     }, newestFirst);
 }
 
-async function chooseOption(page: import('@playwright/test').Page, label: string, value: string | RegExp) {
-    if (['Vai trò mô phỏng', 'Trạng thái thử', 'Dataset mô phỏng'].includes(label)) await openDemoControls(page);
-    await page.getByRole('combobox', { name: label }).click();
-    await page.getByRole('option', { name: value, exact: typeof value === 'string' }).click();
-}
-
-test('UI015 mobile demo tools disclose by keyboard and inbox stays within narrow viewports', async ({ page }) => {
+test('UI015 inbox stays within narrow viewports without demo controls', async ({ page }) => {
     await page.setViewportSize({ width: 390, height: 844 });
     await gotoDemo(page, '/s/shop-demo/inbox/cv1');
 
-    await expect(page.getByText('Demo', { exact: true })).toBeVisible();
-    await expect(page.locator('[aria-label="Dữ liệu mô phỏng"]')).toBeVisible();
-    const disclosure = page.getByRole('button', { name: 'Công cụ demo', exact: true });
-    await expect(disclosure).toBeVisible();
-    await expect(disclosure).toHaveAttribute('aria-expanded', 'false');
-    await expect(page.getByRole('combobox', { name: 'Vai trò mô phỏng' })).toBeHidden();
-
-    await disclosure.focus();
-    await page.keyboard.press('Enter');
-    await expect(page.getByRole('button', { name: 'Ẩn công cụ demo', exact: true })).toHaveAttribute('aria-expanded', 'true');
-    const roleControl = page.getByRole('combobox', { name: 'Vai trò mô phỏng' });
-    await expect(roleControl).toBeVisible();
-    await page.keyboard.press('Tab');
-    await expect(roleControl).toBeFocused();
-    await page.getByRole('button', { name: 'Ẩn công cụ demo', exact: true }).click();
-    await expect(roleControl).toBeHidden();
+    await expect(page.locator('header').getByText(/^(?:Demo|Dữ liệu mô phỏng)$/)).toHaveCount(0);
+    await expect(page.getByRole('button', { name: /Công cụ demo/i })).toHaveCount(0);
 
     const composer = page.getByRole('textbox', { name: 'Nội dung trả lời khách' });
     await expect(composer).toBeVisible();
     await expect(page.getByRole('link', { name: 'Danh sách hội thoại' })).toBeVisible();
-    await expect(page.getByTestId('inbox-context-panel')).toBeAttached();
-    for (const width of [320, 390, 768, 1280]) {
+    await expect(page.getByRole('button', { name: 'Thông tin khách' })).toBeVisible();
+    await expect(page.getByRole('dialog')).toHaveCount(0);
+    for (const width of [320, 390, 768, 1279, 1280, 1440, 1680]) {
         await page.setViewportSize({ width, height: 844 });
         const documentWidth = await page.evaluate(() => document.documentElement.scrollWidth);
         expect(documentWidth, `document overflow at ${width}px`).toBeLessThanOrEqual(width);
         await expect(composer).toBeVisible();
+        const list = page.getByTestId('inbox-list-pane');
+        if (width < 1280) await expect(list).toBeHidden();
+        else await expect(list).toBeVisible();
     }
 });
 
-test('FE016 conversation keeps its composer visible while long demo context scrolls independently', async ({ page }, info) => {
-    await page.setViewportSize({ width: 1600, height: 900 });
+test('FE016 conversation fills desktop height and keeps its composer usable', async ({ page }, info) => {
+    await page.setViewportSize({ width: 1440, height: 768 });
     await gotoDemo(page, '/s/shop-demo/inbox/cv1');
 
     const thread = page.getByTestId('inbox-thread');
-    const context = page.getByTestId('inbox-context-panel');
+    const sendReply = thread.getByRole('button', { name: 'Gửi trả lời' });
+    const main = page.locator('#main-content');
     await thread.getByTestId('inbox-message-bubble').first().waitFor();
     await expect(thread.getByRole('textbox', { name: 'Nội dung trả lời khách' })).toBeVisible();
-    await expect(context.getByRole('heading', { name: 'Bối cảnh khách hàng' })).toBeVisible();
-    await expect(context).toHaveAttribute('tabindex', '0');
+    await expect(page.getByRole('dialog')).toHaveCount(0);
 
-    const layout = await page.evaluate(() => {
-        const thread = document.querySelector<HTMLElement>('[data-testid="inbox-thread"]');
-        const context = document.querySelector<HTMLElement>('[data-testid="inbox-context-panel"]');
-        const messages = document.querySelector<HTMLElement>('[data-testid="inbox-message-list"]');
-        const composer = thread?.querySelector<HTMLElement>('form');
-        if (!thread || !context || !messages || !composer) throw new Error('Inbox layout elements are missing.');
-        return {
-            threadHeight: thread.getBoundingClientRect().height,
-            threadBottom: thread.getBoundingClientRect().bottom,
-            composerBottom: composer.getBoundingClientRect().bottom,
-            messageHeight: messages.getBoundingClientRect().height,
-            contextHeight: context.clientHeight,
-            contextScrollHeight: context.scrollHeight,
-        };
-    });
+    for (const height of [768, 1120]) {
+        await page.setViewportSize({ width: 1440, height });
+        const layout = await page.evaluate(() => {
+            const bottom = (selector: string) => document.querySelector(selector)!.getBoundingClientRect().bottom;
+            const footer = document.querySelector('footer')!;
+            const main = document.querySelector('main')!;
+            return {
+                listBottom: bottom('[data-testid="inbox-list-pane"]'),
+                threadBottom: bottom('[data-testid="inbox-thread"]'),
+                composerBottom: bottom('[data-testid="inbox-thread"] form'),
+                footerTop: footer.getBoundingClientRect().top,
+                footerBottom: footer.getBoundingClientRect().bottom,
+                pageInset: parseFloat(getComputedStyle(main).paddingBottom),
+                documentHeight: document.documentElement.scrollHeight,
+            };
+        });
+        expect(layout.listBottom).toBeCloseTo(layout.threadBottom, 0);
+        expect(layout.footerTop - layout.threadBottom).toBeCloseTo(layout.pageInset, 0);
+        expect(layout.footerBottom).toBeCloseTo(height, 0);
+        expect(layout.documentHeight).toBe(height);
+        expect(layout.composerBottom).toBeLessThanOrEqual(layout.threadBottom + 1);
+        await expect(sendReply).toBeInViewport({ ratio: 1 });
+    }
 
-    expect(layout.threadHeight).toBe(650);
-    expect(layout.contextHeight).toBeLessThanOrEqual(650);
-    expect(layout.contextScrollHeight).toBeGreaterThan(layout.contextHeight);
-    expect(layout.messageHeight).toBeLessThanOrEqual(550);
-    expect(layout.composerBottom).toBeLessThanOrEqual(layout.threadBottom + 1);
+    await page.setViewportSize({ width: 1440, height: 620 });
+    await main.press('End');
+    await expect.poll(() => main.evaluate(element => element.scrollTop)).toBeGreaterThan(0);
+    await expect(sendReply).toBeInViewport({ ratio: 1 });
 
+    await page.setViewportSize({ width: 1600, height: 900 });
     await thread.getByRole('checkbox', { name: 'Ghi chú nội bộ (không gửi khách)', exact: true }).check();
     const draft = thread.getByRole('textbox', { name: 'Ghi chú cho nhóm' });
     const value = Array.from({ length: 9 }, (_, index) => `Dòng nháp ${index + 1}`).join('\n');
@@ -207,6 +215,107 @@ test('FE016 conversation keeps its composer visible while long demo context scro
     await draft.fill('');
 });
 
+test('FE016 two-pane workspace opens customer and sales views with keyboard and preserves the draft', async ({ page }) => {
+    await page.setViewportSize({ width: 1280, height: 900 });
+    await gotoDemo(page, '/s/shop-demo/inbox/cv1');
+    const trigger = page.getByRole('button', { name: 'Thông tin khách', exact: true });
+    const draft = page.getByRole('textbox', { name: 'Nội dung trả lời khách' });
+    await draft.fill('Bản nháp đang xử lý');
+    const thread = page.getByTestId('inbox-thread');
+    const chatWidth = (await thread.boundingBox())!.width;
+    await trigger.press('Enter');
+    const customer = page.getByRole('dialog', { name: 'Thông tin khách', exact: true });
+    const sales = page.getByRole('dialog', { name: 'Luồng tư vấn mẫu', exact: true });
+    const salesTrigger = customer.getByRole('button', { name: 'Luồng tư vấn mẫu', exact: true });
+    await expect(customer).toHaveCSS('width', '420px');
+    await expect.poll(() => customer.evaluate(dialog => dialog.contains(document.activeElement))).toBe(true);
+    for (const key of ['Tab', 'Shift+Tab']) {
+        await page.keyboard.press(key);
+        await expect.poll(() => customer.evaluate(dialog => dialog.contains(document.activeElement))).toBe(true);
+    }
+    await customer.getByRole('link', { name: 'Hồ sơ khách' }).click();
+    const draftGuard = page.getByRole('dialog', { name: 'Rời màn hình chưa lưu?' });
+    await expect(draftGuard).toBeVisible();
+    await draftGuard.getByRole('button', { name: 'Tiếp tục chỉnh sửa' }).click();
+    await expect(draftGuard).toBeHidden();
+    await expect(page).toHaveURL(/\/inbox\/cv1$/);
+    await salesTrigger.click();
+    await expect(sales).toHaveCSS('width', '640px');
+    await expect(sales.getByRole('heading', { name: 'Luồng tư vấn mẫu', exact: true })).toBeFocused();
+    await expect(page.getByRole('dialog')).toHaveCount(1);
+    await sales.getByRole('button', { name: 'Về thông tin khách' }).click();
+    await expect(salesTrigger).toBeFocused();
+    await page.keyboard.press('Escape');
+    await expect(customer).toBeHidden();
+    await expect(trigger).toBeFocused();
+    await expect(draft).toHaveValue('Bản nháp đang xử lý');
+    expect((await thread.boundingBox())!.width).toBe(chatWidth);
+
+    await openCustomerDetails(page);
+    await page.setViewportSize({ width: 390, height: 480 });
+    await expect(customer).toHaveCSS('width', '390px');
+    const body = customer.getByRole('region', { name: 'Chi tiết khách hàng' });
+    await body.press('End');
+    await expect.poll(() => body.evaluate(element => element.scrollTop)).toBeGreaterThan(0);
+    await expect(customer.getByRole('heading', { name: 'Thông tin khách' })).toBeInViewport({ ratio: 1 });
+    await customer.getByRole('button', { name: 'Đóng', exact: true }).click();
+    await expect(trigger).toBeFocused();
+    await expect(draft).toHaveValue('Bản nháp đang xử lý');
+    await draft.fill('');
+});
+
+test('FE016 expired reply keeps chat space and records only the authorized internal note', async ({ page }) => {
+    const writes: string[] = [];
+    page.on('request', request => {
+        const path = new URL(request.url()).pathname;
+        if (request.method() === 'POST' && path.includes('/conversations/')) writes.push(path);
+    });
+    await page.setViewportSize({ width: 1280, height: 900 });
+    await gotoDemo(page, '/s/shop-demo/inbox/cv4');
+    const thread = page.getByTestId('inbox-thread');
+    await expect(thread.getByRole('alert').filter({ hasText: 'Đã hết thời hạn trả lời trên kênh này.' })).toBeVisible();
+    const history = thread.getByRole('region', { name: 'Lịch sử tin nhắn' });
+    await expect(history.getByText('Mình sẽ nhắn lại sau nhé.')).toBeVisible();
+    expect((await thread.boundingBox())!.width).toBeGreaterThanOrEqual(700);
+    expect((await history.boundingBox())!.height).toBeGreaterThanOrEqual(240);
+    const message = 'Nhắc nhóm kiểm tra lại vào ca sau.';
+    await thread.getByRole('textbox', { name: 'Nội dung trả lời khách' }).fill(message);
+    await expect(thread.getByRole('button', { name: 'Gửi trả lời' })).toBeDisabled();
+    await thread.locator('form').evaluate(form => (form as HTMLFormElement).requestSubmit());
+    await expect(thread.getByRole('button', { name: 'Đính kèm' })).toBeDisabled();
+    await thread.getByRole('checkbox', { name: 'Ghi chú nội bộ (không gửi khách)' }).check();
+    await expect(thread.getByRole('textbox', { name: 'Ghi chú cho nhóm' })).toHaveValue(message);
+    await thread.getByRole('button', { name: 'Lưu ghi chú' }).click();
+    await expect(history.getByText(message, { exact: true })).toBeVisible();
+    expect(writes).toEqual(['/api/v2/shops/shop-demo/conversations/cv4/notes']);
+});
+
+test('FE016 drawer keeps the selected assignee and submits the assignment once', async ({ page }) => {
+    await gotoDemo(page, '/s/shop-demo/inbox/cv1');
+    let assignments = 0;
+    const assignmentPath = '/api/v2/shops/shop-demo/conversations/cv1/assign';
+    page.on('request', request => {
+        if (request.method() === 'POST' && new URL(request.url()).pathname === assignmentPath) assignments += 1;
+    });
+    const drawer = await openCustomerDetails(page);
+    const assignee = drawer.getByRole('combobox', { name: /Giao cho nhân viên/ });
+    await assignee.click();
+    const name = 'Chủ shop (mẫu)';
+    const option = page.getByRole('option', { name, exact: true });
+    await expect(option).toBeVisible();
+    await option.click();
+    await drawer.getByRole('button', { name: 'Đóng', exact: true }).click();
+    await openCustomerDetails(page);
+    await expect(assignee).toHaveText(name);
+    const write = page.waitForResponse(response => response.request().method() === 'POST' && new URL(response.url()).pathname === assignmentPath);
+    await drawer.getByRole('button', { name: 'Phân công', exact: true }).click();
+    const response = await write;
+    expect(response.ok()).toBe(true);
+    expect(response.request().postDataJSON()).toMatchObject({ userId: 'user-demo', expectedVersion: expect.any(Number) });
+    await expect(drawer.getByText('Jokertrader · tài khoản mẫu', { exact: true })).toBeVisible();
+    expect(assignments).toBe(1);
+});
+
 test('FE016.AC01 inbox filters call canonical query fields and remain bookmarked through conversation details', async ({ page }) => {
     const responseWait = page.waitForResponse(response => {
         const url = new URL(response.url());
@@ -278,13 +387,17 @@ test('Shared consolidation Inbox preserves selected filters and composer draft t
         expect(new URL(page.url()).searchParams.get('assignedUserId')).toBe('user-demo');
         results.push({ mode, responseStatus: response.status(), data: payload, draftPreserved: true, selectedKeysPreserved: true });
     }
+    const filterToggle = page.getByRole('button', { name: 'Bộ lọc', exact: true });
+    await expect(filterToggle).toHaveAttribute('aria-expanded', 'false');
+    await expect(page.getByText(/^Đang lọc · /)).toContainText('Đang mở');
+    await filterToggle.click();
     const filters = page.getByRole('group', { name: 'Bộ lọc hội thoại', exact: true });
     const status = filters.getByRole('combobox', { name: /^Trạng thái(?: |$)/ });
     const search = page.getByRole('textbox', { name: 'Tìm kiếm', exact: true });
     await expect(search).toHaveValue('');
     await search.fill('Linh'); await expect(search).toHaveValue('Linh');
     await status.focus(); await status.press('Enter');
-    await page.getByRole('option', { name: 'Tất cả trạng thái', exact: true }).press('Enter');
+    await page.getByRole('option', { name: 'Tất cả', exact: true }).press('Enter');
     expect(new URL(page.url()).searchParams.has('status')).toBe(false);
     await expect(status).toBeFocused();
     await expect(search).toHaveValue('Linh');
@@ -294,6 +407,9 @@ test('Shared consolidation Inbox preserves selected filters and composer draft t
     await expect(page).toHaveURL(url => !url.searchParams.has('q')
         && url.searchParams.get('channelId') === 'fb-01'
         && url.searchParams.get('assignedUserId') === 'user-demo');
+    await filterToggle.click();
+    await expect(filterToggle).toHaveAttribute('aria-expanded', 'false');
+    await expect(filters).toBeHidden();
     await expect(draft).toHaveValue('Bản nháp giữ nguyên khi metadata thay đổi');
     await info.attach('metadata-draft-branches', { body: JSON.stringify(results), contentType: 'application/json' });
     await draft.fill('');
@@ -325,7 +441,7 @@ test('UI002 inbox list and message cursors stay independent through paging, conv
     page.on('request', request => {
         if (request.method() !== 'GET') return;
         const url = new URL(request.url());
-        const match = url.pathname.match(/\/shops\/([^/]+)\/(conversations(?:\/([^/]+)\/messages)?)/);
+        const match = url.pathname.match(/\/shops\/([^/]+)\/(conversations(?:\/([^/]+)\/messages)?)$/);
         if (match) requests.push({ shopId: match[1] || '', resource: match[2] || '', conversationId: match[3] || null, cursor: url.searchParams.get('cursor') });
     });
     page.on('response', response => {
@@ -352,16 +468,19 @@ test('UI002 inbox list and message cursors stay independent through paging, conv
         const url = new URL(response.url());
         return response.request().method() === 'GET' && url.pathname.endsWith('/conversations') && url.searchParams.get('cursor') === 'ui002-conversation-40';
     });
+    const firstMessageResponse = page.waitForResponse(response => response.request().method() === 'GET' && new URL(response.url()).pathname.endsWith(`/${fixture.targetConversationId}/messages`));
     await page.getByRole('button', { name: 'Trang tiếp', exact: true }).click();
     expect((await secondListResponse).status()).toBe(200);
     await expect(page.getByRole('link', { name: /UI002 Conversation 41/ })).toBeVisible();
+    const history = page.getByTestId('inbox-message-list');
+    await expect(history.getByRole('button', { name: 'Trang tiếp', exact: true })).toHaveCount(0);
     await test.info().attach('ui002-conversation-page-2.png', { body: await page.screenshot(), contentType: 'image/png' });
 
-    const firstMessageResponse = page.waitForResponse(response => response.request().method() === 'GET' && new URL(response.url()).pathname.endsWith(`/${fixture.targetConversationId}/messages`));
     await page.getByRole('link', { name: /UI002 Conversation 41/ }).click();
     await expect(page).toHaveURL(/listCursor=ui002-conversation-40/);
     expect(new URL(page.url()).searchParams.has('cursor')).toBe(false);
     expect((await firstMessageResponse).status()).toBe(200);
+    await expect(history.getByText('UI002 message 100', { exact: true })).toBeVisible();
     const pageTwoConversation = page.getByRole('listitem').filter({ hasText: 'UI002 Conversation 41' });
     await expect(pageTwoConversation).toBeVisible();
     const firstPageRequest = requests.find(request => request.shopId === 'shop-demo' && request.resource === 'conversations' && request.cursor === 'ui002-conversation-40');
@@ -388,16 +507,19 @@ test('UI002 inbox list and message cursors stay independent through paging, conv
     await page.getByRole('navigation', { name: 'Điều hướng chính' }).getByRole('link', { name: /Joker Studio/ }).click();
     await expect(page.getByRole('heading', { name: 'Chọn cửa hàng', exact: true })).toBeVisible();
     await page.locator('a[href="/s/shop-second/overview"]').click();
-    await page.getByRole('link', { name: 'Hộp thư khách hàng', exact: true }).click();
-    await expect(page.getByRole('link', { name: /Linh \(khách mẫu\)/ })).toBeVisible();
     const beforeOtherShopDetail = requests.length;
     const secondShopMessages = page.waitForResponse(response => {
         const url = new URL(response.url());
         return response.request().method() === 'GET' && url.pathname.endsWith('/shop-second/conversations/b-cv1/messages');
     });
+    await page.getByRole('link', { name: 'Hộp thư khách hàng', exact: true }).click();
+    await expect(page.getByRole('link', { name: /Linh \(khách mẫu\)/ })).toBeVisible();
     await page.getByRole('link', { name: /Linh \(khách mẫu\)/ }).click();
     expect((await secondShopMessages).status()).toBe(200);
-    await expect(page.getByTestId('inbox-thread')).toContainText('b-cv1');
+    await expect(page.getByRole('dialog')).toHaveCount(0);
+    const secondShopDetails = await openCustomerDetails(page);
+    await expect(secondShopDetails).toContainText('Mã hội thoại · b-cv1');
+    await expect(secondShopDetails.getByRole('link', { name: 'Hồ sơ khách' })).toHaveAttribute('href', /\/s\/shop-second\/customers\//);
     expect(requests.slice(beforeOtherShopDetail).filter(request => request.shopId === 'shop-second').every(request => request.cursor === null)).toBe(true);
     await expect(page.getByText(/UI002 message/)).toHaveCount(0);
     expect(invalidCursorResponses).toEqual([]);
@@ -413,6 +535,8 @@ test('SC-036 prepends older messages without moving the reading position or anno
     await page.getByRole('textbox', { name: 'Tìm kiếm' }).fill('UI002 Conversation 41');
     await page.getByRole('button', { name: 'Tìm kiếm', exact: true }).click();
     await page.getByRole('link', { name: /UI002 Conversation 41/ }).click();
+    await expect(page).toHaveURL(/\/inbox\/ui002-conversation-41(?:\?|$)/);
+    await expect(page.getByRole('button', { name: 'Thông tin khách', exact: true })).toBeVisible();
     const messages = page.getByTestId('inbox-message-list');
     let anchor = messages.getByText('UI002 message 6', { exact: true });
     await expect(messages.getByTestId('inbox-message-bubble')).toHaveCount(100);
@@ -422,6 +546,10 @@ test('SC-036 prepends older messages without moving the reading position or anno
     const position = () => anchor.evaluate(element => element.getBoundingClientRect().top
         - element.closest('[data-testid="inbox-message-list"]')!.getBoundingClientRect().top);
     let before = await position();
+    const details = await openCustomerDetails(page);
+    await details.getByRole('button', { name: 'Đóng', exact: true }).click();
+    await expect(details).toBeHidden();
+    expect(Math.abs(await position() - before)).toBeLessThanOrEqual(1);
     if (info.project.name === 'firefox') {
         await page.evaluate(async () => {
             const { setOperationDelay } = await import('/src/mocks/service.ts');
@@ -759,7 +887,7 @@ test('FE016.AC03 unknown send keeps the reply draft, exposes command recovery an
         if (request.method() === 'POST' && new URL(request.url()).pathname.endsWith('/messages')) sends.push(request.postData() || '');
     });
     await gotoDemo(page, '/s/shop-demo/inbox/cv2');
-    await chooseOption(page, 'Trạng thái thử', 'Kết quả ghi chưa rõ');
+    await setDemoControl(page, 'fault', 'unknown');
     const reply = 'Tôi sẽ kiểm tra tồn kho và phản hồi sau.';
     const textbox = page.getByRole('textbox', { name: 'Nội dung trả lời khách' });
     await textbox.fill(reply);
@@ -781,18 +909,19 @@ test('FE016.AC03 unknown send keeps the reply draft, exposes command recovery an
 
 test('FE016.AC04 role without customer/order permissions cannot open those cross-module references', async ({ page }) => {
     await gotoDemo(page, '/s/shop-demo/inbox/cv2');
-    await chooseOption(page, 'Vai trò mô phỏng', 'bot_admin');
-    await expect(page.getByRole('combobox', { name: 'Vai trò mô phỏng' })).toContainText('bot_admin');
-    await expect(page.getByRole('link', { name: 'Hồ sơ khách' })).toHaveCount(0);
-    await expect(page.getByRole('link', { name: 'Tạo đơn từ hội thoại' })).toHaveCount(0);
+    await setDemoControl(page, 'role', 'bot_admin');
     await expect(page.getByRole('button', { name: 'Tiếp quản', exact: true })).toHaveCount(0);
     await expect(page.getByRole('button', { name: 'Gửi trả lời', exact: true })).toBeDisabled();
-    await expect(page.getByText('Thông tin khách bị ẩn theo quyền hiện tại.')).toBeVisible();
+    const drawer = await openCustomerDetails(page);
+    await expect(drawer.getByRole('link', { name: 'Hồ sơ khách' })).toHaveCount(0);
+    await expect(drawer.getByRole('link', { name: 'Tạo đơn từ hội thoại' })).toHaveCount(0);
+    await expect(drawer.getByRole('button', { name: 'Phân công', exact: true })).toHaveCount(0);
+    await expect(drawer.getByText('Thông tin khách bị ẩn theo quyền hiện tại.')).toBeVisible();
 });
 
 test('FE016.S03 stale takeover preserves reason and reports the version conflict', async ({ page }) => {
     await gotoDemo(page, '/s/shop-demo/inbox/cv1');
-    await chooseOption(page, 'Trạng thái thử', 'Xung đột lần ghi tiếp');
+    await setDemoControl(page, 'fault', 'conflict');
     await page.getByRole('button', { name: 'Tiếp quản', exact: true }).click();
     const dialog = page.getByRole('dialog', { name: 'Tiếp quản cuộc trò chuyện' });
     const reason = 'Khách cần hỗ trợ đối chiếu đơn.';
@@ -817,8 +946,9 @@ test('FE016.B05 cross-sell reads effective promotions without changing the conve
         return request.pathname.endsWith('/shops/shop-demo/promotions') && request.searchParams.get('effective') === 'yes';
     });
     await gotoDemo(page, '/s/shop-demo/inbox/cv1');
+    const drawer = await openCustomerDetails(page);
     expect((await read).status()).toBe(200);
-    await expect(page.getByText('Chưa có ưu đãi đang hiệu lực.')).toBeVisible();
+    await expect(drawer.getByText('Chưa có ưu đãi đang hiệu lực.')).toBeVisible();
     expect(writes).toEqual([]);
 });
 
@@ -867,6 +997,12 @@ test('FE016.B08 capability-driven image, voice and document media upload and sen
     const sendResponseWait = page.waitForResponse(response => response.request().method() === 'POST' && new URL(response.url()).pathname.endsWith('/messages'));
     const reply = 'Đã nhận ảnh và tệp, tôi sẽ kiểm tra giúp mình.';
     await page.getByRole('textbox', { name: 'Nội dung trả lời khách' }).fill(reply);
+    const drawer = await openCustomerDetails(page);
+    await page.setViewportSize({ width: 390, height: 844 });
+    await drawer.getByRole('button', { name: 'Đóng', exact: true }).click();
+    await expect(drawer).toBeHidden();
+    await expect(page.getByRole('textbox', { name: 'Nội dung trả lời khách' })).toHaveValue(reply);
+    await expect(page.getByText('Sẵn sàng gửi · kiểm tra mô phỏng đạt')).toHaveCount(3);
     await page.getByRole('button', { name: 'Gửi trả lời', exact: true }).click();
     const sendRequest = await sendRequestWait;
     expect(JSON.parse(sendRequest.postData() || '{}')).toMatchObject({ text: reply, fileIds: uploadIds });
@@ -914,7 +1050,7 @@ test('FE016.B09 pending media send preserves newer text and blocks blind retry a
     const textbox = page.getByRole('textbox', { name: 'Nội dung trả lời khách' });
     await textbox.fill('Tin ban đầu đang được gửi.');
     await page.evaluate(async () => (await import('/src/mocks/service.ts')).setOperationDelay('sendMessage', 2500));
-    await chooseOption(page, 'Trạng thái thử', 'Kết quả ghi chưa rõ');
+    await setDemoControl(page, 'fault', 'unknown');
     const requestWait = page.waitForRequest(request => request.method() === 'POST' && new URL(request.url()).pathname.endsWith('/messages'));
     const responseWait = page.waitForResponse(response => response.request().method() === 'POST' && new URL(response.url()).pathname.endsWith('/messages'));
     await page.getByRole('button', { name: 'Gửi trả lời', exact: true }).click();
@@ -960,7 +1096,8 @@ test('FE027.B01 industry sales script preview asks for missing facts and stays a
         if (request.method() !== 'GET' && new URL(request.url()).pathname.startsWith('/api/v2/')) writes.push(request.method());
     });
     await gotoDemo(page, '/s/shop-demo/inbox/cv1');
-    const preview = page.getByRole('tabpanel', { name: 'Kịch bản tư vấn mẫu' });
+    const drawer = await openSalesPreview(page);
+    const preview = drawer.getByRole('tabpanel', { name: 'Kịch bản tư vấn mẫu' });
     await expect(preview).toContainText('Bạn đang tìm kiểu dáng và dịp sử dụng nào?');
     await expect(preview).toContainText(/thiếu thông tin thì hỏi lại hoặc chuyển nhân viên/i);
     await preview.getByRole('combobox', { name: 'Ngành hàng mẫu' }).click();
@@ -974,6 +1111,7 @@ test('FE027.B02 inbox price and available stock preview uses current canonical m
     const productWait = page.waitForResponse(response => response.request().method() === 'GET' && new URL(response.url()).pathname.endsWith('/products'));
     const stockWait = page.waitForResponse(response => response.request().method() === 'GET' && new URL(response.url()).pathname.endsWith('/inventory'));
     await gotoDemo(page, '/s/shop-demo/inbox/cv1');
+    await openSalesPreview(page);
     const [productResponse, stockResponse] = await Promise.all([productWait, stockWait]);
     expect(productResponse.status()).toBe(200);
     expect(stockResponse.status()).toBe(200);
@@ -993,6 +1131,7 @@ test('FE027.B02 inbox price and available stock preview uses current canonical m
 
 test('FE027.B03 order capture links the active customer and conversation into the manual order form', async ({ page }) => {
     await gotoDemo(page, '/s/shop-demo/inbox/cv1');
+    await openSalesPreview(page);
     await page.getByRole('tab', { name: 'Tạo đơn' }).click();
     const orderLink = page.getByRole('link', { name: 'Mở biểu mẫu tạo đơn từ hội thoại', exact: true });
     await expect(orderLink).toHaveAttribute('href', '/s/shop-demo/orders/new?customerId=c1&conversationId=cv1');
@@ -1007,6 +1146,7 @@ test('FE027.B04 automatic order confirmation stays unavailable until policy and 
         if (request.method() !== 'GET' && new URL(request.url()).pathname.startsWith('/api/v2/')) writes.push(request.method());
     });
     await gotoDemo(page, '/s/shop-demo/inbox/cv1');
+    await openSalesPreview(page);
     await page.getByRole('tab', { name: 'Xác nhận' }).click();
     await expect(page.getByRole('tabpanel', { name: 'Điều kiện xác nhận đơn' })).toContainText('Bằng chứng xác nhận của khách');
     await expect(page.getByRole('button', { name: 'Tự động xác nhận đơn chưa được hỗ trợ' })).toBeDisabled();

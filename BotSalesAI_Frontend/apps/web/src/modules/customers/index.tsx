@@ -14,7 +14,7 @@ import type { Customer, ServiceCase, CustomerWritePatch } from '@botsales/contra
 import { useVersionedDraft } from '@/shared/model/versioned-draft';
 import { DraftConflict } from '@/shared/ui/draft-conflict';
 import { useApi, useCommand, usePagedApi } from '@/shared/api/hooks';
-import { useScope, useCan } from '@/shared/model/scope';
+import { useScope, useCan, useCanWrite } from '@/shared/model/scope';
 import { useListQuery } from '@/shared/model/filters';
 import { limitCodePoints, codePointLength, dateTime } from '@/shared/model/format';
 import { Amount, PageHeader, Panel, DataTable, QueryState, Toolbar, Pager, Status, MutationButton, EditDialog, ErrorNotice, RouteLink, DetailLine, LookupLoadMore } from '@/shared/ui/components';
@@ -73,7 +73,7 @@ export function CustomersPage() {
         navigate(`/s/${shop.id}/customers/${response.data.id}`);
     }
     catch { /* error stays in dialog */ } });
-    return <><PageHeader title={t('customers.list.title')} subtitle={t('customers.list.subtitle')} actions={<MutationButton permission="customers.write" variant="contained" onClick={() => setOpen(true)}>{t('customers.list.addAction')}</MutationButton>}/><Panel><Toolbar operation="listCustomers" placeholder={t('customers.list.searchPlaceholder')} cursorParam="cursor"/><QueryState query={list} pendingProfile="section">{list.data && <><DataTable pinActionOnMobile label={t('customers.list.tableLabel')} empty={t('customers.list.empty')} rows={list.data.data} rowKey={c => c.id} columns={[
+    return <><PageHeader title={t('customers.list.title')} subtitle={t('customers.list.subtitle')} actions={<MutationButton permission="customers.write" variant="contained" onClick={() => setOpen(true)}>{t('customers.list.addAction')}</MutationButton>}/><Panel><Toolbar operation="listCustomers" placeholder={t('customers.list.searchPlaceholder')} cursorParam="cursor"/><QueryState query={list} pendingProfile="section">{list.data && <><DataTable mobile={{ layout: 'cards', titleKey: 'name', summaryKeys: ['phone', 'email'], actionKey: 'action' }} label={t('customers.list.tableLabel')} empty={t('customers.list.empty')} rows={list.data.data} rowKey={c => c.id} columns={[
         { key: 'name', label: t('customers.list.customerColumn'), render: c => <Typography fontWeight={visualSx.typography.fontWeight.strong}>{c.displayName}</Typography> }, { key: 'phone', label: t('customers.list.contactColumn'), render: c => c.phone || t('customers.list.contactUnavailable') }, { key: 'email', label: t('customers.list.emailColumn'), render: c => c.email || '—' }, { key: 'note', label: t('customers.list.notesColumn'), render: c => c.notes || '—' }, { key: 'action', label: 'Thao tác', render: c => <RouteLink to={`/s/${shop.id}/customers/${c.id}`}>{t('customers.list.profileAction')}</RouteLink> }
     ]}/><Pager page={list.data.page}/></>}</QueryState></Panel><EditDialog open={open} title={t('customers.form.createTitle')} onClose={() => setOpen(false)} busy={create.pending} actions={<Button type="submit" form="customer-create-form" variant="contained" disabled={create.pending}>{t('customers.form.createAction')}</Button>}><ErrorNotice error={create.error}/><FormFields component="form" ref={createForm} id="customer-create-form" onSubmit={submit} noValidate >{customerFormFields.map(field => <TextField key={field.name} label={t(field.labelKey)} disabled={create.pending} {...form.register(field.name)} error={!!form.formState.errors[field.name]} helperText={form.formState.errors[field.name]?.message} multiline={field.multiline}/>)}</FormFields></EditDialog></>;
 }
@@ -82,7 +82,7 @@ export function CustomerPage() {
     const { customerId = '' } = useParams();
     const { shop } = useScope();
     const listHref=useListReturn(`/s/${shop.id}/customers`);
-    const canEdit = useCan('customers.write');
+    const canEdit = useCanWrite('customers.write');
     const canReadOrders = useCan('orders.read');
     const canReadShipments = useCan('fulfillment.read');
     const customer = useApi('getCustomer', { path: { customerId } });
@@ -122,7 +122,7 @@ export function CustomerPage() {
         <PageHeader title={customer.data?.data.displayName || t('customers.detail.fallbackTitle')} subtitle={t('customers.detail.subtitle')} actions={<RouteLink to={listHref}>{t('customers.detail.listAction')}</RouteLink>}/>
         <QueryState query={customer} pendingProfile="section">
             {customer.data && <SectionGrid shrinkChildren columns={{ xs: '1fr' }}>
-                <Panel title={t('customers.detail.information')} bodyMode="inset">
+                <PageSections geometry={{ maxWidth: layoutSx.form.standardWidth.maxWidth }}><Panel title={t('customers.detail.information')} bodyMode="inset">
                     <FormFields component="form" ref={draftForm} data-draft-clean={!editor.dirty ? 'true' : undefined} onSubmit={save} >
                         <ErrorNotice error={update.error}/>
                         <DraftConflict editor={editor} labels={{ displayName: 'Tên khách hàng', phone: 'Điện thoại', email: 'Email', notes: 'Ghi chú' }} busy={update.pending}/>
@@ -130,7 +130,7 @@ export function CustomerPage() {
                         {customerFormFields.map(field => <TextField key={field.name} label={t(field.labelKey)} {...form.register(field.name)} error={!!form.formState.errors[field.name]} helperText={form.formState.errors[field.name]?.message} disabled={!canEdit || customer.data?.data.redactedFields.includes(field.name)} multiline={field.multiline} minRows={field.multiline ? 3 : undefined}/>)}
                         <MutationButton permission="customers.write" type="submit" variant="contained" busy={update.pending} disabled={!editor.dirty}>{t('customers.form.saveAction')}</MutationButton>
                     </FormFields>
-                </Panel>
+                </Panel></PageSections>
                 <PageSections >
                     <AddressesPanel key={customer.data.data.id} customer={customer.data.data}/>
                     <Panel title={t('customers.detail.recentOrders')} bodyMode="inset">
@@ -205,8 +205,8 @@ export function ServiceCasesPage() {
             <Toolbar operation="listServiceCases" />
             <QueryState query={list} pendingProfile="section">
                 {list.data && <>
-                    <DataTable label="Yêu cầu chăm sóc sau bán" rows={list.data.data} rowKey={item => item.id} columns={[
-                        { key: 'summary', label: 'Yêu cầu', render: item => <Stack><Typography fontWeight={visualSx.typography.fontWeight.strong}>{item.summary}</Typography><Typography variant="caption">{item.id}</Typography><Box sx={{ display: { xs: 'block', md: 'none' } }}><Button onClick={() => setDetailId(item.id)}>Chi tiết yêu cầu</Button></Box></Stack> },
+                    <DataTable mobile={{ layout: 'cards', titleKey: 'summary', summaryKeys: ['customer', 'order', 'state'], actionKey: 'action' }} label="Yêu cầu chăm sóc sau bán" rows={list.data.data} rowKey={item => item.id} columns={[
+                        { key: 'summary', label: 'Yêu cầu', render: item => <Stack><Typography fontWeight={visualSx.typography.fontWeight.strong}>{item.summary}</Typography><Typography variant="caption">{item.id}</Typography></Stack> },
                         { key: 'customer', label: 'Khách', render: item => <RouteLink to={`/s/${shop.id}/customers/${item.customerId}`}>{customers.data?.data.find(customer => customer.id === item.customerId)?.displayName || item.customerId}</RouteLink> },
                         { key: 'order', label: 'Đơn liên quan', render: item => item.orderId ? <RouteLink to={`/s/${shop.id}/orders/${item.orderId}`}>{item.orderId}</RouteLink> : 'Chưa liên kết' },
                         { key: 'type', label: 'Loại', render: item => <Status value={item.kind} /> },

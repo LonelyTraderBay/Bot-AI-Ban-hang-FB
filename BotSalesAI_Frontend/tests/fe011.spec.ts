@@ -1,4 +1,4 @@
-import { openDemoControls } from './session/demo-controls';
+import { setDemoControl } from './session/demo-controls';
 import { test, expect } from '@playwright/test';
 import AxeBuilder from '@axe-core/playwright';
 import { startDemoServer } from './session/demo-server.mjs';
@@ -19,9 +19,18 @@ async function gotoDemo(page: import('@playwright/test').Page, path: string) {
 }
 
 async function chooseOption(page: import('@playwright/test').Page, label: string, value: string) {
-    if (['Vai trò mô phỏng', 'Trạng thái thử', 'Dataset mô phỏng'].includes(label)) await openDemoControls(page);
     await page.getByRole('combobox', { name: label }).click();
     await page.getByRole('option', { name: value, exact: true }).click();
+}
+
+async function openStockDetails(page: import('@playwright/test').Page, sku: string) {
+    await page.getByRole('button', { name: `Xem chi tiết SKU ${sku}`, exact: true }).first().click();
+    return page.getByRole('dialog', { name: 'Chi tiết tồn kho' });
+}
+
+async function openAdjustment(page: import('@playwright/test').Page, sku: string) {
+    const details = await openStockDetails(page, sku);
+    await details.getByRole('button', { name: 'Điều chỉnh', exact: true }).click();
 }
 
 type ObservedRequest = { method: string; path: string; body: string | null; headers: Record<string, string> };
@@ -43,12 +52,13 @@ test('FE011.AC01 snapshot drives stock totals and the SKU opens its catalog resu
     await expect(row.getByRole('cell').nth(1)).toHaveText('8');
     await expect(row.getByRole('cell').nth(2)).toHaveText('0');
     await expect(row.getByRole('cell').nth(3)).toHaveText('8');
-    await expect(row).toContainText(/cập nhật \d{1,2}:\d{2} \d{1,2}\/\d{1,2}\/\d{2}/);
-    await expect(row.getByRole('link', { name: 'Mở sản phẩm' })).toHaveAttribute('href', '/s/shop-demo/products?q=DEMO-001');
+    await expect(row.getByRole('cell').nth(5)).toHaveText(/\d{1,2}:\d{2} \d{1,2}\/\d{1,2}\/\d{2}/);
+    const details = await openStockDetails(page, 'DEMO-001');
+    await expect(details.getByRole('link', { name: 'Mở sản phẩm' })).toHaveAttribute('href', '/s/shop-demo/products?q=DEMO-001');
     expect(calls.some(call => call.method === 'GET' && call.path === '/api/v2/shops/shop-demo')).toBeTruthy();
     expect(calls.some(call => call.method === 'GET' && call.path.startsWith('/api/v2/shops/shop-demo/inventory?'))).toBeTruthy();
 
-    await row.getByRole('link', { name: 'Mở sản phẩm' }).click();
+    await details.getByRole('link', { name: 'Mở sản phẩm' }).click();
     await expect(page).toHaveURL(/\/s\/shop-demo\/products\?q=DEMO-001/);
     await expect(page.getByText('Áo mẫu A', { exact: true })).toBeVisible();
 });
@@ -56,9 +66,9 @@ test('FE011.AC01 snapshot drives stock totals and the SKU opens its catalog resu
 test('FE011.AC02 adjustment validates, waits for mock confirmation, and reconciles movement history once', async ({ page }) => {
     const calls = observeShopRequests(page);
     await gotoDemo(page, '/s/shop-demo/inventory');
-    await chooseOption(page, 'Trạng thái thử', 'Tải chậm');
+    await setDemoControl(page, 'fault', 'slow');
     const row = page.getByRole('row').filter({ hasText: 'DEMO-001' });
-    await row.getByRole('button', { name: 'Điều chỉnh' }).click();
+    await openAdjustment(page, 'DEMO-001');
     const dialog = page.getByRole('dialog', { name: 'Điều chỉnh DEMO-001' });
     await dialog.getByLabel('Thay đổi số lượng').fill('0');
     await dialog.getByLabel('Lý do điều chỉnh').fill('Kiểm kê FE011');
@@ -95,9 +105,9 @@ test('FE011.AC02 adjustment validates, waits for mock confirmation, and reconcil
 test('FE011.AC03 conflict and insufficient stock preserve the draft and never update optimistically', async ({ page }) => {
     const calls = observeShopRequests(page);
     await gotoDemo(page, '/s/shop-demo/inventory');
-    await chooseOption(page, 'Trạng thái thử', 'Xung đột lần ghi tiếp');
+    await setDemoControl(page, 'fault', 'conflict');
     const row = page.getByRole('row').filter({ hasText: 'DEMO-001' });
-    await row.getByRole('button', { name: 'Điều chỉnh' }).click();
+    await openAdjustment(page, 'DEMO-001');
     const dialog = page.getByRole('dialog', { name: 'Điều chỉnh DEMO-001' });
     await dialog.getByLabel('Thay đổi số lượng').fill('1');
     await dialog.getByLabel('Lý do điều chỉnh').fill('Kiểm kê xung đột');
@@ -130,12 +140,14 @@ test('FE011.AC03 conflict and insufficient stock preserve the draft and never up
 test('FE011.AC03 forbidden adjustment retains user input and shows no success state', async ({ page }) => {
     const calls = observeShopRequests(page);
     await gotoDemo(page, '/s/shop-demo/inventory');
-    await chooseOption(page, 'Trạng thái thử', 'Mất quyền truy vấn tiếp');
-    const row = page.getByRole('row').filter({ hasText: 'DEMO-001' });
-    await row.getByRole('button', { name: 'Điều chỉnh' }).click();
+    await openAdjustment(page, 'DEMO-001');
     const dialog = page.getByRole('dialog', { name: 'Điều chỉnh DEMO-001' });
     await dialog.getByLabel('Thay đổi số lượng').fill('1');
     await dialog.getByLabel('Lý do điều chỉnh').fill('Thử mất quyền');
+    await page.evaluate(async () => {
+        const control = window as Window & { __setMockControl: (key: string, value: string) => Promise<void> };
+        await control.__setMockControl('fault', 'forbidden');
+    });
     await dialog.getByRole('button', { name: 'Xác nhận điều chỉnh' }).click();
     await expect(dialog.getByRole('alert').filter({ hasText: 'Mô phỏng mất quyền' })).toBeVisible();
     await expect(dialog.getByLabel('Lý do điều chỉnh')).toHaveValue('Thử mất quyền');
@@ -146,9 +158,8 @@ test('FE011.AC03 forbidden adjustment retains user input and shows no success st
 test('FE011.AC03 unknown command blocks duplicate submission until shared recovery reconciles it', async ({ page }) => {
     const calls = observeShopRequests(page);
     await gotoDemo(page, '/s/shop-demo/inventory');
-    await chooseOption(page, 'Trạng thái thử', 'Kết quả ghi chưa rõ');
-    const row = page.getByRole('row').filter({ hasText: 'DEMO-001' });
-    await row.getByRole('button', { name: 'Điều chỉnh' }).click();
+    await setDemoControl(page, 'fault', 'unknown');
+    await openAdjustment(page, 'DEMO-001');
     const dialog = page.getByRole('dialog', { name: 'Điều chỉnh DEMO-001' });
     await dialog.getByLabel('Thay đổi số lượng').fill('1');
     await dialog.getByLabel('Lý do điều chỉnh').fill('Chưa rõ kết quả');
@@ -206,8 +217,9 @@ test('FE011.AC05 inventory reflows at mobile widths, passes axe, and restores ke
     const audit = await new AxeBuilder({ page }).withTags(['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa']).analyze();
     expect(audit.violations).toEqual([]);
 
-    const trigger = page.getByRole('row').filter({ hasText: 'DEMO-001' }).getByRole('button', { name: 'Điều chỉnh' });
-    await trigger.click();
+    const trigger = page.getByRole('region', { name: 'Tồn kho theo vị trí' }).getByRole('row')
+        .filter({ hasText: 'DEMO-001' }).getByRole('button', { name: 'Xem chi tiết SKU DEMO-001', exact: true });
+    await openAdjustment(page, 'DEMO-001');
     const dialog = page.getByRole('dialog', { name: /Điều chỉnh DEMO-001/ });
     await expect(dialog).toBeVisible();
     await page.keyboard.press('Tab');

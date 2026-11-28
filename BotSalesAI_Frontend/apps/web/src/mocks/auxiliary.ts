@@ -41,6 +41,18 @@ export async function auxiliary(op: string, input: Input): Promise<Row | Row[] |
     switch (op) {
         case 'getProviderCatalog': return providerCatalog();
         case 'getInboxMetadata': return { channels: all('channels', shopId).map(c => ({ id: c.id, displayName: c.name, mediaPolicy: c.status === 'connected' ? c.mediaPolicy ?? null : null })), assignees: all('members', shopId).filter(m => m.status === 'active').map(m => ({ userId: m.userId, displayName: m.userId === 'user-demo' ? 'Chủ shop (mẫu)' : str(m.userId) })) };
+        case 'closeShop':
+        case 'reopenShop': {
+            const shop = find('shops', shopId, shopId);
+            checkVersion(shop, input);
+            const status = op === 'closeShop' ? 'closed' : 'active';
+            if (shop.status === status) return shop;
+            if (status === 'closed') {
+                const { requireCloseableShop } = await import('./shop-closure');
+                requireCloseableShop(input);
+            }
+            return Object.assign(shop, { status, closedAt: status === 'closed' ? now() : null, version: num(shop.version) + 1 });
+        }
         case 'updateShop': {
             const s = find('shops', shopId, shopId);
             checkVersion(s, input);

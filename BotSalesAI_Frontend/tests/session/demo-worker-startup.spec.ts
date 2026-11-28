@@ -212,7 +212,7 @@ test('demo startup explains the required setup when the browser blocks Service W
         await expect(page.getByRole('heading', { name: 'Chưa khởi động được ứng dụng', exact: true })).toBeVisible();
         await expect(page.getByText(/Chạy npm run setup để tạo service worker mô phỏng/)).toBeVisible();
         await expect(page.getByRole('navigation', { name: 'Điều hướng chính' })).toHaveCount(0);
-        await expect(page.getByText('Dữ liệu mô phỏng', { exact: true })).toHaveCount(0);
+        await expect(page.getByRole('complementary', { name: 'Công cụ mô phỏng', exact: true })).toHaveCount(0);
     }
     finally {
         await context.close();

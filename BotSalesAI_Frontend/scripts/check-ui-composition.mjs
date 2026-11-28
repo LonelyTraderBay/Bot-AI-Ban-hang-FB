@@ -34,7 +34,7 @@ export const finiteProps = {
     ActionGroup: { density: new Set(['compact', 'comfortable']), beforeGap: new Set(['form', 'surface', 'detail']), afterGap: new Set(['section', 'notice']) },
     EditDialog: { density: new Set(['compact', 'comfortable']) },
     PageSections: { rhythm: new Set(['section', 'major']), beforeGap: new Set(['section']) },
-    SectionGrid: { rhythm: new Set(['section', 'content']) },
+    SectionGrid: { rhythm: new Set(['section', 'content']), component: new Set(['div', 'ul']) },
 };
 export const insetModes = {
     Panel: new Set(['inset']),
@@ -56,7 +56,7 @@ export const publicProps = {
     SurfaceContent: new Set([...flowKeys, 'bodyMode', 'rhythm', 'beforeGap', 'afterGap']),
     ActionGroup: new Set([...flowKeys, 'bodyMode', 'density', 'beforeGap', 'afterGap']),
     PageSections: new Set([...flowKeys, 'rhythm', 'beforeGap', 'shrinkChildren']),
-    SectionGrid: new Set(['children', 'key', 'id', 'role', 'aria-label', 'alignItems', 'data-testid', 'data-draft-clean', 'geometry', 'columns', 'shrinkChildren', 'rhythm']),
+    SectionGrid: new Set(['children', 'key', 'id', 'role', 'aria-label', 'alignItems', 'data-testid', 'data-draft-clean', 'geometry', 'columns', 'component', 'shrinkChildren', 'rhythm']),
 };
 const posix = value => value.split(path.sep).join('/');
 

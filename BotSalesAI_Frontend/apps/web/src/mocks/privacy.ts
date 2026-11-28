@@ -50,6 +50,13 @@ function getBySessionHash(sessionHash: string) {
     return (db.consentChallenges || []).find(row => row.sessionHash === sessionHash);
 }
 
+function requireConsentShopOpen(challenge: Row) {
+    if (challenge.action !== 'withdraw') {
+        const shop = find('shops', str(challenge.shopId), str(challenge.shopId));
+        ensure(shop.status !== 'closed', 'Cửa hàng đã đóng.', 409, 'SHOP_CLOSED');
+    }
+}
+
 export async function privacy(op: string, input: Input): Promise<unknown> {
     if (op === 'createCustomerConsentChallenge') {
         ensure(input.permissions?.includes('privacy.manage'), 'Bạn không có quyền quản lý consent.', 403, 'FORBIDDEN');
@@ -74,6 +81,7 @@ export async function privacy(op: string, input: Input): Promise<unknown> {
         const challenge = getByTokenHash(await digest(token));
         ensure(challenge && ['pending', 'exchanged'].includes(str(challenge.status)) && Date.parse(str(challenge.expiresAt)) > Date.parse(now()), 'Liên kết không hợp lệ hoặc đã hết hạn.', 404, 'CONSENT_CHALLENGE_INVALID');
         ensure(str(challenge.status) !== 'exchanged', 'Liên kết đã được mở trước đó; hãy tiếp tục phiên xác nhận hiện có.', 409, 'CONSENT_CHALLENGE_REPLAY');
+        requireConsentShopOpen(challenge);
         const customer = find('customers', str(challenge.customerId), str(challenge.shopId));
         ensure(str(customer.externalIdentity) === str(challenge.identityId), 'Danh tính khách đã đổi sau khi tạo liên kết.', 409, 'CONSENT_IDENTITY_CHANGED');
         const challengeSessionId = `${crypto.randomUUID().replaceAll('-', '')}${crypto.randomUUID().replaceAll('-', '')}`;
@@ -93,6 +101,7 @@ export async function privacy(op: string, input: Input): Promise<unknown> {
         ensure(challenge && str(challenge.status) === 'exchanged' && !challenge.usedAt, 'Phiên xác nhận không hợp lệ hoặc đã được dùng.', 409, 'CONSENT_CHALLENGE_REPLAY');
         ensure(Date.parse(str(challenge.expiresAt)) > Date.parse(now()), 'Phiên xác nhận đã hết hạn.', 410, 'CONSENT_CHALLENGE_EXPIRED');
         ensure(input.body.contentVersion === challenge.contentVersion, 'Nội dung đã đổi; cần tạo liên kết mới để khách xem lại.', 409, 'CONSENT_CONTENT_CHANGED');
+        requireConsentShopOpen(challenge);
         const customer = find('customers', str(challenge.customerId), str(challenge.shopId));
         ensure(str(customer.externalIdentity) === str(challenge.identityId), 'Danh tính khách đã đổi sau khi tạo liên kết.', 409, 'CONSENT_IDENTITY_CHANGED');
         const decision = str(input.body.decision);

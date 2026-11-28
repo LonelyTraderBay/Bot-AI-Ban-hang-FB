@@ -1,4 +1,4 @@
-import { ActionGroup, FormFields } from '../../shared/ui/composition';
+import { ActionGroup, FormFields, SurfaceContent } from '../../shared/ui/composition';
 export { WarehousesPage } from './warehouses';
 import { useEffect, useState } from 'react';
 import { visualSx } from '@/shared/ui/visual';
@@ -14,7 +14,7 @@ import { useApi, useCommand, usePagedApi } from '@/shared/api/hooks';
 import { useCan, useScope } from '@/shared/model/scope';
 import { useListQuery } from '@/shared/model/filters';
 import { limitCodePoints, codePointLength, dateTime } from '@/shared/model/format';
-import { PageHeader, Panel, DataTable, QueryState, Toolbar, Pager, Status, Amount, MutationButton, EditDialog, ErrorNotice, RouteLink, LookupLoadMore } from '@/shared/ui/components';
+import { PageHeader, Panel, DataTable, QueryState, Toolbar, Pager, Status, Amount, MutationButton, EditDialog, ErrorNotice, RouteLink, LookupLoadMore, CopyableCode, DetailLine } from '@/shared/ui/components';
 import { layoutSx } from '@/shared/ui/layout';
 
 const adjustmentSchema = z.object({
@@ -28,8 +28,9 @@ const adjustmentSchema = z.object({
 });
 type AdjustmentFields = z.infer<typeof adjustmentSchema>;
 const emptyAdjustment: AdjustmentFields = { quantityDelta: '', reason: '', unitCost: '' };
+const adjustmentBaseline = { scope: null, sequence: 0 };
 
-function InventoryFilters({ includeVariant = false }: { includeVariant?: boolean }) {
+function InventoryMovementFilters() {
     const [params, setParams] = useSearchParams();
     const warehouses = usePagedApi('listWarehouses', { query: { limit: 20 } });
     const [warehouseId, setWarehouseId] = useState(params.get('warehouseId') || '');
@@ -42,7 +43,7 @@ function InventoryFilters({ includeVariant = false }: { includeVariant?: boolean
 
     const apply = () => {
         const next = new URLSearchParams(params);
-        const filters: Array<[string, string]> = [['warehouseId', warehouseId], ['variantId', includeVariant ? variantId : '']];
+        const filters: Array<[string, string]> = [['warehouseId', warehouseId], ['variantId', variantId]];
         for (const [key, value] of filters) {
             const normalized = value.trim();
             if (normalized) next.set(key, normalized);
@@ -65,9 +66,7 @@ function InventoryFilters({ includeVariant = false }: { includeVariant?: boolean
     return <FormFields direction={{ xs: 'column', sm: 'row' }}  alignItems={{ sm: 'center' }} flexWrap="wrap">
         <FormFields direction={{ xs: 'column', sm: 'row' }} >
             <TextField id="inventory-warehouse" select size="small" label="Kho" SelectProps={{ displayEmpty: true, SelectDisplayProps: { 'aria-labelledby': 'inventory-warehouse-label' } }} value={warehouseId} onChange={event => setWarehouseId(event.target.value)} sx={{ minWidth: { sm: 150 } }}><MenuItem value="">Tất cả kho</MenuItem>{warehouseId && !warehouses.data?.data.some(w => w.id === warehouseId) && <MenuItem value={warehouseId}>Đang giữ bộ lọc {warehouseId}</MenuItem>}{warehouses.data?.data.map(w => <MenuItem key={w.id} value={w.id}>{w.code} · {w.name}</MenuItem>)}</TextField><LookupLoadMore label="kho" loadedCount={warehouses.loadedCount} hasMore={warehouses.hasMore} busy={warehouses.isLoadingMore} onLoadMore={warehouses.loadMore}/><ErrorNotice error={warehouses.error}/>
-            {includeVariant && <>
-                <TextField size="small" label="Mã biến thể" value={variantId} onChange={event => setVariantId(limitCodePoints(event.target.value, 120))}  sx={{ minWidth: { sm: 160 } }}/>
-            </>}
+            <TextField size="small" label="Mã biến thể" value={variantId} onChange={event => setVariantId(limitCodePoints(event.target.value, 120))} sx={{ minWidth: { sm: 160 } }}/>
         </FormFields>
         <ActionGroup direction="row" >
             <Button type="button" size="small" variant="outlined" onClick={apply}>Áp dụng bộ lọc</Button>
@@ -81,7 +80,9 @@ export function InventoryPage() {
     const canFinance = useCan('finance.read');
     const canCatalog = useCan('catalog.read');
     const list = useApi('listStockSnapshots', { query: useListQuery('listStockSnapshots') });
+    const warehouses = usePagedApi('listWarehouses', { query: { limit: 20 } });
     const adjust = useCommand('createInventoryAdjustment', ['listStockSnapshots', 'listStockMovements', 'getDashboard']);
+    const [details, setDetails] = useState<StockSnapshot | null>(null);
     const [item, setItem] = useState<StockSnapshot | null>(null);
     const [completedCommandId, setCompletedCommandId] = useState('');
     const { control, register, handleSubmit, reset, formState: { errors, isSubmitting } } = useForm<AdjustmentFields>({
@@ -96,6 +97,7 @@ export function InventoryPage() {
         adjust.clearError();
     };
     const close = () => {
+        setDetails(null);
         setItem(null);
         reset(emptyAdjustment);
     };
@@ -116,32 +118,64 @@ export function InventoryPage() {
         catch { /* Keep the entered values; unknown outcomes stay locked by useCommand recovery. */ }
     };
     const submitting = adjust.pending || isSubmitting;
+    const warehouseName = (warehouseId: string) => warehouses.data?.data.find(warehouse => warehouse.id === warehouseId)?.name ?? warehouseId;
 
     return <>
-        <PageHeader title="Tồn kho" subtitle="Tồn thực tế, đã giữ cho đơn và số còn có thể bán." actions={<ActionGroup direction="row"><RouteLink to={`/s/${shop.id}/inventory/movements`}>Lịch sử biến động</RouteLink><RouteLink to={`/s/${shop.id}/inventory/stocktakes`}>Kiểm kê kho</RouteLink><RouteLink to={`/s/${shop.id}/inventory/transfers`}>Chuyển kho</RouteLink></ActionGroup>}/>
-        <Alert severity="info" sx={layoutSx.page.sectionAfter}>Số tồn tại thời điểm cập nhật không cộng hàng đang về hoặc hàng cách ly vào số có thể bán. Kho mặc định: {shop.defaultWarehouseId}.</Alert>
+        <PageHeader title="Tồn kho" subtitle="Tồn thực tế, đã giữ cho đơn và số còn có thể bán." actions={<ActionGroup flexWrap="wrap">
+            <RouteLink to={`/s/${shop.id}/inventory/movements`}>Lịch sử biến động</RouteLink>
+            <RouteLink to={`/s/${shop.id}/inventory/stocktakes`}>Kiểm kê kho</RouteLink>
+            <RouteLink to={`/s/${shop.id}/inventory/transfers`}>Chuyển kho</RouteLink>
+            {canFinance && <RouteLink to={`/s/${shop.id}/finance/ledger`}>Sổ cái</RouteLink>}
+        </ActionGroup>}/>
         {completedCommandId && <Alert severity="success" role="status" sx={layoutSx.notice.afterGap}>Điều chỉnh đã được xác nhận. Mã lệnh: {completedCommandId}. Tồn kho và lịch sử đã được tải lại.</Alert>}
-        <Panel><Toolbar operation="listStockSnapshots" placeholder="Tìm SKU hoặc mã biến thể…" filters={<InventoryFilters/>}/><QueryState query={list} pendingProfile="section">{list.data && <>
-            <DataTable pinActionOnMobile label="Tồn kho theo vị trí" rows={list.data.data} rowKey={row => row.id} columns={[
-                { key: 'sku', label: 'SKU / Kho', render: row => <Stack><Typography fontWeight={visualSx.typography.fontWeight.strong}>{row.sku}</Typography><Typography variant="caption" color="text.secondary">Mã kho: {row.warehouseId} · cập nhật {dateTime(row.asOf, shop.timezone)}</Typography>{canCatalog && <RouteLink to={`/s/${shop.id}/products?q=${encodeURIComponent(row.sku)}`}>Mở sản phẩm</RouteLink>}</Stack> },
-                { key: 'onHand', label: 'Thực tế', align: 'right', render: row => row.onHand },
-                { key: 'reserved', label: 'Đã giữ', align: 'right', render: row => row.reserved },
-                { key: 'available', label: 'Có thể bán', align: 'right', render: row => <Typography fontWeight={visualSx.typography.fontWeight.display} color={row.available <= row.lowStockThreshold ? 'warning.main' : 'text.primary'}>{row.available}</Typography> },
-                { key: 'threshold', label: 'Ngưỡng cảnh báo', align: 'right', render: row => row.lowStockThreshold },
-                ...(canFinance ? [{ key: 'cost', label: 'Giá vốn/đơn vị', render: (row: StockSnapshot) => <Amount value={row.unitCost}/> }] : []),
-                { key: 'state', label: 'Tình trạng', render: row => <Status domain="stock" value={row.available <= 0 ? 'out_of_stock' : row.available <= row.lowStockThreshold ? 'low_stock' : 'in_stock'}/> },
-                { key: 'action', label: 'Thao tác', render: row => <MutationButton permission="inventory.adjust" onClick={() => edit(row)}>Điều chỉnh</MutationButton> },
+        <Panel><Toolbar operation="listStockSnapshots" placeholder="Tìm SKU hoặc mã biến thể…" filterGroup={{
+            label: 'Bộ lọc tồn kho', presentation: 'dialog',
+            filters: [{ name: 'warehouseId', label: 'Kho', pinned: true, options: (warehouses.data?.data ?? []).map(warehouse => ({
+                value: warehouse.id, label: `${warehouse.code} · ${warehouse.name}`,
+            })) }],
+            lookupState: <>
+                <LookupLoadMore label="kho" loadedCount={warehouses.loadedCount} hasMore={warehouses.hasMore} busy={warehouses.isLoadingMore} onLoadMore={warehouses.loadMore} />
+                <ErrorNotice error={warehouses.error} />
+            </>,
+        }}/><QueryState query={list} pendingProfile="section">{list.data && <>
+            <DataTable density="compact" mobile={{ layout: 'comparison', appearance: 'grid', pinnedKey: 'sku' }} label="Tồn kho theo vị trí" rows={list.data.data} rowKey={row => row.id} columns={[
+                { key: 'sku', label: 'SKU', width: 110, render: row => <Button size="small" aria-haspopup="dialog" aria-label={`Xem chi tiết SKU ${row.sku}`}
+                    sx={{ minWidth: 0, maxWidth: '100%' }} onClick={() => setDetails(row)}>
+                    <Typography component="span" variant="inherit" fontWeight={visualSx.typography.fontWeight.strong} noWrap>{row.sku}</Typography>
+                </Button> },
+                { key: 'onHand', label: 'Thực tế', width: 70, align: 'right', render: row => row.onHand },
+                { key: 'reserved', label: 'Đã giữ', width: 70, align: 'right', render: row => row.reserved },
+                { key: 'available', label: 'Khả dụng', width: 78, align: 'right', render: row => <Typography fontWeight={visualSx.typography.fontWeight.display} color={row.available <= row.lowStockThreshold ? 'warning.main' : 'text.primary'}>{row.available}</Typography> },
+                { key: 'warehouse', label: 'Kho', width: 104, render: row => warehouseName(row.warehouseId) },
+                { key: 'asOf', label: 'Cập nhật', width: 112, render: row => dateTime(row.asOf, shop.timezone) },
             ]}/>
             <Pager page={list.data.page}/>
         </>}</QueryState></Panel>
-        <EditDialog open={!!item} title={`Điều chỉnh ${item?.sku || ''}`} description="Nhập phần tăng hoặc giảm của vị trí này. Số tồn chỉ đổi sau khi lệnh được xác nhận." onClose={close} busy={submitting} actions={<MutationButton permission="inventory.adjust" variant="contained" busy={submitting} type="button" onClick={() => void handleSubmit(submitAdjustment)()}>Xác nhận điều chỉnh</MutationButton>}>
-            <ErrorNotice error={adjust.error} fieldLabels={{ unitCost: 'Giá vốn đơn vị' }}/>
-            <FormFields component="form" id="inventory-adjustment-form" noValidate  onSubmit={event => { event.preventDefault(); void handleSubmit(submitAdjustment)(event); }}>
-                <Alert severity="warning">API kiểm tra lại phiên bản và lượng đang giữ. Không nhập tổng tồn; không thể giảm thấp hơn lượng đã giữ.</Alert>
-                <TextField label="Thay đổi số lượng" inputProps={{ inputMode: 'numeric' }} {...register('quantityDelta')} error={!!errors.quantityDelta} helperText={errors.quantityDelta?.message}/>
-                <TextField label="Lý do điều chỉnh" multiline minRows={2} {...register('reason')} error={!!errors.reason} helperText={errors.reason?.message}/>
-                {canFinance && <Controller name="unitCost" control={control} render={({ field }) => <TextField {...field} label={`Giá vốn đơn vị (${shop.currency})`} inputProps={{ inputMode: 'decimal' }} error={!!errors.unitCost} helperText={errors.unitCost?.message || 'Bắt buộc khi tăng tồn từ vị trí trống. Có thể để trống nếu vị trí còn hàng hoặc khi giảm tồn.'}/>}/>}
-            </FormFields>
+        <Alert severity="info" sx={layoutSx.page.sectionBefore}>Số tồn khả dụng tại thời điểm cập nhật chưa gồm hàng đang về và hàng cách ly. Kho mặc định: {shop.defaultWarehouseId}.</Alert>
+        <EditDialog open={!!details} width="compact" title={item ? `Điều chỉnh ${item.sku}` : 'Chi tiết tồn kho'}
+            description={item ? 'Nhập phần tăng hoặc giảm của vị trí này. Số tồn chỉ đổi sau khi lệnh được xác nhận.' : undefined}
+            onClose={close} dirtyGuard={!!item} draftCommit={item ? adjustmentBaseline : undefined} busy={submitting} actions={item ?
+                <MutationButton permission="inventory.adjust" variant="contained" busy={submitting} type="button" onClick={() => void handleSubmit(submitAdjustment)()}>Xác nhận điều chỉnh</MutationButton>
+                : details && <>
+                    {canCatalog && <RouteLink to={`/s/${shop.id}/products?q=${encodeURIComponent(details.sku)}`}>Mở sản phẩm</RouteLink>}
+                    <MutationButton permission="inventory.adjust" onClick={() => edit(details)}>Điều chỉnh</MutationButton>
+                </>}>
+            {item ? <>
+                <ErrorNotice error={adjust.error} fieldLabels={{ unitCost: 'Giá vốn đơn vị' }}/>
+                <FormFields component="form" id="inventory-adjustment-form" noValidate onSubmit={event => { event.preventDefault(); void handleSubmit(submitAdjustment)(event); }}>
+                    <Alert severity="warning">Số tồn được kiểm tra lại khi xác nhận và phải đủ cho lượng hàng đã giữ.</Alert>
+                    <TextField autoFocus label="Thay đổi số lượng" inputProps={{ inputMode: 'numeric' }} {...register('quantityDelta')} error={!!errors.quantityDelta} helperText={errors.quantityDelta?.message}/>
+                    <TextField label="Lý do điều chỉnh" multiline minRows={2} {...register('reason')} error={!!errors.reason} helperText={errors.reason?.message}/>
+                    {canFinance && <Controller name="unitCost" control={control} render={({ field }) => <TextField {...field} label={`Giá vốn đơn vị (${shop.currency})`} inputProps={{ inputMode: 'decimal' }} error={!!errors.unitCost} helperText={errors.unitCost?.message || 'Bắt buộc khi tăng tồn từ vị trí trống. Có thể để trống nếu vị trí còn hàng hoặc khi giảm tồn.'}/>}/>}
+                </FormFields>
+            </> : details && <SurfaceContent>
+                <DetailLine label="SKU"><CopyableCode label="SKU" value={details.sku}/></DetailLine>
+                <DetailLine label="Kho">{warehouseName(details.warehouseId)}</DetailLine>
+                <DetailLine label="Cập nhật">{dateTime(details.asOf, shop.timezone)}</DetailLine>
+                <DetailLine label="Ngưỡng cảnh báo">{details.lowStockThreshold}</DetailLine>
+                {canFinance && <DetailLine label="Giá vốn/đơn vị"><Amount wrap value={details.unitCost}/></DetailLine>}
+                <DetailLine label="Tình trạng"><Status domain="stock" value={details.available <= 0 ? 'out_of_stock' : details.available <= details.lowStockThreshold ? 'low_stock' : 'in_stock'}/></DetailLine>
+            </SurfaceContent>}
         </EditDialog>
     </>;
 }
@@ -160,8 +194,8 @@ export function MovementsPage() {
     const actorNames = new Map((canReadConversations && !people.isError ? people.data?.data.assignees : [])?.map(person => [person.userId, person.displayName] as const) || []);
     return <>
         <PageHeader title="Lịch sử kho" subtitle="Truy nguyên mỗi thay đổi đến chứng từ và người thực hiện." actions={<RouteLink to={`/s/${shop.id}/inventory`}>Về tồn kho</RouteLink>}/>
-        <Panel><Toolbar operation="listStockMovements" placeholder="Tìm SKU, mã biến thể hoặc mã chứng từ…" filters={<InventoryFilters includeVariant/>}/><QueryState query={list} pendingProfile="section">{list.data && <>
-            <DataTable reflowOnMobile label="Lịch sử biến động kho" rows={list.data.data} rowKey={row => row.id} columns={[
+        <Panel><Toolbar operation="listStockMovements" placeholder="Tìm SKU, mã biến thể hoặc mã chứng từ…" filters={<InventoryMovementFilters/>}/><QueryState query={list} pendingProfile="section">{list.data && <>
+            <DataTable mobile={{ layout: 'cards', titleKey: 'variant', summaryKeys: ['kind', 'quantity', 'date'] }} label="Lịch sử biến động kho" rows={list.data.data} rowKey={row => row.id} columns={[
                 { key: 'date', label: 'Thời gian', render: row => dateTime(row.createdAt, shop.timezone) },
                 { key: 'kind', label: 'Loại', render: row => <Status domain="stockMovement" value={row.kind}/> },
                 { key: 'variant', label: 'Biến thể', render: row => variants.get(row.variantId) || `Mã biến thể: ${row.variantId}` },

@@ -13,14 +13,19 @@ test('UX01 setup feedback CTA reaches review workflow rather than dynamic knowle
  await page.goto(url+'/s/shop-demo/settings/shop');
  await page.getByRole('link',{name:'Duyệt góp ý',exact:true}).click();
  await expect(page).toHaveURL(/\/knowledge\/review$/);
- await expect(page.getByRole('heading',{name:'Duyệt phản hồi AI',exact:true})).toBeVisible();
+ await expect(page.getByRole('heading',{name:'Phản hồi cần duyệt',exact:true})).toBeVisible();
 });
 test('UX02 stock warnings describe low/zero stock without implying a server block',async({page})=>{
  await page.goto(url+'/s/shop-demo/inventory');
  const table=page.getByRole('table',{name:'Tồn kho theo vị trí'});
- await expect(table.getByRole('row').filter({hasText:'QU-003'})).toContainText('Sắp hết hàng');
- await expect(table.getByRole('row').filter({hasText:'MU-006'})).toContainText('Hết hàng');
- await expect(table).not.toContainText('Bị chặn');
+ for (const [sku, status] of [['QU-003', 'Sắp hết hàng'], ['MU-006', 'Hết hàng']] as const) {
+  await table.getByRole('button', { name: `Xem chi tiết SKU ${sku}`, exact: true }).click();
+  const details = page.getByRole('dialog', { name: 'Chi tiết tồn kho' });
+  await expect(details.getByText(status, { exact: true })).toBeVisible();
+  await expect(details).not.toContainText('Bị chặn');
+  await page.keyboard.press('Escape');
+  await expect(details).toHaveCount(0);
+ }
 });
 test('UX02 inventory receipts and accounting open periods have domain-specific names',async({page})=>{
  await page.goto(url+'/s/shop-demo/inventory/movements');
@@ -130,7 +135,7 @@ test('UX07 titles and breadcrumb distinguish create/detail/review; menu empty st
  await expect(search).toHaveValue('');await expect(search).toBeFocused();
  await expect(page.getByRole('link',{name:'Sản phẩm',exact:true})).toBeVisible();
  await page.goto(url+'/s/shop-demo/knowledge/review');
- await expect(page).toHaveTitle('Đánh giá và phản hồi · BotSales AI');
+ await expect(page).toHaveTitle('Phản hồi cần duyệt · BotSales AI');
  await page.goto(url+'/unknown-path');await expect(page).toHaveTitle('Không tìm thấy trang · BotSales AI');
 });
 
@@ -154,7 +159,8 @@ test('UX06 AI capability names and states are readable in Vietnamese',async({pag
 test('UX15 detail captions reflow without splitting short words across all required viewports',async({page},info)=>{
  test.setTimeout(90000);
  await page.goto(url+'/s/shop-demo/inbox/cv1');
- const context=page.getByRole('complementary',{name:'Bối cảnh khách hàng',exact:true});
+ const context=page.getByRole('dialog',{name:'Thông tin khách',exact:true});
+ await page.getByRole('button',{name:'Thông tin khách',exact:true}).click();
  for(const width of [320,390,768,1280,1440]){
   await page.setViewportSize({width,height:900});
   const caption=context.getByText('Kênh',{exact:true});await expect(caption).toBeVisible();

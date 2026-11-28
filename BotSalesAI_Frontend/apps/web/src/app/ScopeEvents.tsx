@@ -21,6 +21,7 @@ export function ScopeEvents() {
         const resync = () => {
             void cache.invalidateQueries({ queryKey: key });
             void cache.invalidateQueries({ queryKey: shopKey });
+            void cache.invalidateQueries({ queryKey: ['shops', session.user.id] });
         };
         stream.onopen = () => { if (live) {
             setDisconnected(false);

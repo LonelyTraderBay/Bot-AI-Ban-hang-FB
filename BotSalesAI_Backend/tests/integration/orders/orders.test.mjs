@@ -1769,3 +1769,65 @@ test('SC2-B05 and SC2-C07: versioned combo pricing is validated at sale and hist
     assert.equal(after.refundedAmount.amount, '0');
     assert.equal(await db.auditEntry.count({ where: { shopId, resourceId: row.id, action: 'createPromotion' } }), 1);
 });
+
+test('SC-022 R17-FILTERS: shipping and payment states filter each shop before pagination', async () => {
+    for (const [shop, actor, foreignActor] of [[shopA, owner, other], [shopB, other, owner]]) {
+        const client = await customer(shop, actor);
+        const { variants: [variant] } = await product(shop, actor, 1, ['120']);
+        const ids = [];
+        for (const [fulfillmentState, paymentState] of [['delivered', 'unpaid'], ['packed', 'verified'], ['delivered', 'verified'], ['delivered', 'verified']]) {
+            const order = await json(await send('orders', draft(client, variant, { warehouseId: shop.defaultWarehouseId }), { shop, actor }), 201, 'OrderResponse');
+            await admin.salesOrder.update({ where: { shopId_id: { shopId: shop.id, id: order.id } }, data: { fulfillmentState, paymentState } });
+            ids.push(order.id);
+        }
+        const list = route('orders?customerId=' + client.person.id, shop);
+        const filtered = list + '&fulfillmentState=delivered&paymentState=verified&limit=1';
+        assert.equal((await json(await request(list + '&fulfillmentState=delivered', actor), 200, 'OrderListResponse')).length, 3);
+        assert.equal((await json(await request(list + '&paymentState=verified', actor), 200, 'OrderListResponse')).length, 3);
+        const response = await request(filtered, actor);
+        const { page } = await response.clone().json();
+        const [first] = await json(response, 200, 'OrderListResponse');
+        assert.equal(page.hasMore, true);
+        const cursor = '&cursor=' + encodeURIComponent(page.nextCursor);
+        const [second] = await json(await request(filtered + cursor, actor), 200, 'OrderListResponse');
+        assert.deepEqual(new Set([first.id, second.id]), new Set(ids.slice(2)));
+        await json(await request(list + '&fulfillmentState=delivered&paymentState=unpaid' + cursor, actor), 400, 'Problem');
+        await json(await request(list + '&fulfillmentState=invalid', actor), 400, 'Problem');
+        await json(await request(list + '&paymentState=invalid', actor), 400, 'Problem');
+        await json(await request(filtered, foreignActor), 404, 'Problem');
+    }
+});
+
+test('SC-022 R18-ESTIMATE: unsaved drafts use exact current pricing and shipping without creating records in either shop', async t => {
+    for (const [shop, actor, foreignActor] of [[shopA, owner, other], [shopB, other, owner]]) {
+        const client = await customer(shop, actor);
+        const { variants: [variant] } = await product(shop, actor);
+        const endpoint = 'orders/estimate';
+        const policy = await json(await request(route('shipping-policy', shop), actor), 200, 'ShippingPolicyResponse');
+        const rules = [{ countryCode: 'VN', province: 'Hà Nội', serviceName: 'Giao chuẩn', amount: '17.5' }];
+        const estimatePolicy = await json(await send('shipping-policy', { rules }, { method: 'PUT', version: policy.version, shop, actor }),
+            200, 'ShippingPolicyResponse');
+        t.after(async () => {
+            await json(await send('shipping-policy', { rules: policy.rules }, { method: 'PUT', version: estimatePolicy.version, shop, actor }),
+                200, 'ShippingPolicyResponse');
+        });
+        const where = { shopId: shop.id };
+        const counts = () => db.$transaction([db.salesOrder.count({ where }), db.orderQuote.count({ where }), db.addressSnapshot.count({ where }),
+            db.command.count({ where }), db.stockReservation.count({ where }), db.stockMovement.count({ where }), db.financeJournal.count({ where })]);
+        const before = await counts();
+        const body = draft(client, variant, { conversationId: null, warehouseId: shop.defaultWarehouseId,
+            lines: [{ variantId: variant.id, quantity: 2 }] });
+        const price = { amount: '18014398509481986.000000000000000002', currency: shop.currency };
+        const sendEstimate = (payload, who = actor) => request(route(endpoint, shop), who, { method: 'POST', body: JSON.stringify(payload),
+            headers: { origin, 'x-csrf-token': who.csrf, 'content-type': 'application/json' } });
+        const result = await json(await sendEstimate(body), 200, 'OrderDraftEstimateResponse');
+        assert.deepEqual(result, { items: price, shipping: { amount: '17.5', currency: shop.currency },
+            total: { amount: '18014398509482003.500000000000000002', currency: shop.currency } });
+        assert.deepEqual(await json(await sendEstimate({ ...body, shippingAddressId: null }), 200, 'OrderDraftEstimateResponse'),
+            { items: price, shipping: null, total: price });
+        await json(await sendEstimate(body, foreignActor), 404, 'Problem');
+        await json(await sendEstimate({ ...body, warehouseId: shop === shopA ? shopB.defaultWarehouseId : shopA.defaultWarehouseId }), 404, 'Problem');
+        if (shop === shopA) await json(await sendEstimate(body, viewer), 403, 'Problem');
+        assert.deepEqual(await counts(), before);
+    }
+});

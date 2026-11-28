@@ -6,7 +6,8 @@ test('privacy page keeps the customers link when the destination permission is p
 
     try {
         await page.goto(new URL('/s/shop-demo/settings/privacy', server.url).toString());
-    const customerLink = page.getByRole('link', { name: 'Mở danh sách khách' });
+        await expect(page.getByRole('heading', { name: 'Quyền riêng tư', exact: true })).toBeVisible({ timeout: 15_000 });
+        const customerLink = page.getByRole('link', { name: 'Mở danh sách khách' });
         await expect(customerLink).toBeVisible();
         await customerLink.click();
         await expect(page).toHaveURL(/\/s\/shop-demo\/customers$/);
@@ -41,7 +42,7 @@ test('privacy page hides the customers link when the destination permission is m
         });
 
         await page.goto(new URL('/s/shop-demo/settings/privacy', server.url).toString());
-        await expect(page.getByRole('heading', { name: 'Quyền riêng tư & vòng đời dữ liệu' })).toBeVisible();
+        await expect(page.getByRole('heading', { name: 'Quyền riêng tư' })).toBeVisible();
     await expect(page.getByText(/Cần quyền customers\.read để chọn khách/)).toBeVisible();
     await expect(page.getByRole('link', { name: 'Mở danh sách khách' })).toHaveCount(0);
 

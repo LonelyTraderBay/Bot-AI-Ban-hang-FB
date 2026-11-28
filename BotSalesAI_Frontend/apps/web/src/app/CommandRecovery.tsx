@@ -29,6 +29,12 @@ export function CommandRecovery() {
             if (command?.status === 'succeeded' || command?.status === 'failed') {
                 resolveObservedIntent(intent);
                 await cache.invalidateQueries({ queryKey: ['scope', session.user.id, shop.id, membership.permissionVersion] });
+                if (intent.operation === 'closeShop' || intent.operation === 'reopenShop') {
+                    await Promise.all([
+                        cache.invalidateQueries({ queryKey: ['shop', session.user.id, shop.id] }),
+                        cache.invalidateQueries({ queryKey: ['shops', session.user.id] }),
+                    ]);
+                }
             }
             else
                 setMessage('Backend chưa xác minh kết quả. Thao tác tương ứng tiếp tục bị khóa.');

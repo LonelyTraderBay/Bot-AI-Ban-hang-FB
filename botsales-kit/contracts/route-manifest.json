@@ -867,7 +867,7 @@
       "actions": [],
       "purpose": "Theo dõi đơn mà không trộn trạng thái giao hàng/thanh toán.",
       "content": "Order/customer refs, createdAt, order/fulfillment/payment states riêng, tổng tiền nếu được phép.",
-      "behavior": "Filter qua URL, tạo đơn tới R18, row tới R19; bulk mutation chưa hỗ trợ phải ẩn. V2: tách claim/pick/pack/handover/shipment/delivery/payment. Không dùng v1 fulfill tổng hợp; C07 returns theo từng dòng.",
+      "behavior": "Bộ lọc trạng thái đơn, giao hàng và thanh toán qua URL, tạo đơn tới R18, row tới R19; bulk mutation chưa hỗ trợ phải ẩn. V2: tách claim/pick/pack/handover/shipment/delivery/payment. Không dùng v1 fulfill tổng hợp; C07 returns theo từng dòng.",
       "edgeCases": "Enum mới fallback read-only; stale paid badge; redacted total; phân trang không tự cộng thành doanh thu shop.",
       "states": [
         "loading",
@@ -911,6 +911,11 @@
         "listPromotions"
       ],
       "actions": [
+        {
+          "label": "Tính dự toán",
+          "operationId": "estimateOrderDraft",
+          "permission": "orders.write"
+        },
         {
           "label": "Tạo đơn nháp",
           "operationId": "createOrder",

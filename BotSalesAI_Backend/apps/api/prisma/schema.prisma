@@ -564,6 +564,7 @@ model Shop {
   catalogVersion     BigInt        @default(0) @map("catalog_version")
   defaultWarehouseId String        @map("default_warehouse_id") @db.Uuid
   createdAt          DateTime      @default(now()) @map("created_at") @db.Timestamptz(3)
+  closedAt           DateTime?     @map("closed_at") @db.Timestamptz(3)
   defaultWarehouse   Warehouse     @relation("DefaultWarehouse", fields: [id, defaultWarehouseId], references: [shopId, id], onDelete: NoAction, onUpdate: NoAction, map: "shops_default_warehouse_fkey")
   warehouses         Warehouse[]   @relation("ShopWarehouses")
   memberships        Membership[]
@@ -1556,6 +1557,7 @@ model ChannelConversation {
   unreadCount        Int              @default(0) @map("unread_count")
   generation        Int              @default(1)
   lastInboundAt     DateTime?        @map("last_inbound_at") @db.Timestamptz(3)
+  lastInboundWhileClosed Boolean       @default(false) @map("last_inbound_while_closed")
   version            Int              @default(1)
   createdAt          DateTime         @default(now()) @map("created_at") @db.Timestamptz(3)
   updatedAt          DateTime         @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(3)
@@ -1564,6 +1566,7 @@ model ChannelConversation {
   assignee           Membership?      @relation(fields: [shopId, assignedUserId], references: [shopId, userId], onDelete: Restrict, onUpdate: NoAction)
   orders             SalesOrder[]
   messages           ChannelMessage[]
+  orderDrafts        ConversationOrderDraft[]
 
   @@id([shopId, id])
   @@unique([shopId, customerId, id])
@@ -1572,6 +1575,30 @@ model ChannelConversation {
   @@index([shopId, customerId, createdAt, id])
   @@index([shopId, createdAt, id])
   @@map("channel_conversations")
+}
+
+model ConversationOrderDraft {
+  shopId             String    @map("shop_id") @db.Uuid
+  id                 String    @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  conversationId     String    @map("conversation_id") @db.Uuid
+  customerId         String    @map("customer_id") @db.Uuid
+  state              String    @default("active")
+  version            Int       @default(1)
+  values             Json?
+  createdAt          DateTime  @default(now()) @map("created_at") @db.Timestamptz(3)
+  savedAt            DateTime? @map("saved_at") @db.Timestamptz(3)
+  editEpoch          Int       @default(0) @map("edit_epoch")
+  editSessionId      String?   @map("edit_session_id") @db.Uuid
+  editTabId          String?   @map("edit_tab_id") @db.Uuid
+  editGeneration     Int?      @map("edit_generation")
+  editPermissionVersion Int?  @map("edit_permission_version")
+  editExpiresAt      DateTime? @map("edit_expires_at") @db.Timestamptz(3)
+  conversation       ChannelConversation @relation(fields: [shopId, customerId, conversationId], references: [shopId, customerId, id], onDelete: Restrict, onUpdate: NoAction, map: "conversation_order_drafts_conversation_fk")
+
+  @@id([shopId, id])
+  @@index([shopId, state, createdAt, id], map: "conversation_order_drafts_list_idx")
+  @@index([shopId, customerId], map: "conversation_order_drafts_customer_idx")
+  @@map("conversation_order_drafts")
 }
 
 model ChannelMessage {

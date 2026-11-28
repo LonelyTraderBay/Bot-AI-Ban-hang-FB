@@ -139,7 +139,7 @@ export function ReportsPage() {
         : null;
 
     return <>
-        <PageHeader title="Báo cáo & xuất dữ liệu" subtitle="Chọn loại báo cáo và khoảng ngày để xuất CSV." />
+        <PageHeader title="Xuất báo cáo" subtitle="Chọn loại báo cáo và khoảng ngày để xuất CSV." />
         <SectionGrid data-testid="reports-main-layout" columns={{ xs: 'minmax(0, 1fr)', xl: 'minmax(0, 1.2fr) minmax(0, .8fr)' }} alignItems={'start'} geometry={{minWidth: 0}}>
             <PageSections data-testid="reports-page-sections" >
                 <QueryState query={summary} pendingProfile="section">
@@ -165,7 +165,7 @@ export function ReportsPage() {
                             {!canExportReports && <Alert severity="warning">Vai trò hiện tại không có quyền reports.export.</Alert>}
                             {canExportReports && !canExportSource && <Alert severity="warning">Quyền xuất không thay thế quyền đọc nguồn {sourcePermissions[type]}; loại báo cáo này chưa thể xuất.</Alert>}
                             {canExportReports && canExportSource && !reportAvailable && availableReports.length > 0 && <Alert severity="warning">API không liệt kê loại báo cáo này cho vai trò hiện tại.</Alert>}
-                            <Button variant="contained" onClick={handleExport} disabled={!canExportReports || !canExportSource || !reportAvailable || !snapshotAsOf || !from || !to || from > to || run.pending}>
+                            <Button variant="contained" onClick={handleExport} disabled={shop.status === 'closed' || !canExportReports || !canExportSource || !reportAvailable || !snapshotAsOf || !from || !to || from > to || run.pending}>
                                 {run.pending ? 'Đang tạo snapshot…' : 'Tạo tệp báo cáo CSV'}
                             </Button>
                             {lastExport && <ActionGroup direction={{ xs: 'column', sm: 'row' }}  alignItems={{ xs: 'stretch', sm: 'center' }}>
@@ -179,7 +179,7 @@ export function ReportsPage() {
                 </QueryState>
                 {canReadJobs ? <QueryState query={jobs} pendingProfile="section">
                     {jobs.data && <Panel title="Công việc gần đây" subtitle="Trạng thái và tiến độ lấy từ API; trang hiện tại có thể chứa nhiều loại công việc.">
-                        <DataTable rows={jobs.data.data} rowKey={job => job.id} label="Công việc gần đây" empty="Chưa có công việc trong trang này." columns={[
+                        <DataTable mobile={{ layout: 'cards', titleKey: 'id', summaryKeys: ['kind', 'status', 'progress'] }} rows={jobs.data.data} rowKey={job => job.id} label="Công việc gần đây" empty="Chưa có công việc trong trang này." columns={[
                             { key: 'id', label: 'Mã công việc', render: job => <RouteLink to={`/s/${shop.id}/jobs/${job.id}`}>{job.id}</RouteLink> },
                             { key: 'kind', label: 'Loại', render: job => <Status value={job.kind} /> },
                             { key: 'status', label: 'Trạng thái', render: job => <Status value={job.status} /> },
@@ -270,27 +270,27 @@ export function MarketingPage() {
     };
 
     return <>
-        <PageHeader title="Thông tin cho marketing" subtitle="Đề xuất chỉ đọc; trang không tự đăng nội dung hoặc thay đổi ngân sách." />
+        <PageHeader title="Thông tin marketing" subtitle="Đề xuất chỉ đọc; trang không tự đăng nội dung hoặc thay đổi ngân sách." />
         {__MOCK__ && <Alert severity="warning" sx={layoutSx.notice.afterGap}>Số liệu mẫu do API mô phỏng tổng hợp; chưa kết nối tài khoản quảng cáo hoặc nguồn phân bổ thật.</Alert>}
         <Panel title="Khoảng thời gian báo cáo" subtitle={`Ngày được tính theo lịch ${shop.timezone} của cửa hàng.`} bodyMode="inset" afterGap="section">
-            <FormFields component="form" onSubmit={applyFilter} data-testid="marketing-range-form">
-                <Stack direction={{ xs: 'column', md: 'row' }} alignItems={{ xs: 'stretch', md: 'flex-end' }} sx={layoutSx.toolbar.controlGap}>
+            <FormFields component="form" density="compact" onSubmit={applyFilter} data-testid="marketing-range-form">
+                <SectionGrid columns={{ xs: 'repeat(auto-fit, minmax(min(100%, 10rem), 1fr))', md: 'repeat(3, minmax(0, 1fr)) auto' }} rhythm="content" alignItems="end" shrinkChildren>
                     <TextField inputRef={fromRef} type="date" label="Từ ngày" value={draft.fromDate} onChange={event => { draftTouched.current = true; setDraft(value => ({ ...value, fromDate: event.target.value })); }} slotProps={{ inputLabel: { shrink: true } }} error={visibleFilterError?.field === 'fromDate'} helperText={visibleFilterError?.field === 'fromDate' ? visibleFilterError.message : isValidDateOnly(draft.fromDate) ? `Từ ${formatDateOnly(draft.fromDate)}, bao gồm ngày này.` : 'Ngày bắt đầu, tính cả ngày đã chọn.'} />
                     <TextField inputRef={toRef} type="date" label="Đến ngày" value={draft.toDate} onChange={event => { draftTouched.current = true; setDraft(value => ({ ...value, toDate: event.target.value })); }} slotProps={{ inputLabel: { shrink: true } }} error={visibleFilterError?.field === 'toDate'} helperText={visibleFilterError?.field === 'toDate' ? visibleFilterError.message : isValidDateOnly(draft.toDate) ? `Đến ${formatDateOnly(draft.toDate)}, bao gồm ngày này; tối đa 366 ngày.` : 'Tối đa 366 ngày, tính cả hai đầu.'} />
                     <TextField inputRef={bucketRef} select label="Gộp theo" value={draft.bucket} onChange={event => { draftTouched.current = true; setDraft(value => ({ ...value, bucket: event.target.value })); }} error={visibleFilterError?.field === 'bucket'} helperText={visibleFilterError?.field === 'bucket' ? visibleFilterError.message : 'Chọn ngày, tuần hoặc tháng.'}>
                         <MenuItem value="day">Ngày</MenuItem><MenuItem value="week">Tuần</MenuItem><MenuItem value="month">Tháng</MenuItem>
                     </TextField>
                     <Button type="submit" variant="contained">Áp dụng</Button>
-                </Stack>
+                </SectionGrid>
                 {showFilterError && draftError && <Alert severity="error" role="alert">{draftError.message}</Alert>}
             </FormFields>
         </Panel>
         {appliedError ? <Alert severity="error" role="alert"><strong>Bộ lọc trên đường dẫn không hợp lệ.</strong> Hãy sửa trường được đánh dấu trước khi áp dụng.</Alert> : <QueryState query={data} pendingProfile="section">{m && <>
-            <Stats>
+            <Stats density="compact" appearance="strip">
                 <Stat title="Đơn có nguồn xác định" value={m.knownAttributedOrders} note="Được API tổng hợp trong kỳ" />
                 <Stat title="Đơn chưa rõ nguồn" value={m.unknownAttributionOrders} note="Giữ riêng, không tự gán nguồn" />
-                <Stat title="Chi quảng cáo thực tế" value={<Amount wrap value={m.actualSpend} />} note={m.actualSpend ? 'API cung cấp số thực tế' : 'Kỳ này chưa có số thực tế từ API'} />
-                <Stat title="Chi quảng cáo ước tính" value={<Amount wrap value={m.estimatedSpend} />} note={m.estimateCoverage
+                <Stat title="Chi quảng cáo thực tế" value={<Amount wrap value={m.actualSpend} />} valueRole={m.actualSpend == null ? 'text' : 'metric'} note={m.actualSpend ? 'API cung cấp số thực tế' : 'Kỳ này chưa có số thực tế từ API'} />
+                <Stat title="Chi quảng cáo ước tính" value={<Amount wrap value={m.estimatedSpend} />} valueRole={m.estimatedSpend == null ? 'text' : 'metric'} note={m.estimateCoverage
                     ? `Đã có dự trù cho ${m.estimateCoverage.daysWithEstimate}/${m.estimateCoverage.daysInPeriod} ngày. Lần ghi gần nhất ${dateTime(m.estimateCoverage.lastRecordedAt, m.period?.timezone || shop.timezone)}.`
                     : 'Ước tính không phải số ghi sổ'} />
             </Stats>
@@ -301,7 +301,7 @@ export function MarketingPage() {
                 </Typography>}
                 <Typography variant="caption" color="text.secondary">Cập nhật {dateTime(m.asOf, m.period?.timezone || shop.timezone)} · {shop.name} · múi giờ {m.period?.timezone || shop.timezone}</Typography>
             </Stack>
-            <SectionGrid data-testid="marketing-sections-grid" columns={{ xs: '1fr', lg: '1fr 1fr' }}>
+            <SectionGrid data-testid="marketing-sections-grid" alignItems="start" columns={{ xs: 'minmax(0, 1fr)', lg: 'repeat(2, minmax(0, 1fr))' }} shrinkChildren>
                 <Panel title="Đơn theo thời gian">
                     <Box role="img" aria-label={`Số đơn theo ${m.period?.bucket || 'kỳ'} trong khoảng đã chọn`} data-testid="marketing-trend-chart" sx={[{ height: 280 }, layoutSx.report.chartViewportInset]}>
                         {m.trend?.length ? <ResponsiveContainer width="100%" height="100%"><BarChart data={m.trend} accessibilityLayer>
@@ -315,7 +315,7 @@ export function MarketingPage() {
                             <Bar dataKey="unknownAttributionOrders" name="Chưa rõ nguồn" fill={colors.textSecondary} radius={[3, 3, 0, 0]} />
                         </BarChart></ResponsiveContainer> : <Typography color="text.secondary" sx={layoutSx.report.emptyStateInset}>API chưa có bucket dữ liệu trong kỳ đã chọn.</Typography>}
                     </Box>
-                    <DataTable label="Tổng hợp marketing theo kỳ" rows={m.trend || []} rowKey={point => point.fromDate} empty="Chưa có dữ liệu theo kỳ trong khoảng này." columns={[
+                    <DataTable mobile={{ layout: 'comparison' }} label="Tổng hợp marketing theo kỳ" rows={m.trend || []} rowKey={point => point.fromDate} empty="Chưa có dữ liệu theo kỳ trong khoảng này." columns={[
                         { key: 'range', label: 'Khoảng ngày', render: point => `${formatDateOnly(point.fromDate)} – ${formatDateOnly(point.toDate)}` },
                         { key: 'known', label: 'Có nguồn', align: 'right', render: point => point.knownAttributedOrders },
                         ...(m.estimatedAttributedOrders === undefined ? [] : [{
@@ -341,7 +341,7 @@ export function MarketingPage() {
                     </Box>
                 </Panel>
                 {!!m.promotionResults?.length && <Panel title="Kết quả ưu đãi" subtitle="Đơn đã chốt trong kỳ. Tiền hàng tính sau giảm, trước các khoản hoàn." geometry={{ gridColumn: '1 / -1' }}>
-                    <DataTable label="Kết quả ưu đãi" reflowOnMobile rows={m.promotionResults} rowKey={row => row.promotionId} columns={[
+                    <DataTable mobile={{ layout: 'comparison' }} label="Kết quả ưu đãi" rows={m.promotionResults} rowKey={row => row.promotionId} columns={[
                         { key: 'program', label: 'Chương trình', render: row => row.orderId ?
                             <RouteLink to={`/s/${shop.id}/orders/${row.orderId}`}>{row.name} · đơn mẫu</RouteLink> : row.name },
                         { key: 'orders', label: 'Đơn đã chốt', align: 'right', render: row => row.orders },
@@ -359,7 +359,7 @@ export function MarketingPage() {
                             <Bar dataKey="count" name="Số trường hợp" fill={colors.accent} radius={[4, 4, 0, 0]} />
                         </BarChart></ResponsiveContainer> : <Typography color="text.secondary" sx={layoutSx.report.emptyStateInset}>Chưa có lý do mất đơn trong kỳ này.</Typography>}
                     </Box>
-                    <DataTable rows={m.lostSaleReasons} rowKey={reason => reason.reason} label="Lý do không chốt đơn" empty="Chưa có lý do mất đơn trong kỳ đã chọn." columns={[
+                    <DataTable mobile={{ layout: 'cards', titleKey: 'reason', summaryKeys: ['count'] }} rows={m.lostSaleReasons} rowKey={reason => reason.reason} label="Lý do không chốt đơn" empty="Chưa có lý do mất đơn trong kỳ đã chọn." columns={[
                         { key: 'reason', label: 'Lý do', render: reason => {
                             const source = m.lostSaleEvidence?.find(row => row.reason === reason.reason);
                             return source ? <RouteLink to={`/s/${shop.id}/inbox/${source.conversationId}`}>{reason.reason} · hội thoại mẫu</RouteLink> : reason.reason;

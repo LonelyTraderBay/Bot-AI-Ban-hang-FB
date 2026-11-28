@@ -1,8 +1,10 @@
+import { lockShopClosure } from '../../platform/database/shop-lifecycle.js';
 import { ForbiddenException, NotFoundException } from '@nestjs/common';
 import type { BotInboundTask, ChannelConnection, ChannelConversation, ChannelMessage, Prisma, PrismaClient } from '../../generated/prisma/client.js';
 import { recordAudit } from '../../platform/audit/index.js';
 import { serializable } from '../../platform/database/transactions.js';
 import { ExactDecimal } from '../../platform/money/index.js';
+import { enqueueResourceUpdate } from '../../platform/outbox/index.js';
 import { evaluateStagingDraft, liveBotSnapshot, proposeSalesDraft, reserveAiUsage, stagingDraftCase, stagingDraftIntent, StagingAiError,
     type ApprovedEvaluationConfig } from '../ai/index.js';
 import { metaInboundPage } from '../channels/index.js';
@@ -73,7 +75,18 @@ async function eligible(tx: Prisma.TransactionClient, row: Task, auth: AuthConfi
 }
 
 async function finish(tx: Prisma.TransactionClient, row: Task, outcome: string) {
-    if (sameConversation(row)) await workForHandoff(tx, row.message.conversation, true);
+    if (sameConversation(row)) {
+        const item = await workForHandoff(tx, row.message.conversation, true);
+        if (outcome === 'provider_unknown' && (item.state === 'completed' || item.state === 'cancelled')) {
+            const reopened = await tx.workItem.update({
+                where: { shopId_id: { shopId: row.shopId, id: item.id } },
+                data: { state: 'queued', assigneeUserId: null, blockedReason: null, dueAt: null, ruleVersion: null, version: { increment: 1 } },
+            });
+            await enqueueResourceUpdate(tx, 'work_item.updated', reopened);
+            await recordAudit(tx, { shopId: row.shopId, actorId: null, requestId: row.messageId, action: 'reopenCustomerHandoff',
+                resourceType: 'work_item', resourceId: item.id, metadata: { previousState: item.state, resourceVersion: reopened.version, outcome } });
+        }
+    }
     await tx.botInboundTask.update({ where: taskWhere(row), data: { finishedAt: new Date(), outcome } });
 }
 
@@ -98,11 +111,13 @@ export async function processStagedBotInbound(db: PrismaClient, auth: AuthConfig
     const now = new Date();
     const cutoff = new Date(now.getTime() - recoveryMs);
     const key = await db.botInboundTask.findFirst({ where: { finishedAt: null, providerRunId: { not: null },
+        message: { conversation: { channel: { shop: { closedAt: null } } } },
         OR: [{ externalStartedAt: null }, { externalStartedAt: { lte: cutoff } }] },
     select: { shopId: true, messageId: true }, orderBy: [{ createdAt: 'asc' }, { messageId: 'asc' }] });
     if (!key) return;
 
     const prepared = await serializable(db, async tx => {
+        if (await lockShopClosure(tx, key.shopId)) return null;
         const row = await readTask(tx, key);
         if (!row?.providerRunId || row.finishedAt) return null;
         if (row.externalStartedAt) {
@@ -135,6 +150,7 @@ export async function processStagedBotInbound(db: PrismaClient, auth: AuthConfig
     let outcome = 'provider_failed';
     try {
         const result = await evaluateStagingDraft(prepared.plan, prepared.key, prepared.runId, entry => serializable(db, async tx => {
+            if (await lockShopClosure(tx, key.shopId)) throw new StagingAiError('STAGING_SCOPE_CHANGED');
             const row = await readTask(tx, key);
             if (!row || row.finishedAt) throw new StagingAiError('STAGING_SCOPE_CHANGED');
             const current = await eligible(tx, row, auth, provider);
@@ -152,6 +168,7 @@ export async function processStagedBotInbound(db: PrismaClient, auth: AuthConfig
     }
 
     await serializable(db, async tx => {
+        if (await lockShopClosure(tx, key.shopId)) return;
         const row = await readTask(tx, key);
         if (!row || row.finishedAt) return;
         if (outcome !== 'draft_proposal') return finish(tx, row, outcome);

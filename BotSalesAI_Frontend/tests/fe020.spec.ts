@@ -1,4 +1,4 @@
-import { openDemoControls } from './session/demo-controls';
+import { setDemoControl } from './session/demo-controls';
 import { test, expect } from '@playwright/test';
 import { startDemoServer } from './session/demo-server.mjs';
 
@@ -18,7 +18,6 @@ async function gotoDemo(page: import('@playwright/test').Page, path: string) {
 }
 
 async function chooseOption(page: import('@playwright/test').Page, label: string, value: string | RegExp) {
-    if (['Vai trò mô phỏng', 'Trạng thái thử', 'Dataset mô phỏng'].includes(label)) await openDemoControls(page);
     await page.getByRole('combobox', { name: label }).click();
     await page.getByRole('option', { name: value, exact: true }).click();
 }
@@ -199,9 +198,7 @@ test('FE020.AC02/03 work-item actions follow allowedActions and operations healt
     await expect(page.getByText(/Chưa có API tạo\/sửa lịch bản tin/)).toBeVisible();
     await expect(page.getByText('Chưa kiểm tra thực tế', { exact: true }).first()).toBeVisible();
     await expect(page.getByRole('button', { name: /Tạo lịch bản tin|Lưu lịch bản tin/ })).toHaveCount(0);
-    await openDemoControls(page);
-    await page.getByLabel('Vai trò mô phỏng').click();
-    await page.getByRole('option', { name: 'viewer', exact: true }).click();
+    await setDemoControl(page, 'role', 'viewer');
     await expect(page.getByRole('button', { name: 'Tạm dừng vai trò' })).toHaveCount(0);
     await expect(page.getByRole('button', { name: 'Kiểm tra điều kiện tiếp tục' })).toHaveCount(0);
     const denied = await page.evaluate(async () => {
@@ -241,7 +238,7 @@ test('FE020.F03 operations exception filter groups overdue, blocked, and unclaim
     });
     await gotoDemo(page, '/s/shop-demo/operations');
     const panel = page.getByTestId('operation-exceptions');
-    await expect(panel).toContainText('Chỉ lọc trang dữ liệu hiện đang tải');
+    await expect(panel).toContainText('quá hạn hoặc sai lệch thanh toán trong trang hiện tại');
     await panel.getByRole('button', { name: /Chỉ xem ngoại lệ/ }).click();
     const table = page.getByRole('table', { name: 'Công việc vận hành', exact: true });
     for (const sourceRef of ['DEMO-SHIPMENT-LATE', 'DEMO-BANK-MISMATCH', 'DEMO-ORDER-UNCLAIMED'])
@@ -313,9 +310,9 @@ test('FE020.F06/H01 digest and dependency health panels show synthetic history w
     const digests = (await digestsResponse.json()).data as Array<{ id: string; text: string; status: string }>;
     const summary = (await healthResponse.json()).data as { health: Array<{ component: string; status: string; checkedAt: string | null; reason: string }> };
 
-    await expect(page.getByRole('heading', { name: 'Bản tin & sức khỏe hệ thống', exact: true })).toBeVisible();
+    await expect(page.getByRole('heading', { name: 'Bản tin & sức khỏe', exact: true })).toBeVisible();
     await expect(page.getByText('Đây là dữ liệu mô phỏng.', { exact: false })).toBeVisible();
-    await expect(page.getByRole('heading', { name: 'Bản tin điều hành', exact: true })).toBeVisible();
+    await expect(page.getByRole('heading', { name: 'Bản tin & sức khỏe', exact: true })).toBeVisible();
     for (const digest of digests) {
         await expect(page.getByText(digest.id, { exact: false })).toBeVisible();
         await expect(page.getByText(digest.text, { exact: true })).toBeVisible();
@@ -335,7 +332,7 @@ test('FE020.F06/H01 digest and dependency health panels show synthetic history w
 test('FE020.F06/F07 links historical source work and shows the runbook on both operations routes', async ({ page }) => {
     await page.setViewportSize({ width: 390, height: 844 });
     await gotoDemo(page, '/s/shop-demo/operations/digests');
-    await expect(page.getByRole('heading', { name: 'Bản tin điều hành' })).toBeVisible();
+    await expect(page.getByRole('heading', { name: 'Bản tin & sức khỏe' })).toBeVisible();
     if (process.env.BOTSALES_OPERATIONS_BASELINE_DIR) {
         await expect(page.getByText('Meta', { exact: true })).toBeVisible();
         await page.screenshot({ path: process.env.BOTSALES_OPERATIONS_BASELINE_DIR + '/' + test.info().project.name + '-r52-before.png', fullPage: true });
@@ -343,7 +340,7 @@ test('FE020.F06/F07 links historical source work and shows the runbook on both o
     await page.getByText('1 công việc đã hoàn tất', { exact: true }).click();
     await page.getByRole('link', { name: 'seed-workitem-10009' }).click();
     await expect(page).toHaveURL(/\/operations\?q=seed-workitem-10009$/);
-    await expect(page.getByRole('table', { name: 'Công việc vận hành' }).getByRole('row')).toHaveCount(2);
+    await expect(page.getByRole('region', { name: 'Công việc vận hành' }).getByRole('listitem')).toHaveCount(1);
     const checks = page.getByRole('region', { name: 'Trạng thái phụ thuộc' });
     await expect(checks.getByText('Meta', { exact: true })).toBeVisible();
     await checks.getByRole('link', { name: 'Hướng dẫn xử lý Meta' }).click();

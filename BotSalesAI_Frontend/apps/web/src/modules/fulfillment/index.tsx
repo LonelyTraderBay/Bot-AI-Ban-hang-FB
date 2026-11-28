@@ -56,7 +56,7 @@ export function FulfillmentPage() {
             </FieldGroup>} />
             <QueryState query={list} pendingProfile="section">
                 {list.data && <>
-                    <DataTable pinActionOnMobile label="Công việc chuẩn bị đơn" rows={list.data.data} rowKey={prep => prep.id} columns={[
+                    <DataTable mobile={{ layout: 'cards', titleKey: 'order', summaryKeys: ['state', 'items', 'due'], actionKey: 'action' }} label="Công việc chuẩn bị đơn" rows={list.data.data} rowKey={prep => prep.id} columns={[
                         { key: 'order', label: 'Đơn hàng', render: prep => <RouteLink to={`/s/${shop.id}/orders/${prep.orderId}`}>Mã đơn: {prep.orderId}</RouteLink> },
                         { key: 'state', label: 'Giai đoạn', render: prep => <Status value={prep.state} /> },
                         { key: 'items', label: 'Dòng hàng', render: prep => `${prep.lines.filter(line => line.requiredQuantity === line.pickedQuantity && !line.hasIssue).length}/${prep.lines.length} đã kiểm đủ` },
@@ -332,7 +332,7 @@ export function ShipmentsPage() {
                 <Toolbar operation="listShipments" />
                 <QueryState query={list} pendingProfile="section">
                     {list.data && <>
-                        <DataTable label="Danh sách vận đơn" rows={list.data.data} rowKey={item => item.id} columns={[
+                        <DataTable mobile={{ layout: 'cards', titleKey: 'id', summaryKeys: ['order', 'state', 'actual'], actionKey: 'actions' }} label="Danh sách vận đơn" rows={list.data.data} rowKey={item => item.id} columns={[
                         { key: 'id', label: 'Vận đơn', render: item => <Stack><Typography fontWeight={visualSx.typography.fontWeight.strong}>{item.trackingCode || item.id}</Typography><Typography variant="caption">{item.carrierId ? `Mã đơn vị vận chuyển: ${item.carrierId}` : 'Giao thủ công'}</Typography></Stack> },
                         { key: 'order', label: 'Đơn', render: item => <RouteLink to={`/s/${shop.id}/orders/${item.orderId}`}>Mã đơn: {item.orderId}</RouteLink> },
                         { key: 'state', label: 'Trạng thái', render: item => <Status value={item.state} /> },

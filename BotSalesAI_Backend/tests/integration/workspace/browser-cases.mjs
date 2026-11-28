@@ -124,6 +124,61 @@ export async function verifyWorkspaceSelection(browser, page, ownerCookie) {
     }
 }
 
+
+export async function verifyShopClosure(page) {
+    assertFixtureDatabase(readDatabaseUrl(process.env));
+    const name = 'Shop thử đóng mở ' + randomUUID().slice(0, 8);
+    const list = appOrigin + '/workspaces';
+    const shopApi = appOrigin + '/api/v2/shops';
+    await page.goto(list);
+    await page.getByRole('link', { name: 'Tạo cửa hàng', exact: true }).click();
+    await page.getByRole('textbox', { name: 'Tên cửa hàng', exact: true }).fill(name);
+    const created = page.waitForResponse(response => response.url() === shopApi && response.request().method() === 'POST');
+    await page.getByRole('button', { name: 'Tạo cửa hàng', exact: true }).click();
+    const creation = await created;
+    assert.equal(creation.status(), 201);
+    const { data: shop } = await creation.json();
+    assert.equal(shop.status, 'active');
+    assert.equal(shop.closedAt, null);
+    await page.waitForURL(overview(shop.id));
+
+    const settings = appOrigin + '/s/' + shop.id + '/settings/shop';
+    async function change(action, label) {
+        await page.getByRole('button', { name: label, exact: true }).click();
+        const dialog = page.getByRole('dialog', { name: label, exact: true });
+        const response = page.waitForResponse(result => result.url() === shopApi + '/' + shop.id + '/' + action &&
+            result.request().method() === 'POST');
+        await dialog.getByRole('button', { name: label, exact: true }).click();
+        const result = await response;
+        assert.equal(result.status(), 200);
+        const { data } = await result.json();
+        assert.equal(data.id, shop.id);
+        assert.equal(data.defaultWarehouseId, shop.defaultWarehouseId);
+        return data;
+    }
+
+    await page.goto(settings);
+    const closed = await change('close', 'Đóng cửa hàng');
+    assert.equal(closed.status, 'closed');
+    assert.ok(closed.closedAt);
+    await page.getByText('Cửa hàng đã đóng. Bạn có thể xem lại dữ liệu nghiệp vụ.', { exact: true }).waitFor();
+    await page.goto(list);
+    await page.getByRole('heading', { name: shopA.name, exact: true }).waitFor();
+    assert.equal(await page.getByRole('heading', { name, exact: true }).count(), 0);
+    await page.getByRole('button', { name: 'Đã đóng', exact: true }).click();
+    await page.getByRole('heading', { name, exact: true }).waitFor();
+
+    await page.goto(settings);
+    const reopened = await change('reopen', 'Mở lại cửa hàng');
+    assert.equal(reopened.status, 'active');
+    assert.equal(reopened.closedAt, null);
+    assert.equal(reopened.version, closed.version + 1);
+    await page.goto(list);
+    await page.getByRole('heading', { name, exact: true }).waitFor();
+    assert.equal(await page.getByRole('heading', { name: shopB.name, exact: true }).count(), 0);
+    console.log('Firefox dev:live shop closure: created, closed, filtered, reopened and same warehouse preserved.');
+}
+
 export async function verifyCommandRecovery(page) {
     const base = appOrigin + '/s/' + shopA.id + '/settings/';
     const api = appOrigin + '/api/v2/shops/' + shopA.id;

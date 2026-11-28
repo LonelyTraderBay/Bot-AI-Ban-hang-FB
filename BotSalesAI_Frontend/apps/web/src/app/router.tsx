@@ -17,6 +17,10 @@ const WorkspacesPage = lazy(() => import('../modules/workspace').then(m => ({ de
 const OnboardingPage = lazy(() => import('../modules/workspace').then(m => ({ default: m.OnboardingPage })));
 const DashboardPage = lazy(() => import('../modules/dashboard').then(m => ({ default: m.DashboardPage })));
 const InboxPage = lazy(() => import('../modules/inbox').then(m => ({ default: m.InboxPage })));
+const ConversationDraftPanel = lazy(() => import('../modules/orders').then(m => m.loadConversationDraftPanel()));
+function InboxConversationPage() {
+    return <InboxPage orderDraft={ConversationDraftPanel} />;
+}
 const CustomersPage = lazy(() => import('../modules/customers').then(m => ({ default: m.CustomersPage })));
 const CustomerPage = lazy(() => import('../modules/customers').then(m => ({ default: m.CustomerPage })));
 const ProductsPage = lazy(() => import('../modules/catalog').then(m => ({ default: m.ProductsPage })));
@@ -91,8 +95,8 @@ export const pages: Record<string, ComponentType> = {
     R02: WorkspacesPage,
     R03: OnboardingPage,
     R04: DashboardPage,
-    R05: InboxPage,
-    R06: InboxPage,
+    R05: InboxConversationPage,
+    R06: InboxConversationPage,
     R07: CustomersPage,
     R08: CustomerPage,
     R09: ProductsPage,

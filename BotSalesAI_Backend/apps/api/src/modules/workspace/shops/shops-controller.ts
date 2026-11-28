@@ -51,6 +51,22 @@ export class ShopsController {
         return versionedEnvelope(response, await this.shops.update(request.headers, shopId, patch, String(response.getHeader('X-Request-Id'))));
     }
 
+    @Post(':shopId/close')
+    @HttpCode(200)
+    @ContractOperation('closeShop')
+    async close(@Param('shopId', idPipe) shopId: string, @Req() request: IncomingMessage, @Res({ passthrough: true }) response: ServerResponse) {
+        noStore(response);
+        return versionedEnvelope(response, await this.shops.changeStatus(request.headers, shopId, 'closeShop', String(response.getHeader('X-Request-Id'))));
+    }
+
+    @Post(':shopId/reopen')
+    @HttpCode(200)
+    @ContractOperation('reopenShop')
+    async reopen(@Param('shopId', idPipe) shopId: string, @Req() request: IncomingMessage, @Res({ passthrough: true }) response: ServerResponse) {
+        noStore(response);
+        return versionedEnvelope(response, await this.shops.changeStatus(request.headers, shopId, 'reopenShop', String(response.getHeader('X-Request-Id'))));
+    }
+
     @Get(':shopId/members')
     @ContractOperation('listMembers')
     async listMembers(@Param('shopId', idPipe) shopId: string, @Query() query: Record<string, unknown>,

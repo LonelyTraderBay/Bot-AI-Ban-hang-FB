@@ -8,7 +8,7 @@ import { Alert, Box, Button, Checkbox, MenuItem, Stack, TextField, Typography } 
 import { layoutSx } from '../../shared/ui/layout';
 import type { Approval, BudgetPolicy, PurchaseDelegation, PurchaseDelegationReservation, SupplierOffer } from '@botsales/contracts';
 import { useApi, usePagedApi, useCommand } from '@/shared/api/hooks';
-import { useScope, useCan } from '@/shared/model/scope';
+import { useScope, useCan, useCanWrite } from '@/shared/model/scope';
 import { useListQuery } from '@/shared/model/filters';
 import { codePointLength, dateTime } from '@/shared/model/format';
 import { PageHeader, Panel, DataTable, QueryState, Toolbar, Pager, Status, MutationButton, EditDialog, ErrorNotice, Amount, DetailLine, ConfirmDialog } from '@/shared/ui/components';
@@ -23,7 +23,7 @@ export function ApprovalsPage() {
 
 function ApprovalQueue({ toolbar }: { toolbar: ReactNode }) {
     const { shop } = useScope();
-    const canDecide = useCan('approvals.decide');
+    const canDecide = useCanWrite('approvals.decide');
     const list = useApi('listApprovals', { query: useListQuery('listApprovals') });
     const [approvalId, setApprovalId] = useState<string | null>(null);
     const detail = useApi('getApproval', { path: { resourceId: approvalId || '' } }, Boolean(approvalId));
@@ -56,7 +56,7 @@ function ApprovalQueue({ toolbar }: { toolbar: ReactNode }) {
                             </MutationButton>
                         </ActionGroup>
                     </SurfaceContent>}
-                    <DataTable label="Yêu cầu phê duyệt" rows={list.data.data} rowKey={entry => entry.id} columns={[
+                    <DataTable mobile={{ layout: 'cards', titleKey: 'action', summaryKeys: ['selection', 'amount', 'state'], actionKey: 'actions' }} label="Yêu cầu phê duyệt" rows={list.data.data} rowKey={entry => entry.id} columns={[
                         ...(canDecide ? [{
                             key: 'selection', label: 'Chọn', render: (entry: Approval) => {
                                 const checked = selected.some(current => current.id === entry.id);
@@ -191,7 +191,7 @@ function PurchaseDelegationsPanel() {
     return <Panel title="Ủy quyền gửi đơn mua" subtitle="Chỉ owner cấp quyền; mỗi ủy quyền giới hạn theo người phụ trách, nhà cung cấp, kho, báo giá, ngân sách, hạn mức và thời hạn.">
         <Box sx={layoutSx.surface.bodyInsetAfterHeader}><SurfaceContent>{__MOCK__ && <Alert severity="info">Đây là worker MSW local xác định. Không gọi AI, nhà cung cấp hoặc thanh toán; trạng thái “đã gửi” chỉ là kết quả mô phỏng.</Alert>}
         {canManage && <ActionGroup direction="row"><MutationButton permission="procurement.delegation.manage" onClick={openCreate}>Tạo ủy quyền có giới hạn</MutationButton></ActionGroup>}</SurfaceContent></Box>
-        <QueryState query={grants} pendingProfile="section">{grants.data && <DataTable label="Ủy quyền gửi đơn mua" rows={grants.data.data} rowKey={grant => grant.id} columns={[
+        <QueryState query={grants} pendingProfile="section">{grants.data && <DataTable mobile={{ layout: 'cards', titleKey: 'scope', summaryKeys: ['state', 'reason'], actionKey: 'actions' }} label="Ủy quyền gửi đơn mua" rows={grants.data.data} rowKey={grant => grant.id} columns={[
             { key: 'scope', label: 'Phạm vi', render: grant => <Stack><Typography fontWeight={visualSx.typography.fontWeight.strong}>{grantLabel(grant)}</Typography><Typography variant="caption">{grant.offerSnapshots.length} báo giá · tối đa {grant.maxPerOrder.amount} {grant.maxPerOrder.currency} / đơn</Typography><Typography variant="caption">Ngân sách · mã chính sách {grant.budgetPolicyId} · {grant.budgetPeriod} · đến {dateTime(grant.expiresAt, shop.timezone)}</Typography></Stack> },
             { key: 'state', label: 'Trạng thái', render: grant => <Status value={Date.parse(grant.expiresAt) <= Date.now() && grant.status === 'active' ? 'expired' : grant.status}/> },
             { key: 'reason', label: 'Lý do gần nhất', render: grant => grant.lastReason || '—' },
@@ -200,7 +200,7 @@ function PurchaseDelegationsPanel() {
                 {grant.status !== 'revoked' && <MutationButton permission="procurement.delegation.manage" color="error" disabled={update.pending} onClick={() => { setActionGrant(grant); setActionStatus('revoked'); }}>Thu hồi</MutationButton>}
             </ActionGroup> },
         ]}/>}</QueryState>
-        <QueryState query={reservations} pendingProfile="section">{reservations.data && <DataTable label="Lịch sử hạn mức mua tự động" rows={reservations.data.data as PurchaseDelegationReservation[]} rowKey={row => row.id} columns={[
+        <QueryState query={reservations} pendingProfile="section">{reservations.data && <DataTable mobile={{ layout: 'cards', titleKey: 'purchase', summaryKeys: ['amount', 'period', 'status'] }} label="Lịch sử hạn mức mua tự động" rows={reservations.data.data as PurchaseDelegationReservation[]} rowKey={row => row.id} columns={[
             { key: 'purchase', label: 'Đơn mua', render: row => row.purchaseOrderId },
             { key: 'amount', label: 'Số tiền', render: row => <Amount value={row.amount}/> },
             { key: 'period', label: 'Kỳ ngân sách', render: row => row.periodKey },

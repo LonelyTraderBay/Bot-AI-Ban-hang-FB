@@ -6,8 +6,17 @@ import { activeWarehouse, addressSnapshot } from './masters';
 import { assertShippingQuoteCurrent, shippingRateForQuote } from './shipping-policy';
 import { applyPromotion, assertPaidPromotionPrice, assertPromotionQuote } from './promotions';
 
-function pricedOrder(shopId: string, order: Row) {
+export function pricedOrder(shopId: string, order: Row) {
     return applyPromotion(shopId, str(order.warehouseId), str(order.promotionId), pricedLines(shopId, rows(order.lines)));
+}
+
+function draftAddress(shopId: string, data: Row) {
+    find('customers', str(data.customerId), shopId);
+    activeWarehouse(shopId, str(data.warehouseId));
+    const address = data.shippingAddressId ? addressSnapshot(shopId, str(data.customerId), str(data.shippingAddressId)) : null;
+    if (data.conversationId)
+        ensure(find('conversations', str(data.conversationId), shopId).customerId === data.customerId, 'Hội thoại không thuộc khách đã chọn.', 422);
+    return address;
 }
 function pinApprovedProductImage(shopId: string, variantId: string) {
     const product = variant(shopId, variantId).product;
@@ -30,6 +39,14 @@ export async function hashValue(value: unknown) {
 export async function orders(op: string, input: Input): Promise<Row | undefined> {
     const { shopId, body } = input;
     switch (op) {
+        case 'estimateOrderDraft': {
+            const address = draftAddress(shopId, body);
+            const { lines } = pricedOrder(shopId, { ...body, lines: rows(body.lines).map(line => ({ ...line, id: crypto.randomUUID() })) });
+            const currency = str(find('shops', shopId, shopId).currency);
+            const subtotal = sum(lines, 'lineTotal');
+            const shipping = shippingRateForQuote(shopId, address, 'preview')?.fee ?? null;
+            return { items: money(subtotal, currency), shipping, total: money(subtotal + (shipping ? units(shipping) : 0n), currency) };
+        }
         case 'createOrder':
         case 'updateOrderDraft': {
             const existing = op === 'updateOrderDraft' ? find('orders', input.id, shopId) : undefined;
@@ -38,11 +55,7 @@ export async function orders(op: string, input: Input): Promise<Row | undefined>
                 ensure(existing.orderState === 'draft', 'Chỉ sửa đơn nháp.');
             }
             const data = { ...existing, ...body };
-            find('customers', str(data.customerId), shopId);
-            activeWarehouse(shopId,str(data.warehouseId));
-            if (data.shippingAddressId) addressSnapshot(shopId,str(data.customerId),str(data.shippingAddressId));
-            if (data.conversationId)
-                ensure(find('conversations', str(data.conversationId), shopId).customerId === data.customerId, 'Hội thoại không thuộc khách đã chọn.', 422);
+            draftAddress(shopId, data);
             ensure(!existing || existing.paymentState === 'unpaid' || !(existing.promotionId || data.promotionId),
                 'Đơn có ưu đãi đã được xác minh tiền. Đối chiếu khoản thu trước khi sửa.', 409, 'PAID_PROMOTION_CHANGED');
             const { lines, promotion } = pricedOrder(shopId, data);

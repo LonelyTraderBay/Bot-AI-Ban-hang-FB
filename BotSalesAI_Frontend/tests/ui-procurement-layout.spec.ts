@@ -1,4 +1,3 @@
-import { openDemoControls } from './session/demo-controls';
 import { expect, test } from '@playwright/test';
 import { startDemoServer } from './session/demo-server.mjs';
 
@@ -22,7 +21,6 @@ async function gotoDemo(page: import('@playwright/test').Page, route: string) {
 }
 
 async function chooseOption(page: import('@playwright/test').Page, label: string, value: string | RegExp, within?: import('@playwright/test').Locator) {
-    if (['Vai trò mô phỏng', 'Trạng thái thử', 'Dataset mô phỏng'].includes(label)) await openDemoControls(page);
     const scope = within || page;
     await scope.getByRole('combobox', { name: label }).click();
     await page.getByRole('option', { name: value, exact: typeof value === 'string' }).click();
@@ -40,8 +38,8 @@ async function expectDialogWithinViewport(page: import('@playwright/test').Page,
 }
 
 const layoutRoutes = [
-    { id: 'R44', path: '/s/shop-demo/suppliers', heading: 'Nhà cung cấp hàng hóa' },
-    { id: 'R45', path: '/s/shop-demo/replenishment', heading: 'Nhập lại hàng' },
+    { id: 'R44', path: '/s/shop-demo/suppliers', heading: 'Nhà cung cấp' },
+    { id: 'R45', path: '/s/shop-demo/replenishment', heading: 'Đề nghị nhập' },
     { id: 'R46', path: '/s/shop-demo/purchases', heading: 'Đơn mua hàng' },
     { id: 'R47', path: '/s/shop-demo/receipts', heading: 'Nhận hàng' },
 ];
@@ -56,11 +54,13 @@ for (const route of layoutRoutes) {
         await page.setViewportSize({ width: layoutWidths[0], height: 900 });
         await gotoDemo(page, route.path);
         await expect(page.getByRole('heading', { name: route.heading, exact: true })).toBeVisible();
-        await expect(page.getByRole('table').first()).toBeVisible();
+        await expect(page.locator('main [data-ui-table-layout="cards"]').first()).toBeVisible();
 
         for (const width of layoutWidths) {
             await page.setViewportSize({ width, height: 900 });
-            await expect(page.locator('main#main-content')).toHaveCSS('padding-left', width >= 768 ? '24px' : '16px');
+            const collection = width < 768 ? page.locator('main [data-ui-table-layout="cards"]').first() : page.getByRole('table').first();
+            await expect(collection).toBeVisible();
+            await expect(page.locator('main#main-content')).toHaveCSS('padding-left', '8px');
             const geometry = await page.evaluate(() => ({
                 clientWidth: document.documentElement.clientWidth,
                 scrollWidth: document.documentElement.scrollWidth,
@@ -91,7 +91,8 @@ test('Procurement supplier, offer, rule, purchase and receipt dialogs fit narrow
         await page.getByRole('button', { name: 'Thêm nhà cung cấp', exact: true }).click();
         await expectDialogWithinViewport(page, page.getByRole('dialog', { name: 'Nhà cung cấp mới' }), width);
         await page.keyboard.press('Escape');
-        const supplier = page.getByRole('table').first().getByRole('row').filter({ hasText: 'Xưởng hàng mẫu' });
+        const supplier = page.getByRole('region', { name: 'Nhà cung cấp', exact: true })
+            .getByRole(width < 768 ? 'listitem' : 'row').filter({ hasText: 'Xưởng hàng mẫu' });
         await supplier.getByRole('button', { name: 'Thêm báo giá', exact: true }).click();
         await expectDialogWithinViewport(page, page.getByRole('dialog', { name: /Báo giá — Xưởng hàng mẫu/ }), width);
         await page.keyboard.press('Escape');

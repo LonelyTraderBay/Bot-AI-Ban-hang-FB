@@ -313,7 +313,7 @@ test('posted journal refreshes the dashboard across pages without relying on SSE
         Object.defineProperty(window, 'EventSource', { value: DisconnectedStream });
     });
     await page.goto(`${url}/s/shop-demo/overview`);
-    await expect(page.getByRole('heading', { name: 'Tổng quan cửa hàng' })).toBeVisible();
+    await expect(page.getByRole('heading', { name: 'Tổng quan' })).toBeVisible();
     await expect(page.getByText('Doanh thu đã ghi nhận')).toBeVisible();
     await page.getByRole('link', { name: 'Chứng từ & sổ kép', exact: true }).click();
     await page.getByRole('button', { name: 'Tạo bút toán nháp' }).click();

@@ -1,4 +1,4 @@
-import { openDemoControls } from './session/demo-controls';
+import { setDemoControl } from './session/demo-controls';
 import { test, expect } from '@playwright/test';
 import { startDemoServer } from './session/demo-server.mjs';
 
@@ -25,7 +25,7 @@ test('UI028.W25 Reports semantic spacing stays stable at mobile, tablet and desk
     for (const width of widths) {
         await page.setViewportSize({ width, height: 900 });
         await page.goto(new URL('/s/shop-demo/reports?reportType=orders&fromDate=2026-09-28&toDate=2026-09-29', demoUrl).toString());
-        await expect(page.getByRole('heading', { name: 'Báo cáo & xuất dữ liệu' })).toBeVisible();
+        await expect(page.getByRole('heading', { name: 'Xuất báo cáo' })).toBeVisible();
         await expect(page.getByRole('heading', { name: 'Công việc gần đây' })).toBeVisible();
         const spacing = await page.evaluate(() => {
             const styleOf = (selector: string) => {
@@ -46,7 +46,7 @@ test('UI028.W25 Reports semantic spacing stays stable at mobile, tablet and desk
                 dateFieldGap: styleOf('[data-testid="reports-date-filters"]').gap,
             };
         });
-        const inset = width < 768 ? '12px' : '16px';
+        const inset = '12px';
         expect(spacing).toEqual({
             pageGridGap: '16px',
             sectionGap: '16px',
@@ -68,9 +68,11 @@ test('UI028.W25 Reports semantic spacing stays stable at mobile, tablet and desk
         });
         await page.goto(new URL('/s/shop-demo/reports/marketing', demoUrl).toString());
         expect((await canonicalResponse).status()).toBe(200);
-        await expect(page.getByRole('heading', { name: 'Thông tin cho marketing' })).toBeVisible();
+        await expect(page.getByRole('heading', { name: 'Thông tin marketing' })).toBeVisible();
         await expect(page.getByTestId('marketing-loss-chart')).toBeVisible();
-        await expect(page.getByRole('table', { name: 'Lý do không chốt đơn' })).toBeVisible();
+        const lossData = page.getByRole('region', { name: 'Lý do không chốt đơn', exact: true });
+        await expect(lossData).toBeVisible();
+        await expect(lossData).toHaveAttribute('data-ui-table-layout', width < 768 ? 'cards' : 'table');
         const chartSvg = page.getByTestId('marketing-loss-chart').locator('svg.recharts-surface');
         await expect(chartSvg).toBeVisible();
         await expect(chartSvg.locator('text')).not.toHaveCount(0);
@@ -122,9 +124,7 @@ test('UI028.W25 Reports semantic spacing stays stable at mobile, tablet and desk
 
 test('UI028.W25 authorized report download link retains its 44px hit target', async ({ page }) => {
     await page.goto(new URL('/s/shop-demo/overview', demoUrl).toString());
-    await openDemoControls(page);
-    await page.getByLabel('Vai trò mô phỏng').click();
-    await page.getByRole('option', { name: 'owner', exact: true }).click();
+    await setDemoControl(page, 'role', 'owner');
     await page.goto(new URL('/s/shop-demo/reports', demoUrl).toString());
     await expect(page.getByRole('heading', { name: 'Tạo tệp báo cáo' })).toBeVisible();
     await page.getByLabel('Từ ngày').fill('2026-09-29');

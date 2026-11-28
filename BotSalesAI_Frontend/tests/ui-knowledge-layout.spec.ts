@@ -45,7 +45,7 @@ async function openKnowledgeFeedbackReview(page: import('@playwright/test').Page
     await page.getByRole('progressbar', { name: 'Đang tải màn hình', exact: true }).waitFor({ state: 'hidden', timeout: 30000 });
     await expect(page.locator('main h1')).toBeVisible({ timeout: 30000 });
     await expect(page.locator('main .MuiCircularProgress-root,main .MuiLinearProgress-root')).toHaveCount(0, { timeout: 30000 });
-    await expect(page.getByRole('heading', { name: 'Duyệt phản hồi AI', exact: true })).toBeVisible({ timeout: 30000 });
+    await expect(page.getByRole('heading', { name: 'Phản hồi cần duyệt', exact: true })).toBeVisible({ timeout: 30000 });
     await expect(page.getByRole('button', { name: 'Duyệt nội dung', exact: true }).first()).toBeVisible();
 }
 
@@ -89,7 +89,8 @@ test('Knowledge routes R23/R24/R25 fit every supported layout boundary', async (
 
         await gotoDemo(page, '/s/shop-demo/knowledge');
         await expect(page.getByRole('heading', { name: 'Kiến thức cửa hàng', exact: true })).toBeVisible({ timeout: 30_000 });
-        await expect(page.getByRole('table').first()).toBeVisible({ timeout: 30_000 });
+        const collection = page.getByRole('region', { name: 'Nguồn kiến thức cửa hàng', exact: true });
+        await expect(collection).toHaveAttribute('data-ui-table-layout', width < 768 ? 'cards' : 'table', { timeout: 30_000 });
         await expectNoHorizontalOverflow(page, width);
 
         await gotoKnowledgeDetail(page);

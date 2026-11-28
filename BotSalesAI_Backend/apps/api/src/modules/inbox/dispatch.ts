@@ -1,3 +1,4 @@
+import { lockShopClosure } from '../../platform/database/shop-lifecycle.js';
 import type { Prisma, PrismaClient } from '../../generated/prisma/client.js';
 import { recordAudit } from '../../platform/audit/index.js';
 import { serializable } from '../../platform/database/transactions.js';
@@ -12,7 +13,7 @@ import { sendMetaReply, type MetaSendResult } from './meta-send.js';
 type DispatchKey = { shopId: string; messageId: string };
 
 const commandFields = { select: { id: true, actorId: true, status: true } } as const;
-const pending = { finishedAt: null, command: { status: 'accepted' } } as const;
+const pending = { finishedAt: null, command: { status: 'accepted', actor: { shop: { closedAt: null } } } } as const;
 const oldestDispatch = [{ createdAt: 'asc' }, { messageId: 'asc' }] satisfies Prisma.MessageDispatchOrderByWithRelationInput[];
 const metaAttemptGraceMs = 60_000;
 
@@ -27,6 +28,7 @@ async function finishDispatch(tx: Prisma.TransactionClient, key: DispatchKey, co
 }
 
 async function executeFixtureDispatch(tx: Prisma.TransactionClient, config: AuthConfig | undefined, { shopId, messageId }: DispatchKey) {
+    if (await lockShopClosure(tx, shopId)) return;
     const where = { shopId_messageId: { shopId, messageId } };
     const dispatch = await tx.messageDispatch.findUnique({ where, include: {
         command: commandFields,
@@ -109,12 +111,17 @@ async function executeMetaDispatch(db: PrismaClient, key: DispatchKey, recover: 
     meta: MetaInboundConfig | undefined, request: typeof fetch) {
     if (!recover) {
         // A committed claim prevents another HTTP call after losing the worker process.
-        const claim = await db.messageDispatch.updateMany({ where: { ...key, ...pending, startedAt: null }, data: { startedAt: new Date() } });
-        if (!claim.count) return;
+        const claimed = await db.$transaction(async tx => {
+            if (await lockShopClosure(tx, key.shopId)) return false;
+            const claim = await tx.messageDispatch.updateMany({ where: { ...key, ...pending, startedAt: null }, data: { startedAt: new Date() } });
+            return claim.count === 1;
+        });
+        if (!claimed) return;
     }
     const { shopId, messageId } = key;
     // Do not retry this transaction after it can contact Meta.
     await db.$transaction(async tx => {
+        if (await lockShopClosure(tx, shopId)) return;
         await tx.$queryRaw`SELECT message_id FROM message_dispatches WHERE shop_id=${shopId}::uuid AND message_id=${messageId}::uuid FOR UPDATE`;
         const dispatch = await tx.messageDispatch.findUnique({ where: { shopId_messageId: key }, include: { command: commandFields } });
         if (!dispatch?.startedAt || dispatch.finishedAt || dispatch.command.status !== 'accepted') return;

@@ -35,7 +35,7 @@ export function debtView(debt: Debt, timezone: string, asOf = new Date()) {
 }
 
 export function findDebts(tx: Prisma.TransactionClient, shopId: string, currency: string, filter: {
-    ids?: string[]; orderIds?: string[]; sourceIds?: string[]; before?: { id: string; createdAt: Date }; limit?: number;
+    ids?: string[]; orderIds?: string[]; sourceIds?: string[]; before?: { id: string; createdAt: Date }; limit?: number; unsettledOnly?: boolean;
 } = {}) {
     const ids = (values: string[]) => Prisma.join(values.map(value => Prisma.sql`${value}::uuid`));
     const and = [
@@ -81,7 +81,8 @@ export function findDebts(tx: Prisma.TransactionClient, shopId: string, currency
               AND r.state='inspected' AND r.receivable_credit > 0
         ) returns
         LEFT JOIN debt_terms terms ON terms.shop_id=s."shopId" AND terms.debt_line_id=s.id
-        ORDER BY s."createdAt" DESC, s.id DESC
+        ${filter.unsettledOnly ? Prisma.sql`WHERE coalesce(terms.dispute_hold, false) OR s.original <> allocations.amount + returns.credit` : Prisma.empty}
+        ORDER BY s."createdAt" DESC, s.id DESC ${filter.unsettledOnly ? Prisma.sql`LIMIT 1` : Prisma.empty}
     `);
 }
 

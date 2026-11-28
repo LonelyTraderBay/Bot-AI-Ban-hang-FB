@@ -34,7 +34,7 @@ export class FieldConflict extends ConflictException {
 }
 
 export class DomainConflict extends ConflictException {
-    constructor(readonly problemCode: string, readonly detail: string) {
+    constructor(readonly problemCode: string, readonly detail: string, readonly errors?: FieldError[]) {
         super(detail);
     }
 }

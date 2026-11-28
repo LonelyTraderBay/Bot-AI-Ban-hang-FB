@@ -1,4 +1,4 @@
-import { openDemoControls } from './session/demo-controls';
+import { setDemoControl } from './session/demo-controls';
 import { test, expect } from '@playwright/test';
 import { startDemoServer } from './session/demo-server.mjs';
 
@@ -219,6 +219,8 @@ test('UI006.C05 lookup and table cursors reach records after 150 synthetic suppl
 
 test('UI006.C04 bounded previews disclose their sample and link to full collections', async ({ page }) => {
     await gotoDemo(page, '/s/shop-demo/inbox/cv1');
+    await page.getByRole('button', { name: 'Thông tin khách' }).click();
+    await page.getByRole('dialog', { name: 'Thông tin khách' }).getByRole('button', { name: 'Luồng tư vấn mẫu' }).click();
     await page.getByRole('tab', { name: 'Giá & tồn' }).click();
     await expect(page.getByText('Preview giới hạn ở 100 sản phẩm và 100 snapshot đầu tiên; không phải danh sách đầy đủ.')).toBeVisible();
     await expect(page.getByRole('link', { name: 'Mở danh sách sản phẩm' })).toHaveAttribute('href', '/s/shop-demo/products');
@@ -243,10 +245,7 @@ test('UI006.C02 selected order identity survives a failed search and cursor retr
     const detailRequest = page.waitForResponse(response => response.request().method() === 'GET' && new URL(response.url()).pathname.endsWith(`/orders/${selectedOrderId}`));
     await gotoDemo(page, `/s/shop-demo/returns?orderId=${selectedOrderId}`);
     await Promise.all([initialOrders, detailRequest]);
-    await openDemoControls(page);
-    await page.getByRole('combobox', { name: 'Trạng thái thử' }).click();
-    await page.getByRole('option', { name: 'Mất quyền truy vấn tiếp', exact: true }).click();
-    await expect(page.getByRole('status')).toContainText('Trạng thái thử đã được áp dụng.');
+    await setDemoControl(page, 'fault', 'forbidden');
     await page.getByRole('button', { name: 'Tạo yêu cầu trả', exact: true }).click();
     const dialog = page.getByRole('dialog', { name: 'Yêu cầu trả hàng' });
     const selectedOrder = dialog.getByRole('combobox', { name: 'Đơn đủ điều kiện trả' });

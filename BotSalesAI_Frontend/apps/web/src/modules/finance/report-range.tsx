@@ -1,7 +1,7 @@
-import {useEffect,useRef} from 'react';
+import {useEffect,useId,useRef} from 'react';
 import {useSearchParams} from 'react-router-dom';
-import {Alert,TextField} from '@mui/material';
-import {FormFields} from '@/shared/ui/composition';
+import {Alert,TextField,Typography} from '@mui/material';
+import {FormFields,SectionGrid} from '@/shared/ui/composition';
 import {dateOnlyInTimezone,dateOnlyStartOfDayToISOString,formatDateOnly,isValidDateOnly} from '@/shared/model/format';
 function previousMonthRange(timezone: string) {
     const [yearText = '', monthText = ''] = dateOnlyInTimezone(new Date(), timezone).split('-');
@@ -57,10 +57,29 @@ export function useReportRange(timezone: string) {
         },
     };
 }
-export function ReportRangeFields({ range, timezone, setFrom, setTo }: { range: { from: string; to: string }; timezone: string; setFrom: (value: string) => void; setTo: (value: string) => void }) {
+export function ReportRangeFields({ range, timezone, setFrom, setTo, density = 'comfortable' }: {
+    range: { from: string; to: string };
+    timezone: string;
+    setFrom: (value: string) => void;
+    setTo: (value: string) => void;
+    density?: 'comfortable' | 'compact';
+}) {
+    const helpId = useId();
+    const dates = <>
+        <TextField type="date" label="Từ ngày" value={range.from} onChange={event => setFrom(event.target.value)} slotProps={{ inputLabel: { shrink: true } }} helperText={isValidDateOnly(range.from) ? `Ngày bắt đầu: ${formatDateOnly(range.from)}` : undefined} />
+        <TextField type="date" label="Đến trước ngày" value={range.to} onChange={event => setTo(event.target.value)} slotProps={{ inputLabel: { shrink: true } }} helperText={isValidDateOnly(range.to) ? `Ngày kết thúc: ${formatDateOnly(range.to)}` : undefined} />
+    </>;
+    const periodHelp = `Bao gồm ngày bắt đầu; không bao gồm ngày kết thúc. Múi giờ ${timezone}.`;
+    if (density === 'compact') return <FormFields density="compact" afterGap="section" role="group" aria-label="Kỳ báo cáo" aria-describedby={helpId}
+        direction={{ xs: 'column', md: 'row' }} alignItems={{ xs: 'stretch', md: 'center' }}>
+        <SectionGrid rhythm="content" columns={{ xs: 'repeat(auto-fit, minmax(min(100%, 10em), 1fr))', md: 'repeat(2, minmax(0, 1fr))' }}
+            geometry={{ width: { xs: '100%', md: '24em' } }} shrinkChildren>
+            {dates}
+        </SectionGrid>
+        <Typography id={helpId} variant="body2" color="text.secondary">{periodHelp}</Typography>
+    </FormFields>;
     return <FormFields direction={{ xs: 'column', sm: 'row' }} afterGap="section">
-        <TextField type="date" label="Từ ngày" value={range.from} onChange={event => setFrom(event.target.value)} slotProps={{ inputLabel: { shrink: true } }} helperText={isValidDateOnly(range.from) ? `Ngày bắt đầu: ${formatDateOnly(range.from)}` : undefined}/>
-        <TextField type="date" label="Đến trước ngày" value={range.to} onChange={event => setTo(event.target.value)} slotProps={{ inputLabel: { shrink: true } }} helperText={isValidDateOnly(range.to) ? `Ngày kết thúc: ${formatDateOnly(range.to)}` : undefined}/>
-        <Alert severity="info" sx={{ alignItems: 'center' }}>Bao gồm ngày bắt đầu; không bao gồm ngày kết thúc. Múi giờ {timezone}.</Alert>
+        {dates}
+        <Alert severity="info" sx={{ alignItems: 'center' }}>{periodHelp}</Alert>
     </FormFields>;
 }

@@ -4,7 +4,7 @@ import type { OrderPaymentMethod, Prisma } from '../../generated/prisma/client.j
 import { validUuid } from '../../http/query.js';
 import { ExactDecimal } from '../../platform/money/index.js';
 import { evaluateOrderPromotion, sellableVariants } from '../catalog/index.js';
-import { customerInShop, snapshotAddress, type AddressInput } from '../customers/index.js';
+import { addressForPricing, customerInShop, snapshotAddress, type AddressInput } from '../customers/index.js';
 import { estimatedShipping } from '../fulfillment/index.js';
 import { requireCustomerConversation } from '../inbox/index.js';
 import { lockWarehouse, sellableAvailability } from '../inventory/index.js';
@@ -32,7 +32,8 @@ export function lineView(line: PricedLine, currency: string) {
     };
 }
 
-export async function priceOrder(tx: Prisma.TransactionClient, shopId: string, draft: DraftOrder, lineIds: ReadonlyMap<string, string>, now = new Date()) {
+export async function priceOrder(tx: Prisma.TransactionClient, shopId: string, draft: DraftOrder, lineIds: ReadonlyMap<string, string>,
+    now = new Date(), mode: 'commit' | 'preview' = 'commit') {
     if (draft.notes.includes(String.fromCharCode(0)) || !draft.lines.length) throw new UnprocessableEntityException();
     const ids = draft.lines.map(line => line.variantId);
     if (ids.some(id => !validUuid(id)) || new Set(ids).size !== ids.length) throw new UnprocessableEntityException();
@@ -41,7 +42,10 @@ export async function priceOrder(tx: Prisma.TransactionClient, shopId: string, d
     const warehouse = await lockWarehouse(tx, shopId, draft.warehouseId);
     if (warehouse.status !== 'active') throw new ConflictException();
     if (draft.conversationId) await requireCustomerConversation(tx, shopId, draft.customerId, draft.conversationId);
-    const address = draft.shippingAddressId ? await snapshotAddress(tx, shopId, draft.customerId, draft.shippingAddressId) : null;
+    const address = mode === 'commit' && draft.shippingAddressId ? await snapshotAddress(tx, shopId, draft.customerId, draft.shippingAddressId) : null;
+    const shippingAddress = mode === 'preview' && draft.shippingAddressId
+        ? await addressForPricing(tx, shopId, draft.customerId, draft.shippingAddressId)
+        : address?.data as AddressInput | null ?? null;
     const { currency, timezone } = await tx.shop.findUniqueOrThrow({ where: { id: shopId }, select: { currency: true, timezone: true } });
     const variants = new Map((await sellableVariants(tx, shopId, ids)).map(variant => [variant.id, variant]));
     const lines = draft.lines.map(({ variantId, quantity }, position): PricedLine => {
@@ -68,7 +72,7 @@ export async function priceOrder(tx: Prisma.TransactionClient, shopId: string, d
     }
     const promotion = applied?.snapshot ?? null;
     const total = lines.reduce((sum, line) => sum.plus(line.lineTotal), new ExactDecimal(0));
-    const { policyVersion, rate, outsideConfiguredRegions } = await estimatedShipping(tx, shopId, address?.data as AddressInput | null ?? null, currency);
+    const { policyVersion, rate, outsideConfiguredRegions } = await estimatedShipping(tx, shopId, shippingAddress, currency);
     const publicLines = lines.map(line => lineView(line, currency));
     const terms = {
         customerId: draft.customerId, conversationId: draft.conversationId, warehouseId: draft.warehouseId, paymentMethod: draft.paymentMethod,
@@ -85,6 +89,13 @@ export async function quoteWarnings(tx: Prisma.TransactionClient, shopId: string
     const availability = await sellableAvailability(tx, shopId, warehouseId, lines.map(line => line.variantId));
     return lines.filter(line => (availability.get(line.variantId) ?? 0) < line.quantity)
         .map(line => 'Tồn khả dụng hiện tại chưa đủ cho SKU ' + line.sku + '.');
+}
+
+export async function estimateOrderPricing(tx: Prisma.TransactionClient, shopId: string, draft: DraftOrder) {
+    const priced = await priceOrder(tx, shopId, draft, new Map(), new Date(), 'preview');
+    const shipping = priced.rate?.fee ?? null;
+    return { items: orderMoney(priced.total, priced.currency), shipping,
+        total: orderMoney(priced.total.add(shipping?.amount ?? '0'), priced.currency) };
 }
 
 export function orderQuoteHash(orderId: string, orderVersion: number, termsHash: string) {

@@ -1,19 +1,25 @@
 import { useListReturn } from '@/shared/model/list-return';
-import { ActionGroup, FormFields, SectionGrid } from '../../shared/ui/composition';
+import { ActionGroup, FormFields, PageSections, SectionGrid } from '../../shared/ui/composition';
 import { useEffect, useState } from 'react';
 import { visualSx } from '@/shared/ui/visual';
-import { useNavigate, useParams } from 'react-router-dom';
-import { Alert, Box, Button, Stack, TextField, Typography } from '@mui/material';
+import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
+import { Alert, Box, Button, Stack, Tab, Tabs, TextField, Typography } from '@mui/material';
 import type { OrderQuote, CustomerConfirmationRequest, CustomerConfirmation } from '@botsales/contracts';
+import { schemaCatalog } from '@botsales/contracts';
 import { ApiError } from '@/shared/api/errors';
 import { useApi, useCommand } from '@/shared/api/hooks';
 import { useScope, useCan } from '@/shared/model/scope';
 import { useListQuery } from '@/shared/model/filters';
+import { labels } from '@/shared/model/labels';
 import { codePointLength, dateTime } from '@/shared/model/format';
-import { PageHeader, Panel, DataTable, QueryState, Toolbar, Pager, Status, Amount, MutationButton, EditDialog, ErrorNotice, ConfirmDialog, RouteLink, DetailLine } from '@/shared/ui/components';
+import { PageHeader, Panel, DataTable, QueryState, Toolbar, Pager, Status, Amount, MutationButton, EditDialog, ErrorNotice, ConfirmDialog, RouteLink, DetailLine, CopyableCode } from '@/shared/ui/components';
 import { layoutSx } from '@/shared/ui/layout';
 import { DraftForm } from './draft-form';
 import { ReturnsPage as ReturnsView } from './returns';
+
+export function loadConversationDraftPanel() {
+    return import('./conversation-draft-panel').then(module => ({ default: module.ConversationDraftPanel }));
+}
 
 function requiresFreshQuote(error: unknown): error is ApiError {
     return error instanceof ApiError && error.status === 409 &&
@@ -24,13 +30,77 @@ function OrderCustomerName({ customerId }: { customerId: string }) {
     const customer = useApi('getCustomer', { path: { customerId } });
     return <>{customer.data?.data.displayName || `Mã khách hàng: ${customerId}`}</>;
 }
-export function OrdersPage() { const { shop } = useScope(); const navigate = useNavigate(); const canReadCustomers = useCan('customers.read'); const list = useApi('listOrders', { query: useListQuery('listOrders') }); return <><PageHeader title="Đơn hàng" subtitle="Tách riêng trạng thái đơn, giao hàng và thanh toán." actions={<MutationButton permission="orders.write" variant="contained" onClick={() => navigate(`/s/${shop.id}/orders/new`)}>Tạo đơn hàng</MutationButton>}/><Panel><Toolbar operation="listOrders" placeholder="Tìm mã đơn hoặc khách hàng…"/><QueryState query={list} pendingProfile="section">{list.data && <><DataTable pinActionOnMobile label="Danh sách đơn hàng" rows={list.data.data} rowKey={o => o.id} columns={[
-    {
-        key: 'id', label: 'Đơn hàng', render: o => <Stack><Typography fontWeight={visualSx.typography.fontWeight.strong}>{o.id}</Typography><Typography variant="caption" color="text.secondary">{dateTime(o.createdAt, shop.timezone)}</Typography></Stack>
-    },
-    { key: 'customer', label: 'Khách', render: o => canReadCustomers ? <RouteLink to={`/s/${shop.id}/customers/${encodeURIComponent(o.customerId)}`}><OrderCustomerName customerId={o.customerId}/></RouteLink> : `Mã khách hàng: ${o.customerId}` }, { key: 'total', label: 'Tổng tiền', align: 'right', render: o => <Amount value={o.total}/> }, { key: 'order', label: 'Đơn', render: o => <Status value={o.orderState}/> }, { key: 'shipping', label: 'Giao hàng', render: o => <Status value={o.fulfillmentState}/> }, { key: 'payment', label: 'Tiền', render: o => <Status value={o.paymentState}/> }, { key: 'action', label: 'Thao tác', render: o => <RouteLink to={`/s/${shop.id}/orders/${o.id}`}>Xem đơn</RouteLink> }
-]}/><Pager page={list.data.page}/></>}</QueryState></Panel></>; }
-export function NewOrderPage() { const { shop } = useScope(); const navigate = useNavigate(); return <><PageHeader title="Tạo đơn hàng" subtitle="Lưu nháp trước, sau đó báo giá và xác nhận khách." actions={<RouteLink to={`/s/${shop.id}/orders`}>Danh sách đơn</RouteLink>}/><DraftForm onSaved={o => navigate(`/s/${shop.id}/orders/${o.id}`)}/></>; }
+export function OrdersPage() {
+    const { shop } = useScope();
+    const navigate = useNavigate();
+    const canReadCustomers = useCan('customers.read');
+    const canReadDrafts = useCan('conversations.read');
+    const [params, setParams] = useSearchParams();
+    const active = canReadDrafts && params.get('tab') === 'drafts';
+    const list = useApi('listOrders', { query: useListQuery('listOrders') }, !active);
+    const drafts = useApi('listConversationOrderDrafts', { query: useListQuery('listConversationOrderDrafts', 'draftCursor') }, active);
+    return <>
+        <PageHeader title="Đơn hàng"
+            primaryAction={<MutationButton permission="orders.write" variant="contained" appearance="compactFace" onClick={() => navigate(`/s/${shop.id}/orders/new`)}>Tạo đơn hàng</MutationButton>} />
+        {canReadDrafts && <Tabs aria-label="Nhóm đơn hàng" value={active ? 'drafts' : 'orders'} onChange={(_, value: string) => {
+            const next = new URLSearchParams(params);
+            if (value === 'drafts') next.set('tab', value);
+            else next.delete('tab');
+            setParams(next);
+        }}>
+            <Tab value="orders" label="Đơn hàng" /><Tab value="drafts" label="Đang nhập" />
+        </Tabs>}
+        {active ? <Panel>
+            <Toolbar operation="listConversationOrderDrafts" cursorParam="draftCursor" placeholder="Tìm khách hoặc mã hội thoại…" />
+            <QueryState query={drafts} pendingProfile="section">{drafts.data && <>
+                <DataTable mobile={{ layout: 'cards', titleKey: 'customer', summaryKeys: ['updated'], actionKey: 'action' }} label="Đơn đang nhập"
+                    rows={drafts.data.data} rowKey={row => row.id} empty="Chưa có đơn đang nhập." columns={[
+                        { key: 'customer', label: 'Khách', render: row => row.customerName ?? row.conversationId },
+                        { key: 'updated', label: 'Lần lưu gần nhất', render: row => dateTime(row.savedAt, shop.timezone) },
+                        { key: 'action', label: 'Hội thoại', render: row => <RouteLink to={`/s/${shop.id}/inbox/${encodeURIComponent(row.conversationId)}?view=order-draft`}>Mở hội thoại</RouteLink> },
+                    ]} />
+                <Pager page={drafts.data.page} cursorParam="draftCursor" />
+            </>}</QueryState>
+        </Panel> : <Panel>
+            <Toolbar operation="listOrders" placeholder="Tìm mã đơn hoặc khách hàng…" filterGroup={{ label: 'Bộ lọc đơn hàng', presentation: 'dialog', filters: [
+                { name: 'status', label: 'Trạng thái đơn', pinned: true, options: [
+                    { value: 'draft', label: 'Bản nháp' }, { value: 'confirmed', label: 'Chờ xử lý' },
+                    { value: 'completed', label: 'Hoàn tất' }, { value: 'cancelled', label: 'Đã hủy' },
+                ] },
+                { name: 'fulfillmentState', label: 'Giao hàng', options: schemaCatalog.components.schemas.Order.properties.fulfillmentState.enum.map(value => ({ value, label: labels[value] ?? value })) },
+                { name: 'paymentState', label: 'Thanh toán', options: schemaCatalog.components.schemas.Order.properties.paymentState.enum.map(value => ({ value, label: labels[value] ?? value })) },
+                { name: 'sort', label: 'Thứ tự', options: [{ value: 'createdAt:asc', label: 'Cũ nhất trước' }] },
+            ] }} />
+            <QueryState query={list} pendingProfile="section">{list.data && <>
+                <DataTable density="compact" label="Danh sách đơn hàng" rows={list.data.data} rowKey={order => order.id}
+                    mobile={{ layout: 'cards', titleKey: 'id', statusKey: 'order', summaryKeys: ['shipping', 'payment', 'total'], actionKey: 'action' }} columns={[
+                        { key: 'id', label: 'Mã đơn', render: order => <Stack sx={{ overflowWrap: 'anywhere' }}>
+                            <Typography fontWeight={visualSx.typography.fontWeight.strong}>{order.id}</Typography>
+                            <Typography variant="caption" color="text.secondary">{dateTime(order.createdAt, shop.timezone)}</Typography>
+                        </Stack> },
+                        { key: 'customer', label: 'Khách', render: order => canReadCustomers
+                            ? <RouteLink to={`/s/${shop.id}/customers/${encodeURIComponent(order.customerId)}`}><OrderCustomerName customerId={order.customerId}/></RouteLink>
+                            : `Mã khách hàng: ${order.customerId}` },
+                        { key: 'order', label: 'Trạng thái đơn', render: order => <Status value={order.orderState}/> },
+                        { key: 'shipping', label: 'Giao hàng', render: order => <Status value={order.fulfillmentState}/> },
+                        { key: 'payment', label: 'Thanh toán', render: order => <Status value={order.paymentState}/> },
+                        { key: 'total', label: 'Tổng tiền', align: 'right', render: order => <Amount value={order.total}/> },
+                        { key: 'action', label: 'Thao tác', render: order => <RouteLink to={`/s/${shop.id}/orders/${encodeURIComponent(order.id)}`}>Xem đơn</RouteLink> },
+                    ]} />
+                <Pager page={list.data.page}/>
+            </>}</QueryState>
+        </Panel>}
+    </>;
+}
+export function NewOrderPage() {
+    const { shop } = useScope();
+    const navigate = useNavigate();
+    return <>
+        <PageHeader title="Tạo đơn hàng" subtitle="Lưu nháp trước, sau đó báo giá và xác nhận khách."
+            primaryAction={<RouteLink to={`/s/${shop.id}/orders`}>Danh sách đơn</RouteLink>} />
+        <DraftForm onSaved={order => navigate(`/s/${shop.id}/orders/${encodeURIComponent(order.id)}`)} />
+    </>;
+}
 export function OrderDetailPage({ simulateCustomerConfirmation }: {
     simulateCustomerConfirmation?: (shopId: string, quoteId: string) => Promise<CustomerConfirmationRequest>;
 }) {
@@ -39,6 +109,11 @@ export function OrderDetailPage({ simulateCustomerConfirmation }: {
     const listHref=useListReturn(`/s/${shop.id}/orders`);
     const get = useApi('getOrder', { path: { orderId } });
     const order = get.data?.data;
+    const canReadConversations = useCan('conversations.read');
+    const canReadCustomers = useCan('customers.read');
+    const [revealedOrderId, setRevealedOrderId] = useState<string | null>(null);
+    const fullOrderId = order?.id ?? orderId;
+    const revealOrderId = fullOrderId.length > 24;
     const quoteOp = useCommand('quoteOrder', ['getOrder']);
     const record = useCommand('recordCustomerConfirmation', []);
     const confirm = useCommand('confirmOrder', ['getOrder', 'listOrders', 'listStockSnapshots', 'getDashboard', 'listWorkItems', 'listNotifications', 'listPrepJobs', 'getMarketingSummary', 'listPaymentReviews']);
@@ -100,15 +175,58 @@ export function OrderDetailPage({ simulateCustomerConfirmation }: {
     catch (e) {
         setError(e instanceof Error ? e : new Error('Không tạo được bằng chứng mẫu'));
     } };
-    return <><PageHeader title={`Đơn ${orderId}`} subtitle="Mọi thay đổi quan trọng kiểm lại phiên bản và điều kiện nghiệp vụ." actions={<RouteLink to={listHref}>Danh sách đơn</RouteLink>}/><QueryState query={get} pendingProfile="section">{order && <>
+    return <>
+        <PageHeader title={revealOrderId ? 'Chi tiết đơn hàng' : `Đơn ${fullOrderId}`}
+            primaryAction={canReadConversations && order?.conversationId
+                ? <RouteLink to={`/s/${shop.id}/inbox/${encodeURIComponent(order.conversationId)}`}>Mở hội thoại</RouteLink>
+                : undefined}
+            actions={<>
+                {order && revealOrderId && <Button onClick={() => setRevealedOrderId(order.id)}>Xem mã đơn hàng</Button>}
+                <RouteLink to={listHref}>Danh sách đơn</RouteLink>
+            </>} />
+        <QueryState query={get} pendingProfile="section">{order && <>
  <ErrorNotice error={error || quoteOp.error || (requiresFreshQuote(record.error) ? null : record.error) || (requiresFreshQuote(confirm.error) ? null : confirm.error)}/>{editing ? <EditDialog allowEditsWhileBusy open title="Sửa đơn nháp" busy={editBusy} onClose={() => setEditing(false)} actions={({ requestClose, busy }) => <Button disabled={busy} onClick={requestClose}>Đóng chỉnh sửa</Button>}><DraftForm initial={order} onBusyChange={setEditBusy} onSaved={() => { setEditBusy(false); setEditing(false); setQuote(null); setConfirmation(null); }}/></EditDialog> : <>
- <ActionGroup direction="row" afterGap="section"><Status value={order.orderState}/><Status value={order.fulfillmentState}/><Status value={order.paymentState}/><Typography variant="caption" sx={{ alignSelf: 'center' }}>Phiên bản {order.version}</Typography></ActionGroup>
- <SectionGrid columns={{ xs: '1fr', lg: '2fr 1fr' }}><Panel title="Sản phẩm trong đơn"><DataTable label="Sản phẩm trong đơn" rows={order.lines} rowKey={l => l.id} columns={[
-                {
-                    key: 'name', label: 'Sản phẩm / SKU', render: l => <Stack><Typography fontWeight={visualSx.typography.fontWeight.strong}>{l.name}</Typography><Typography variant="caption">{l.sku}</Typography></Stack>
-                },
-                { key: 'qty', label: 'Số lượng', align: 'right', render: l => l.quantity }, { key: 'price', label: 'Đơn giá', align: 'right', render: l => <Amount value={l.unitPrice}/> }, { key: 'total', label: 'Thành tiền', align: 'right', render: l => <Amount value={l.lineTotal}/> }
-            ]}/><Box sx={[layoutSx.surface.inset, { textAlign: 'right' }]}><Typography color="text.secondary">Tổng từ API</Typography><Typography component="div" variant="h4"><Amount wrap value={order.total}/></Typography></Box></Panel><Panel title="Thông tin xử lý" bodyMode="inset"><Box><DetailLine label="Khách"><RouteLink to={`/s/${shop.id}/customers/${order.customerId}`}>Mã khách hàng: {order.customerId}</RouteLink></DetailLine><DetailLine label="Kho">Mã kho: {order.warehouseId}</DetailLine><DetailLine label="Địa chỉ">{order.shippingAddressSnapshot ? [order.shippingAddressSnapshot.label, order.shippingAddressSnapshot.recipient, order.shippingAddressSnapshot.line1, order.shippingAddressSnapshot.province].filter(Boolean).join(' · ') : (order.shippingAddressId ? `Mã địa chỉ: ${order.shippingAddressId}` : 'Chưa có địa chỉ được xác minh')}</DetailLine>{order.shippingRate && <DetailLine label="Phí giao đã báo"><Amount wrap value={order.shippingRate.fee} /> · {order.shippingRate.serviceName}</DetailLine>}{order.promotion && <DetailLine label="Ưu đãi trên đơn">{order.promotion.name} · giảm <Amount wrap value={order.promotion.discount} /></DetailLine>}<DetailLine label="Thanh toán">{order.paymentMethod === 'cod' ? 'COD' : 'Trả trước'}</DetailLine>{order.conversationId && <RouteLink to={`/s/${shop.id}/inbox/${order.conversationId}`}>Mở hội thoại</RouteLink>}{order.prepTaskId && <RouteLink to={`/s/${shop.id}/fulfillment`}>Chuẩn bị đơn</RouteLink>}</Box></Panel></SectionGrid>
+  <PageSections>
+    <Panel bodyMode="inset">
+        <SectionGrid role="region" aria-label="Trạng thái đơn hàng" columns="repeat(auto-fit, minmax(min(100%, 6.5em), 1fr))" rhythm="content" shrinkChildren>
+            {[
+                { label: 'Đơn hàng', value: order.orderState },
+                { label: 'Giao hàng', value: order.fulfillmentState },
+                { label: 'Thanh toán', value: order.paymentState },
+            ].map(status => <Box key={status.label}>
+                <Typography component="div" variant="caption" color="text.secondary">{status.label}</Typography>
+                <Status value={status.value}/>
+            </Box>)}
+        </SectionGrid>
+    </Panel>
+    <SectionGrid columns={{ xs: 'minmax(0, 1fr)', md: 'minmax(0, 2fr) minmax(0, 1fr)' }}>
+        <Panel title="Khách và giao hàng" bodyMode="inset">
+            <DetailLine label="Khách">{canReadCustomers
+                ? <RouteLink to={`/s/${shop.id}/customers/${encodeURIComponent(order.customerId)}`}><OrderCustomerName customerId={order.customerId}/></RouteLink>
+                : `Mã khách hàng: ${order.customerId}`}</DetailLine>
+            <DetailLine label="Địa chỉ">{order.shippingAddressSnapshot
+                ? [order.shippingAddressSnapshot.label, order.shippingAddressSnapshot.recipient, order.shippingAddressSnapshot.line1, order.shippingAddressSnapshot.province].filter(Boolean).join(' · ')
+                : (order.shippingAddressId ? `Mã địa chỉ: ${order.shippingAddressId}` : 'Chưa có địa chỉ được xác minh')}</DetailLine>
+            <DetailLine label="Kho xuất">{order.warehouseId}</DetailLine>
+            <DetailLine label="Phương thức thanh toán">{order.paymentMethod === 'cod' ? 'COD' : 'Trả trước'}</DetailLine>
+            <Typography variant="caption">Phiên bản {order.version}</Typography>
+            {order.prepTaskId && <RouteLink to={`/s/${shop.id}/fulfillment`}>Chuẩn bị đơn</RouteLink>}
+        </Panel>
+        <Panel title="Giá trị đơn hàng" bodyMode="inset">
+            <DetailLine label="Tổng tiền"><Typography component="div" variant="h4"><Amount wrap value={order.total}/></Typography></DetailLine>
+            {order.shippingRate && <DetailLine label="Phí giao đã báo"><Amount wrap value={order.shippingRate.fee} /> · {order.shippingRate.serviceName}</DetailLine>}
+            {order.promotion && <DetailLine label="Ưu đãi trên đơn">{order.promotion.name} · giảm <Amount wrap value={order.promotion.discount} /></DetailLine>}
+        </Panel>
+    </SectionGrid>
+    <Panel title="Sản phẩm trong đơn">
+        <DataTable mobile={{ layout: 'cards', titleKey: 'name', summaryKeys: ['qty', 'price', 'total'] }} label="Sản phẩm trong đơn" rows={order.lines} rowKey={line => line.id} columns={[
+            { key: 'name', label: 'Sản phẩm / SKU', render: line => <Stack><Typography fontWeight={visualSx.typography.fontWeight.strong}>{line.name}</Typography><Typography variant="caption">{line.sku}</Typography></Stack> },
+            { key: 'qty', label: 'Số lượng', align: 'right', render: line => line.quantity },
+            { key: 'price', label: 'Đơn giá', align: 'right', render: line => <Amount value={line.unitPrice}/> },
+            { key: 'total', label: 'Thành tiền', align: 'right', render: line => <Amount value={line.lineTotal}/> },
+        ]} />
+    </Panel>
+  </PageSections>
  <ActionGroup direction="row" beforeGap="form"><MutationButton permission="orders.write" allowedActions={order.allowedActions} action="edit" onClick={() => setEditing(true)}>Sửa đơn nháp</MutationButton><MutationButton permission="orders.write" allowedActions={order.allowedActions} action="quote" variant="contained" busy={quoteOp.pending} disabled={record.pending || confirm.pending} onClick={async () => { try {
                 const r = await quoteOp.execute({ path: { orderId }, version: order.version });
                 synchronizeApiTime(r.meta.asOf);
@@ -129,6 +247,9 @@ export function OrderDetailPage({ simulateCustomerConfirmation }: {
             }
             catch (failure) { discardRejectedQuote(failure); } }}>Xác nhận đơn & giữ hàng</MutationButton></Stack></Panel>}
  </>}</>}</QueryState>
+  {order && <EditDialog open={revealedOrderId === order.id} title="Mã đơn hàng" width="compact" onClose={() => setRevealedOrderId(null)} actions={null}>
+      <CopyableCode value={order.id} label="mã đơn hàng" />
+  </EditDialog>}
  <ConfirmDialog open={action === 'cancel'} title="Hủy đơn hàng" confirmLabel="Hủy đơn hàng" description={`Đơn ${orderId}: hủy xử lý mới và giải phóng lượng hàng giữ khi đủ điều kiện. Nếu đã lấy hoặc đóng gói, kiểm hàng và đưa hàng về vị trí bán được trước khi xác nhận hủy.`} requireReason onClose={() => setAction(null)} busy={cancel.pending} error={cancel.error} onConfirm={reason => cancel.execute({ path: { orderId }, version: order?.version, body: { expectedVersion: order?.version || 1, reason } })}/>
  <EditDialog open={action === 'evidence'} title="Bằng chứng xác nhận từ khách" onClose={() => setAction(null)} busy={record.pending} actions={<Button variant="contained" disabled={!/^[a-f0-9]{64}$/.test(hash) || !identity || !messageId || record.pending} onClick={() => void collect()}>Ghi nhận bằng chứng</Button>}><ErrorNotice error={record.error}/><FormFields ><Alert severity="warning">Không dùng lời AI “khách đã đồng ý” để xác nhận. Cần định danh và tin nhắn khách thực sự xác nhận đúng báo giá.</Alert><TextField label="Hash báo giá từ backend" value={hash} onChange={e => setHash(e.target.value)}/><TextField label="Định danh khách" value={identity} onChange={e => setIdentity(e.target.value)}/><TextField label="Mã tin nhắn xác nhận" value={messageId} onChange={e => setMessage(e.target.value)}/></FormFields></EditDialog>
  <EditDialog open={action === 'pay' || action === 'refund'} title={action === 'pay' ? 'Ghi nhận tiền đã thu' : 'Ghi nhận tiền đã hoàn'} onClose={() => setAction(null)} busy={pay.pending || refund.pending} actions={<Button variant="contained" disabled={!/^\d+(\.\d{1,4})?$/.test(amount) || !evidenceRef || !reference || codePointLength(reason.trim()) < 5 || pay.pending || refund.pending} onClick={async () => { if (!order)

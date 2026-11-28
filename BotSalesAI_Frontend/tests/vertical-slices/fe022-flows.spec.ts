@@ -1,4 +1,3 @@
-import { openDemoControls } from '../session/demo-controls';
 import { test, expect } from '@playwright/test';
 import fs from 'node:fs';
 import path from 'node:path';
@@ -20,7 +19,6 @@ async function gotoDemo(page: import('@playwright/test').Page, route: string) {
 }
 
 async function chooseOption(page: import('@playwright/test').Page, label: string, value: string | RegExp, within?: import('@playwright/test').Locator) {
-    if (['Vai trò mô phỏng', 'Trạng thái thử', 'Dataset mô phỏng'].includes(label)) await openDemoControls(page);
     const scope = within || page;
     await scope.getByRole('combobox', { name: label }).click();
     await page.getByRole('option', { name: value, exact: typeof value === 'string' }).click();
@@ -45,7 +43,8 @@ test('FE022.VS01 catalog → stock → order → prep keeps product, reservation
     expect(snapshots.data.some(snapshot => snapshot.sku === 'AO-002')).toBe(true);
     const stockRow = page.getByRole('row').filter({ hasText: 'AO-002' });
     await expect(stockRow).toBeVisible();
-    await stockRow.getByRole('link', { name: 'Mở sản phẩm' }).click();
+    await stockRow.getByRole('button', { name: 'Xem chi tiết SKU AO-002', exact: true }).click();
+    await page.getByRole('dialog', { name: 'Chi tiết tồn kho' }).getByRole('link', { name: 'Mở sản phẩm' }).click();
     await expect(page).toHaveURL(/\/products\?q=AO-002$/);
     await expect(page.getByText('Áo thun Essential', { exact: true })).toBeVisible();
 

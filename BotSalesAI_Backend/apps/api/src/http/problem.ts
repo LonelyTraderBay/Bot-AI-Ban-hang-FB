@@ -55,7 +55,7 @@ export class ProblemFilter implements ExceptionFilter {
             status,
             code,
             requestId,
-            ...(error instanceof DomainConflict ? { detail: error.detail } : {}),
+            ...(error instanceof DomainConflict ? { detail: error.detail, errors: error.errors } : {}),
             ...(error instanceof InvalidInput || error instanceof FieldConflict || error instanceof UnprocessableInput ? { errors: error.errors } : {}),
         }));
     }

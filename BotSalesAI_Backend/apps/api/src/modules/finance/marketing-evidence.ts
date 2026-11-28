@@ -4,6 +4,7 @@ import type { PrismaClient } from '../../generated/prisma/client.js';
 import { validUuid } from '../../http/query.js';
 import { requireVersion } from '../../http/response.js';
 import { recordAudit } from '../../platform/audit/index.js';
+import { requireOpenShop } from '../../platform/database/shop-lifecycle.js';
 import { serializable } from '../../platform/database/transactions.js';
 import { requireShopAccess } from '../workspace/index.js';
 import { accountingDate, financeShop, localAccountingDate } from './journal.js';
@@ -35,6 +36,7 @@ export function recordMarketingEvidence(db: PrismaClient, input: Attestation, at
         if (!scope.permissions.includes(orderId ? 'orders.read' : 'finance.post')) throw new ForbiddenException();
         const prior = await tx.marketingEvidence.findUnique({ where: { shopId_attestationHash: { shopId, attestationHash } }, select: { id: true } });
         if (prior) return prior.id;
+        await requireOpenShop(tx, shopId);
         const { currency, timezone } = await financeShop(tx, shopId);
         if (orderId) {
             const order = await tx.salesOrder.findFirst({ where: { shopId, id: orderId, currency, orderState: { in: ['confirmed', 'completed'] } },

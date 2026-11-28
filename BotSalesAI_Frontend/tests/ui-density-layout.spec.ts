@@ -10,12 +10,13 @@ async function ready(page:import('@playwright/test').Page, route:string){await p
 test('density table saves row space while preserving action target and data',async({page})=>{
  for(const width of [320,806,1440]){
   await page.setViewportSize({width,height:900});await ready(page,'products');
-  const cells=page.locator('main tbody td');await expect(cells.first()).toHaveCSS('padding-top','8px');await expect(cells.first()).toHaveCSS('padding-left','12px');
+  if(width>=768){const cell=page.locator('main tbody td').first();await expect(cell).toHaveCSS('padding-top','0px');await expect(cell).toHaveCSS('padding-left','12px');}
+  else await expect(page.locator('main [data-ui-table-layout="cards"]')).toBeVisible();
   const link=page.getByRole('link',{name:'Chi tiết',exact:true}).first();expect((await link.boundingBox())!.height).toBeGreaterThanOrEqual(44);
   await expect(page.getByText('DEMO-001',{exact:true})).toBeVisible();await expect(page.getByText('150.000 ₫',{exact:true})).toBeVisible();
   expect(await page.evaluate(()=>document.documentElement.scrollWidth)).toBe(width);
   await link.focus();await expect(link).toBeFocused();
-  if(width>=768){const height=await page.locator('main tbody tr').first().evaluate(e=>e.getBoundingClientRect().height);expect(height).toBeGreaterThanOrEqual(60);expect(height).toBeLessThanOrEqual(63);}
+  if(width>=768){const height=await page.locator('main tbody tr').first().evaluate(e=>e.getBoundingClientRect().height);expect(height).toBeGreaterThanOrEqual(44);expect(height).toBeLessThanOrEqual(48);}
  }
 });
 
@@ -30,30 +31,25 @@ test('density divided facts list has one row inset and no additional inter-row g
  }
 });
 
-test('density demo disclosure retains state and always shows the synthetic warning',async({page})=>{
- await page.setViewportSize({width:390,height:900});await ready(page,'products');
- const tools=page.locator('#mock-tools-controls'), toggle=page.getByRole('button',{name:'Công cụ demo',exact:true});
- for(const [index,width] of [390,806,1440].entries()){
-  if(index>0)await page.setViewportSize({width,height:900});
-  await expect(tools).toBeHidden();await expect(toggle).toHaveAttribute('aria-expanded','false');
-  await expect(page.getByRole('alert').filter({hasText:'Frontend review: API được mô phỏng'})).toBeVisible();
-  await toggle.focus();await page.keyboard.press('Enter');await expect(tools).toBeVisible();
-  if(index===0){await page.getByRole('combobox',{name:'Dataset mô phỏng'}).click();await page.getByRole('option',{name:'1.000 khách hàng tổng hợp',exact:true}).click();await expect(page.getByText('Đã tải 1.000 khách hàng tổng hợp vào API mô phỏng.')).toBeVisible();}
-  await page.getByRole('button',{name:'Ẩn công cụ demo',exact:true}).click();await expect(tools).toBeHidden();
-  await expect(page.locator('[data-testid="mock-tools-summary"]')).toContainText('1.000 khách hàng');
-  await page.getByRole('button',{name:'Công cụ demo',exact:true}).click();await expect(page.getByRole('combobox',{name:'Dataset mô phỏng'})).toContainText('1.000 khách hàng');
-  await page.getByRole('button',{name:'Ẩn công cụ demo',exact:true}).click();await expect(tools).toBeHidden();
- }
+test('shop pages have no demo controls or review prompts', async ({ page }) => {
+    for (const width of [390, 806, 1440]) {
+        await page.setViewportSize({ width, height: 900 });
+        await ready(page, 'products');
+        await expect(page.getByRole('button', { name: /Công cụ demo/i })).toHaveCount(0);
+        await expect(page.getByText('owner · Bình thường · Dataset mặc định')).toHaveCount(0);
+        await expect(page.getByText('Frontend review: API được mô phỏng', { exact: false })).toHaveCount(0);
+        await expect(page.getByRole('button', { name: /^Góp ý(?: màn hình)?$/ })).toHaveCount(0);
+    }
 });
 
 test('density operational Panel uses 12px boundary while complex form and reading Panel keep comfortable rhythm',async({page})=>{
  for(const width of [390,1440]){
   await page.setViewportSize({width,height:900});await ready(page,'finance');
-  await expect(page.locator('main')).toHaveCSS('padding-top','16px');
+  await expect(page.locator('main')).toHaveCSS('padding-top','8px');
   const panel=page.getByRole('heading',{name:'Kỳ báo cáo',exact:true}).locator('xpath=ancestor::*[contains(@class,"MuiPaper-root")][1]');
   const geometry=await panel.evaluate(e=>{const header=e.firstElementChild!,body=e.lastElementChild!;return {gap:body.firstElementChild!.getBoundingClientRect().top-Math.max(...[...header.children].map(c=>c.getBoundingClientRect().bottom)),bodyTop:getComputedStyle(body).paddingTop,bodyInline:getComputedStyle(body).paddingLeft};});
-  expect(geometry.gap).toBeCloseTo(12,0);expect(geometry.bodyTop).toBe('0px');expect(geometry.bodyInline).toBe(width<768?'12px':'16px');
-  await ready(page,'orders/new');await expect(page.locator('[data-ui-composition="form-fields"]').first()).toHaveCSS('gap','16px');
+  expect(geometry.gap).toBeCloseTo(12,0);expect(geometry.bodyTop).toBe('0px');expect(geometry.bodyInline).toBe('12px');
+  await ready(page,'orders/new');await expect(page.locator('[data-ui-composition="form-fields"]').first()).toHaveCSS('gap','12px');
   await ready(page,'knowledge/k1');const reading=page.getByRole('heading',{name:'Nội dung & nguồn',exact:true}).locator('xpath=ancestor::*[contains(@class,"MuiPaper-root")][1]');await expect(reading).toHaveAttribute('data-ui-density','comfortable');await expect(reading.locator(':scope > :last-child')).toHaveCSS('padding-left',width<768?'16px':'24px');
  }
 });

@@ -2255,6 +2255,16 @@ Component nhận children vẫn phải kiểm nội dung được truyền; sour
 
 ### 16.6. Kế hoạch triển khai chi tiết, dependency và tiến độ
 
+#### Chuẩn hóa danh sách và cách ghép màn hình · 26/11/2026
+
+| Thứ tự | Công việc | Kết quả kiểm chứng |
+|---|---|---|
+| P0.1 | Kiểm kê route và mẫu bố cục trên nền `685dab0a` có bản chỉnh Hộp thư. | Đã lưu ma trận 67 route, 54 mục menu và đường cơ sở hai khổ màn hình trước khi sửa. [Ma trận route](../evidence/ui-consistency-20261126/route-profiles.md) |
+| P0.2 | Thí điểm thẻ trên R21, R44 và R48. | Hai trình duyệt kiểm nút, trường phụ, hộp thoại và trả tiêu điểm ở 320/390 px. |
+| P1.1 | Áp cấu hình mobile cho từng bảng theo nhóm nghiệp vụ. | 66 điểm dùng thẻ và 12 điểm dùng bảng đối chiếu, đủ cả 78 điểm dùng `DataTable`. |
+| P1.2 | Rà mẫu bố cục theo SPC-048, đồng bộ tiêu đề, trạng thái và nhóm thao tác. | Sửa 22 tiêu đề lệch menu và dùng bố cục chung cho khoảng cách bên trong thẻ. Đã chạy ca đại diện cho tải/rỗng/lỗi, quyền và luồng bản nháp. |
+| P2 | Kiểm source/build, ma trận hai trình duyệt, zoom/bàn phím và hai shop mẫu. | `npm run verify` đạt, 268 lượt render và 128 ca hồi quy đạt. Hai shop mẫu đạt sáu ca chỉ đọc. Còn chờ CI từ xa, kiểm bằng trình đọc màn hình, thiết bị thật và nghiệm thu người dùng. [Báo cáo Frontend](../evidence/REPORT.md#chuẩn-hóa-giao-diện-67-màn-hình--26112026) |
+
 **CURRENT — Đồng bộ UI theo audit 16/10/2026, cập nhật trạng thái theo bằng chứng ngày 18/10/2026.** Người dùng yêu cầu kế hoạch chi tiết, theo dõi thực tế, mỗi việc có kiểm chứng và commit/push riêng bằng tiếng Việt. [Bằng chứng gốc đã lưu](../evidence/frontend-ui-consistency-20261016/REPORT.md); [phiếu việc và phạm vi kiểm chứng](#ui-consistency-20261016). Đây là đợt khắc phục/kiểm chứng trong S11–S12/S14–S20, không tạo ledger hoặc mẫu số FE mới. Bảng dưới đây phản ánh đúng source, SHA, remote và Actions đã quan sát; local PASS không thay thế hosted CI.
 
 | Việc / ưu tiên | Công việc, owner và phạm vi | Dependency | Trạng thái thực tế lúc lập | Bằng chứng đóng / bàn giao Git |

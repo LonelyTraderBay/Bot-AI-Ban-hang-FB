@@ -67,7 +67,7 @@ function PrivacyApproval({ row, returning, onClose }: { row: PrivacyRequest; ret
         }
     };
     return <EditDialog open title="Phê duyệt yêu cầu dữ liệu" onClose={onClose} busy={busy}
-        actions={<MutationButton permission="privacy.manage" variant="contained" busy={busy} disabled={!valid || approve.unresolved}
+        actions={<MutationButton permission="privacy.manage" action="approvePrivacyRequest" variant="contained" busy={busy} disabled={!valid || approve.unresolved}
             onClick={() => void submit()}>{confirming ? 'Phê duyệt yêu cầu' : 'Xác minh qua tài khoản công ty'}</MutationButton>}>
         <FormFields>
             <DetailLine label="Loại yêu cầu">{businessLabel(row.kind)}</DetailLine>
@@ -138,11 +138,11 @@ export function PrivacyPage() {
         } catch (error) { editor.failed(error); }
     };
     return <>
-        <PageHeader title="Quyền riêng tư & vòng đời dữ liệu" subtitle="Quản lý thời hạn lưu dữ liệu và yêu cầu của khách."/>
-        <SectionGrid columns={{ xs: '1fr', lg: '1fr 1.4fr' }}>
+        <PageHeader title="Quyền riêng tư" subtitle="Quản lý thời hạn lưu dữ liệu và yêu cầu của khách."/>
+        <SectionGrid alignItems="start" columns={{ xs: '1fr', lg: '1fr 1.4fr' }}>
             <Panel title="Chính sách lưu trữ" bodyMode="inset">
                 <QueryState query={policy} pendingProfile="section">
-                    <FormFields component="form" ref={policyForm} onSubmit={event => { event.preventDefault(); void savePolicy(); }}>
+                    <FormFields component="form" density="compact" ref={policyForm} onSubmit={event => { event.preventDefault(); void savePolicy(); }}>
                         <ErrorNotice error={save.error}/>
                         <DraftConflict editor={editor} labels={{ days: 'Số ngày lưu hội thoại', note: 'Căn cứ / thị trường áp dụng' }} busy={save.pending}/>
                         {policySaved && <Alert severity="success" role="status">{policySaved}</Alert>}
@@ -150,7 +150,7 @@ export function PrivacyPage() {
                         <TextField label="Số ngày lưu hội thoại" value={days} onBlur={() => setDaysTouched(true)}
                             onChange={e => { setDays(e.target.value); setDaysTouched(true); setPolicySaved(''); }} type="number"
                             inputProps={{ min: 1, max: 36500, step: 1 }} error={showDaysError} helperText={showDaysError ? daysError : 'Nhập số nguyên từ 1 đến 36.500 ngày.'}/>
-                        <TextField label="Căn cứ / thị trường áp dụng" multiline minRows={4} value={note} onBlur={() => setNoteTouched(true)}
+                        <TextField label="Căn cứ / thị trường áp dụng" multiline minRows={3} value={note} onBlur={() => setNoteTouched(true)}
                             onChange={e => { setNote(e.target.value); setNoteTouched(true); setPolicySaved(''); }} error={showNoteError}
                             helperText={showNoteError ? noteError : 'Tối thiểu 5 và tối đa 2.000 ký tự.'}/>
                         <MutationButton permission="privacy.manage" type="submit" variant="contained" busy={save.pending}
@@ -161,10 +161,10 @@ export function PrivacyPage() {
                     </FormFields>
                 </QueryState>
             </Panel>
-            <Panel title="Yêu cầu của khách" action={<MutationButton permission="privacy.manage" onClick={() => setOpen(true)}>Tạo yêu cầu</MutationButton>}>
+            <Panel title="Yêu cầu của khách" action={<MutationButton permission="privacy.manage" action="createPrivacyRequest" onClick={() => setOpen(true)}>Tạo yêu cầu</MutationButton>}>
                 <QueryState query={requests} pendingProfile="section">
                     {requests.data && <>
-                        <DataTable label="Yêu cầu quyền riêng tư" rows={requests.data.data} rowKey={r => r.id} columns={[
+                        <DataTable mobile={{ layout: 'cards', titleKey: 'customer', summaryKeys: ['kind', 'state', 'reason'], actionKey: 'action' }} label="Yêu cầu quyền riêng tư" rows={requests.data.data} rowKey={r => r.id} columns={[
                             { key: 'customer', label: 'Khách', render: r => `Mã khách hàng: ${r.customerId}` },
                             { key: 'kind', label: 'Yêu cầu', render: r => <Status value={r.kind}/> },
                             { key: 'state', label: 'Trạng thái', render: r => <Status value={r.status}/> },
@@ -173,7 +173,7 @@ export function PrivacyPage() {
                                 key: 'action', label: 'Thao tác', render: (r: PrivacyRequest) => r.jobId
                                     ? <RouteLink to={`/s/${shop.id}/jobs/${r.jobId}`}>Theo dõi công việc</RouteLink>
                                     : canApprove && r.status === 'pending_approval'
-                                        ? <MutationButton permission="privacy.manage" onClick={() => setSelectedRequest(r)}>Phê duyệt</MutationButton>
+                                        ? <MutationButton permission="privacy.manage" action="approvePrivacyRequest" onClick={() => setSelectedRequest(r)}>Phê duyệt</MutationButton>
                                         : null,
                             }] : []),
                         ]}/>
@@ -221,6 +221,7 @@ function ConsentManagement({ customers, canReadCustomers, shopId }: { customers:
     };
     return <Panel title="Consent marketing và xác nhận lại" beforeGap="section" bodyMode="inset">
         <FormFields>
+            <FormFields geometry={{ maxWidth: layoutSx.form.standardWidth.maxWidth }}>
             <Alert severity="info">Consent được lưu theo khách, mục đích, kênh, phiên bản và lịch sử. Tạo yêu cầu chỉ tạo challenge đang chờ; không bật consent. Môi trường local không có nhà cung cấp gửi email/SMS/Meta nên không khẳng định đã gửi link thật.</Alert>
             {canReadCustomers ? <>
                 <TextField select label="Khách hàng" value={customerId} onChange={event => { setSelectedCustomerId(event.target.value); setCreated(false); }} disabled={!customer}>
@@ -235,10 +236,11 @@ function ConsentManagement({ customers, canReadCustomers, shopId }: { customers:
                 <ErrorNotice error={createChallenge.error || consentList.error || challengeList.error}/>
                 {created && <Alert severity="success" role="status">Đã tạo challenge chờ khách xác nhận. Trạng thái này chưa phải consent được cấp.</Alert>}
             </> : <Alert severity="warning">Cần quyền customers.read để chọn khách. Danh sách và thông tin nhận dạng được ẩn.</Alert>}
+            </FormFields>
             <FieldGroup role="group" aria-label="Bản ghi consent hiện tại">
                 <Typography component="h2" variant="h6">Bản ghi consent hiện tại</Typography>
                 <QueryState query={consentList} pendingProfile="section">{consentList.data && <>
-                    <DataTable label="Lịch sử consent khách hàng" rows={consentList.data.data} rowKey={record => record.id} columns={[
+                    <DataTable mobile={{ layout: 'cards', titleKey: 'customer', summaryKeys: ['purpose', 'channel', 'status'] }} label="Lịch sử consent khách hàng" rows={consentList.data.data} rowKey={record => record.id} columns={[
                         { key: 'customer', label: 'Khách', render: record => `Mã khách hàng: ${record.customerId}` },
                         { key: 'purpose', label: 'Mục đích', render: record => businessLabel(record.purpose) },
                         { key: 'channel', label: 'Kênh', render: record => businessLabel(record.channel) },
@@ -252,7 +254,7 @@ function ConsentManagement({ customers, canReadCustomers, shopId }: { customers:
             <FieldGroup role="group" aria-label="Yêu cầu xác nhận đang chờ">
                 <Typography component="h2" variant="h6">Yêu cầu xác nhận đang chờ</Typography>
                 <QueryState query={challengeList} pendingProfile="section">{challengeList.data && <>
-                    <DataTable label="Yêu cầu xác nhận đang chờ" rows={challengeList.data.data} rowKey={challenge => challenge.id} columns={[
+                    <DataTable mobile={{ layout: 'cards', titleKey: 'customer', summaryKeys: ['purpose', 'action', 'status'] }} label="Yêu cầu xác nhận đang chờ" rows={challengeList.data.data} rowKey={challenge => challenge.id} columns={[
                         { key: 'customer', label: 'Khách', render: challenge => `Mã khách hàng: ${challenge.customerId}` },
                         { key: 'purpose', label: 'Mục đích', render: challenge => businessLabel(challenge.purpose) },
                         { key: 'channel', label: 'Kênh', render: challenge => businessLabel(challenge.channel) },

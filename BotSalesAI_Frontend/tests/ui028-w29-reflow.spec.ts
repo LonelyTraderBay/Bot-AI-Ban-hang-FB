@@ -5,7 +5,7 @@ import { evidenceRunId } from './evidence-run-id.mjs';
 import { startDemoServer } from './session/demo-server.mjs';
 
 const root = process.cwd();
-const widths = [320, 390, 767, 768, 1024, 1279, 1280, 1440, 1920] as const;
+const widths = [320, 390, 705, 767, 768, 1024, 1279, 1280, 1440, 1920] as const;
 const profiles = [
     { name: 'auth', path: '/login', role: 'link' as const, control: /Tiếp tục vào cửa hàng/ },
     { name: 'dashboard', path: '/s/shop-demo/overview', role: 'link' as const, control: /Xem việc cần làm|Xem đơn hàng|Tạo đơn hàng/ },
@@ -32,7 +32,7 @@ for (const width of widths) {
         const issues: string[] = [];
         const pageErrors: string[] = [];
         const observations: Array<Record<string, unknown>> = [];
-        await page.setViewportSize({ width, height: 900 });
+        await page.setViewportSize({ width, height: width === 705 ? 480 : 900 });
         page.on('pageerror', error => pageErrors.push(error.message));
 
         for (const profile of profiles) {
@@ -74,7 +74,7 @@ for (const width of widths) {
                     issues.push(`${width}px ${profile.name}: primary action extends outside viewport`);
                 if (geometry.pageOverflow > 1) issues.push(`${width}px ${profile.name}: page overflows by ${geometry.pageOverflow}px`);
                 if (profile.path.startsWith('/s/')) {
-                    const expectedGutter = width < 768 ? 16 : 24;
+                    const expectedGutter = 8;
                     if (geometry.mainPaddingInlineStart !== expectedGutter || geometry.mainPaddingInlineEnd !== expectedGutter)
                         issues.push(`${width}px ${profile.name}: shell gutter=${geometry.mainPaddingInlineStart}/${geometry.mainPaddingInlineEnd}px; expected=${expectedGutter}px`);
                 }

@@ -36,14 +36,16 @@ export function shippingPolicyOperations(operation: string, input: Input) {
     return saved;
 }
 
-export function shippingRateForQuote(shopId: string, address: Row | null): Row | null {
+export function shippingRateForQuote(shopId: string, address: Row | null, mode: 'quote' | 'preview' = 'quote'): Row | null {
     const policy = storedPolicy(shopId);
     if (!policy) return null;
     const rules = rows(policy.rules);
     if (!rules.length) return null;
     const countryCode = str(address?.countryCode), province = str(address?.province);
+    if (mode === 'preview' && (!countryCode || !province)) return null;
     ensure(countryCode && province, 'Cần quốc gia và tỉnh/thành để báo phí giao hàng.', 422, 'SHIPPING_ADDRESS_INCOMPLETE');
     const rule = rules.find(item => zoneKey(str(item.countryCode), str(item.province)) === zoneKey(countryCode, province));
+    if (mode === 'preview' && !rule) return null;
     ensure(rule, 'Địa chỉ nằm ngoài các vùng giao hàng đã cấu hình.', 422, 'SHIPPING_ZONE_UNAVAILABLE');
     return {
         policyVersion: policy.version,

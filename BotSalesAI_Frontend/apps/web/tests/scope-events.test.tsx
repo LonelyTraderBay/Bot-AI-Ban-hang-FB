@@ -17,7 +17,7 @@ class Stream {
 const refreshSession = vi.fn(async () => undefined);
 const membership: Scope['membership'] = { id: 'member-1', userId: 'user-1', shopId: 'shop-1', roles: ['owner'], permissions: [], permissionVersion: 1, status: 'active' };
 const scope: Scope = { membership, online: true, refreshSession,
-    shop: { id: 'shop-1', name: 'Synthetic', currency: 'VND', timezone: 'Asia/Vientiane', locale: 'vi-VN', defaultWarehouseId: 'wh-1', version: 1, policyVersion: 'p-1' },
+    shop: { id: 'shop-1', name: 'Synthetic', currency: 'VND', timezone: 'Asia/Vientiane', locale: 'vi-VN', status: 'active', closedAt: null, defaultWarehouseId: 'wh-1', version: 1, policyVersion: 'p-1' },
     session: { user: { id: 'user-1', displayName: 'Synthetic', email: 'user@example.test' }, memberships: [membership], csrfToken: 'synthetic-csrf-123', expiresAt: '2030-01-01T00:00:00Z' },
 };
 const cache = new QueryClient();
@@ -54,7 +54,7 @@ it.each(['gap', 'resync', 'unrecognized', 'invalid', 'open', 'reconnect'] as con
         if (kind === 'invalid') stream.onmessage?.({ data: 'malformed-json' });
         if (kind === 'open' || kind === 'reconnect') { if (kind === 'reconnect') stream.onerror?.(); stream.onopen?.(); }
     });
-    expect(invalidate.mock.calls.map(([options]) => options?.queryKey)).toEqual([key, shopKey]);
+    expect(invalidate.mock.calls.map(([options]) => options?.queryKey)).toEqual([key, shopKey, ['shops', scope.session.user.id]]);
 });
 
 it('F09 revocation closes the stream and refreshes the session even when its sequence is old', () => {
@@ -85,13 +85,13 @@ it.each([
     expect(keys).not.toContainEqual(key);expect(keys).not.toContainEqual([...key,unrelated]);
     invalidate.mockClear();
     act(()=>stream.emit(event(11,{type,resourceType:'unexpected-resource'})));
-    expect(invalidate.mock.calls.map(([options]) => options?.queryKey)).toEqual([key, shopKey]);
+    expect(invalidate.mock.calls.map(([options]) => options?.queryKey)).toEqual([key, shopKey, ['shops', scope.session.user.id]]);
     invalidate.mockClear();
     act(()=>stream.emit(event(13,{type,resourceType})));
-    expect(invalidate.mock.calls.map(([options]) => options?.queryKey)).toEqual([key, shopKey]);
+    expect(invalidate.mock.calls.map(([options]) => options?.queryKey)).toEqual([key, shopKey, ['shops', scope.session.user.id]]);
     invalidate.mockClear();
     act(()=>stream.emit(event(14,{type,resourceType,schemaVersion:3})));
-    expect(invalidate.mock.calls.map(([options]) => options?.queryKey)).toEqual([key, shopKey]);
+    expect(invalidate.mock.calls.map(([options]) => options?.queryKey)).toEqual([key, shopKey, ['shops', scope.session.user.id]]);
 });
 
 it.each(['journal.updated', 'opening_balance.updated'] as const)('financial event %s refreshes dashboard figures', type => {

@@ -1,3 +1,4 @@
+import { lockShopClosure } from '../../platform/database/shop-lifecycle.js';
 import { ConflictException } from '@nestjs/common';
 import { createHash } from 'node:crypto';
 import type { ChannelConnection, MessageOrigin, Prisma } from '../../generated/prisma/client.js';
@@ -21,7 +22,8 @@ export function metaMessageDigest(pageId: string, senderId: string, occurredAt: 
 }
 
 export async function recordMessengerEvent(tx: Prisma.TransactionClient, channel: ChannelConnection,
-    event: { externalId: string; occurredAt: Date; contentHash: string }, apply: () => Promise<MessageObservation>) {
+    event: { externalId: string; occurredAt: Date; contentHash: string }, apply: (closedAt: Date | null) => Promise<MessageObservation>) {
+    const closedAt = await lockShopClosure(tx, channel.shopId);
     const source = { shopId: channel.shopId, channelId: channel.id, externalId: event.externalId };
     const seen = await tx.channelEvent.findUnique({ where: { shopId_channelId_externalId: source } });
     if (seen) {
@@ -29,7 +31,7 @@ export async function recordMessengerEvent(tx: Prisma.TransactionClient, channel
         return { duplicate: true };
     }
     await tx.channelEvent.create({ data: { ...source, occurredAt: event.occurredAt, contentHash: event.contentHash } });
-    const result = await apply();
+    const result = await apply(closedAt);
     const updated = await tx.channelConnection.update({ where: inboxKey(channel.shopId, channel.id),
         data: { lastWebhookAt: new Date(), version: { increment: 1 } } });
     await enqueueResourceUpdate(tx, 'health.updated', updated);
@@ -37,7 +39,7 @@ export async function recordMessengerEvent(tx: Prisma.TransactionClient, channel
 }
 
 export async function receiveMessengerMessage(tx: Prisma.TransactionClient, channel: ChannelConnection, input: InboundMessage,
-    occurredAt: Date, origin: MessageOrigin, config?: AuthConfig, ai?: ApprovedEvaluationConfig) {
+    occurredAt: Date, origin: MessageOrigin, closedAt: Date | null, config?: AuthConfig, ai?: ApprovedEvaluationConfig) {
     const { shopId, id: channelId, provider, pageId } = channel;
     const identityKey = { shopId, channel: provider, pageId, externalId: input.senderId };
     const retiredKey = erasedIdentityKey(shopId, provider, pageId, input.senderId);
@@ -73,11 +75,12 @@ export async function receiveMessengerMessage(tx: Prisma.TransactionClient, chan
     if (newest) {
         const reopen = conversation.status === 'resolved' && occurredAt > conversation.updatedAt;
         const updated = await updateConversation(tx, conversation, {
-            lastInboundAt: occurredAt, ...(reopen ? { status: 'open', assignedUserId: null, generation: { increment: 1 } } : {}),
+            lastInboundAt: occurredAt, lastInboundWhileClosed: closedAt !== null,
+            ...(reopen ? { status: 'open', assignedUserId: null, generation: { increment: 1 } } : {}),
             ...(conversation.status === 'open' || reopen ? { unreadCount: { increment: 1 } } : {}),
         });
-        if (origin === 'fixture') await queueBotInbound(tx, updated, channel, message.id, config);
-        if (origin === 'provider') await queueStagedBotInbound(tx, updated, channel, message, input.senderId, ai);
+        if (!closedAt && origin === 'fixture') await queueBotInbound(tx, updated, channel, message.id, config);
+        if (!closedAt && origin === 'provider') await queueStagedBotInbound(tx, updated, channel, message, input.senderId, ai);
     }
     await enqueueResourceUpdate(tx, 'message.created', message);
     return { duplicate: false, messageId: message.id };

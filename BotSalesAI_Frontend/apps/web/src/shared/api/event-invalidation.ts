@@ -3,6 +3,7 @@ import type { QueryOperationId } from './client';
 
 const inboxReads: readonly QueryOperationId[] = [
     'listMessages', 'getConversation', 'listConversations', 'getInboxMetadata',
+    'getConversationOrderDraft', 'listConversationOrderDrafts', 'estimateConversationOrderDraft',
     'getDashboard', 'getReportSummary', 'getMarketingSummary', 'getOperationsSummary',
     'listWorkItems', 'listDigests', 'listNotifications',
 ];

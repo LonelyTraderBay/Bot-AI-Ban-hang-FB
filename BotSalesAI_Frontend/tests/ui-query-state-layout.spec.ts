@@ -113,7 +113,7 @@ for (const route of cases) {
                 const response = operationResponse ?? await page.waitForResponse(matchesOperation, { timeout: 30_000 });
                 expect(response.status(), `${route.id} synthetic ${route.operation} response`).toBe(200);
                 await expect(progress).toHaveCount(0);
-                if (route.readySelector === 'table') await expect(page.getByRole('table')).toBeVisible();
+                if (route.readySelector === 'table') await expect(page.locator(`main [data-ui-table-layout="${width < 768 ? 'cards' : 'table'}"]`).first()).toBeVisible();
                 else await expect(page.getByRole('textbox', { name: 'Tên sản phẩm' })).toBeVisible();
                 expect(await page.evaluate(() => document.documentElement.scrollWidth), `${route.id} ${width}px document width`).toBe(width);
                 observations.push({ routeId: route.id, pathname: route.pathname, viewport: { width, height: 900 }, profile: route.expectedProfile, pendingGeometry, responseStatus: response.status(), ready: true });

@@ -20,7 +20,7 @@ test('UI61 R14 valid import job retains status width and visible empty-row guida
         await page.locator('input[type="file"]').setInputFiles({name:'ui61-layout.csv',mimeType:'text/csv',buffer:Buffer.from('sku,name,price,description,currency\nUI61-VALID,Sản phẩm kiểm tra bố cục,1000,Dữ liệu tổng hợp,VND','utf8')});
         await page.getByRole('button', { name:'Kiểm tra trước khi nhập',exact:true }).click();
         await expect(page).toHaveURL(/\/imports\/job-/);
-        await expect(page.getByRole('table', { name:'Lỗi từng dòng trong tệp nhập',exact:true })).toBeVisible();
+        await expect(page.getByRole('region', { name:'Lỗi từng dòng trong tệp nhập',exact:true })).toBeVisible();
         const chip=page.locator('main .MuiChip-root').first();
         expect((await chip.boundingBox())!.width).toBeLessThan(200);
         const empty=page.getByRole('status').filter({hasText:'Không có dòng lỗi trong báo cáo kiểm tra.'});

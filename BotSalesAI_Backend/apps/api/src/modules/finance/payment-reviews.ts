@@ -14,6 +14,79 @@ type ReviewRow = {
 };
 const unique = (values: (string | null | undefined)[]) => [...new Set(values.filter((value): value is string => Boolean(value)))].sort();
 
+function paymentFacts(shopId: string, currency: string) {
+    return Prisma.sql`
+        WITH facts AS (
+            SELECT o.id AS "orderId", o.order_state, o.payment_state, o.payment_method,
+                   o.fulfillment_state, (o.fulfillment_state IN ('delivered','part_returned','returned')
+                     OR shipment.delivered_at IS NOT NULL) AS delivered,
+                   coalesce(o.fulfillment_state='returned' AND shipment.state='returned' AND shipment.delivered_at IS NULL, false) AS returned_undelivered,
+                   greatest(o.updated_at, payments.latest, allocations.latest, returns.latest) AS "createdAt",
+                   greatest(0, o.total-returns.credit) AS expected, payments.receipts + allocations.applied - allocations.overlap AS verified,
+                   payments.banked + allocations.applied AS banked, returns.obligation + payments.early_refunds AS refund_due,
+                   payments.refunds AS refunded, payments.early_refunds
+            FROM sales_orders o
+            LEFT JOIN shipments shipment ON shipment.shop_id=o.shop_id AND shipment.order_id=o.id
+            CROSS JOIN LATERAL (
+                SELECT coalesce(sum(e.amount) FILTER (WHERE e.kind='receipt'),0) AS receipts,
+                       coalesce(sum(e.amount) FILTER (WHERE e.kind='receipt' AND e.journal_id IS NOT NULL),0) AS banked,
+                       coalesce(sum(e.amount) FILTER (WHERE e.kind='disbursement'),0) AS refunds,
+                       coalesce(sum(e.amount) FILTER (WHERE e.kind='disbursement' AND e.source_type='order_refund'),0) AS early_refunds,
+                       max(e.updated_at) AS latest
+                FROM finance_entries e WHERE e.shop_id=o.shop_id AND e.order_id=o.id AND e.currency=o.currency AND e.status='posted'
+            ) payments
+            CROSS JOIN LATERAL (
+                SELECT coalesce(sum(a.amount),0) AS applied, coalesce(sum(linked.applied),0) AS overlap, max(a.created_at) AS latest
+                FROM settlement_allocations a
+                CROSS JOIN LATERAL (
+                    SELECT coalesce(sum(c.amount),0) AS applied FROM collection_applications c WHERE c.shop_id=a.shop_id AND c.allocation_id=a.id
+                ) linked
+                WHERE a.shop_id=o.shop_id AND a.order_id=o.id
+            ) allocations
+            CROSS JOIN LATERAL (
+                SELECT coalesce(sum(r.receivable_credit),0) AS credit, coalesce(sum(r.refund_obligation),0) AS obligation, max(r.updated_at) AS latest
+                FROM order_returns r WHERE r.shop_id=o.shop_id AND r.order_id=o.id AND r.state='inspected'
+            ) returns
+            WHERE o.shop_id=${shopId}::uuid AND o.currency=${currency}
+        )
+    `;
+}
+
+function reviewFacts(shopId: string, currency: string) {
+    return Prisma.sql`
+        ${paymentFacts(shopId, currency)}, reviews AS (
+            SELECT md5("orderId"::text || '/collection')::uuid AS id, "orderId", order_state, 'collection' AS kind, "createdAt", expected, verified,
+                   CASE WHEN verified > expected OR verified < 0 OR (payment_state='settled' AND verified <> expected) THEN 'needs_check'
+                        WHEN payment_method='cod' AND delivered AND banked < expected AND verified IN (0, expected) THEN 'cod_pending'
+                        WHEN verified = expected THEN 'settled'
+                        WHEN verified > 0 THEN 'partial' ELSE 'unpaid' END AS status
+            FROM facts WHERE expected > 0 AND order_state <> 'cancelled' AND (order_state <> 'draft' OR payment_method='prepay')
+            UNION ALL
+            SELECT md5("orderId"::text || '/refund')::uuid AS id, "orderId", order_state, 'refund' AS kind, "createdAt", refund_due, refunded,
+                   CASE WHEN refunded > refund_due OR (refunded < refund_due AND verified < refund_due) THEN 'needs_check'
+                        WHEN refunded = refund_due THEN 'settled' ELSE 'refund_due' END AS status
+            FROM facts WHERE refund_due > 0
+        )
+    `;
+}
+
+export async function hasUnsettledPayments(tx: Prisma.TransactionClient, shopId: string, currency: string) {
+    const [row] = await tx.$queryRaw<{ open: boolean }[]>`
+        ${paymentFacts(shopId, currency)}
+        -- Drafts and undelivered returns carry only the outstanding customer deposit.
+        -- For a sale, pre-handover refunds reduce collections, while return payouts settle a separate obligation.
+        SELECT EXISTS (
+            SELECT 1 FROM facts WHERE refund_due <> refunded OR
+                CASE WHEN order_state IN ('draft','cancelled') OR returned_undelivered
+                     THEN verified <> refunded
+                     ELSE verified - early_refunds <> expected
+                          OR (payment_method='cod' AND delivered AND banked - early_refunds < expected)
+                END
+        ) AS open
+    `;
+    return row.open;
+}
+
 export class PaymentReviews extends FinanceAccess {
     list(headers: IncomingHttpHeaders, shopId: string, raw: Record<string, unknown>) {
         return this.read(headers, shopId, async (tx, scope) => {
@@ -36,49 +109,7 @@ export class PaymentReviews extends FinanceAccess {
                 OR EXISTS (SELECT 1 FROM order_returns r WHERE r.shop_id=${shopId}::uuid AND r.order_id="orderId" AND r.id::text ILIKE ${pattern})
             )`;
             const result = page.result(await tx.$queryRaw<ReviewRow[]>(Prisma.sql`
-                WITH facts AS (
-                    SELECT o.id AS "orderId", o.order_state, o.payment_state, o.payment_method,
-                           o.fulfillment_state, (o.fulfillment_state IN ('delivered','part_returned','returned')
-                             OR EXISTS (SELECT 1 FROM shipments s WHERE s.shop_id=o.shop_id AND s.order_id=o.id AND s.delivered_at IS NOT NULL)) AS delivered,
-                           greatest(o.updated_at, payments.latest, allocations.latest, returns.latest) AS "createdAt",
-                           greatest(0, o.total-returns.credit) AS expected, payments.receipts + allocations.applied - allocations.overlap AS verified,
-                           payments.banked + allocations.applied AS banked, returns.obligation + payments.early_refunds AS refund_due,
-                           payments.refunds AS refunded
-                    FROM sales_orders o
-                    CROSS JOIN LATERAL (
-                        SELECT coalesce(sum(e.amount) FILTER (WHERE e.kind='receipt'),0) AS receipts,
-                               coalesce(sum(e.amount) FILTER (WHERE e.kind='receipt' AND e.journal_id IS NOT NULL),0) AS banked,
-                               coalesce(sum(e.amount) FILTER (WHERE e.kind='disbursement'),0) AS refunds,
-                               coalesce(sum(e.amount) FILTER (WHERE e.kind='disbursement' AND e.source_type='order_refund'),0) AS early_refunds,
-                               max(e.updated_at) AS latest
-                        FROM finance_entries e WHERE e.shop_id=o.shop_id AND e.order_id=o.id AND e.currency=o.currency AND e.status='posted'
-                    ) payments
-                    CROSS JOIN LATERAL (
-                        SELECT coalesce(sum(a.amount),0) AS applied, coalesce(sum(linked.applied),0) AS overlap, max(a.created_at) AS latest
-                        FROM settlement_allocations a
-                        CROSS JOIN LATERAL (
-                            SELECT coalesce(sum(c.amount),0) AS applied FROM collection_applications c WHERE c.shop_id=a.shop_id AND c.allocation_id=a.id
-                        ) linked
-                        WHERE a.shop_id=o.shop_id AND a.order_id=o.id
-                    ) allocations
-                    CROSS JOIN LATERAL (
-                        SELECT coalesce(sum(r.receivable_credit),0) AS credit, coalesce(sum(r.refund_obligation),0) AS obligation, max(r.updated_at) AS latest
-                        FROM order_returns r WHERE r.shop_id=o.shop_id AND r.order_id=o.id AND r.state='inspected'
-                    ) returns
-                    WHERE o.shop_id=${shopId}::uuid AND o.currency=${currency}
-                ), reviews AS (
-                    SELECT md5("orderId"::text || '/collection')::uuid AS id, "orderId", 'collection' AS kind, "createdAt", expected, verified,
-                           CASE WHEN verified > expected OR verified < 0 OR (payment_state='settled' AND verified <> expected) THEN 'needs_check'
-                                WHEN payment_method='cod' AND delivered AND banked < expected AND verified IN (0, expected) THEN 'cod_pending'
-                                WHEN verified = expected THEN 'settled'
-                                WHEN verified > 0 THEN 'partial' ELSE 'unpaid' END AS status
-                    FROM facts WHERE expected > 0 AND order_state <> 'cancelled' AND (order_state <> 'draft' OR payment_method='prepay')
-                    UNION ALL
-                    SELECT md5("orderId"::text || '/refund')::uuid AS id, "orderId", 'refund' AS kind, "createdAt", refund_due, refunded,
-                           CASE WHEN refunded > refund_due OR (refunded < refund_due AND verified < refund_due) THEN 'needs_check'
-                                WHEN refunded = refund_due THEN 'settled' ELSE 'refund_due' END AS status
-                    FROM facts WHERE refund_due > 0
-                )
+                ${reviewFacts(shopId, currency)}
                 SELECT id, "orderId", kind, "createdAt", expected, verified, status
                 FROM reviews WHERE true ${kind} ${stage} ${after} ${search}
                 ORDER BY "createdAt" DESC, id DESC LIMIT ${page.limit + 1}

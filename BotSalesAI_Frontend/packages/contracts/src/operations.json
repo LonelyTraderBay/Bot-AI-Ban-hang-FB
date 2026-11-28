@@ -110,7 +110,11 @@
         "required": false,
         "schema": {
           "type": "string",
-          "maxLength": 80
+          "enum": [
+            "active",
+            "closed"
+          ],
+          "default": "active"
         }
       },
       {
@@ -182,6 +186,100 @@
     "permission": "shop.manage",
     "versionRequired": true,
     "requestSchema": "ShopPatch",
+    "responseSchema": "ShopResponse",
+    "status": 200,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
+    "headers": [
+      {
+        "name": "X-CSRF-Token",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16
+        }
+      },
+      {
+        "name": "Idempotency-Key",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16,
+          "maxLength": 200
+        }
+      },
+      {
+        "name": "If-Match",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    ],
+    "queryParameters": [],
+    "bodyType": "json"
+  },
+  "closeShop": {
+    "method": "POST",
+    "path": "/shops/{shopId}/close",
+    "permission": "shop.manage",
+    "versionRequired": true,
+    "requestSchema": null,
+    "responseSchema": "ShopResponse",
+    "status": 200,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
+    "headers": [
+      {
+        "name": "X-CSRF-Token",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16
+        }
+      },
+      {
+        "name": "Idempotency-Key",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16,
+          "maxLength": 200
+        }
+      },
+      {
+        "name": "If-Match",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    ],
+    "queryParameters": [],
+    "bodyType": "json"
+  },
+  "reopenShop": {
+    "method": "POST",
+    "path": "/shops/{shopId}/reopen",
+    "permission": "shop.manage",
+    "versionRequired": true,
+    "requestSchema": null,
     "responseSchema": "ShopResponse",
     "status": 200,
     "pathParameters": [
@@ -1391,6 +1489,40 @@
         "required": false,
         "schema": {
           "$ref": "#/components/schemas/Id"
+        }
+      },
+      {
+        "name": "fulfillmentState",
+        "required": false,
+        "schema": {
+          "type": "string",
+          "enum": [
+            "unfulfilled",
+            "reserved",
+            "picking",
+            "packed",
+            "dispatched",
+            "part_delivered",
+            "delivered",
+            "part_returned",
+            "returned"
+          ]
+        }
+      },
+      {
+        "name": "paymentState",
+        "required": false,
+        "schema": {
+          "type": "string",
+          "enum": [
+            "unpaid",
+            "part_paid",
+            "verified",
+            "cod_collected",
+            "settled",
+            "part_refunded",
+            "refunded"
+          ]
         }
       }
     ],
@@ -11181,6 +11313,383 @@
         "schema": {
           "type": "string",
           "minLength": 1
+        }
+      }
+    ],
+    "queryParameters": [],
+    "bodyType": "json"
+  },
+  "listConversationOrderDrafts": {
+    "method": "GET",
+    "path": "/shops/{shopId}/conversation-order-drafts",
+    "permission": "orders.read",
+    "versionRequired": false,
+    "requestSchema": null,
+    "responseSchema": "ConversationOrderDraftListResponse",
+    "status": 200,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
+    "headers": [],
+    "queryParameters": [
+      {
+        "name": "limit",
+        "required": false,
+        "schema": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 100,
+          "default": 25
+        }
+      },
+      {
+        "name": "cursor",
+        "required": false,
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "q",
+        "required": false,
+        "schema": {
+          "type": "string",
+          "maxLength": 200
+        }
+      }
+    ],
+    "bodyType": "json"
+  },
+  "getConversationOrderDraft": {
+    "method": "GET",
+    "path": "/shops/{shopId}/conversations/{conversationId}/order-draft",
+    "permission": "orders.read",
+    "versionRequired": false,
+    "requestSchema": null,
+    "responseSchema": "ConversationOrderDraftViewResponse",
+    "status": 200,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      },
+      {
+        "name": "conversationId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
+    "headers": [],
+    "queryParameters": [],
+    "bodyType": "json"
+  },
+  "accessConversationOrderDraft": {
+    "method": "POST",
+    "path": "/shops/{shopId}/conversations/{conversationId}/order-draft/access",
+    "permission": "orders.write",
+    "versionRequired": false,
+    "requestSchema": "ConversationOrderDraftAccess",
+    "responseSchema": "ConversationOrderDraftResponse",
+    "status": 200,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      },
+      {
+        "name": "conversationId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
+    "headers": [
+      {
+        "name": "X-CSRF-Token",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16
+        }
+      },
+      {
+        "name": "Idempotency-Key",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16,
+          "maxLength": 200
+        }
+      },
+      {
+        "name": "If-Match",
+        "required": false,
+        "schema": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    ],
+    "queryParameters": [],
+    "bodyType": "json"
+  },
+  "saveConversationOrderDraft": {
+    "method": "PATCH",
+    "path": "/shops/{shopId}/conversations/{conversationId}/order-draft/{draftId}",
+    "permission": "orders.write",
+    "versionRequired": true,
+    "requestSchema": "ConversationOrderDraftSave",
+    "responseSchema": "ConversationOrderDraftResponse",
+    "status": 200,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      },
+      {
+        "name": "conversationId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      },
+      {
+        "name": "draftId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
+    "headers": [
+      {
+        "name": "X-CSRF-Token",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16
+        }
+      },
+      {
+        "name": "Idempotency-Key",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16,
+          "maxLength": 200
+        }
+      },
+      {
+        "name": "If-Match",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    ],
+    "queryParameters": [],
+    "bodyType": "json"
+  },
+  "discardConversationOrderDraft": {
+    "method": "POST",
+    "path": "/shops/{shopId}/conversations/{conversationId}/order-draft/{draftId}/discard",
+    "permission": "orders.write",
+    "versionRequired": true,
+    "requestSchema": "ConversationOrderDraftEdit",
+    "responseSchema": "ConversationOrderDraftDiscardResponse",
+    "status": 200,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      },
+      {
+        "name": "conversationId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      },
+      {
+        "name": "draftId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
+    "headers": [
+      {
+        "name": "X-CSRF-Token",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16
+        }
+      },
+      {
+        "name": "Idempotency-Key",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16,
+          "maxLength": 200
+        }
+      },
+      {
+        "name": "If-Match",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    ],
+    "queryParameters": [],
+    "bodyType": "json"
+  },
+  "convertConversationOrderDraft": {
+    "method": "POST",
+    "path": "/shops/{shopId}/conversations/{conversationId}/order-draft/{draftId}/convert",
+    "permission": "orders.write",
+    "versionRequired": true,
+    "requestSchema": "ConversationOrderDraftEdit",
+    "responseSchema": "OrderResponse",
+    "status": 201,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      },
+      {
+        "name": "conversationId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      },
+      {
+        "name": "draftId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
+    "headers": [
+      {
+        "name": "X-CSRF-Token",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16
+        }
+      },
+      {
+        "name": "Idempotency-Key",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16,
+          "maxLength": 200
+        }
+      },
+      {
+        "name": "If-Match",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    ],
+    "queryParameters": [],
+    "bodyType": "json"
+  },
+  "estimateConversationOrderDraft": {
+    "method": "GET",
+    "path": "/shops/{shopId}/conversations/{conversationId}/order-draft/{draftId}/estimate",
+    "permission": "orders.read",
+    "versionRequired": false,
+    "requestSchema": null,
+    "responseSchema": "ConversationOrderDraftEstimateResponse",
+    "status": 200,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      },
+      {
+        "name": "conversationId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      },
+      {
+        "name": "draftId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
+    "headers": [],
+    "queryParameters": [],
+    "bodyType": "json"
+  },
+  "estimateOrderDraft": {
+    "method": "POST",
+    "path": "/shops/{shopId}/orders/estimate",
+    "permission": "orders.write",
+    "versionRequired": false,
+    "requestSchema": "OrderDraft",
+    "responseSchema": "OrderDraftEstimateResponse",
+    "status": 200,
+    "pathParameters": [
+      {
+        "name": "shopId",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Id"
+        }
+      }
+    ],
+    "headers": [
+      {
+        "name": "X-CSRF-Token",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16
         }
       }
     ],

@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Alert, MenuItem, TextField } from '@mui/material';
 import type { KnowledgeTemplate, ProductKnowledgeTemplate, SalesScriptKnowledgeTemplate } from '@botsales/contracts';
 import { useCommand, usePagedApi } from '@/shared/api/hooks';
-import { useCan, useScope } from '@/shared/model/scope';
+import { useCan, useCanWrite, useScope } from '@/shared/model/scope';
 import { limitCodePoints } from '@/shared/model/format';
 import { FormFields } from '@/shared/ui/composition';
 import { ErrorNotice, LookupLoadMore, MutationButton, Panel, RouteLink } from '@/shared/ui/components';
@@ -66,7 +66,7 @@ export function KnowledgeTemplateFields({ value, onChange }: {
 
 export function KnowledgeTemplatePanel({ kind }: { kind: KnowledgeTemplate['kind'] }) {
     const { shop } = useScope();
-    const canWrite = useCan('knowledge.write');
+    const canWrite = useCanWrite('knowledge.write');
     const [value, setValue] = useState<KnowledgeTemplate>(() => ({ ...(kind === 'product_content' ? emptyProduct : emptyScript) }));
     const [title, setTitle] = useState('');
     const [createdId, setCreatedId] = useState('');

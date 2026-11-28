@@ -4,6 +4,7 @@ import type { IncomingHttpHeaders } from 'node:http';
 import { ConsentChallengeState, ConsentState, type ConsentChallenge, type ConsentChannel, type ConsentEvidence, type CustomerConsent, type Prisma, type PrismaClient } from '../../generated/prisma/client.js';
 import { listQuery, paging, validUuid } from '../../http/query.js';
 import { recordAudit } from '../../platform/audit/index.js';
+import { requireOpenShop } from '../../platform/database/shop-lifecycle.js';
 import { serializable } from '../../platform/database/transactions.js';
 import { enqueueResourceUpdate } from '../../platform/outbox/index.js';
 import { readAsSession, requireIdempotencyKey, requirePublicBrowserCsrf, requireShopAccess, usesLocalOidcFixture, writeShopCommand, type AuthConfig } from '../workspace/index.js';
@@ -177,7 +178,10 @@ export class ConsentService {
             const exchangeHash = hash(key);
             let current = row;
             if (row.status === 'pending') {
-                if (!row.withdraw) await requireShopAccess(tx, row.actorId, row.shopId, 'privacy.manage');
+                if (!row.withdraw) {
+                    await requireShopAccess(tx, row.actorId, row.shopId, 'privacy.manage');
+                    await requireOpenShop(tx, row.shopId);
+                }
                 current = { ...row, ...await tx.consentChallenge.update({ where: scopedKey(row.shopId, row.id),
                     data: { exchangeHash, status: 'exchanged', version: { increment: 1 } } }) };
                 await enqueueResourceUpdate(tx, 'consent_challenge.updated', current);
@@ -193,7 +197,10 @@ export class ConsentService {
             const confirmationHash = hash(JSON.stringify([key, input.decision, input.contentVersion]));
             if (row.confirmationHash === confirmationHash && (row.status === 'confirmed' || row.status === 'declined')) return confirmationView(row);
             if (row.status !== 'exchanged' || !row.exchangeHash || row.contentVersion !== input.contentVersion) throw new ConflictException();
-            if (!row.withdraw) await requireShopAccess(tx, row.actorId, row.shopId, 'privacy.manage');
+            if (!row.withdraw) {
+                await requireShopAccess(tx, row.actorId, row.shopId, 'privacy.manage');
+                await requireOpenShop(tx, row.shopId);
+            }
             const where = consentKey(row.shopId, row.customerId, row.channel);
             const current = await tx.customerConsent.findUnique({ where });
             if ((current?.version ?? 0) !== row.priorConsentVersion) throw new ConflictException('Bản ghi quyền tiếp thị đã thay đổi.');

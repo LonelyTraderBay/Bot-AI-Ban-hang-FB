@@ -1,4 +1,4 @@
-import { openDemoControls, waitForDemoMenu } from './session/demo-controls';
+import { waitForDemoMenu, setDemoControl } from './session/demo-controls';
 import { test, expect } from '@playwright/test';
 import AxeBuilder from '@axe-core/playwright';
 import { startDemoServer } from './session/demo-server.mjs';
@@ -19,13 +19,11 @@ async function gotoDemo(page: import('@playwright/test').Page, path: string) {
 }
 
 async function chooseOption(page: import('@playwright/test').Page, label: string, value: string) {
-    if (['Vai trò mô phỏng', 'Trạng thái thử', 'Dataset mô phỏng'].includes(label)) await openDemoControls(page);
     const select = page.getByRole('combobox', { name: label });
     await select.click();
     await waitForDemoMenu(page, label);
     await page.getByRole('option', { name: value, exact: true }).click();
     await expect(select).toHaveText(value);
-    if (label === 'Trạng thái thử') await expect(page.getByText('Trạng thái thử đã được áp dụng.', { exact: true })).toBeVisible();
 }
 
 async function confirmSeedOrder(page: import('@playwright/test').Page) {
@@ -80,7 +78,7 @@ test('FE013.AC01–AC04 stale claim conflict is visible; pick, pack, dispatch an
     await page.getByRole('link', { name: 'Chuẩn bị đơn' }).click();
     const prepRow = page.getByRole('row').filter({ hasText: 'DH-1001' });
     await expect(prepRow).toBeVisible();
-    await chooseOption(page, 'Trạng thái thử', 'Xung đột lần ghi tiếp');
+    await setDemoControl(page, 'fault', 'conflict');
     await prepRow.getByRole('button', { name: 'Mở phiếu lấy hàng' }).click();
     const prepDialog = page.getByRole('dialog', { name: 'Phiếu chuẩn bị DH-1001' });
     await expect(prepDialog.getByRole('button', { name: 'Tôi nhận chuẩn bị đơn' })).toBeVisible();
@@ -98,7 +96,7 @@ test('FE013.AC01–AC04 stale claim conflict is visible; pick, pack, dispatch an
     await prepDialog.getByRole('button', { name: 'Tải lại trạng thái' }).click();
     await expect(prepDialog.getByRole('button', { name: 'Tải lại trạng thái' })).toHaveCount(0);
     await prepDialog.getByRole('button', { name: 'Đóng', exact: true }).last().click();
-    await chooseOption(page, 'Trạng thái thử', 'Bình thường');
+    await setDemoControl(page, 'fault', 'normal');
     await prepRow.getByRole('button', { name: 'Mở phiếu lấy hàng' }).click();
 
     const claimRequest = page.waitForRequest(request => request.method() === 'POST' && new URL(request.url()).pathname.endsWith('/claim'));
@@ -221,7 +219,7 @@ test('FE013.AC01–AC04 stale claim conflict is visible; pick, pack, dispatch an
     expect((await eventResponse).status()).toBe(200);
     const deliveredRow = page.getByRole('row').filter({ hasText: 'DH-1001' });
     await expect(deliveredRow).toContainText('Đã giao');
-    await expect(page.getByText('Dữ liệu mô phỏng', { exact: true })).toBeVisible();
+    await expect(page.getByRole('complementary', { name: 'Công cụ mô phỏng', exact: true })).toHaveCount(0);
     expect(calls.filter(call => call.method === 'POST' && call.path.endsWith('/handover'))).toHaveLength(1);
     await page.getByRole('link', { name: 'Mã đơn: DH-1001', exact: true }).click();
     await expect(page.getByRole('heading', { name: 'Đơn DH-1001', exact: true })).toBeVisible();
@@ -261,8 +259,7 @@ test('FE013.AC03 unknown handover cannot be repeated before command reconciliati
     await createDialog.getByRole('button', { name: 'Tạo bản vận chuyển' }).click();
     expect((await create).status()).toBe(201);
 
-    await chooseOption(page, 'Trạng thái thử', 'Kết quả ghi chưa rõ');
-    await expect(page.getByRole('status').filter({ hasText: 'Trạng thái thử đã được áp dụng.' })).toBeVisible();
+    await setDemoControl(page, 'fault', 'unknown');
     const shipmentRow = page.getByRole('row').filter({ hasText: 'DH-1001' });
     await expect(shipmentRow).toBeVisible();
     await shipmentRow.getByRole('button', { name: 'Bàn giao' }).click();
@@ -284,7 +281,7 @@ test('FE013.AC03 unknown handover cannot be repeated before command reconciliati
 
 test('FE013.AC01 role scope and FE013.AC05 responsive shipment/preparation views remain accessible', async ({ page }) => {
     await confirmSeedOrder(page);
-    await chooseOption(page, 'Vai trò mô phỏng', 'warehouse');
+    await setDemoControl(page, 'role', 'warehouse');
     await page.getByRole('link', { name: 'Chuẩn bị hàng', exact: true }).click();
     const row = page.getByRole('row').filter({ hasText: 'DH-1001' });
     await expect(row).toBeVisible();
@@ -294,7 +291,7 @@ test('FE013.AC01 role scope and FE013.AC05 responsive shipment/preparation views
     await expect(dialog.getByRole('button', { name: 'Tôi nhận chuẩn bị đơn' })).toHaveCount(0);
     await dialog.getByRole('button', { name: 'Đóng', exact: true }).last().click();
 
-    await chooseOption(page, 'Vai trò mô phỏng', 'owner');
+    await setDemoControl(page, 'role', 'owner');
     await page.getByRole('link', { name: 'Vận đơn & giao hàng', exact: true }).click();
     const viewportResults = [] as Array<{ width: number; documentWidth: number; viewportWidth: number }>;
     for (const width of [320, 390, 768, 1440]) {
@@ -305,5 +302,5 @@ test('FE013.AC01 role scope and FE013.AC05 responsive shipment/preparation views
     await page.setViewportSize({ width: 1440, height: 900 });
     const audit = await new AxeBuilder({ page }).include('main#main-content').withTags(['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa']).analyze();
     expect(audit.violations.map(issue => issue.id)).toEqual([]);
-    await expect(page.getByText('Dữ liệu mô phỏng', { exact: true })).toBeVisible();
+    await expect(page.getByRole('complementary', { name: 'Công cụ mô phỏng', exact: true })).toHaveCount(0);
 });

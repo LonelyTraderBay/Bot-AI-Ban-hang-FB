@@ -39,7 +39,24 @@ export function CashflowPage() {
     const report = useReportRange(shop.timezone);
     const data = useApi('getCashflow', { query: report.query }, report.valid);
     const c = data.data?.data;
-    return <><PageHeader title="Dòng tiền" subtitle="Tiền thực thu và thực chi, tách biệt doanh thu và lợi nhuận." actions={<RouteLink to={`/s/${shop.id}/finance/entries`}>Sổ thu chi</RouteLink>}/><ReportRangeFields range={report.range} timezone={shop.timezone} setFrom={report.setFrom} setTo={report.setTo}/>{report.valid ? <QueryState query={data} pendingProfile="section">{c && <><Stats><Stat title="Tiền đã thu" value={<Amount wrap value={c.receipts}/>}/><Stat title="Tiền đã chi" value={<Amount wrap value={c.disbursements}/>}/><Stat title="Biến động tiền thuần" value={<Amount wrap value={c.netCashMovement}/>} accent note="Không phải số dư tài khoản"/><Stat title="Múi giờ báo cáo" value={c.timezone}/></Stats><Panel title="Kỳ báo cáo" bodyMode="inset"><DetailLine label="Từ">{dateTime(c.from, shop.timezone)}</DetailLine><DetailLine label="Đến (không gồm)">{dateTime(c.to, shop.timezone)}</DetailLine><DetailLine label="Dữ liệu tại">{dateTime(c.asOf, shop.timezone)}</DetailLine><ReportWarnings warnings={c.warnings} severity="info"/></Panel></>}</QueryState> : <Alert severity="error">Ngày bắt đầu phải trước ngày kết thúc.</Alert>}</>;
+    return <>
+        <PageHeader title="Thu chi" subtitle="Tiền thực thu và thực chi, tách biệt doanh thu và lợi nhuận." actions={<RouteLink to={`/s/${shop.id}/finance/entries`}>Sổ thu chi</RouteLink>} />
+        <ReportRangeFields range={report.range} timezone={shop.timezone} setFrom={report.setFrom} setTo={report.setTo} />
+        {report.valid ? <QueryState query={data} pendingProfile="section">{c && <>
+            <Stats density="compact">
+                <Stat title="Tiền đã thu" value={<Amount wrap value={c.receipts} />} />
+                <Stat title="Tiền đã chi" value={<Amount wrap value={c.disbursements} />} />
+                <Stat title="Biến động tiền thuần" value={<Amount wrap value={c.netCashMovement} />} valueRole="primary" accent note="Không phải số dư tài khoản" />
+            </Stats>
+            <Panel title="Kỳ báo cáo" bodyMode="inset">
+                <DetailLine label="Từ">{dateTime(c.from, shop.timezone)}</DetailLine>
+                <DetailLine label="Đến (không gồm)">{dateTime(c.to, shop.timezone)}</DetailLine>
+                <DetailLine label="Múi giờ báo cáo">{c.timezone}</DetailLine>
+                <DetailLine label="Dữ liệu tại">{dateTime(c.asOf, shop.timezone)}</DetailLine>
+                <ReportWarnings warnings={c.warnings} severity="info" />
+            </Panel>
+        </>}</QueryState> : <Alert severity="error">Ngày bắt đầu phải trước ngày kết thúc.</Alert>}
+    </>;
 }
 export function EntriesPage() {
     const { shop } = useScope();
@@ -56,7 +73,7 @@ export function EntriesPage() {
     } | null>(null);
     const [entrySaved,setEntrySaved]=useState(false);
     const begin=(entry:FinanceEntry|null)=>{setEditing(entry);setOpen(true);};
-    return <>{entrySaved&&<Alert severity="success" role="status">Đã lưu phiếu nháp.</Alert>}<PageHeader title="Sổ thu chi" subtitle="Phiếu nháp → kiểm tra → ghi sổ. Phiếu đã ghi chỉ điều chỉnh có lịch sử." actions={<MutationButton permission="finance.post" variant="contained" onClick={() => begin(null)}>Tạo phiếu</MutationButton>}/><Panel><Toolbar operation="listFinanceEntries" /><QueryState query={list} pendingProfile="section">{list.data && <><DataTable label="Chứng từ thu chi" rows={list.data.data} rowKey={r => r.id} columns={[
+    return <>{entrySaved&&<Alert severity="success" role="status">Đã lưu phiếu nháp.</Alert>}<PageHeader title="Sổ thu chi" subtitle="Phiếu nháp → kiểm tra → ghi sổ. Phiếu đã ghi chỉ điều chỉnh có lịch sử." actions={<MutationButton permission="finance.post" variant="contained" onClick={() => begin(null)}>Tạo phiếu</MutationButton>}/><Panel><Toolbar operation="listFinanceEntries" /><QueryState query={list} pendingProfile="section">{list.data && <><DataTable mobile={{ layout: 'cards', titleKey: 'id', titleText: row => row.id, summaryKeys: ['date', 'amount', 'state'], actionKey: 'action' }} label="Chứng từ thu chi" rows={list.data.data} rowKey={r => r.id} columns={[
         { key: 'id', label: 'Chứng từ', render: r => <Button onClick={() => setEntryId(r.id)}>{r.id}</Button> }, { key: 'date', label: 'Ngày', render: r => dateTime(r.occurredAt, shop.timezone) }, { key: 'type', label: 'Phân loại', render: r => classes[r.classification] }, { key: 'amount', label: 'Số tiền', render: r => <Amount value={r.amount}/> }, { key: 'note', label: 'Diễn giải', render: r => r.description }, { key: 'state', label: 'Trạng thái', render: r => <Status value={r.status}/> },
         {
             key: 'action', label: 'Thao tác', render: r => <Button onClick={() => setEntryId(r.id)}>Chi tiết</Button>
@@ -76,15 +93,15 @@ export function ProfitLossPage() {
     const currentKey = p ? JSON.stringify([shop.id, report.range.from, report.range.to, p.asOf, p.policyVersion, question]) : '';
     const explanation = p && generatedKey === currentKey ? explainProfitLoss(p, question) : null;
     return <>
-        <PageHeader title="Lợi nhuận quản trị" subtitle="Số liệu do API tổng hợp từ nguồn giao dịch, không tính từ trang danh sách đang mở." />
+        <PageHeader title="Lợi nhuận" subtitle="Số liệu do API tổng hợp từ nguồn giao dịch, không tính từ trang danh sách đang mở." />
         <ReportRangeFields range={report.range} timezone={shop.timezone} setFrom={value => { setGeneratedKey(''); report.setFrom(value); }} setTo={value => { setGeneratedKey(''); report.setTo(value); }} />
         {report.valid ? <QueryState query={data} pendingProfile="section">
             {p && <>
-                <Stats>
-                    <Stat title="Doanh thu thuần" value={<Amount wrap value={p.netSales} />} />
-                    <Stat title="Giá vốn" value={<Amount wrap value={p.cogs} />} />
-                    <Stat title="Lãi gộp" value={<Amount wrap value={p.grossProfit} />} accent={p.grossProfit != null} />
-                    <Stat title="Lợi nhuận vận hành" value={<Amount wrap value={p.operatingProfit} />} note="Chưa có chứng nhận kế toán pháp định" />
+                <Stats density="compact">
+                    <Stat title="Doanh thu thuần" value={<Amount wrap value={p.netSales} />} valueRole={p.netSales == null ? 'text' : 'metric'} />
+                    <Stat title="Giá vốn" value={<Amount wrap value={p.cogs} />} valueRole={p.cogs == null ? 'text' : 'metric'} />
+                    <Stat title="Lãi gộp" value={<Amount wrap value={p.grossProfit} />} valueRole={p.grossProfit == null ? 'text' : 'primary'} accent={p.grossProfit != null} />
+                    <Stat title="Lợi nhuận vận hành" value={<Amount wrap value={p.operatingProfit} />} valueRole={p.operatingProfit == null ? 'text' : 'metric'} note="Chưa có chứng nhận kế toán pháp định" />
                 </Stats>
                 <PageSections>
                     <Panel title="Chi tiết kết quả kinh doanh" action={<ActionGroup><Status value={p.completeness} /></ActionGroup>} bodyMode="inset">
@@ -147,7 +164,7 @@ export function ReconciliationPage() {
         else next.set('tab', value);
         setParams(next, { replace: true, flushSync: true });
     };
-    return <><PageHeader title="Đối soát ngân hàng & COD" subtitle="Khách trả tiền cho đơn vị giao hàng chưa đồng nghĩa tiền đã về shop." actions={<ActionGroup direction="row"><RouteLink to={`/s/${shop.id}/finance/payment-reviews`}>Xác minh thu và hoàn tiền</RouteLink><MutationButton permission="finance.reconcile" variant="contained" onClick={() => setImport(true)}>Nhập bảng đối soát</MutationButton></ActionGroup>}/><Tabs
+    return <><PageHeader title="Đối soát" subtitle="Khách trả tiền cho đơn vị giao hàng chưa đồng nghĩa tiền đã về shop." actions={<ActionGroup direction="row"><RouteLink to={`/s/${shop.id}/finance/payment-reviews`}>Xác minh thu và hoàn tiền</RouteLink><MutationButton permission="finance.reconcile" variant="contained" onClick={() => setImport(true)}>Nhập bảng đối soát</MutationButton></ActionGroup>}/><Tabs
         aria-label="Nhóm đối soát ngân hàng và COD"
         value={tab}
         onChange={selectTab}
@@ -157,14 +174,14 @@ export function ReconciliationPage() {
         <Tab value="bank" label="Ngân hàng" onFocus={event => event.currentTarget.scrollIntoView({ block: 'nearest', inline: 'nearest' })} />
         <Tab value="cod" label="COD" onFocus={event => event.currentTarget.scrollIntoView({ block: 'nearest', inline: 'nearest' })} />
         <Tab value="cases" label="Chênh lệch cần xử lý" onFocus={event => event.currentTarget.scrollIntoView({ block: 'nearest', inline: 'nearest' })} />
-    </Tabs><Panel>{tab === 'bank' ? <QueryState query={banks} pendingProfile="section">{banks.data && <><DataTable label="Giao dịch sao kê ngân hàng" rows={banks.data.data} rowKey={row => row.id} empty="Chưa có giao dịch sao kê trong phạm vi đang xem." emptyAction={<Button onClick={() => setImport(true)}>Nhập bảng sao kê</Button>} columns={[
+    </Tabs><Panel>{tab === 'bank' ? <QueryState query={banks} pendingProfile="section">{banks.data && <><DataTable mobile={{ layout: 'cards', titleKey: 'id', summaryKeys: ['money', 'direction', 'state'] }} label="Giao dịch sao kê ngân hàng" rows={banks.data.data} rowKey={row => row.id} empty="Chưa có giao dịch sao kê trong phạm vi đang xem." emptyAction={<Button onClick={() => setImport(true)}>Nhập bảng sao kê</Button>} columns={[
         { key: 'id', label: 'Mã ngoài hệ thống', render: row => row.externalTransactionId },
         { key: 'account', label: 'Tài khoản', render: row => row.accountId },
         { key: 'money', label: 'Số tiền', render: row => <Amount value={row.amount}/> },
         { key: 'direction', label: 'Chiều', render: row => row.direction === 'credit' ? 'Tiền vào' : 'Tiền ra' },
         { key: 'note', label: 'Nội dung', render: row => row.referenceText },
         { key: 'state', label: 'Khớp', render: row => <Status value={row.matchState}/> },
-    ]}/><Pager page={banks.data.page} cursorParam="bankCursor"/></>}</QueryState> : tab === 'cod' ? <QueryState query={cod} pendingProfile="section">{cod.data && <><DataTable label="Đợt đối soát COD" rows={cod.data.data} rowKey={row => row.id} empty="Chưa có đợt đối soát COD trong phạm vi đang xem." columns={[
+    ]}/><Pager page={banks.data.page} cursorParam="bankCursor"/></>}</QueryState> : tab === 'cod' ? <QueryState query={cod} pendingProfile="section">{cod.data && <><DataTable mobile={{ layout: 'cards', titleKey: 'id', summaryKeys: ['carrier', 'cash', 'state'], actionKey: 'action' }} label="Đợt đối soát COD" rows={cod.data.data} rowKey={row => row.id} empty="Chưa có đợt đối soát COD trong phạm vi đang xem." columns={[
         { key: 'id', label: 'Đợt COD', render: row => row.externalBatchId },
         { key: 'carrier', label: 'Đơn vị giao', render: row => row.carrierId },
         { key: 'gross', label: 'Phải thu', render: row => <Amount value={row.grossDue}/> },
@@ -172,7 +189,7 @@ export function ReconciliationPage() {
         { key: 'cash', label: 'Đã về ngân hàng', render: row => <Amount value={row.bankReceived}/> },
         { key: 'state', label: 'Trạng thái', render: row => <Status value={row.status}/> },
         { key: 'action', label: 'Thao tác', render: row => <MutationButton permission="finance.reconcile" disabled={row.status === 'matched'} onClick={() => { setSelected(row); setTransaction(''); setFees(row.actualFees.amount); setEvidence(''); }}>Đối chiếu</MutationButton> },
-    ]}/><Pager page={cod.data.page} cursorParam="codCursor"/></>}</QueryState> : <QueryState query={cases} pendingProfile="section">{cases.data && <><DataTable label="Hồ sơ ghép và đối chiếu" rows={cases.data.data} rowKey={row => row.id} empty="Chưa có hồ sơ chênh lệch cần xử lý trong phạm vi đang xem." columns={[
+    ]}/><Pager page={cod.data.page} cursorParam="codCursor"/></>}</QueryState> : <QueryState query={cases} pendingProfile="section">{cases.data && <><DataTable mobile={{ layout: 'cards', titleKey: 'id', summaryKeys: ['transaction', 'state', 'reason'], actionKey: 'action' }} label="Hồ sơ ghép và đối chiếu" rows={cases.data.data} rowKey={row => row.id} empty="Chưa có hồ sơ chênh lệch cần xử lý trong phạm vi đang xem." columns={[
         { key: 'id', label: 'Mã', render: row => row.id },
         { key: 'transaction', label: 'Giao dịch', render: row => banks.data?.data.find(transaction => transaction.id === row.transactionId)?.externalTransactionId || row.transactionId },
         { key: 'state', label: 'Trạng thái', render: row => <Status value={row.state}/> },
@@ -190,12 +207,12 @@ export function DebtsPage() {
     const close = useCommand('closeAccountingPeriod', ['listAccountingPeriods']);
     const reopen = useCommand('reopenAccountingPeriod', ['listAccountingPeriods']);
     const [selected, setSelected] = useState<AccountingPeriod | null>(null), [approval, setApproval] = useState(''), [reason, setReason] = useState('');
-    return <><PageHeader title="Công nợ & khóa kỳ" subtitle="Theo dõi khoản còn phải thu/trả; khóa kỳ chỉ khi các điều kiện được kiểm chứng." actions={<MutationButton permission="finance.close" variant="contained" onClick={()=>setPeriodOpen(true)}>Tạo kỳ kế toán</MutationButton>}/>{periodSaved&&<Alert severity="success" role="status">Đã tạo kỳ kế toán mới.</Alert>}{periodOpen&&<CreatePeriodDialog onClose={()=>setPeriodOpen(false)} onSaved={()=>setPeriodSaved(true)}/>}<Panel title="Công nợ"><QueryState query={debts} pendingProfile="section">{debts.data && <><DataTable label="Công nợ" reflowOnMobile rows={debts.data.data} rowKey={r => r.id} columns={[
+    return <><PageHeader title="Công nợ & khóa kỳ" subtitle="Theo dõi khoản còn phải thu/trả; khóa kỳ chỉ khi các điều kiện được kiểm chứng." actions={<MutationButton permission="finance.close" variant="contained" onClick={()=>setPeriodOpen(true)}>Tạo kỳ kế toán</MutationButton>}/>{periodSaved&&<Alert severity="success" role="status">Đã tạo kỳ kế toán mới.</Alert>}{periodOpen&&<CreatePeriodDialog onClose={()=>setPeriodOpen(false)} onSaved={()=>setPeriodSaved(true)}/>}<Panel title="Công nợ"><QueryState query={debts} pendingProfile="section">{debts.data && <><DataTable mobile={{ layout: 'cards', titleKey: 'who', summaryKeys: ['current', 'due', 'dispute'], actionKey: 'action' }} label="Công nợ" rows={debts.data.data} rowKey={r => r.id} columns={[
         { key: 'id', label: 'Khoản nợ', render: r => r.id }, { key: 'who', label: 'Đối tượng', render: r => `${r.counterpartyType === 'supplier' ? 'Nhà cung cấp' : r.counterpartyType === 'carrier' ? 'Đơn vị vận chuyển' : r.counterpartyType === 'customer' ? 'Khách hàng' : r.counterpartyType} / Mã đối tượng: ${r.counterpartyId}` }, { key: 'direction', label: 'Loại', render: r => r.direction === 'receivable' ? 'Phải thu' : 'Phải trả' }, { key: 'original', label: 'Ban đầu', render: r => <Amount value={r.originalAmount}/> }, { key: 'current', label: 'Còn lại', render: r => <Amount value={r.outstandingAmount}/> }, { key: 'due', label: 'Hạn trả và tuổi nợ', render: r => [r.dueDate ? formatDateOnly(r.dueDate) : null, r.agingBucket ? agingLabels[r.agingBucket] : null].filter(Boolean).join(' · ') || 'Chưa đặt hạn' },
         { key: 'dispute', label: 'Tranh chấp', render: r => r.disputed ? 'Đang giữ xử lý' : 'Không' },
         { key: 'action', label: 'Thao tác', render: r => <MutationButton permission="finance.reconcile"
             disabled={(decimalUnits(r.outstandingAmount.amount) ?? 0n) <= 0n} onClick={() => setTerms(r)}>Hạn và tranh chấp</MutationButton> }
-    ]}/><Pager page={debts.data.page}/></>}</QueryState></Panel>{terms && <DebtTermsDialog key={terms.id} debt={terms} close={() => setTerms(null)} />}<Panel title="Kỳ kế toán" beforeGap={"section"}><QueryState query={periods} pendingProfile="section"><DataTable label="Kỳ kế toán" rows={periods.data?.data || []} rowKey={r => r.id} columns={[
+    ]}/><Pager page={debts.data.page}/></>}</QueryState></Panel>{terms && <DebtTermsDialog key={terms.id} debt={terms} close={() => setTerms(null)} />}<Panel title="Kỳ kế toán" beforeGap={"section"}><QueryState query={periods} pendingProfile="section"><DataTable mobile={{ layout: 'cards', titleKey: 'period', summaryKeys: ['state', 'issues'], actionKey: 'action' }} label="Kỳ kế toán" rows={periods.data?.data || []} rowKey={r => r.id} columns={[
         { key: 'period', label: 'Kỳ', render: r => `${formatDateOnly(r.startDate)} → ${formatDateOnly(r.endDate)}` }, { key: 'state', label: 'Trạng thái', render: r => <Status domain="accountingPeriod" value={r.state}/> }, { key: 'issues', label: 'Điều kiện còn thiếu', render: r => r.blockingIssues.join('; ') || 'Xác minh lại tại lúc ghi' },
         {
             key: 'action', label: 'Thao tác', render: r => <MutationButton permission="finance.close" onClick={() => { setSelected(r); setApproval(''); setReason(''); }}>{r.state === 'closed' ? 'Mở lại có phê duyệt' : 'Kiểm & khóa kỳ'}</MutationButton>

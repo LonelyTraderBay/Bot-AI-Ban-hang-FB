@@ -1,4 +1,4 @@
-import { openDemoControls, waitForDemoMenu, navigateDemoAndRead } from '../session/demo-controls';
+import { navigateDemoAndRead, setDemoControl } from '../session/demo-controls';
 import { readFileSync } from 'node:fs';
 import { test, expect } from '@playwright/test';
 import { startDemoServer } from '../session/demo-server.mjs';
@@ -22,13 +22,6 @@ function routePath(path: string) {
     return path
         .replace(':shopId', 'shop-demo')
         .replace(/:([A-Za-z]+)/g, (_, key: string) => detailIds[key] || 'missing');
-}
-
-async function chooseMockOption(page: import('@playwright/test').Page, label: string, value: string) {
-    if (['Vai trò mô phỏng', 'Trạng thái thử', 'Dataset mô phỏng'].includes(label)) await openDemoControls(page);
-    await page.getByRole('combobox', { name: label }).click();
-    await waitForDemoMenu(page, label);
-    await page.getByRole('option', { name: value, exact: true }).click();
 }
 
 const selectedRouteId = process.env.ROUTE_ERROR_TEST_ID;
@@ -57,9 +50,7 @@ test.describe('every shop route composes the shared API error state with its pag
                 result => result.request().method() === 'GET' && new URL(result.url()).pathname === readPath, 'domcontentloaded');
             expect(response.status()).toBe(200);
             expect(await response.finished()).toBeNull();
-            await openDemoControls(page);
-            await expect(page.getByRole('combobox', { name: 'Trạng thái thử' })).toBeVisible({ timeout: 15_000 });
-            await chooseMockOption(page, 'Trạng thái thử', 'Lỗi API kéo dài');
+            await setDemoControl(page, 'fault', 'error_persistent_all');
             await page.evaluate(nextPath => {
                 window.history.pushState({}, '', nextPath);
                 window.dispatchEvent(new PopStateEvent('popstate', { state: window.history.state }));
@@ -70,16 +61,16 @@ test.describe('every shop route composes the shared API error state with its pag
             if (route.id === 'R10') {
                 const categoryError = main.getByRole('alert').filter({ hasText: 'Không tải được danh mục' });
                 await expect(categoryError, `${route.id} should explain when category choices cannot load`).toBeVisible({ timeout: 10_000 });
-                await chooseMockOption(page, 'Trạng thái thử', 'Bình thường');
+                await setDemoControl(page, 'fault', 'normal');
                 await categoryError.getByRole('button', { name: 'Thử lại danh mục' }).click();
                 await expect(categoryError).toHaveCount(0);
             } else if (route.id === 'R33') {
-                await expect(main.getByRole('heading', { name: 'Thiết lập cửa hàng' }), 'R33 uses shop data already loaded by the shared shell').toBeVisible();
-                await chooseMockOption(page, 'Trạng thái thử', 'Bình thường');
+                await expect(main.getByRole('heading', { name: 'Cửa hàng' }), 'R33 uses shop data already loaded by the shared shell').toBeVisible();
+                await setDemoControl(page, 'fault', 'normal');
             } else {
                 await expect(main.locator('[role="alert"], [role="status"]').filter({ hasText: 'API mô phỏng đang lỗi liên tục' }).first(), `${route.id} ${route.path} should expose the failed read`)
                     .toBeVisible({ timeout: 10_000 });
-                await chooseMockOption(page, 'Trạng thái thử', 'Bình thường');
+                await setDemoControl(page, 'fault', 'normal');
             }
             await expect(page.locator('.MuiSnackbar-root').filter({ hasText: /thành công|đã lưu|đã tạo|đã cập nhật|hoàn tất|success/i }), `${route.id} must not show a success toast while an API read is failing`)
                 .toHaveCount(0);

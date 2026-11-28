@@ -4,9 +4,9 @@ import type { StockTransfer, StockTransferLine } from '@botsales/contracts';
 import { useApi, useCommand } from '@/shared/api/hooks';
 import { useListQuery } from '@/shared/model/filters';
 import { codePointLength, dateTime } from '@/shared/model/format';
-import { useCan, useScope } from '@/shared/model/scope';
+import { useCanWrite, useScope } from '@/shared/model/scope';
 import { ActionGroup, FieldGroup, FormFields } from '@/shared/ui/composition';
-import { ConfirmDialog, DataTable, DetailLine, EditDialog, ErrorNotice, MutationButton, PageHeader, Pager, Panel, QueryState, RouteLink, Toolbar } from '@/shared/ui/components';
+import { ConfirmDialog, DataTable, DetailLine, EditDialog, ErrorNotice, MutationButton, PageHeader, Pager, Panel, QueryState, RouteLink, Status, Toolbar } from '@/shared/ui/components';
 import { StockPositionPicker, WarehouseLookupStatus, WarehousePicker, stockReads, useActiveWarehouses } from './warehouse-forms';
 import type { PickedSku } from './warehouse-forms';
 
@@ -18,7 +18,7 @@ type TransferTask = 'detail' | 'dispatch' | 'receive' | 'close_short' | 'cancel'
 export function StockTransfersPage() {
     const { shop } = useScope();
     const warehouses = useActiveWarehouses();
-    const canAdjust = useCan('inventory.adjust');
+    const canAdjust = useCanWrite('inventory.adjust');
     const query = useApi('listStockTransfers', { query: useListQuery('listStockTransfers') });
     const change = useCommand('updateStockTransfer', reads);
     const [creating, setCreating] = useState(false);
@@ -36,10 +36,10 @@ export function StockTransfersPage() {
             <ErrorNotice error={warehouses.error} />
             <Toolbar operation="listStockTransfers" placeholder="Tìm mã phiếu, kho hoặc SKU…" />
             <QueryState query={query} pendingProfile="section">{query.data && <>
-                <DataTable label="Danh sách phiếu chuyển kho" reflowOnMobile rows={query.data.data} rowKey={row => row.id} empty="Chưa có phiếu chuyển kho." columns={[
+                <DataTable mobile={{ layout: 'cards', titleKey: 'transfer', summaryKeys: ['warehouses', 'status', 'transit'], actionKey: 'actions' }} label="Danh sách phiếu chuyển kho" rows={query.data.data} rowKey={row => row.id} empty="Chưa có phiếu chuyển kho." columns={[
                     { key: 'transfer', label: 'Phiếu', render: row => row.id },
                     { key: 'warehouses', label: 'Kho gửi → Kho nhận', render: row => `${warehouseName(row.fromWarehouseId)} → ${warehouseName(row.toWarehouseId)}` },
-                    { key: 'status', label: 'Trạng thái', render: row => statuses[row.status] },
+                    { key: 'status', label: 'Trạng thái', render: row => <Status value={row.status} labelText={statuses[row.status]} /> },
                     { key: 'transit', label: 'Đang chuyển', render: row => row.status === 'in_transit' ? row.lines.reduce((total, line) => total + remaining(line), 0) : 0 },
                     { key: 'time', label: 'Ngày xuất', render: row => row.dispatchedAt ? dateTime(row.dispatchedAt, shop.timezone) : 'Chưa xuất' },
                     { key: 'actions', label: 'Thao tác', render: row => <ActionGroup direction="row">
@@ -133,12 +133,12 @@ function TransferDetails({ transfer, close }: { transfer: StockTransfer; close: 
     const { shop } = useScope();
     return <EditDialog open title={`Phiếu ${transfer.id}`} onClose={close} actions={<Button onClick={close}>Đóng</Button>}>
         <FormFields>
-            <DetailLine label="Trạng thái">{statuses[transfer.status]}</DetailLine>
+            <DetailLine label="Trạng thái"><Status value={transfer.status} labelText={statuses[transfer.status]} /></DetailLine>
             <DetailLine label="Kho gửi">{transfer.fromWarehouseId}</DetailLine>
             <DetailLine label="Kho nhận">{transfer.toWarehouseId}</DetailLine>
             <DetailLine label="Lý do">{transfer.reason}</DetailLine>
             <DetailLine label="Xác nhận thiếu">{transfer.discrepancyReason ?? '—'}</DetailLine>
-            <DataTable label="SKU theo phiếu chuyển" reflowOnMobile rows={transfer.lines} rowKey={line => line.variantId} columns={[
+            <DataTable mobile={{ layout: 'comparison' }} label="SKU theo phiếu chuyển" rows={transfer.lines} rowKey={line => line.variantId} columns={[
                 { key: 'sku', label: 'SKU', render: line => line.sku },
                 { key: 'target', label: 'Số trên phiếu', render: line => line.quantity },
                 { key: 'received', label: 'Đã nhận', render: line => line.received },

@@ -12,6 +12,7 @@ type ListQuery = {
     state?: string; assignee?: 'me' | 'unassigned'; exception?: 'active'; due?: 'overdue' | 'unscheduled';
     stage?: 'open' | 'settled';
     fromDate?: string; toDate?: string; bucket?: 'day' | 'week' | 'month';
+    fulfillmentState?: string; paymentState?: string;
 };
 const listParameters = ['Limit', 'Cursor', 'Query', 'StatusFilter', 'Sort'].map(name => openapi.components.parameters[name]);
 const commandKind = openapi.paths['/shops/{shopId}/commands'].get.parameters.find((param: { name?: string }) => param.name === 'kind');
@@ -29,7 +30,11 @@ const productQueryPipe = listPipe([...listParameters, { name: 'categoryId', sche
 const inventoryQueryPipe = listPipe([...listParameters, openapi.components.parameters.WarehouseFilter, openapi.components.parameters.VariantFilter]);
 const stocktakeQueryPipe = listPipe([...listParameters.slice(0, 4), openapi.components.parameters.WarehouseFilter]);
 const transferQueryPipe = listPipe(listParameters.slice(0, 4));
-const ordersQueryPipe = listPipe([...listParameters, openapi.components.parameters.CustomerFilter]);
+const ordersQueryPipe = listPipe([...listParameters, openapi.components.parameters.CustomerFilter,
+    ...openapi.paths['/shops/{shopId}/orders'].get.parameters.filter((param: { name?: string }) =>
+        param.name === 'fulfillmentState' || param.name === 'paymentState'),
+]);
+const conversationDraftsQueryPipe = listPipe(listParameters.slice(0, 3));
 const conversationQueryPipe = listPipe([
     ...listParameters, ...['CustomerFilter', 'ChannelFilter', 'AssigneeFilter', 'ConversationMode'].map(name => openapi.components.parameters[name]),
 ]);
@@ -59,6 +64,7 @@ const prepQueryPipe = listPipe([...listParameters.slice(0, 2),
 const listPipes = {
     general: queryPipe, listCommands: commandQueryPipe, listJobs: commandQueryPipe, listProducts: productQueryPipe,
     inventory: inventoryQueryPipe, orders: ordersQueryPipe, promotions: promotionsQueryPipe, conversations: conversationQueryPipe,
+    conversationDrafts: conversationDraftsQueryPipe,
     stocktakes: stocktakeQueryPipe, transfers: transferQueryPipe,
     page: pageQueryPipe, ledger: ledgerQueryPipe, report: reportQueryPipe, marketing: marketingQueryPipe, work: workQueryPipe,
     paymentReviews: paymentReviewQueryPipe, prepJobs: prepQueryPipe,

@@ -201,14 +201,18 @@ test('F09 refreshes new Inbox messages without refetching the visible product an
         };
     });
     await visit(page, 'inbox/cv1');
-    await page.getByRole('tab', { name: 'Giá & tồn', exact: true }).click();
+    const details = page.getByRole('button', { name: 'Thông tin khách' });
+    await details.click();
+    await page.getByRole('dialog', { name: 'Thông tin khách' }).getByRole('button', { name: 'Luồng tư vấn mẫu' }).click();
+    const preview = page.getByRole('dialog', { name: 'Luồng tư vấn mẫu' });
+    const priceTab = preview.getByRole('tab', { name: 'Giá & tồn', exact: true });
+    await priceTab.click();
     await expect(page.getByRole('table', { name: 'Nguồn giá và tồn trong hộp thư', exact: true })).toBeVisible();
     const thread = page.getByTestId('inbox-thread');
-    const history = thread.getByRole('region', { name: 'Lịch sử tin nhắn' });
+    const history = thread.getByTestId('inbox-message-list');
     const notice = thread.locator('[role="status"][aria-live="polite"][aria-atomic="true"]');
     const reply = thread.getByRole('textbox', { name: 'Nội dung trả lời khách' });
     await expect(notice).toBeEmpty();
-    await reply.focus();
     await history.evaluate(element => {
         element.scrollTop = element.scrollHeight;
         element.dispatchEvent(new Event('scroll'));
@@ -216,18 +220,28 @@ test('F09 refreshes new Inbox messages without refetching the visible product an
     await expect.poll(() => history.evaluate(element => element.scrollHeight - element.clientHeight - element.scrollTop)).toBeLessThanOrEqual(2);
     const requests: string[] = [];
     page.on('request', request => { if (request.method() === 'GET') requests.push(new URL(request.url()).pathname); });
-    const refreshed = page.waitForResponse(result => result.request().method() === 'GET' && new URL(result.url()).pathname.endsWith('/messages'));
-    await page.evaluate(async () => {
-        const { db } = await import('/src/mocks/database.ts');
-        const original = db.messages.find((row: Record<string, unknown>) => row.conversationId === 'cv1');
-        db.messages.push({ ...original, id: 'message-sse-regression', direction: 'inbound', senderKind: 'customer',
-            text: 'Synthetic normal SSE message', createdAt: '2030-01-01T00:00:00Z' });
-        const state = window as unknown as { correctionsSource: EventSource; correctionsSequence?: number };
-        state.correctionsSource.dispatchEvent(new MessageEvent('message', { data: JSON.stringify({ eventId: 'event-sse-regression', type: 'message.created', schemaVersion: 2, shopId: 'shop-demo', resourceType: 'message', resourceId: 'message-sse-regression', resourceVersion: 1, occurredAt: '2030-01-01T00:00:00Z', sequence: (state.correctionsSequence ?? 0) + 1 }) }));
-    });
-    await refreshed;
+    const publishMessage = async (text: string) => {
+        const refreshed = page.waitForResponse(result => result.request().method() === 'GET' && new URL(result.url()).pathname.endsWith('/messages'));
+        await page.evaluate(async text => {
+            const { db } = await import('/src/mocks/database.ts');
+            const original = db.messages.find((row: Record<string, unknown>) => row.conversationId === 'cv1');
+            const messageId = `message-sse-${crypto.randomUUID()}`;
+            db.messages.push({ ...original, id: messageId, direction: 'inbound', senderKind: 'customer',
+                text, createdAt: '2030-01-01T00:00:00Z' });
+            const state = window as unknown as { correctionsSource: EventSource; correctionsSequence?: number };
+            state.correctionsSource.dispatchEvent(new MessageEvent('message', { data: JSON.stringify({ eventId: `event-${messageId}`, type: 'message.created', schemaVersion: 2, shopId: 'shop-demo', resourceType: 'message', resourceId: messageId, resourceVersion: 1, occurredAt: '2030-01-01T00:00:00Z', sequence: (state.correctionsSequence ?? 0) + 1 }) }));
+        }, text);
+        expect((await refreshed).status()).toBe(200);
+    };
+    await publishMessage('Synthetic normal SSE message');
     await expect(history.getByText('Synthetic normal SSE message', { exact: true })).toBeVisible();
     await expect(notice).toHaveText('Có tin nhắn mới.');
+    await expect(priceTab).toBeFocused();
+    await preview.getByRole('button', { name: 'Đóng', exact: true }).click();
+    await expect(preview).toBeHidden();
+    await reply.focus();
+    await publishMessage('Synthetic follow-up SSE message');
+    await expect(history.getByText('Synthetic follow-up SSE message', { exact: true })).toBeVisible();
     await expect(reply).toBeFocused();
     await expect(thread.getByRole('button', { name: 'Có tin nhắn mới' })).toHaveCount(0);
     await expect.poll(() => history.evaluate(element => element.scrollHeight - element.clientHeight - element.scrollTop)).toBeLessThanOrEqual(2);

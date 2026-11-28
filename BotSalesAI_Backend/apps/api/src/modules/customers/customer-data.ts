@@ -81,13 +81,18 @@ export function addressView(customer: Customer, address: CustomerAddress) {
     return { ...address, ...Object.fromEntries(redactedFields.map(field => [field, null])), redactedFields };
 }
 
-export async function snapshotAddress(tx: Prisma.TransactionClient, shopId: string, customerId: string, addressId: string) {
+export async function addressForPricing(tx: Prisma.TransactionClient, shopId: string, customerId: string, addressId: string) {
     const customer = await customerInShop(tx, shopId, customerId);
     const address = await addressForCustomer(tx, shopId, customerId, addressId);
     if (addressRedactions(customer, address).length) throw new ForbiddenException();
     if (address.status !== 'active' || !address.label || !address.recipient || !address.line1 || !address.province || !address.countryCode) {
         throw new UnprocessableEntityException();
     }
+    return address;
+}
+
+export async function snapshotAddress(tx: Prisma.TransactionClient, shopId: string, customerId: string, addressId: string) {
+    const address = await addressForPricing(tx, shopId, customerId, addressId);
     const key = { shopId, customerId, addressId, addressVersion: address.version };
     const data = Object.fromEntries(addressFields.map(field => [field, address[field]]));
     await tx.addressSnapshot.createMany({ data: [{ ...key, data }], skipDuplicates: true });

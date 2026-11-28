@@ -1,3 +1,4 @@
+import { lockShopClosure, requireOpenShop } from '../database/shop-lifecycle.js';
 import { randomUUID } from 'node:crypto';
 import { Prisma, type Job, type JobStatus, type PrismaClient } from '../../generated/prisma/client.js';
 import type { ResourceRef } from '../commands/index.js';
@@ -30,6 +31,7 @@ const activeJobsPerShop = jobWorkerConcurrency - 1;
 
 export async function scheduleJob(tx: Prisma.TransactionClient, data: Pick<Prisma.JobUncheckedCreateInput,
     'shopId' | 'actorId' | 'sourceOperation' | 'kind' | 'input' | 'dueAt' | 'commandId'>) {
+    if (data.sourceOperation !== 'approvePrivacyRequest') await requireOpenShop(tx, data.shopId);
     if (!jobSourcePermission(data.kind, data.sourceOperation)) throw new Error('Unknown job source');
     if (data.commandId && !await tx.command.findFirst({
         where: { shopId: data.shopId, id: data.commandId, actorId: data.actorId, operationId: data.sourceOperation, status: 'accepted' },
@@ -86,6 +88,7 @@ export async function dueJobs(db: PrismaClient, sourceOperations: string[], now 
                 SELECT shop_id, id, source_operation, due_at
                 FROM jobs
                 WHERE shop_id = shop.id AND status = 'queued' AND due_at <= ${now} AND attempts < ${maxAttempts}
+                  AND (shop.closed_at IS NULL OR source_operation = 'approvePrivacyRequest')
                   AND source_operation IN (${Prisma.join(sourceOperations)})
                 ORDER BY due_at, id
                 LIMIT greatest(${activeJobsPerShop} - occupied.count, 0)
@@ -99,6 +102,7 @@ export async function dueJobs(db: PrismaClient, sourceOperations: string[], now 
 export async function runJob(db: PrismaClient, key: JobKey & { sourceOperation: string }, handler: JobHandler, authorize: Authorize) {
     const token = randomUUID();
     const job = await db.$transaction(async tx => {
+        if (key.sourceOperation !== 'approvePrivacyRequest' && await lockShopClosure(tx, key.shopId)) return;
         // Only lease admission is serialized. A running handler never holds this lock.
         const [{ locked }] = await tx.$queryRaw<{ locked: boolean }[]>`
             SELECT pg_try_advisory_xact_lock(hashtextextended('botsales/job-claim/' || ${key.shopId}::uuid::text, 0)) AS locked
@@ -139,6 +143,7 @@ export async function runJob(db: PrismaClient, key: JobKey & { sourceOperation: 
         const outcome = await handler(job, {
             beginExternalEffect: async () => {
                 await db.$transaction(async tx => {
+                    if (job.sourceOperation !== 'approvePrivacyRequest') await requireOpenShop(tx, job.shopId);
                     const permission = jobSourcePermission(job.kind, job.sourceOperation);
                     if (!permission || !await authorize(tx, job, permission)) throw new Error('Job permission lost');
                     const started = new Date();
@@ -153,6 +158,7 @@ export async function runJob(db: PrismaClient, key: JobKey & { sourceOperation: 
         });
         if (typeof outcome === 'function') {
             await serializable(db, async tx => {
+                if (job.sourceOperation !== 'approvePrivacyRequest' && await lockShopClosure(tx, job.shopId)) return;
                 const now = new Date();
                 const renewed = await tx.job.updateMany({
                     where: { ...held, leaseUntil: { gt: now } }, data: { leaseUntil: new Date(now.getTime() + leaseMs) },

@@ -1,4 +1,5 @@
-import { ActionGroup, FieldGroup, FormFields } from '../../shared/ui/composition';
+import { ActionGroup, FieldGroup, FormFields, PageSections } from '../../shared/ui/composition';
+import { layoutSx } from '@/shared/ui/layout';
 import { useRef, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { Alert, Box, Button, MenuItem, TextField, Typography } from '@mui/material';
@@ -32,8 +33,8 @@ export function ImportsPage() {
     const uploadTooLarge = upload.error instanceof ApiError && upload.error.status === 413;
 
     return <>
-        <PageHeader title="Nhập dữ liệu sản phẩm" subtitle="Tải tệp → ánh xạ cột → kiểm tra trước → xác nhận các dòng hợp lệ." />
-        <Panel title="Tệp & ánh xạ" bodyMode="inset">
+        <PageHeader title="Nhập dữ liệu" subtitle="Tải tệp → ánh xạ cột → kiểm tra trước → xác nhận các dòng hợp lệ." />
+        <PageSections geometry={{ maxWidth: layoutSx.form.standardWidth.maxWidth }}><Panel title="Tệp & ánh xạ" bodyMode="inset">
             <Box sx={{ width: '100%', minWidth: 0 }}>
                 <ErrorNotice error={(!uploadTooLarge && upload.error) || dry.error} />
                 <FormFields >
@@ -97,11 +98,11 @@ export function ImportsPage() {
                     }}>Kiểm tra trước khi nhập</MutationButton>
                 </FormFields>
             </Box>
-        </Panel>
+        </Panel></PageSections>
         <Panel title="Tác vụ gần đây" subtitle="Tình trạng xử lý do API trả về; dữ liệu mẫu chỉ chạy trong bộ nhớ." beforeGap={"section"}>
             <QueryState query={jobs} pendingProfile="section">
                 {jobs.data && <>
-                    <DataTable label="Tác vụ nền gần đây" rows={jobs.data.data} rowKey={job => job.id} empty="Chưa có tác vụ nhập. Chọn tệp ở biểu mẫu phía trên để bắt đầu." columns={[
+                    <DataTable mobile={{ layout: 'cards', titleKey: 'kind', summaryKeys: ['id', 'status', 'progress'], actionKey: 'action' }} label="Tác vụ nền gần đây" rows={jobs.data.data} rowKey={job => job.id} empty="Chưa có tác vụ nhập. Chọn tệp ở biểu mẫu phía trên để bắt đầu." columns={[
                         { key: 'kind', label: 'Loại tác vụ', render: job => label(job.kind) },
                         { key: 'id', label: 'Mã tác vụ', render: job => job.id },
                         { key: 'status', label: 'Trạng thái', render: job => <Status value={job.status} /> },
@@ -123,5 +124,5 @@ export function ImportResultPage() {
     const commit = useCommand('commitProductImport', ['getJob', 'listJobs', 'listProducts', 'listStockSnapshots']);
     const [confirm, setConfirm] = useState(false);
     const j = job.data?.data;
-    return <><PageHeader title="Kết quả kiểm tra tệp" subtitle="Không nhập dữ liệu âm thầm khi còn lỗi; token kiểm tra gắn với phiên bản dữ liệu." actions={<RouteLink to={`/s/${shop.id}/imports`}>Danh sách tác vụ</RouteLink>}/><QueryState query={job} pendingProfile="section">{j && <Panel title={j.id} action={<ActionGroup><Status value={j.status}/></ActionGroup>} bodyMode="inset"><FormFields ><ErrorNotice error={commit.error}/><DetailLine label="Đã xử lý">{j.completed} / {j.total ?? 'Chưa rõ'}</DetailLine><DetailLine label="Lỗi">{j.errorCount}</DetailLine><DataTable label="Lỗi từng dòng trong tệp nhập" rows={j.rowErrors.map((e, i) => ({ ...e, key: String(i) }))} rowKey={e => e.key} empty="Không có dòng lỗi trong báo cáo kiểm tra." columns={[{ key: 'row', label: 'Dòng', render: e => e.row }, { key: 'field', label: 'Cột', render: e => e.field }, { key: 'message', label: 'Lỗi', render: e => e.message }]}/>{j.validationToken && <Alert severity="info">Xác nhận chỉ nhập những dòng đã hợp lệ. Dòng lỗi được giữ trong báo cáo, không coi là nhập thành công.</Alert>}<MutationButton permission="catalog.import" variant="contained" disabled={!j.validationToken || j.status !== 'awaiting_confirmation'} onClick={() => setConfirm(true)}>Xác nhận nhập các dòng hợp lệ</MutationButton><RouteLink to={`/s/${shop.id}/imports`}>Chọn tệp khác</RouteLink></FormFields></Panel>}</QueryState><ConfirmDialog open={confirm} title="Ghi dữ liệu đã kiểm tra" confirmLabel="Nhập các dòng hợp lệ" description={`Tệp đã kiểm trong công việc ${jobId}: chỉ ghi các dòng hợp lệ; dòng lỗi không được nhập. Nếu danh mục đã thay đổi, phải kiểm tra tệp lại.`} onClose={() => setConfirm(false)} error={commit.error} busy={commit.pending} onConfirm={() => commit.execute({ path: { jobId }, body: { validationToken: j?.validationToken || '', confirmValidRowsOnly: true } })}/></>;
+    return <><PageHeader title="Kết quả kiểm tra tệp" subtitle="Không nhập dữ liệu âm thầm khi còn lỗi; token kiểm tra gắn với phiên bản dữ liệu." actions={<RouteLink to={`/s/${shop.id}/imports`}>Danh sách tác vụ</RouteLink>}/><QueryState query={job} pendingProfile="section">{j && <Panel title={j.id} action={<ActionGroup><Status value={j.status}/></ActionGroup>} bodyMode="inset"><FormFields ><ErrorNotice error={commit.error}/><DetailLine label="Đã xử lý">{j.completed} / {j.total ?? 'Chưa rõ'}</DetailLine><DetailLine label="Lỗi">{j.errorCount}</DetailLine><DataTable mobile={{ layout: 'cards', titleKey: 'row', summaryKeys: ['field', 'message'] }} label="Lỗi từng dòng trong tệp nhập" rows={j.rowErrors.map((e, i) => ({ ...e, key: String(i) }))} rowKey={e => e.key} empty="Không có dòng lỗi trong báo cáo kiểm tra." columns={[{ key: 'row', label: 'Dòng', render: e => e.row }, { key: 'field', label: 'Cột', render: e => e.field }, { key: 'message', label: 'Lỗi', render: e => e.message }]}/>{j.validationToken && <Alert severity="info">Xác nhận chỉ nhập những dòng đã hợp lệ. Dòng lỗi được giữ trong báo cáo, không coi là nhập thành công.</Alert>}<MutationButton permission="catalog.import" variant="contained" disabled={!j.validationToken || j.status !== 'awaiting_confirmation'} onClick={() => setConfirm(true)}>Xác nhận nhập các dòng hợp lệ</MutationButton><RouteLink to={`/s/${shop.id}/imports`}>Chọn tệp khác</RouteLink></FormFields></Panel>}</QueryState><ConfirmDialog open={confirm} title="Ghi dữ liệu đã kiểm tra" confirmLabel="Nhập các dòng hợp lệ" description={`Tệp đã kiểm trong công việc ${jobId}: chỉ ghi các dòng hợp lệ; dòng lỗi không được nhập. Nếu danh mục đã thay đổi, phải kiểm tra tệp lại.`} onClose={() => setConfirm(false)} error={commit.error} busy={commit.pending} onConfirm={() => commit.execute({ path: { jobId }, body: { validationToken: j?.validationToken || '', confirmValidRowsOnly: true } })}/></>;
 }

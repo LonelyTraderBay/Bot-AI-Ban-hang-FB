@@ -1,4 +1,4 @@
-import { openDemoControls } from './session/demo-controls';
+import { setDemoControl } from './session/demo-controls';
 import { test, expect } from '@playwright/test';
 import AxeBuilder from '@axe-core/playwright';
 import { startDemoServer } from './session/demo-server.mjs';
@@ -19,7 +19,6 @@ async function gotoDemo(page: import('@playwright/test').Page, path: string) {
 }
 
 async function chooseOption(page: import('@playwright/test').Page, label: string, value: string) {
-    if (['Vai trò mô phỏng', 'Trạng thái thử', 'Dataset mô phỏng'].includes(label)) await openDemoControls(page);
     await page.getByRole('combobox', { name: label }).click();
     await page.getByRole('option', { name: value, exact: true }).click();
 }
@@ -74,7 +73,7 @@ test('FE012.AC01 searchable customer and product pickers submit contract-shaped 
     });
     expect(request.headers()['idempotency-key']).toBeTruthy();
     await expect(page.getByRole('heading', { name: /^Đơn order-/ })).toBeVisible();
-    await expect(page.getByText('Dữ liệu mô phỏng', { exact: true })).toBeVisible();
+    await expect(page.getByRole('complementary', { name: 'Công cụ mô phỏng', exact: true })).toHaveCount(0);
 
     const orderId = new URL(page.url()).pathname.split('/').pop() || '';
     const quoteResponse = page.waitForResponse(response => response.request().method() === 'POST' && new URL(response.url()).pathname.endsWith(`/orders/${orderId}/quote`));
@@ -166,7 +165,7 @@ test('FE012.AC01 editing lines invalidates quote and customer consent; a new quo
     const confirmation = (await confirmationResponse.json()).data;
     expect(confirmation.quoteId).toBe(secondQuote.id);
 
-    await chooseOption(page, 'Trạng thái thử', 'Tải chậm');
+    await setDemoControl(page, 'fault', 'slow');
     const confirmRequest = page.waitForRequest(request => request.method() === 'POST' && new URL(request.url()).pathname.endsWith('/orders/DH-1001/confirm'));
     const confirmResponse = page.waitForResponse(response => response.request().method() === 'POST' && new URL(response.url()).pathname.endsWith('/orders/DH-1001/confirm'));
     await page.getByRole('button', { name: 'Xác nhận đơn & giữ hàng' }).click();
@@ -194,8 +193,7 @@ test('FE012.AC01 editing lines invalidates quote and customer consent; a new quo
 
 test('FE012.AC03 mock stale-version 412 preserves draft fields and does not show success', async ({ page }) => {
     await gotoDemo(page, '/s/shop-demo/orders/DH-1001');
-    await chooseOption(page, 'Trạng thái thử', 'Xung đột lần ghi tiếp');
-    await expect(page.getByRole('status').filter({ hasText: 'Trạng thái thử đã được áp dụng.' })).toBeVisible();
+    await setDemoControl(page, 'fault', 'conflict');
     await page.getByRole('button', { name: 'Sửa đơn nháp' }).click();
     const staleNotes = page.getByRole('textbox', { name: 'Ghi chú chuẩn bị' });
     await staleNotes.fill('Bản chỉnh sửa cần giữ lại khi có xung đột');
@@ -242,7 +240,7 @@ test('FE012.AC03 unknown confirm outcome blocks duplicate writes until shared co
     await expect(page.getByRole('button', { name: 'Mô phỏng khách đồng ý báo giá' })).toBeVisible();
     await page.getByRole('button', { name: 'Mô phỏng khách đồng ý báo giá' }).click();
     await expect(page.getByText(/Đã ghi nhận bằng chứng/)).toBeVisible();
-    await chooseOption(page, 'Trạng thái thử', 'Kết quả ghi chưa rõ');
+    await setDemoControl(page, 'fault', 'unknown');
 
     const unknownResponse = page.waitForResponse(response => response.request().method() === 'POST' && new URL(response.url()).pathname.endsWith('/orders/DH-1001/confirm'));
     await page.getByRole('button', { name: 'Xác nhận đơn & giữ hàng' }).click();

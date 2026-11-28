@@ -1,4 +1,4 @@
-import { openDemoControls } from './session/demo-controls';
+import { setDemoControl } from './session/demo-controls';
 import { test, expect } from '@playwright/test';
 import { startDemoServer } from './session/demo-server.mjs';
 
@@ -89,7 +89,8 @@ test('catalog import rejects files above the demo size limit before upload', asy
 
 test('mock uploads require a purpose, enforce its role, and fingerprint file content for retries', async ({ page, browser }) => {
   await gotoDemo(page, '/s/shop-demo/imports');
-  await expect(page.getByText('Frontend review: API được mô phỏng trong bộ nhớ', { exact: false })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Nhập dữ liệu', exact: true })).toBeVisible();
+  await expect(page.getByRole('complementary', { name: 'Công cụ mô phỏng', exact: true })).toHaveCount(0);
   const missingPurpose = await uploadStatus(page, null, 'missing-purpose', 'sku,name,price\nP-1,Sample,100');
   expect(missingPurpose.status).toBe(422);
   expect(missingPurpose.body.code).toBe('UPLOAD_PURPOSE_REQUIRED');
@@ -98,12 +99,8 @@ test('mock uploads require a purpose, enforce its role, and fingerprint file con
   try {
     const salesPage = await salesContext.newPage();
     await gotoDemo(salesPage, '/s/shop-demo/imports');
-    await expect(salesPage.getByText('Frontend review: API được mô phỏng trong bộ nhớ', { exact: false })).toBeVisible();
-    await openDemoControls(salesPage);
-    await salesPage.getByRole('combobox', { name: 'Vai trò mô phỏng' }).click();
-    await salesPage.getByRole('option', { name: 'sales', exact: true }).click();
-    await expect(salesPage.getByRole('combobox', { name: 'Vai trò mô phỏng' })).toContainText('sales');
-    await expect(salesPage.getByRole('status').filter({ hasText: 'Vai trò mô phỏng đã được áp dụng.' })).toBeVisible();
+    await expect(salesPage.getByRole('complementary', { name: 'Công cụ mô phỏng', exact: true })).toHaveCount(0);
+    await setDemoControl(salesPage, 'role', 'sales');
     const session = await salesPage.evaluate(async () => (await (await fetch('/api/v2/session')).json()).data);
     expect(session.memberships.find((membership: { shopId: string }) => membership.shopId === 'shop-demo').roles).toEqual(['sales']);
     const denied = await uploadStatus(salesPage, 'product_import', 'sales-import', 'sku,name,price\nP-1,Sample,100');

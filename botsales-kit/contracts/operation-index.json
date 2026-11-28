@@ -58,6 +58,20 @@
       "module": "workspace"
     },
     {
+      "operationId": "closeShop",
+      "method": "POST",
+      "path": "/shops/{shopId}/close",
+      "permission": "shop.manage",
+      "module": "workspace"
+    },
+    {
+      "operationId": "reopenShop",
+      "method": "POST",
+      "path": "/shops/{shopId}/reopen",
+      "permission": "shop.manage",
+      "module": "workspace"
+    },
+    {
       "operationId": "listMembers",
       "method": "GET",
       "path": "/shops/{shopId}/members",
@@ -1820,6 +1834,62 @@
       "path": "/shops/{shopId}/inventory/transfers/{resourceId}",
       "permission": "inventory.adjust",
       "module": "inventory"
+    },
+    {
+      "operationId": "listConversationOrderDrafts",
+      "method": "GET",
+      "path": "/shops/{shopId}/conversation-order-drafts",
+      "permission": "orders.read",
+      "module": "orders"
+    },
+    {
+      "operationId": "getConversationOrderDraft",
+      "method": "GET",
+      "path": "/shops/{shopId}/conversations/{conversationId}/order-draft",
+      "permission": "orders.read",
+      "module": "orders"
+    },
+    {
+      "operationId": "accessConversationOrderDraft",
+      "method": "POST",
+      "path": "/shops/{shopId}/conversations/{conversationId}/order-draft/access",
+      "permission": "orders.write",
+      "module": "orders"
+    },
+    {
+      "operationId": "saveConversationOrderDraft",
+      "method": "PATCH",
+      "path": "/shops/{shopId}/conversations/{conversationId}/order-draft/{draftId}",
+      "permission": "orders.write",
+      "module": "orders"
+    },
+    {
+      "operationId": "discardConversationOrderDraft",
+      "method": "POST",
+      "path": "/shops/{shopId}/conversations/{conversationId}/order-draft/{draftId}/discard",
+      "permission": "orders.write",
+      "module": "orders"
+    },
+    {
+      "operationId": "convertConversationOrderDraft",
+      "method": "POST",
+      "path": "/shops/{shopId}/conversations/{conversationId}/order-draft/{draftId}/convert",
+      "permission": "orders.write",
+      "module": "orders"
+    },
+    {
+      "operationId": "estimateConversationOrderDraft",
+      "method": "GET",
+      "path": "/shops/{shopId}/conversations/{conversationId}/order-draft/{draftId}/estimate",
+      "permission": "orders.read",
+      "module": "orders"
+    },
+    {
+      "operationId": "estimateOrderDraft",
+      "method": "POST",
+      "path": "/shops/{shopId}/orders/estimate",
+      "permission": "orders.write",
+      "module": "orders"
     }
   ]
 }

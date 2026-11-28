@@ -79,6 +79,16 @@ export function SessionProvider({ children }: {
             document.removeEventListener('visibilitychange', changed);
         };
     }, [refresh]);
+    useEffect(() => {
+        if (!__MOCK__ || import.meta.env.VITE_E2E_MOCK_CONTROL !== '1') return;
+        const apply = async (key: string, value: string) => {
+            const { setMockControl } = await import('../mocks/control');
+            await setMockControl(key, value);
+            if (key === 'role' || key === 'dataset') await refresh();
+        };
+        const testWindow = Object.assign(window, { __setMockControl: apply });
+        return () => { Reflect.deleteProperty(testWindow, '__setMockControl'); };
+    }, [refresh]);
     const logout = useCallback(async () => {
         if (query.data)
             setCsrfToken(query.data.data.csrfToken);

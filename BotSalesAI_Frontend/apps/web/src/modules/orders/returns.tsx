@@ -6,7 +6,7 @@ import { useSearchParams } from 'react-router-dom';
 import { Alert, Button, Divider, MenuItem, TextField, Typography } from '@mui/material';
 import type { ReturnCase, ReturnInspection } from '@botsales/contracts';
 import { useApi, useCommand, usePagedApi } from '@/shared/api/hooks';
-import { useScope, useCan } from '@/shared/model/scope';
+import { useScope, useCan, useCanWrite } from '@/shared/model/scope';
 import { useListQuery } from '@/shared/model/filters';
 import { codePointLength } from '@/shared/model/format';
 import { PageHeader, Panel, DataTable, QueryState, Toolbar, Pager, Status, Amount, MutationButton, EditDialog, ErrorNotice, RouteLink, LookupLoadMore } from '@/shared/ui/components';
@@ -16,8 +16,8 @@ export function ReturnsPage() {
     const { shop } = useScope();
     const [params] = useSearchParams();
     const canReadOrders = useCan('orders.read');
-    const canCreateReturn = useCan('orders.return');
-    const canInspectReturn = useCan('inventory.adjust');
+    const canCreateReturn = useCanWrite('orders.return');
+    const canInspectReturn = useCanWrite('inventory.adjust');
     const list = useApi('listReturnCases', { query: useListQuery('listReturnCases') });
     const [orderSearchInput, setOrderSearchInput] = useState('');
     const [orderSearch, setOrderSearch] = useState('');
@@ -58,9 +58,9 @@ export function ReturnsPage() {
         return !Number.isInteger(line.acceptedQuantity) || line.acceptedQuantity < 0 || line.acceptedQuantity > returned || !line.reason.trim() || codePointLength(line.reason) > 1_000;
     });
     return <>
-        <PageHeader title="Đổi và trả hàng" subtitle="Nhận lại, kiểm tình trạng, xác định nghĩa vụ hoàn. Không tự cộng hàng chưa kiểm vào tồn bán." actions={<MutationButton permission="orders.return" variant="contained" disabled={!canReadOrders} onClick={() => setOpen(true)}>Tạo yêu cầu trả</MutationButton>}/>
+        <PageHeader title="Đổi trả" subtitle="Nhận lại, kiểm tình trạng, xác định nghĩa vụ hoàn. Không tự cộng hàng chưa kiểm vào tồn bán." actions={<MutationButton permission="orders.return" variant="contained" disabled={!canReadOrders} onClick={() => setOpen(true)}>Tạo yêu cầu trả</MutationButton>}/>
         {!canReadOrders && <Alert severity="warning" sx={layoutSx.notice.afterGap}>Cần quyền orders.read để chọn đơn gốc và xử lý yêu cầu trả.</Alert>}
-        <Panel><Toolbar operation="listReturnCases" /><QueryState query={list} pendingProfile="section">{list.data && <><DataTable label="Yêu cầu đổi trả" rows={list.data.data} rowKey={r => r.id} columns={[
+        <Panel><Toolbar operation="listReturnCases" /><QueryState query={list} pendingProfile="section">{list.data && <><DataTable mobile={{ layout: 'cards', titleKey: 'id', summaryKeys: ['order', 'state', 'refund'], actionKey: 'action' }} label="Yêu cầu đổi trả" rows={list.data.data} rowKey={r => r.id} columns={[
             { key: 'id', label: 'Yêu cầu', render: r => r.id },
             { key: 'order', label: 'Đơn gốc', render: r => <RouteLink to={`/s/${shop.id}/orders/${r.orderId}`}>{r.orderId}</RouteLink> },
             { key: 'state', label: 'Trạng thái', render: r => <Status value={r.state} domain="return"/> },

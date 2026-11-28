@@ -1,6 +1,7 @@
-import { openDemoControls } from '../session/demo-controls';
+import { setDemoControl } from '../session/demo-controls';
 import { test, expect } from '@playwright/test';
 import { startDemoServer } from '../session/demo-server.mjs';
+import { holdRouteReads } from '../session/read-barrier';
 
 let demoUrl = '';
 let stopDemo: (() => Promise<void>) | undefined;
@@ -78,17 +79,22 @@ test('FE023.S04 delayed requests show loading and failed refresh keeps a retry p
     const pageErrors: string[] = [];
     page.on('pageerror', error => pageErrors.push(error.stack || error.message));
     await page.goto(new URL('/s/shop-demo/overview', demoUrl).toString());
-    await openDemoControls(page);
-    await page.getByRole('combobox', { name: 'Trạng thái thử' }).click();
-    await page.getByRole('option', { name: 'Tải chậm', exact: true }).click();
-    await page.getByRole('navigation', { name: 'Điều hướng chính' }).getByRole('link', { name: 'Danh mục' }).click();
-    await expect(page.getByRole('status').filter({ hasText: 'Đang tải dữ liệu' })).toBeVisible();
-    await expect(page.getByRole('heading', { name: 'Danh mục', exact: true })).toBeVisible();
-    await expect(page.getByRole('status').filter({ hasText: 'Đang tải dữ liệu' })).toHaveCount(0);
+    await expect(page.getByRole('heading', { name: 'Tổng quan', exact: true })).toBeVisible();
+    const main = page.getByRole('main');
+    const loading = main.getByRole('progressbar', { name: 'Đang tải dữ liệu', exact: true });
+    const categories = await holdRouteReads(page, ['^/api/v2/shops/shop-demo/categories$']);
+    try {
+        await page.getByRole('navigation', { name: 'Điều hướng chính' }).getByRole('link', { name: 'Danh mục' }).click();
+        await expect(main.getByRole('heading', { name: 'Danh mục', exact: true })).toBeVisible();
+        await expect.poll(categories.entered).toBe(1);
+        await expect(loading).toBeVisible();
+    } finally {
+        await categories.release();
+    }
+    await expect(main.getByRole('region', { name: 'Danh sách danh mục' })).toBeVisible();
+    await expect(loading).toHaveCount(0);
 
-    await openDemoControls(page);
-    await page.getByRole('combobox', { name: 'Trạng thái thử' }).click();
-    await page.getByRole('option', { name: 'Lỗi danh sách thiết bị', exact: true }).click();
+    await setDemoControl(page, 'fault', 'error_persistent');
     await page.getByRole('navigation', { name: 'Điều hướng chính' }).getByRole('link', { name: 'Điện thoại & lịch trực' }).click();
     const devicesHeading = page.getByRole('heading', { name: 'Điện thoại & lịch trực', exact: true });
     const routeErrorHeading = page.getByRole('heading', { name: 'Không thể mở màn hình', exact: true });
@@ -97,9 +103,7 @@ test('FE023.S04 delayed requests show loading and failed refresh keeps a retry p
         throw new Error(`Route failed while rendering devices page. Browser errors: ${pageErrors.join('\n') || '(none captured)'}. Route detail: ${await page.getByTestId('route-error-details').textContent() || '(none)'}`);
     await expect(page.getByRole('alert').filter({ hasText: 'Không thể hoàn thành yêu cầu' })).toBeVisible();
     await expect(page.getByRole('button', { name: 'Thử lại' })).toBeVisible();
-    await openDemoControls(page);
-    await page.getByRole('combobox', { name: 'Trạng thái thử' }).click();
-    await page.getByRole('option', { name: 'Bình thường', exact: true }).click();
+    await setDemoControl(page, 'fault', 'normal');
     await page.getByRole('button', { name: 'Thử lại' }).first().click();
     await expect(page.getByRole('alert').filter({ hasText: 'Không thể hoàn thành yêu cầu' })).toHaveCount(0);
 });

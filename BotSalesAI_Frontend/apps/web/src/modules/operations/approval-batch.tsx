@@ -76,7 +76,7 @@ export function ApprovalBatchDialog({ items, execute, onClose, onComplete }: {
             </MutationButton>}>
         <FormFields>
             <Alert severity="info">Mỗi hồ sơ được kiểm và ghi riêng. Xem kết quả từng hồ sơ sau khi gửi.</Alert>
-            <DataTable label="Hồ sơ trong lô" reflowOnMobile rows={items} rowKey={entry => entry.id} columns={[
+            <DataTable mobile={{ layout: 'cards', titleKey: 'intent', summaryKeys: ['amount', 'outcome'] }} label="Hồ sơ trong lô" rows={items} rowKey={entry => entry.id} columns={[
                 { key: 'intent', label: 'Nội dung đã chọn', render: entry => `${label(entry.action)} · ${entry.resource.id} · phiên bản ${entry.resourceVersion}` },
                 { key: 'amount', label: 'Số tiền', render: entry => <Amount value={entry.amount} /> },
                 { key: 'outcome', label: 'Kết quả', render: entry => {

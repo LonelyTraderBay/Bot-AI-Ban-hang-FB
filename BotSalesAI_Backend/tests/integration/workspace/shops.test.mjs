@@ -1,16 +1,23 @@
 import assert from 'node:assert/strict';
 import { createHash, randomUUID } from 'node:crypto';
 import { readFileSync } from 'node:fs';
+import { setTimeout as delay } from 'node:timers/promises';
 import { URLSearchParams } from 'node:url';
 import { after, before, test } from 'node:test';
 import { createApp } from '../../../apps/api/dist/app.js';
 import { readDatabaseUrl } from '../../../apps/api/dist/config.js';
 import { createContractValidator, schemaFromContract } from '../../../apps/api/dist/http/contracts.js';
 import { readAuthConfig } from '../../../apps/api/dist/modules/workspace/index.js';
+import { acceptInvitations } from '../../../apps/api/dist/modules/workspace/members/invitations.js';
 import { Database } from '../../../apps/api/dist/platform/database/client.js';
 import { recordAudit } from '../../../apps/api/dist/platform/audit/index.js';
 import { recordCommand } from '../../../apps/api/dist/platform/commands/index.js';
-import { fixtureShops } from '../../../apps/api/prisma/p0-fixture.mjs';
+import { recordAdvertisingEstimate, recordMarketingEvidence } from '../../../apps/api/dist/modules/finance/index.js';
+import { recordManualShipmentEvidence } from '../../../apps/api/dist/modules/fulfillment/index.js';
+import { recordManualEvidence } from '../../../apps/api/dist/modules/procurement/index.js';
+import { fixtureIssuer, fixtureShops } from '../../../apps/api/prisma/p0-fixture.mjs';
+import { orderConversation } from '../orders/fixtures.mjs';
+import { reviewedEvidenceFixture } from '../helpers/reviewed-evidence-fixture.mjs';
 import { assertFixtureDatabase, fixtureSession, restoreReader } from './session-fixture.mjs';
 
 const { components } = JSON.parse(readFileSync(new URL('../../../../botsales-kit/contracts/openapi.json', import.meta.url)));
@@ -439,4 +446,341 @@ test('SC2-G01: shop country is explicit, independently editable and never inferr
     assert.equal((await read(ownerA, shopA.id)).businessCountry, null);
     console.log(JSON.stringify({ status: 'SC2_G01_VN_REFERENCE', country: vietnam.businessCountry,
         currency: vietnam.currency, timezone: vietnam.timezone, otherShopCurrency: comparison.currency }));
+});
+
+async function closureFixture(t) {
+    const subject = 'closure-' + randomUUID();
+    await db.user.create({ data: { oidcIssuer: fixtureIssuer, oidcSubject: subject, email: subject + '@example.test', displayName: 'Chủ cửa hàng' } });
+    const owner = await fixtureSession(db, subject);
+    t.after(() => db.session.update({ where: { id: owner.id }, data: { revokedAt: new Date() } }));
+    const { csrfToken } = await sessionFor(owner);
+    const headers = (version, key = randomUUID()) => ({
+        origin: authConfig.appOrigin, 'x-csrf-token': csrfToken, 'idempotency-key': key,
+        ...(version === undefined ? {} : { 'if-match': '"' + version + '"' }),
+    });
+    const create = async () => {
+        const response = await sendMemberWrite(owner, '/shops', 'POST', {
+            name: subject, timezone: 'Asia/Vientiane', locale: 'vi-VN', currency: 'LAK',
+        }, headers());
+        assert.equal(response.status, 201);
+        return (await response.json()).data;
+    };
+    const shop = await create();
+    const path = shopPath(shop.id);
+    const change = (action, options = headers(shop.version), actor = owner) =>
+        request(path + '/' + action, actor, { method: 'POST', headers: options });
+    return { shop, owner, path, headers, change, create };
+}
+
+test('P0-05 SHOP-LIFECYCLE: owner closes and reopens once, preserving history and blocking new writes from existing sessions', async t => {
+    const { shop, owner, path, headers, change, create } = await closureFixture(t);
+    const other = await create();
+    const member = await db.membership.create({ data: { shopId: shop.id, userId: reader.userId, roles: ['manager'] } });
+    t.after(() => db.membership.update({ where: { shopId_id: { shopId: shop.id, id: member.id } }, data: { status: 'revoked' } }));
+    const customer = await db.customer.create({ data: { shopId: shop.id, displayName: 'Khách có lịch sử' } });
+    const headerFor = async actor => ({ ...headers(shop.version), 'x-csrf-token': (await sessionFor(actor)).csrfToken });
+    await json(await change('close', await headerFor(reader), reader), 403, 'Problem');
+    await json(await change('close', await headerFor(ownerB), ownerB), 404, 'Problem');
+    await json(await request('/shops/not-a-uuid/close', owner, { method: 'POST', headers: headers(shop.version) }), 404, 'Problem');
+    await json(await change('close', { ...headers(shop.version), 'x-csrf-token': '' }), 403, 'Problem');
+    await json(await change('close', headers()), 428, 'Problem');
+    await json(await change('close', headers(shop.version - 1)), 412, 'Problem');
+    await json(await change('close', { ...headers(shop.version), 'idempotency-key': '' }), 400, 'Problem');
+
+    const firstPage = await json(await request('/shops?limit=1', owner), 200, 'ShopListResponse');
+    assert.ok(firstPage.page.nextCursor);
+    const cursor = encodeURIComponent(firstPage.page.nextCursor);
+    await json(await request('/shops?status=active&limit=1&cursor=' + cursor, owner), 200, 'ShopListResponse');
+    await json(await request('/shops?status=closed&cursor=' + cursor, owner), 400, 'Problem');
+    const patchHeader = headers(shop.version);
+    const patch = () => sendMemberWrite(owner, path, 'PATCH', { name: 'Tên đã cập nhật' }, patchHeader);
+    const updated = (await json(await patch(), 200, 'ShopResponse')).data;
+    const closeHeaders = headers(updated.version);
+    const replies = await Promise.all([change('close', closeHeaders), change('close', closeHeaders)]);
+    const [closed, repeated] = await Promise.all(replies.map(reply => json(reply, 200, 'ShopResponse').then(body => body.data)));
+    assert.equal(replies[0].headers.get('etag'), '"' + closed.version + '"');
+    assert.equal(closed.version, updated.version + 1);
+    assert.equal(closed.status, 'closed');
+    assert.ok(Number.isFinite(Date.parse(closed.closedAt)));
+    assert.deepEqual(closed, repeated);
+    assert.deepEqual((await json(await request('/shops', owner), 200, 'ShopListResponse')).data.map(s => s.id), [other.id]);
+    assert.deepEqual((await json(await request('/shops?status=closed', owner), 200, 'ShopListResponse')).data, [closed]);
+    assert.deepEqual((await json(await request(path, reader), 200, 'ShopResponse')).data, closed);
+    await json(await request(path, ownerB), 404, 'Problem');
+    const lookup = await json(await request(recoverPath(shop.id, 'closeShop', closeHeaders['idempotency-key']), owner), 200, 'CommandListResponse');
+    assert.equal(lookup.data[0].result.id, shop.id);
+    assert.equal(await db.auditEntry.count({ where: { shopId: shop.id, action: 'closeShop' } }), 1);
+    await json(await patch(), 200, 'ShopResponse');
+    const blocked = await json(await sendMemberWrite(owner, path, 'PATCH', { name: 'Ghi sau đóng' }, headers(closed.version)), 409, 'Problem');
+    assert.equal(blocked.code, 'SHOP_CLOSED');
+    assert.equal((await json(await request(shopPath(shopB.id), ownerB), 200, 'ShopResponse')).data.status, 'active');
+    await json(await change('reopen', await headerFor(reader), reader), 403, 'Problem');
+    await json(await change('reopen', headers(updated.version)), 412, 'Problem');
+    const privacy = await json(await sendMemberWrite(owner, path + '/privacy/requests', 'POST', {
+        kind: 'export', customerId: customer.id, reason: 'Xuất dữ liệu của khách',
+    }, headers()), 201, 'PrivacyRequestResponse');
+    assert.equal(privacy.data.customerId, customer.id);
+    assert.equal((await revoke(owner, shop.id, member.id, headers(member.permissionVersion))).status, 204);
+    await json(await request(path, reader), 404, 'Problem');
+    const opened = (await json(await change('reopen', headers(closed.version)), 200, 'ShopResponse')).data;
+    assert.deepEqual(opened, { ...updated, status: 'active', closedAt: null, version: closed.version + 1 });
+    assert.ok((await json(await request('/shops', owner), 200, 'ShopListResponse')).data.some(row => row.id === shop.id));
+    assert.equal(await db.auditEntry.count({ where: { shopId: shop.id, action: 'reopenShop' } }), 1);
+});
+
+test('P0-05 SHOP-LIFECYCLE: drafts survive closure but unprocessed work and delivered COD block it by group', async t => {
+    const { shop, owner, change } = await closureFixture(t);
+    const customer = await db.customer.create({ data: { shopId: shop.id, displayName: 'Khách COD' } });
+    const order = await db.salesOrder.create({ data: { shopId: shop.id, customerId: customer.id, warehouseId: shop.defaultWarehouseId,
+        paymentMethod: 'cod', currency: shop.currency, total: '15000', notes: '' } });
+    const where = { shopId_id: { shopId: shop.id, id: order.id } };
+    const job = await db.job.create({ data: { shopId: shop.id, actorId: owner.userId, sourceOperation: 'createExport', kind: 'export', input: {} } });
+    await db.salesOrder.update({ where, data: { orderState: 'completed', fulfillmentState: 'delivered' } });
+    const problem = await json(await change('close'), 409, 'Problem');
+    assert.equal(problem.code, 'SHOP_CLOSE_BLOCKED');
+    assert.deepEqual(problem.errors.map(item => item.code).sort(), ['BACKGROUND_WORK', 'RECONCILIATION']);
+    assert.ok(problem.errors.every(item => item.path === '/status' && item.message.length > 0));
+    assert.equal(await db.auditEntry.count({ where: { shopId: shop.id, action: 'closeShop' } }), 0);
+    await db.job.update({ where: { shopId_id: { shopId: shop.id, id: job.id } }, data: { status: 'succeeded' } });
+    await db.salesOrder.update({ where, data: { orderState: 'draft', fulfillmentState: 'unfulfilled', paymentMethod: 'prepay' } });
+    await json(await change('close'), 200, 'ShopResponse');
+    assert.equal((await db.salesOrder.findUniqueOrThrow({ where })).orderState, 'draft');
+});
+
+test('P0-05 SHOP-LIFECYCLE: closure sees a worker job committed while the HTTP command waits on the shop lock', async t => {
+    const { shop, owner, change } = await closureFixture(t);
+    let response;
+    await db.$transaction(async tx => {
+        const [lock] = await tx.$queryRaw`SELECT pg_backend_pid() AS pid FROM shops WHERE id=${shop.id}::uuid FOR NO KEY UPDATE`;
+        response = change('close');
+        const deadline = Date.now() + 4000;
+        let waiting = false;
+        while (!waiting && Date.now() < deadline) {
+            const [activity] = await db.$queryRaw`SELECT EXISTS (
+                SELECT 1 FROM pg_stat_activity WHERE ${lock.pid}::int = ANY(pg_blocking_pids(pid))
+            ) AS waiting`;
+            waiting = activity.waiting;
+            if (!waiting) await delay(10);
+        }
+        assert.ok(waiting, 'closure must acquire the same shop lock as the worker');
+        await tx.job.create({ data: { shopId: shop.id, actorId: owner.userId, sourceOperation: 'createExport', kind: 'export', input: {} } });
+    }, { isolationLevel: 'ReadCommitted', timeout: 10000 });
+    const problem = await json(await response, 409, 'Problem');
+    assert.deepEqual(problem.errors.map(item => item.code), ['BACKGROUND_WORK']);
+    assert.equal((await db.shop.findUniqueOrThrow({ where: { id: shop.id } })).closedAt, null);
+});
+
+test('P0-05 SHOP-LIFECYCLE: an HTTP export racing closure either queues its job or reports SHOP_CLOSED', async t => {
+    const { shop, owner, path, headers, change } = await closureFixture(t);
+    const snapshotAsOf = new Date().toISOString();
+    const [close, createExport] = await Promise.all([change('close'), sendMemberWrite(owner, path + '/exports', 'POST', {
+        reportType: 'orders', format: 'csv', from: '2026-01-01T00:00:00.000Z', to: '2026-01-02T00:00:00.000Z',
+        timezone: shop.timezone, snapshotAsOf,
+    }, headers())]);
+    const jobs = await db.job.count({ where: { shopId: shop.id, kind: 'export' } });
+    if (close.status === 200) {
+        assert.equal((await json(await createExport, 409, 'Problem')).code, 'SHOP_CLOSED');
+        assert.equal(jobs, 0);
+    } else {
+        assert.equal((await json(close, 409, 'Problem')).code, 'SHOP_CLOSE_BLOCKED');
+        assert.equal(createExport.status, 202);
+        assert.equal(jobs, 1);
+    }
+});
+
+test('P0-05 SHOP-LIFECYCLE: operations report every outstanding blocker, then isolate a refund after physical processing ends', async t => {
+    const { shop, owner, change } = await closureFixture(t);
+    const shopId = shop.id;
+    const warehouseId = shop.defaultWarehouseId;
+    const customer = await db.customer.create({ data: { shopId, displayName: 'Kiểm nhóm đang xử lý' } });
+    const supplier = await db.supplier.create({ data: { shopId, name: 'Nhà cung cấp', contactLabel: 'Liên hệ', currency: shop.currency,
+        leadTimeDays: 2, paymentTerms: 'Theo lần nhận', sendMethod: 'manual' } });
+    const order = await db.salesOrder.create({ data: { shopId, warehouseId, customerId: customer.id, orderState: 'confirmed',
+        paymentMethod: 'prepay', currency: shop.currency, total: '15000', notes: '' } });
+    const purchase = await db.purchaseOrder.create({ data: { shopId, warehouseId, supplierId: supplier.id, supplierVersion: 1,
+        currency: shop.currency, total: '10000', intentHash: digest(randomUUID()), status: 'sent', externalReference: 'PO-TEST' } });
+    const hold = await db.stockReservation.create({ data: { shopId, orderId: order.id, orderVersion: 1, actorId: owner.userId,
+        requestHash: digest(randomUUID()), expiresAt: new Date(Date.now() + 120000) } });
+    const shipment = await db.shipment.create({ data: { shopId, orderId: order.id, warehouseId, state: 'returning', handedOverAt: new Date(), lastEventAt: new Date(), currency: shop.currency } });
+    const returned = await db.orderReturn.create({ data: { shopId, orderId: order.id, shipmentId: shipment.id, reason: 'Chờ kiểm nhận' } });
+    const key = id => ({ shopId_id: { shopId, id } });
+    const blockers = async () => (await json(await change('close'), 409, 'Problem')).errors.map(item => item.code).sort();
+    assert.deepEqual(await blockers(), ['ORDER_PROCESSING', 'PURCHASE_RECEIVING', 'RECONCILIATION', 'RETURN_PROCESSING', 'SHIPMENT_PROCESSING', 'STOCK_RESERVED']);
+    await db.salesOrder.update({ where: key(order.id), data: { orderState: 'completed', fulfillmentState: 'returned' } });
+    await db.shipment.update({ where: key(shipment.id), data: { state: 'returned' } });
+    await db.orderReturn.update({ where: key(returned.id), data: { state: 'inspected', receivableCredit: '15000', refundObligation: '15000' } });
+    await db.stockReservation.update({ where: key(hold.id), data: { status: 'released', settledAt: new Date() } });
+    await db.purchaseOrder.update({ where: key(purchase.id), data: { status: 'unknown' } });
+    assert.deepEqual(await blockers(), ['EXTERNAL_UNKNOWN', 'RECONCILIATION']);
+    await db.purchaseOrder.update({ where: key(purchase.id), data: { status: 'cancelled' } });
+    assert.deepEqual(await blockers(), ['RECONCILIATION']);
+});
+
+test('P0-05 SHOP-LIFECYCLE: reviewed evidence writers replay prior receipts and reject new attestations after closure', async t => {
+    const { shop, owner, change } = await closureFixture(t);
+    const { id: shopId, currency, defaultWarehouseId: warehouseId } = shop;
+    const reviewerId = owner.userId, key = id => ({ shopId_id: { shopId, id } });
+    const customer = await db.customer.create({ data: { shopId, displayName: 'Khách hàng' } });
+    const supplier = await db.supplier.create({ data: { shopId, name: 'Nhà cung cấp', contactLabel: 'Liên hệ', currency,
+        leadTimeDays: 1, paymentTerms: 'Trả khi nhận', sendMethod: 'manual' } });
+    for (const [name, value] of Object.entries({ ADVERTISING_ESTIMATE_SHOPS: shopId, MARKETING_EVIDENCE_SHOPS: shopId,
+        SHIPMENT_MANUAL_SHOPS: shopId, PROCUREMENT_MANUAL_SUPPLIERS: shopId + '/' + supplier.id })) {
+        const previous = process.env[name];
+        process.env[name] = value;
+        t.after(() => { if (previous === undefined) delete process.env[name]; else process.env[name] = previous; });
+    }
+    const day = new Date('2020-01-01T12:00:00Z');
+    const order = await db.salesOrder.create({ data: { shopId, warehouseId, customerId: customer.id, orderState: 'completed',
+        fulfillmentState: 'returned', paymentMethod: 'cod', currency, total: '15000', notes: '' } });
+    const reservation = await db.stockReservation.create({ data: { shopId, orderId: order.id, orderVersion: 1, actorId: reviewerId,
+        requestHash: digest(randomUUID()), status: 'released', createdAt: day, settledAt: day, expiresAt: day } });
+    await db.salesOrder.update({ where: key(order.id), data: { reservationId: reservation.id } });
+    const shipment = await db.shipment.create({ data: { shopId, orderId: order.id, warehouseId, currency, state: 'returned', handedOverAt: day, lastEventAt: day } });
+    const purchase = await db.purchaseOrder.create({ data: { shopId, warehouseId, supplierId: supplier.id, supplierVersion: 1,
+        currency, total: '10000', intentHash: digest(randomUUID()), status: 'unknown' } });
+    const command = await db.command.create({ data: { shopId, actorId: reviewerId, operationId: 'sendPurchaseOrder',
+        idempotencyKey: randomUUID(), requestHash: digest(randomUUID()), status: 'succeeded' } });
+    await db.purchaseDispatch.create({ data: { shopId, purchaseOrderId: purchase.id, commandId: command.id, manualHandoff: true } });
+    const common = { shopId, reviewerId, documentSha256: digest('reviewed document') };
+    const date = '2020-01-01', occurredAt = new Date().toISOString();
+    const writers = [
+        ['advertising-estimate', recordAdvertisingEstimate, db.advertisingEstimate, { date, expectedRevision: 0, amount: { amount: '500', currency } }, { expectedRevision: 1 }],
+        ['marketing', recordMarketingEvidence, db.marketingEvidence, { orderId: order.id, date, expectedRevision: 0, confidence: 'known', channel: 'messenger',
+            campaignId: 'campaign', sourceId: 'source-1' }, { expectedRevision: 1, sourceId: 'source-2' }],
+        ['shipment', recordManualShipmentEvidence, db.shipmentObservation, { orderId: order.id, shipmentId: shipment.id, expectedVersion: shipment.version,
+            eventType: 'returned', externalEventId: 'returned-1', occurredAt }, { externalEventId: 'returned-2' }],
+        ['procurement', recordManualEvidence, db.procurementEvidence, { purchaseOrderId: purchase.id, supplierId: supplier.id, intentHash: purchase.intentHash,
+            expectedVersion: purchase.version, kind: 'supplier_confirmation', externalRef: 'observation-1', occurredAt }, { externalRef: 'observation-2' }],
+    ];
+    const prepared = [];
+    for (const [kind, writer, table, input, revision] of writers) {
+        const cli = await reviewedEvidenceFixture(kind, { document: 'reviewed document' });
+        t.after(cli.close);
+        const original = { ...common, ...input }, hash = await cli.prepare(original);
+        const { stdout } = await cli.execute(hash);
+        prepared.push({ kind, writer, table, cli, original, hash, revision, id: JSON.parse(stdout).evidenceId });
+    }
+    await db.purchaseOrder.update({ where: key(purchase.id), data: { status: 'cancelled' } });
+    await json(await change('close'), 200, 'ShopResponse');
+    const auditCount = () => db.auditEntry.count({ where: { shopId } });
+    const audits = await auditCount();
+    for (const { kind, writer, table, cli, original, hash, revision, id } of prepared) await t.test(kind, async () => {
+        assert.equal(JSON.parse((await cli.execute(hash)).stdout).evidenceId, id);
+        await assert.rejects(writer(db, { ...original, reviewerId: ownerB.userId }, hash),
+            error => error.getStatus() === 404);
+        const next = { ...original, ...revision }, nextHash = await cli.prepare(next);
+        await assert.rejects(writer(db, next, nextHash), { problemCode: 'SHOP_CLOSED' });
+        await assert.rejects(cli.execute(nextHash), { stderr: /rejected \(409\)/ });
+        assert.equal(await table.count({ where: { shopId } }), 1);
+        assert.equal(await auditCount(), audits);
+    });
+});
+
+test('P0-05 SHOP-LIFECYCLE: a closed shop rejects pending marketing opt-ins and lets a customer withdraw earlier consent', async t => {
+    const { shop, owner, path, headers, change } = await closureFixture(t);
+    const shopId = shop.id;
+    const createChallenge = async existing => {
+        const customer = await db.customer.create({ data: { shopId, displayName: 'Kiểm đồng ý', email: randomUUID() + '@example.test' } });
+        if (existing) await db.customerConsent.create({ data: { shopId, customerId: customer.id, channel: 'email', status: 'granted', policyVersion: shop.policyVersion } });
+        const response = await sendMemberWrite(owner, path + '/customers/' + customer.id + '/consent-challenges', 'POST',
+            { purpose: 'marketing', channel: 'email', message: 'Xác nhận việc nhận nội dung tiếp thị qua email.', contentVersion: 1 }, headers());
+        const challenge = (await json(response, 201, 'ConsentChallengeResponse')).data;
+        return { customer, token: challenge.fixtureToken };
+    };
+    const pending = await createChallenge(false);
+    const exchanged = await createChallenge(false);
+    const withdrawal = await createChallenge(true);
+    const csrf = await request('/auth/csrf');
+    const browser = { cookie: csrf.headers.get('set-cookie').split(';')[0] };
+    const csrfToken = (await json(csrf, 200, 'CsrfResponse')).data.csrfToken;
+    const post = (url, body) => sendMemberWrite(browser, '/public/consent/' + url, 'POST', body, { ...headers(), 'x-csrf-token': csrfToken });
+    const exchange = token => post('challenges/exchange', { token });
+    const confirm = data => post('confirmations', { challengeSessionId: data.challengeSessionId, contentVersion: 1, decision: 'accept' });
+    const ready = (await json(await exchange(exchanged.token), 200, 'PublicConsentChallengeViewResponse')).data;
+    await json(await change('close'), 200, 'ShopResponse');
+    assert.equal((await json(await exchange(pending.token), 409, 'Problem')).code, 'SHOP_CLOSED');
+    assert.equal((await json(await confirm(ready), 409, 'Problem')).code, 'SHOP_CLOSED');
+    const revokeConsent = (await json(await exchange(withdrawal.token), 200, 'PublicConsentChallengeViewResponse')).data;
+    await json(await confirm(revokeConsent), 200, 'ConsentConfirmationResponse');
+    assert.equal((await db.customerConsent.findFirstOrThrow({ where: { shopId, customerId: withdrawal.customer.id } })).status, 'withdrawn');
+    assert.equal(await db.customerConsent.count({ where: { shopId, customerId: exchanged.customer.id } }), 0);
+});
+
+test('P0-05 SHOP-LIFECYCLE: signing in can still accept another shop invitation while the closed shop invitation stays pending', async t => {
+    const { shop, owner, path, headers, change, create } = await closureFixture(t);
+    const other = await create();
+    const subject = randomUUID();
+    const email = subject + '@example.test';
+    const identity = { oidcIssuer: fixtureIssuer, oidcSubject: subject, displayName: 'Thành viên mới', email };
+    for (const id of [shop.id, other.id]) {
+        await json(await sendMemberWrite(owner, membersPath(id), 'POST', { email, roles: ['viewer'] }, headers()), 201, 'MembershipResponse');
+    }
+    const closed = (await json(await change('close'), 200, 'ShopResponse')).data;
+    const signIn = () => db.$transaction(tx => acceptInvitations(tx, identity, randomUUID()), { isolationLevel: 'Serializable' });
+    const user = await signIn();
+    const viewer = await fixtureSession(db, subject);
+    t.after(() => db.session.update({ where: { id: viewer.id }, data: { revokedAt: new Date() } }));
+    assert.equal((await request(shopPath(other.id), viewer)).status, 200);
+    assert.equal((await request(path, viewer)).status, 404);
+    assert.equal(await db.membership.count({ where: { shopId: shop.id, status: 'invited' } }), 1);
+    await json(await change('reopen', headers(closed.version)), 200, 'ShopResponse');
+    assert.equal((await signIn()).id, user.id);
+    assert.equal((await request(path, viewer)).status, 200);
+});
+
+test('P0-05 SHOP-LIFECYCLE: a file that expires during an external write still blocks closing until its lease settles', async t => {
+    const { shop, owner, change } = await closureFixture(t);
+    const file = await db.fileObject.create({ data: { shopId: shop.id, uploaderId: owner.userId, name: 'ảnh.png', mimeType: 'image/png', sizeBytes: 1,
+        sha256: digest('a'), purpose: 'product_image', status: 'ready' } });
+    const key = { shopId: shop.id, fileId: file.id };
+    await db.fileStorage.create({ data: { ...key, targetId: digest('fixture'), leaseUntil: new Date(Date.now() + 60000) } });
+    await db.fileObject.update({ where: { shopId_id: { shopId: shop.id, id: file.id } }, data: { expiresAt: new Date(Date.now() - 1000) } });
+    const blocked = await json(await change('close'), 409, 'Problem');
+    assert.deepEqual(blocked.errors.map(item => item.code), ['BACKGROUND_WORK']);
+    await db.fileStorage.update({ where: { shopId_fileId: key }, data: { state: 'purged', leaseUntil: null } });
+    await json(await change('close'), 200, 'ShopResponse');
+});
+
+test('P0-05 SHOP-LIFECYCLE: resolving a handoff and acknowledging its notification clears the blockers while preserving unknown outcomes', async t => {
+    const { shop, owner, path, headers, change } = await closureFixture(t);
+    const shopId = shop.id;
+    const customer = await db.customer.create({ data: { shopId, displayName: 'Khách được bàn giao' } });
+    const { conversation } = await orderConversation(db, shopId, customer.id);
+    const message = await db.channelMessage.create({ data: { shopId, conversationId: conversation.id, direction: 'inbound', origin: 'provider',
+        senderKind: 'customer', externalId: randomUUID(), text: 'Hỗ trợ từ nhân viên' } });
+    const work = await db.workItem.create({ data: { shopId, kind: 'customer_handoff', sourceType: 'conversation', sourceId: conversation.id,
+        state: 'working', assigneeUserId: owner.userId } });
+    await db.botInboundTask.create({ data: { shopId, messageId: message.id, channelGeneration: 1, conversationGeneration: 1, botGeneration: 1,
+        providerRunId: randomUUID(), externalStartedAt: new Date(), finishedAt: new Date(), outcome: 'provider_unknown' } });
+    const notice = await db.appNotification.create({ data: { shopId, workItemId: work.id, sourceType: 'work_item', sourceId: work.id,
+        recipientUserId: owner.userId, channel: 'telegram', title: 'Chuyển cho nhân viên', safeBody: 'Kiểm tra yêu cầu',
+        deliveryStatus: 'unknown', deliveryIntent: digest(randomUUID()) } });
+    const former = await db.membership.create({ data: { shopId, userId: reader.userId, roles: ['manager'] } });
+    await db.appNotification.create({ data: { shopId, workItemId: work.id, sourceType: 'work_item', sourceId: work.id, recipientUserId: reader.userId,
+        channel: 'telegram', title: 'Hỗ trợ khách', safeBody: 'Nhắc công việc', deliveryStatus: 'unknown', deliveryIntent: digest(randomUUID()) } });
+    assert.equal((await revoke(owner, shopId, former.id, headers(former.permissionVersion))).status, 204);
+    const blocked = async () => (await json(await change('close'), 409, 'Problem')).errors.map(e => e.code);
+    assert.ok((await blocked()).includes('BACKGROUND_WORK'));
+    const post = (resource, input) => sendMemberWrite(owner, path + '/' + resource, 'POST', input, headers());
+    await json(await post('conversations/' + conversation.id + '/resolve', { expectedVersion: conversation.version, reason: 'Đã hỗ trợ khách' }), 202, 'CommandResponse');
+    await json(await post('work-items/' + work.id + '/actions', { action: 'complete', expectedVersion: work.version, reason: 'Xác nhận bàn giao đã hoàn tất' }), 200, 'WorkItemResponse');
+    assert.deepEqual(await blocked(), ['EXTERNAL_UNKNOWN']);
+    await json(await post('notifications/' + notice.id + '/acknowledge', { expectedVersion: notice.version }), 200, 'NotificationResponse');
+    await json(await change('close'), 200, 'ShopResponse');
+    assert.equal((await db.appNotification.findUniqueOrThrow({ where: { shopId_id: { shopId, id: notice.id } } })).deliveryStatus, 'unknown');
+    assert.equal((await db.botInboundTask.findUniqueOrThrow({ where: { shopId_messageId: { shopId, messageId: message.id } } })).outcome, 'provider_unknown');
+    assert.equal(await db.auditEntry.count({ where: { shopId, actorId: owner.userId, action: 'acknowledgeNotification', resourceId: notice.id } }), 1);
+    assert.equal(await db.auditEntry.count({ where: { shopId, actorId: owner.userId, action: 'updateWorkItem', resourceId: work.id } }), 1);
+});
+
+test('P0-05 SHOP-LIFECYCLE: an active device probe blocks closure and a finished inconclusive probe remains available for diagnostics', async t => {
+    const { shop, owner, change } = await closureFixture(t);
+    const shopId = shop.id;
+    const job = await db.job.create({ data: { shopId, actorId: owner.userId, sourceOperation: 'testDevice', kind: 'connection_test', input: {} } });
+    assert.deepEqual((await json(await change('close'), 409, 'Problem')).errors.map(e => e.code), ['BACKGROUND_WORK']);
+    await db.job.update({ where: { shopId_id: { shopId, id: job.id } }, data: { status: 'awaiting_confirmation', externalStartedAt: new Date() } });
+    const notice = await db.appNotification.create({ data: { shopId, sourceType: 'job', sourceId: job.id, recipientUserId: owner.userId,
+        channel: 'telegram', title: 'Kiểm tra thiết bị', safeBody: 'Chưa xác minh kết quả', deliveryStatus: 'unknown', deliveryIntent: digest(randomUUID()) } });
+    await json(await change('close'), 200, 'ShopResponse');
+    assert.equal((await db.appNotification.findUniqueOrThrow({ where: { shopId_id: { shopId, id: notice.id } } })).deliveryStatus, 'unknown');
 });

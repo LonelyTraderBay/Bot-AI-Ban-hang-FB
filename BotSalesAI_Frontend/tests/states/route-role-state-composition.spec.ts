@@ -1,9 +1,10 @@
-import { openDemoControls, waitForDemoMenu, navigateDemoAndRead } from '../session/demo-controls';
+import { navigateDemoAndRead, setDemoControl } from '../session/demo-controls';
 import { readFileSync } from 'node:fs';
 import { test, expect } from '@playwright/test';
 import { startDemoServer } from '../session/demo-server.mjs';
 import { assertEmptyTable } from '../session/assert-empty-table';
 import { holdRouteReads } from '../session/read-barrier';
+import { expectedDocumentTitle } from '../session/document-title';
 import { API_BASE_PATH } from '../../packages/contracts/src/generated';
 
 // Every role test uses a fresh page fixture; no browser/mock state is shared.
@@ -47,18 +48,9 @@ function operationPattern(operation: string) {
     return '^' + (API_BASE_PATH + path).split('/').map(segment => segment.startsWith('{') ? '[^/]+' : segment.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')).join('/') + '$';
 }
 
-async function chooseMockOption(page: import('@playwright/test').Page, label: string, value: string) {
-    await openDemoControls(page);
-    await page.getByRole('combobox', { name: label }).click();
-    await waitForDemoMenu(page, label);
-    await page.getByRole('option', { name: value, exact: true }).click({ timeout: 10_000 });
-}
-
 async function chooseRole(page: import('@playwright/test').Page, role: string) {
     if (role === 'owner') return;
-    await chooseMockOption(page, 'Vai trò mô phỏng', role);
-    await expect(page.getByRole('status').filter({ hasText: 'Vai trò mô phỏng đã được áp dụng.' })).toBeVisible();
-    await expect(page.getByRole('combobox', { name: 'Vai trò mô phỏng' })).toHaveText(role);
+    await setDemoControl(page, 'role', role);
 }
 
 async function navigateWithinDemo(page: import('@playwright/test').Page, path: string) {
@@ -94,7 +86,7 @@ test.describe('route read states render under every role allowed by the canonica
             if (!bootstrapRoute || !secondaryBootstrapRoute || !canRead(bootstrapRoute, role) || !canRead(secondaryBootstrapRoute, role)) throw new Error('R37 and R52 must remain readable by every simulated role.');
             await page.goto(new URL(routePath(bootstrapRoute.path), demoUrl).toString());
             await chooseRole(page, role);
-            await chooseMockOption(page, 'Trạng thái thử', 'Lỗi API kéo dài');
+            await setDemoControl(page, 'fault', 'error_persistent_all');
 
             for (const route of readableErrorRoutes.filter(route => route.id !== 'R37')) {
                 await navigateWithinDemo(page, route.path);
@@ -113,7 +105,7 @@ test.describe('route read states render under every role allowed by the canonica
             try {
                 await secondaryPage.goto(new URL(routePath(secondaryBootstrapRoute.path), demoUrl).toString());
                 await chooseRole(secondaryPage, role);
-                await chooseMockOption(secondaryPage, 'Trạng thái thử', 'Lỗi API kéo dài');
+                await setDemoControl(secondaryPage, 'fault', 'error_persistent_all');
                 await navigateWithinDemo(secondaryPage, bootstrapRoute.path);
                 const bootstrapMain = secondaryPage.locator('main#main-content');
                 await expect(bootstrapMain, `R37 should render its route content for ${role}`).toBeVisible();
@@ -129,7 +121,7 @@ test.describe('route read states render under every role allowed by the canonica
             try {
                 await emptyPage.goto(new URL('/s/shop-demo/overview', demoUrl).toString());
                 await chooseRole(emptyPage, role);
-                await chooseMockOption(emptyPage, 'Trạng thái thử', 'Danh sách rỗng (demo)');
+                await setDemoControl(emptyPage, 'fault', 'empty_persistent');
                 for (const route of readableEmptyRoutes) {
                     await navigateWithinDemo(emptyPage, route.path);
                     const main = emptyPage.locator('main#main-content');
@@ -202,7 +194,7 @@ test.describe('route loading state appears for every readable route with route-o
                     const barrier = await holdRouteReads(page, patterns);
                     try {
                         await navigateWithinDemo(page, route.path);
-                        await expect.poll(() => page.title(), { message: `${route.id} must become the active route for ${role}` }).toBe(`${route.title} · BotSales AI`);
+                        await expect.poll(() => page.title(), { message: `${route.id} must become the active route for ${role}` }).toBe(expectedDocumentTitle(route));
                         const main = page.locator('main#main-content');
                         await expect(main, `${route.id} should render for ${role}`).toBeVisible();
                         const loading = main.getByText(/Đang tải/);

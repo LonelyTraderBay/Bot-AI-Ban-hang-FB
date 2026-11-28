@@ -536,7 +536,7 @@ test('Panel geometry and DataTable columns remain closed public contracts', () =
     ));
     assert.deepEqual(
         checker.getPropertiesOfType(panelGeometry).map(property => property.getName()).sort(),
-        ['display', 'flexDirection', 'gridColumn', 'height'],
+        ['display', 'flexDirection', 'gridColumn', 'height', 'overflowY'],
         'Panel geometry must stay limited to its documented layout keys',
     );
     const breakpoints = ['xs', 'sm', 'md', 'lg', 'xl'];
@@ -558,7 +558,13 @@ test('Panel geometry and DataTable columns remain closed public contracts', () =
     assert.ok(column, 'Column<T> must remain exported for typed DataTable columns');
     const columnType = checker.getDeclaredTypeOfSymbol(column);
     const properties = new Map(checker.getPropertiesOfType(columnType).map(property => [property.getName(), property]));
-    assert.deepEqual([...properties.keys()].sort(), ['align', 'key', 'label', 'render']);
+    assert.deepEqual([...properties.keys()].sort(), ['align', 'gridAction', 'key', 'label', 'render', 'width']);
+    const gridAction = properties.get('gridAction');
+    assert.ok(gridAction.flags & ts.SymbolFlags.Optional, 'Grid action placement is opt-in');
+    assert.equal(checker.typeToString(checker.getNonNullableType(checker.getTypeOfSymbolAtLocation(gridAction, gridAction.valueDeclaration))), 'boolean');
+    const width = properties.get('width');
+    assert.ok(width.flags & ts.SymbolFlags.Optional, 'Column width is an optional preferred grid track width');
+    assert.equal(checker.typeToString(checker.getNonNullableType(checker.getTypeOfSymbolAtLocation(width, width.valueDeclaration))), 'number');
     const alignProperty = properties.get('align');
     const align = checker.getNonNullableType(checker.getTypeOfSymbolAtLocation(alignProperty, alignProperty.valueDeclaration));
     const alignValues = align.isUnion() ? align.types : [align];
@@ -572,6 +578,17 @@ test('Panel geometry and DataTable columns remain closed public contracts', () =
     const rowType = checker.getTypeOfSymbolAtLocation(renderSignature.getParameters()[0], renderProperty.valueDeclaration);
     assert.equal(checker.typeToString(rowType), 'T', 'Column.render must receive its DataTable row type');
     assert.equal(checker.typeToString(renderSignature.getReturnType()), 'ReactNode', 'Column.render must remain a ReactNode slot');
+
+    const dataTable = publicFunctionContracts('apps/web/src/shared/ui/components.tsx').find(api => api.name === 'DataTable');
+    const mobile = checker.getPropertyOfType(dataTable.type, 'mobile');
+    assert.ok(mobile && !(mobile.flags & ts.SymbolFlags.Optional), 'DataTable callers must select a mobile layout');
+    const mobileLayouts = checker.getTypeOfSymbolAtLocation(mobile, mobile.valueDeclaration);
+    assert.ok(mobileLayouts.isUnion());
+    assert.deepEqual(mobileLayouts.types.map(member => {
+        const layout = checker.getPropertyOfType(member, 'layout');
+        return checker.getTypeOfSymbolAtLocation(layout, layout.valueDeclaration).value;
+    }).sort(), ['cards', 'comparison']);
+    assert.ok(!dataTable.props.includes('pinActionOnMobile') && !dataTable.props.includes('reflowOnMobile'));
 
     const sectionGrid = publicFunctionContracts('apps/web/src/shared/ui/composition.tsx').find(api => api.name === 'SectionGrid');
     const columns = checker.getPropertyOfType(sectionGrid.type, 'columns');

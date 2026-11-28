@@ -17,6 +17,7 @@ vi.mock('../src/shared/model/scope', async importOriginal => ({
     ...await importOriginal<typeof import('../src/shared/model/scope')>(),
     useScope: () => ({ shop: { id: 'shop-demo', name: 'Synthetic shop', currency: 'VND', timezone: 'Asia/Vientiane' } }),
     useCan: () => false,
+    useCanWrite: () => false,
 }));
 
 let router: ReturnType<typeof createBrowserRouter>;

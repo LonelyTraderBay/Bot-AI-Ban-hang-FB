@@ -5,7 +5,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import type { Account } from '@botsales/contracts';
 import { useApi, useCommand } from '@/shared/api/hooks';
-import { useScope, useCan } from '@/shared/model/scope';
+import { useScope, useCanWrite } from '@/shared/model/scope';
 import { useListQuery } from '@/shared/model/filters';
 import { useVersionedDraft, draftEqual } from '@/shared/model/versioned-draft';
 import { useDraftForm, markDraftClean } from '@/shared/model/dirty-drafts';
@@ -21,7 +21,7 @@ const snapshot=(account:Account)=>({version:account.version,values:{code:account
 export const accountGroupName:Record<Account['group'],string>={asset:'Tài sản',liability:'Nợ phải trả',equity:'Vốn chủ sở hữu',income:'Thu nhập',expense:'Chi phí'};
 
 export function AccountsPage() {
-    const {shop}=useScope(),canEdit=useCan("finance.accounts.manage");const list=useApi('listAccounts',{query:useListQuery('listAccounts')});
+    const {shop}=useScope(),canEdit=useCanWrite("finance.accounts.manage");const list=useApi('listAccounts',{query:useListQuery('listAccounts')});
     const [open,setOpen]=useState(false),[selected,setSelected]=useState<Account|null>(null),[archive,setArchive]=useState<Account|null>(null),[success,setSuccess]=useState('');
     const detail=useApi('getAccount',{path:{accountId:selected?.id||''}},open&&Boolean(selected));
     const create=useCommand('createAccount',['listAccounts']),update=useCommand('updateAccount',['listAccounts','getAccount']),remove=useCommand('archiveAccount',['listAccounts','getAccount']);
@@ -42,7 +42,7 @@ export function AccountsPage() {
         <PageHeader title="Tài khoản kế toán" subtitle="Danh mục kế toán quản trị; mã và nhóm đã dùng trong chứng từ được bảo vệ, không phải hệ thống tài khoản pháp định." actions={<MutationButton permission="finance.accounts.manage" variant="contained" onClick={()=>{setSelected(null);form.reset(empty);setOpen(true);}}>Thêm tài khoản</MutationButton>}/>
         {success&&<Alert severity="success" role="status">{success}</Alert>}
         <Panel><Toolbar operation="listAccounts" placeholder="Tìm mã hoặc tên tài khoản…"/><QueryState query={list} pendingProfile="section">{list.data&&<>
-            <DataTable label="Danh mục tài khoản kế toán" rows={list.data.data} rowKey={account=>account.id} columns={[
+            <DataTable mobile={{ layout: 'cards', titleKey: 'code', summaryKeys: ['name', 'group', 'status'], actionKey: 'edit' }} label="Danh mục tài khoản kế toán" rows={list.data.data} rowKey={account=>account.id} columns={[
                 {key:'code',label:'Mã tài khoản',render:a=>a.code},{key:'name',label:'Tên tài khoản',render:a=>a.name},{key:'group',label:'Nhóm',render:a=>accountGroupName[a.group]},{key:'used',label:'Chứng từ',render:a=>a.used?'Đã sử dụng':'Chưa sử dụng'},{key:'status',label:'Trạng thái',render:a=><Status value={a.status}/>},
                 {key:'edit',label:'Thao tác',render:a=>a.status==='active'?<ActionGroup><MutationButton permission="finance.accounts.manage" onClick={()=>{setSelected(a);form.reset(snapshot(a).values);setOpen(true);}}>Sửa tài khoản {a.code}</MutationButton><MutationButton permission="finance.accounts.manage" onClick={()=>setArchive(a)}>Ngừng dùng {a.code}</MutationButton></ActionGroup>:'Lịch sử được giữ'},
             ]}/><Pager page={list.data.page}/></>}</QueryState></Panel>

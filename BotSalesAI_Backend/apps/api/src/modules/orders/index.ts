@@ -10,8 +10,11 @@ import type { MetaInboundConfig } from '../channels/index.js';
 import type { AuthConfig } from '../workspace/index.js';
 import { OrdersService, type CancelOrder, type ConfirmOrder, type CustomerEvidence, type DraftPatch } from './orders-service.js';
 import type { DraftOrder } from './pricing.js';
+import { ConversationDrafts } from './conversation-drafts.js';
+import { ConversationDraftsController } from './conversation-drafts-controller.js';
 
 export { orderInShop } from './order-data.js';
+export { orderMoney } from './pricing.js';
 export { createSalesDraft, orderCommands, quoteDeliveryDraft, recordSalesQuoteEvidence, requireCurrentPaymentPrice } from './orders-service.js';
 export { returnCommands } from './returns.js';
 import { ReturnsController, ReturnsService } from './returns.js';
@@ -51,6 +54,15 @@ class OrdersController {
         @Req() request: IncomingMessage, @Res({ passthrough: true }) response: ServerResponse) {
         noStore(response);
         return versionedEnvelope(response, await this.orders.create(request.headers, shopId, draft, requestId(response)));
+    }
+
+    @Post('estimate')
+    @HttpCode(200)
+    @ContractOperation('estimateOrderDraft')
+    async estimate(@Param('shopId', idPipe) shopId: string, @Body(draftInput) draft: DraftOrder,
+        @Req() request: IncomingMessage, @Res({ passthrough: true }) response: ServerResponse) {
+        noStore(response);
+        return envelope(response, await this.orders.estimate(request.headers, shopId, draft));
     }
 
     @Patch(':orderId')
@@ -103,8 +115,9 @@ class OrdersModule {}
 
 export function ordersModule(db?: PrismaClient, config?: AuthConfig, meta?: MetaInboundConfig): DynamicModule {
     return {
-        module: OrdersModule, controllers: [OrdersController, ReturnsController],
+        module: OrdersModule, controllers: [OrdersController, ReturnsController, ConversationDraftsController],
         providers: [
+            { provide: ConversationDrafts, useFactory: () => new ConversationDrafts(db, config) },
             { provide: OrdersService, useFactory: () => new OrdersService(db, config, meta) },
             { provide: ReturnsService, useFactory: () => new ReturnsService(db, config) },
         ],

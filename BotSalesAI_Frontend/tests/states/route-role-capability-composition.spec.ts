@@ -1,6 +1,6 @@
 import { readFileSync } from 'node:fs';
 import { expect, test } from '@playwright/test';
-import { openDemoControls } from '../session/demo-controls';
+import { setDemoControl } from '../session/demo-controls';
 import { startDemoServer } from '../session/demo-server.mjs';
 
 type Route = {
@@ -23,14 +23,12 @@ const capabilityRoles = Object.keys(permissionCatalog.rolePresets).filter(role =
 });
 const capabilityFaults = [
     {
-        option: 'Hết hạn mức AI mô phỏng',
         fault: 'budget_exceeded',
         status: 429,
         code: 'BUDGET_EXCEEDED',
         message: 'Hạn mức AI mô phỏng đã đạt giới hạn',
     },
     {
-        option: 'Công cụ bị từ chối',
         fault: 'tool_denied',
         status: 403,
         code: 'TOOL_NOT_ALLOWED',
@@ -38,21 +36,14 @@ const capabilityFaults = [
     },
 ];
 
-async function chooseMockOption(page: import('@playwright/test').Page, label: string, value: string) {
-    await openDemoControls(page);
-    await page.getByRole('combobox', { name: label }).click();
-    await page.getByRole('option', { name: value, exact: true }).click();
-}
-
 for (const role of capabilityRoles) {
     test(`R27 capability failure stays distinct and preserves the prompt for ${role}`, async ({ page }) => {
         const server = await startDemoServer();
         try {
             await page.goto(new URL('/s/shop-demo/bot/playground', server.url).toString());
-            await expect(page.getByRole('heading', { name: 'Phòng thử bot' })).toBeVisible();
+            await expect(page.getByRole('heading', { name: 'Thử bot' })).toBeVisible();
             if (role !== 'owner') {
-                await chooseMockOption(page, 'Vai trò mô phỏng', role);
-                await expect(page.getByRole('status').filter({ hasText: 'Vai trò mô phỏng đã được áp dụng.' })).toBeVisible();
+                await setDemoControl(page, 'role', role);
             }
 
             const prompt = `Kiểm chứng capability_unavailable cho ${role}.`;
@@ -61,7 +52,7 @@ for (const role of capabilityRoles) {
             await expect(input).toHaveValue(prompt);
 
             for (const fault of capabilityFaults) {
-                await chooseMockOption(page, 'Trạng thái thử', fault.option);
+                await setDemoControl(page, 'fault', fault.fault);
                 await expect(input).toHaveValue(prompt);
                 const responseWait = page.waitForResponse(response => response.request().method() === 'POST'
                     && new URL(response.url()).pathname.endsWith('/bot/playground'));

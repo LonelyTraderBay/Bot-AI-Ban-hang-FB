@@ -1,20 +1,18 @@
 import operationIndex from '../../../../packages/contracts/src/operations.json';
+import { sha256Text } from '../shared/api/sha256';
+import { isShopTransition, permitsClosedShopWrite } from '../shared/model/shop-lifecycle';
 import collections from './collections.json';
-import { db, all, first, find, insert, resetDb, restoreDb, ensure, str, num, record, rows, id, now, future, grantedPermissions, audit, MockFailure } from './database';
+import { command, db, all, first, find, insert, resetDb, restoreDb, ensure, str, num, record, rows, id, now, future, grantedPermissions, audit, MockFailure } from './database';
 import type { Row, Input } from './database';
 import { catalog } from './catalog';
 import { orders } from './orders';
 import { fulfillment } from './fulfillment';
 import { markDelegatedPurchasesUnknown, procurement } from './procurement';
 import { allTimeReportWindow, finance, cashflow, profitLoss } from './finance';
-import { auxiliary } from './auxiliary';
 import { clearFileState, files, upload } from './files';
 import { masters, visibleOrderAddress } from './masters';
-import { privacy as privacyOperations, safeConsentChallenge } from './privacy';
 import { shippingPolicyOperations } from './shipping-policy';
 import { promotionCurrent, promotionDate, promotionOperations } from './promotions';
-import { stocktakeOperations } from './stocktakes';
-import { stockTransferOperations } from './stock-transfers';
 import type { EventEnvelope } from '@botsales/contracts';
 export { MockFailure };
 export const CSRF = 'botsales-demo-csrf-not-a-real-secret';
@@ -106,6 +104,7 @@ export type MockResult = {
     status: number;
     data: unknown;
     commandId?: string;
+    dropResponse?: boolean;
 };
 async function read(op: string, input: Input): Promise<unknown> {
     const { shopId } = input;
@@ -124,10 +123,20 @@ async function read(op: string, input: Input): Promise<unknown> {
     }
     if (op === 'listBotRevisions')
         return all('botRevisions', shopId);
-    if (op === 'getDashboard')
+    if (op === 'getDashboard') {
+        const permissions = grantedPermissions(role);
+        const summary = (states: string[]) => all('orders', shopId).filter(row => states.includes(str(row.orderState)))
+            .sort((a, b) => str(b.updatedAt).localeCompare(str(a.updatedAt))).slice(0, 3)
+            .map(({ id, fulfillmentState, total, updatedAt, customerId }) => ({ id, fulfillmentState, total, updatedAt,
+                customerName: permissions.includes('customers.read') ? all('customers', shopId).find(row => row.id === customerId)?.displayName ?? null : null }));
+        const stock = all('stock', shopId).sort((a, b) => num(a.available) - num(b.available) || str(a.sku).localeCompare(str(b.sku))).slice(0, 3)
+            .map(({ id, sku, onHand, reserved, available }) => ({ id, sku, onHand, reserved, available }));
         return {
-            shopId, asOf: now(), openConversations: all('conversations', shopId).filter(c => c.status === 'open').length, pendingOrders: all('orders', shopId).filter(o => ['draft', 'confirmed'].includes(str(o.orderState))).length, lowStockVariants: all('stock', shopId).filter(s => num(s.available) <= num(s.lowStockThreshold)).length, botStatus: first('bots', shopId).status, recognizedRevenue: grantedPermissions(role).includes('finance.read') ? profitLoss(shopId, allTimeReportWindow(shopId)).netSales : null, cashReceived: grantedPermissions(role).includes('finance.read') ? cashflow(shopId, allTimeReportWindow(shopId)).receipts : null, warnings: ['Môi trường mô phỏng. Các kết nối ngoài chưa hoạt động.']
+            shopId, asOf: now(), openConversations: all('conversations', shopId).filter(c => c.status === 'open').length, pendingOrders: all('orders', shopId).filter(o => ['draft', 'confirmed'].includes(str(o.orderState))).length, lowStockVariants: all('stock', shopId).filter(s => num(s.available) <= num(s.lowStockThreshold)).length, botStatus: first('bots', shopId).status, recognizedRevenue: permissions.includes('finance.read') ? profitLoss(shopId, allTimeReportWindow(shopId)).netSales : null, cashReceived: permissions.includes('finance.read') ? cashflow(shopId, allTimeReportWindow(shopId)).receipts : null, warnings: [],
+            ...(permissions.includes('orders.read') && { pendingOrderRows: summary(['draft', 'confirmed']), completedOrderRows: summary(['completed']) }),
+            ...(permissions.includes('inventory.read') && { availableStockRows: stock }),
         };
+    }
     if (op === 'getOperationsSummary')
         return {
             asOf: now(), queuedTasks: all('workItems', shopId).filter(t => t.state === 'queued').length, overdueTasks: all('workItems', shopId).filter(t => t.dueAt && Date.parse(str(t.dueAt)) < Date.parse(now()) && !['completed', 'cancelled'].includes(str(t.state))).length, pendingApprovals: all('approvals', shopId).filter(a => a.status === 'pending').length, unknownCommands: all('commands', shopId).filter(c => c.status === 'unknown').length, roles: all('agentRoles', shopId), health: [['Meta', 'messenger'], ['AI provider', 'ai'], ['Worker', 'worker'], ['Thông báo điện thoại', 'notifications']].map(([component, runbook]) => ({ component, runbook, status: 'unknown', checkedAt: null, expiresAt: null, reason: 'Chưa có backend và kiểm tra tích hợp thật.' }))
@@ -156,6 +165,12 @@ async function read(op: string, input: Input): Promise<unknown> {
         const command = find('commands', input.id, shopId);
         ensure(canReadCommand(command), 'Bạn không có quyền xem nguồn của thao tác này.', 403, 'FORBIDDEN');
         return command;
+    }
+    const kind = input.query.get('kind') ?? '';
+    const lookup = input.query.get('q');
+    if (op === 'listCommands' && isShopTransition(kind) && lookup && /^[a-f0-9]{64}$/.test(lookup)) {
+        const receipt = all('shopLifecycleReceipts', shopId).find(row => row.actorId === input.userId && row.kind === kind && row.digest === lookup);
+        return all('commands', shopId).filter(row => row.id === receipt?.commandId && canReadCommand(row));
     }
     const responseSchema = opMap[op]?.responseSchema;
     const schema = responseSchema?.replace(/ListResponse$|Response$/, '');
@@ -210,13 +225,21 @@ async function read(op: string, input: Input): Promise<unknown> {
         }
         if (op === 'listProducts' && input.query.has('categoryId'))
             data = data.filter(r => r.categoryId === input.query.get('categoryId'));
+        if (op === 'listOrders') {
+            for (const filter of ['fulfillmentState', 'paymentState'] as const) {
+                const value = input.query.get(filter);
+                if (value) data = data.filter(order => order[filter] === value);
+            }
+        }
         const search = input.query.get('q')?.toLocaleLowerCase('vi');
         if (search)
             data = data.filter(r => JSON.stringify(r).toLocaleLowerCase('vi').includes(search));
         if (collection === 'stock' && !grantedPermissions(role).includes('finance.read'))
             data = data.map(s => ({ ...s, unitCost: null, carryingValue: null }));
-        if (collection === 'consentChallenges')
+        if (collection === 'consentChallenges') {
+            const { safeConsentChallenge } = await import('./privacy');
             data = data.map(safeConsentChallenge);
+        }
         return collection === 'orders' ? data.map(order => visibleOrderAddress(order,shopId)) : data;
     }
     const found = find(collection, input.id, shopId);
@@ -264,10 +287,15 @@ async function execute(request: MockRequest): Promise<MockResult> {
     }
     if (!['exchangeConsentChallenge', 'confirmConsentChallenge'].includes(request.op))
         currentSession();
-    if (request.op === 'listShops')
-        return { status: 200, data: db.shops || [] };
+    if (request.op === 'listShops') {
+        const status = input.query.get('status') ?? 'active';
+        ensure(['active', 'closed'].includes(status), 'Trạng thái cửa hàng không hợp lệ.', 422);
+        const visible = new Set((db.members || []).filter(m => m.userId === input.userId && m.status === 'active').map(m => m.shopId));
+        const keyword = input.query.get('q')?.trim().toLocaleLowerCase('vi') || '';
+        return { status: 200, data: (db.shops || []).filter(shop => visible.has(shop.id) && shop.status === status && str(shop.name).toLocaleLowerCase('vi').includes(keyword)) };
+    }
     if (request.op === 'createShop') {
-        const created = insert('shops', 'Shop', '', { ...body, id: id('shop'), defaultWarehouseId: id('warehouse'), policyVersion: 'unconfigured' });
+        const created = insert('shops', 'Shop', '', { ...body, status: 'active', closedAt: null, id: id('shop'), defaultWarehouseId: id('warehouse'), policyVersion: 'unconfigured' });
         const newShop = str(created.id);
         insert('warehouses','Warehouse',newShop,{id:created.defaultWarehouseId,code:'MAIN',name:'Kho chính',addressLine:'Chưa thiết lập địa điểm kho',status:'active'});
         for (const account of all('accounts','shop-demo'))
@@ -286,12 +314,21 @@ async function execute(request: MockRequest): Promise<MockResult> {
         }
         return { status: 201, data: created };
     }
-    if (shopId) {
-        find('shops', shopId, shopId);
-        ensure((db.members || []).some(m => m.shopId === shopId && m.userId === input.userId && m.status === 'active'), 'Bạn không thuộc cửa hàng.', 403);
+    const currentShop = shopId ? find('shops', shopId, shopId) : undefined;
+    const member = (db.members || []).find(m => m.shopId === shopId && m.userId === input.userId && m.status === 'active');
+    if (shopId && !member) {
+        if (['getShop', 'closeShop', 'reopenShop'].includes(request.op))
+            throw new MockFailure(404, 'NOT_FOUND', 'Không tìm thấy cửa hàng.');
+        throw new MockFailure(403, 'FORBIDDEN', 'Bạn không thuộc cửa hàng.');
     }
     if (meta.permission)
         ensure(grantedPermissions(role).includes(meta.permission), 'Bạn không có quyền thực hiện thao tác này.', 403, 'FORBIDDEN');
+    const transition = isShopTransition(request.op);
+    if (transition) {
+        ensure(role === 'owner' && Array.isArray(member?.roles) && member.roles.includes('owner'), 'Chỉ chủ cửa hàng được thay đổi trạng thái.', 403, 'FORBIDDEN');
+        ensure(headers['idempotency-key'], 'Thiếu khóa chống gửi lặp.', 400, 'REQUIRED_HEADER');
+        ensure(request.body === undefined, 'Thao tác này không nhận nội dung.', 422);
+    }
     if (request.op === 'getFile') {
         const file = find('files', request.path.fileId || '', shopId);
         const purpose = str(file.purpose);
@@ -357,9 +394,13 @@ async function execute(request: MockRequest): Promise<MockResult> {
         throw new MockFailure(503, 'SIMULATED_FAILURE', 'Lỗi dịch vụ mô phỏng. Đổi “Thử trạng thái” về bình thường để tiếp tục.');
     }
     if (fault === 'error_persistent_all')
-        throw new MockFailure(503, 'SIMULATED_FAILURE', 'API mô phỏng đang lỗi liên tục. Đổi “Trạng thái thử” về bình thường rồi thử lại.');
+        throw new MockFailure(503, 'SIMULATED_FAILURE', 'API mô phỏng đang lỗi liên tục.');
     if (fault === 'error_persistent' && request.op === 'listDevices')
         throw new MockFailure(503, 'SIMULATED_FAILURE', 'Danh sách thiết bị đang lỗi mô phỏng. Đổi “Thử trạng thái” về bình thường rồi thử tải lại.');
+    if (request.op === 'estimateOrderDraft') {
+        ensure(currentShop?.status !== 'closed', 'Cửa hàng đã đóng.', 409, 'SHOP_CLOSED');
+        return { status: meta.status, data: await orders(request.op, input) };
+    }
     if (fault === 'stale' && mutating) {
         fault = 'none';
         throw new MockFailure(412, 'STALE_VERSION', 'Mô phỏng dữ liệu bị thay đổi bởi người khác.');
@@ -376,8 +417,8 @@ async function execute(request: MockRequest): Promise<MockResult> {
         }
         else formEntries.push([name, value]);
     }
-    const canonicalBody = JSON.stringify({ path: request.path, body: request.body, form: formEntries });
-    const bodyHash = Array.from(new Uint8Array(await crypto.subtle.digest('SHA-256', new TextEncoder().encode(canonicalBody))), byte => byte.toString(16).padStart(2, '0')).join('');
+    const canonicalBody = JSON.stringify({ path: request.path, body: request.body, form: formEntries, ...(transition ? { version: input.version } : {}) });
+    const bodyHash = await sha256Text(canonicalBody);
     if (mutating && headers['idempotency-key']) {
         const previous = seen.get(dedupeKey);
         if (previous) {
@@ -385,13 +426,26 @@ async function execute(request: MockRequest): Promise<MockResult> {
             return previous.response as MockResult;
         }
     }
+    if (mutating && currentShop?.status === 'closed' && !permitsClosedShopWrite(request.op))
+        throw new MockFailure(409, 'SHOP_CLOSED', 'Cửa hàng đã đóng. Chỉ có thể xem dữ liệu nghiệp vụ.');
+    const previousShopStatus = currentShop?.status;
     const snapshot = structuredClone(db);
     try {
         let data: unknown = masters(request.op,input);
         if (data === undefined) data = shippingPolicyOperations(request.op, input);
         if (data === undefined) data = promotionOperations(request.op, input);
-        if (data === undefined) data = stocktakeOperations(request.op, input);
-        if (data === undefined) data = stockTransferOperations(request.op, input);
+        if (data === undefined && /Stocktake$/.test(request.op) && meta.method !== 'GET') {
+            const { stocktakeOperations } = await import('./stocktakes');
+            data = stocktakeOperations(request.op, input);
+        }
+        if (data === undefined && /StockTransfer$/.test(request.op) && meta.method !== 'GET') {
+            const { stockTransferOperations } = await import('./stock-transfers');
+            data = stockTransferOperations(request.op, input);
+        }
+        if (data === undefined && /ConversationOrderDrafts?$/.test(request.op)) {
+            const { conversationDraftOperations } = await import('./conversation-drafts');
+            data = await conversationDraftOperations(request.op, input);
+        }
         if (request.op === 'uploadFile') {
             ensure(request.form, 'Thiếu file.', 422);
             data = await upload(input, request.form);
@@ -408,10 +462,14 @@ async function execute(request: MockRequest): Promise<MockResult> {
             data = await procurement(request.op, input);
         if (data === undefined)
             data = finance(request.op, input);
-        if (data === undefined)
+        if (data === undefined) {
+            const { auxiliary } = await import('./auxiliary');
             data = await auxiliary(request.op, input);
-        if (data === undefined)
-            data = await privacyOperations(request.op, input);
+        }
+        if (data === undefined) {
+            const { privacy } = await import('./privacy');
+            data = await privacy(request.op, input);
+        }
         if (data === undefined)
             data = files(request.op, input);
         if (meta.method === 'GET' && meta.responseSchema?.endsWith('ListResponse') && Array.isArray(data)
@@ -426,12 +484,17 @@ async function execute(request: MockRequest): Promise<MockResult> {
             purchaseOrderIds: (Array.isArray(record(record(data).result).purchaseOrderIds) ? record(record(data).result).purchaseOrderIds as unknown[] : []).map(str),
             reservationIds: (Array.isArray(record(record(data).result).reservationIds) ? record(record(data).result).reservationIds as unknown[] : []).map(str),
         } : null;
-        if (mutating && !['exchangeConsentChallenge', 'confirmConsentChallenge'].includes(request.op))
+        if (mutating && (!transition || currentShop?.status !== previousShopStatus) && !['exchangeConsentChallenge', 'confirmConsentChallenge'].includes(request.op))
             audit(input, request.op, record(data).id ? { type: meta.responseSchema || 'command', id: record(data).id } : null);
         if (meta.responseSchema === 'OrderResponse') data = visibleOrderAddress(record(data),shopId);
         if (meta.responseSchema === 'OrderQuoteResponse') {
             const quote=record(data),order=find('orders',str(quote.orderId),shopId);
             data={...quote,shippingAddressSnapshot:visibleOrderAddress({customerId:order.customerId,shippingAddressSnapshot:quote.shippingAddressSnapshot},shopId).shippingAddressSnapshot};
+        }
+        if (transition) {
+            const receipt = command(shopId, request.op, { type: 'shop', id: shopId });
+            (db.shopLifecycleReceipts ??= []).push({ shopId, actorId: input.userId, kind: request.op, commandId: receipt.id,
+                digest: await sha256Text(headers['idempotency-key']!) });
         }
         const result: MockResult = { status: meta.status, data: meta.status === 204 ? undefined : data };
         if (fault === 'unknown' && mutating && meta.responseSchema === 'CommandResponse') {
@@ -462,6 +525,10 @@ async function execute(request: MockRequest): Promise<MockResult> {
         if (request.op === 'evaluateReorder') record(data).result = null;
         if (mutating && headers['idempotency-key'])
             seen.set(dedupeKey, { body: bodyHash, response: structuredClone(result) });
+        if (transition && fault === 'unknown') {
+            fault = 'none';
+            return { ...result, dropResponse: true };
+        }
         return result;
     }
     catch (error) {

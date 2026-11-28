@@ -9,7 +9,7 @@ export function MarketingEvidence({ summary, shopId }: { summary: MarketingSumma
     return <PageSections geometry={{ gridColumn: '1 / -1' }} shrinkChildren>
         {summary.demandStock && <Panel title="Nhu cầu và tồn khả dụng"
             subtitle="Tối đa 25 SKU theo số lượng trong đơn đã chốt trong kỳ. Tồn khả dụng được đọc ở kho mặc định tại thời điểm xem.">
-            <DataTable label="Nhu cầu và tồn khả dụng" reflowOnMobile rows={summary.demandStock} rowKey={row => row.variantId}
+            <DataTable mobile={{ layout: 'comparison' }} label="Nhu cầu và tồn khả dụng" rows={summary.demandStock} rowKey={row => row.variantId}
                 empty="Chưa có số lượng đã chốt trong kỳ." columns={[
                     { key: 'sku', label: 'SKU', render: row => row.sku },
                     { key: 'ordered', label: 'Đã chốt', align: 'right', render: row => row.orderedUnits },
@@ -23,7 +23,7 @@ export function MarketingEvidence({ summary, shopId }: { summary: MarketingSumma
         </Panel>}
         {summary.campaignResults && <Panel title="Hiệu quả chiến dịch"
             subtitle="Tối đa 50 chiến dịch có hồ sơ quy gán hoặc liên kết chi phí đã duyệt. Số chi được lấy từ sổ quảng cáo.">
-            <DataTable label="Hiệu quả chiến dịch" reflowOnMobile rows={summary.campaignResults}
+            <DataTable mobile={{ layout: 'comparison' }} label="Hiệu quả chiến dịch" rows={summary.campaignResults}
                 rowKey={row => row.channel + '/' + row.campaignId} empty="Kỳ này chưa có hồ sơ chiến dịch được duyệt." columns={[
                     { key: 'campaign', label: 'Kênh và mã chiến dịch', render: row => <Typography component="span" sx={{ overflowWrap: 'anywhere' }}>{row.channel} · {row.campaignId}</Typography> },
                     { key: 'known', label: 'Đơn có nguồn', align: 'right', render: row => row.knownOrders },
@@ -38,7 +38,7 @@ export function MarketingEvidence({ summary, shopId }: { summary: MarketingSumma
         </Panel>}
         {!!summary.actualSpendSources?.length && <Panel title="Chứng từ chi quảng cáo"
             subtitle="Tối đa 25 chứng từ mẫu theo nhóm chiến dịch và nhóm chưa quy gán.">
-            <DataTable label="Chứng từ chi quảng cáo" reflowOnMobile rows={summary.actualSpendSources} rowKey={row => row.journalId} columns={[
+            <DataTable mobile={{ layout: 'cards', titleKey: 'campaign', summaryKeys: ['source', 'journal'] }} label="Chứng từ chi quảng cáo" rows={summary.actualSpendSources} rowKey={row => row.journalId} columns={[
                 { key: 'campaign', label: 'Kênh và mã chiến dịch', render: row => row.campaignId ?
                     <Typography component="span" sx={{ overflowWrap: 'anywhere' }}>{row.channel} · {row.campaignId}</Typography> : 'Chưa quy gán' },
                 { key: 'source', label: 'Mã chứng từ', render: row => <Typography component="span" sx={{ overflowWrap: 'anywhere' }}>{row.sourceId}</Typography> },

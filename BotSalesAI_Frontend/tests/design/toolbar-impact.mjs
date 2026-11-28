@@ -30,7 +30,15 @@ export function toolbarImpact(root) {
     const routeSources = JSON.parse(fs.readFileSync(path.join(root, 'docs/route-source-map.json'), 'utf8'));
     const exceptionTabs = new Map([['WorkQueue', ''], ['JobQueue', '?view=jobs'], ['CommandQueue', '?view=commands']]);
     const isExceptionTab = (route, call) => route.id === 'R63' && call.file === routeSources.R63?.source && exceptionTabs.has(call.owner);
-    const rows = manifest.routes.flatMap(route => calls.filter(call => bindings.get(route.id) === call.owner || isExceptionTab(route, call)).map(call => ({
+    const ownsToolbar = (route, call) => {
+        const registered = bindings.get(route.id);
+        const owner = routeSources[route.id];
+        // The Inbox list shares its route wrapper with the detail. Only the list
+        // exposes the queue Toolbar at every viewport.
+        const inboxList = route.id === 'R05' && owner?.source === call.file && owner.component === call.owner;
+        return registered && (registered === call.owner || inboxList || isExceptionTab(route, call));
+    };
+    const rows = manifest.routes.flatMap(route => calls.filter(call => ownsToolbar(route, call)).map(call => ({
         ...call, id: route.id, path: route.path.replace(':shopId', 'shop-demo').replace(':conversationId', 'cv1')
             + (isExceptionTab(route, call) ? exceptionTabs.get(call.owner) : ''), title: route.title,
         supportsSearch: operations[call.operation].queryParameters.some(parameter => parameter.name === 'q'),

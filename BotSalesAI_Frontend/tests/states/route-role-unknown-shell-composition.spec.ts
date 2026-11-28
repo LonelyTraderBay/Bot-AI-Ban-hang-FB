@@ -1,7 +1,8 @@
 import { readFileSync } from 'node:fs';
 import { expect, test } from '@playwright/test';
-import { openDemoControls } from '../session/demo-controls';
+import { setDemoControl } from '../session/demo-controls';
 import { startDemoServer } from '../session/demo-server.mjs';
+import { expectedDocumentTitle } from '../session/document-title';
 
 type Route = { id: string; path: string; title: string; readPermission: string | null; actions: Array<{ operationId: string; permission: string | null }> };
 type PermissionCatalog = { rolePresets: Record<string, string[]> };
@@ -41,9 +42,7 @@ test.afterAll(async () => stopDemo?.());
 
 async function chooseRole(page: import('@playwright/test').Page, role: string) {
     if (role === 'owner') return;
-    await openDemoControls(page);
-    await page.getByRole('combobox', { name: 'Vai trò mô phỏng' }).click();
-    await page.getByRole('option', { name: role, exact: true }).click();
+    await setDemoControl(page, 'role', role);
 }
 
 test.describe('unknown command recovery shell renders for each readable route and permitted action role', () => {
@@ -75,7 +74,7 @@ test.describe('unknown command recovery shell renders for each readable route an
                 }, pathname);
                 const main = page.locator('main#main-content');
                 await expect.poll(() => new URL(page.url()).pathname).toBe(pathname);
-                await expect.poll(() => page.title()).toBe(`${route.title} · BotSales AI`);
+                await expect.poll(() => page.title()).toBe(expectedDocumentTitle(route));
                 await expect(main.getByRole('heading').first(), `${route.id} should render before adding recovery state`).toBeVisible();
 
                 const intentId = `uic07-${role}-${route.id}`;

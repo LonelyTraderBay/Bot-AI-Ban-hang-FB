@@ -64,18 +64,21 @@ export async function runDesignBrowserAudit() {
         if (EVIDENCE_DIR) await fs.promises.mkdir(EVIDENCE_DIR, { recursive: true });
         for (const width of [320,390,768,1440]) {
             await page.setViewportSize({width,height:1000});
+            if (width === 320 || width === 390) {
+                await page.getByRole('heading', { name: 'Đơn chờ', exact: true }).locator('xpath=../../..').getByRole('link', { name: /^DH-/ }).first().waitFor();
+            }
             const observed = await page.evaluate(()=>{
-                const grid = [...document.querySelectorAll('.MuiBox-root')].find(element=>{
-                    const text=element.textContent||'';
-                    return getComputedStyle(element).display==='grid'&&text.includes('Hội thoại đang mở')&&text.includes('Trợ lý bán hàng');
-                });
+                const grid = document.querySelector('[data-ui-stats-appearance="strip"]');
                 return {
                     width:window.innerWidth,
                     documentWidth:document.documentElement.scrollWidth,
                     contentWidth:document.documentElement.clientWidth,
                     kpiColumns:grid?getComputedStyle(grid).gridTemplateColumns.trim().split(/\s+/).length:0,
-                    tableScrollsLocally:(()=>{const table=document.querySelector('main#main-content table');const region=table?.parentElement;return Boolean(region&&table.scrollWidth>region.clientWidth&&['auto','scroll'].includes(getComputedStyle(region).overflowX)&&document.documentElement.scrollWidth<=document.documentElement.clientWidth);})(),
-                    tableHintVisible:(()=>{const hint=[...document.querySelectorAll('main#main-content *')].find(item=>item.textContent==='Cuộn ngang để xem đủ cột.');return Boolean(hint&&getComputedStyle(hint).display!=='none');})(),
+                    recentOrdersFit:(()=>{
+                        const title=[...document.querySelectorAll('main#main-content h2')].find(element=>element.textContent==='Đơn chờ');
+                        const summary=title?.closest('.MuiPaper-root');
+                        return Boolean(summary?.querySelector('a[href*="/orders/DH-"]')&&summary.scrollWidth<=summary.clientWidth);
+                    })(),
                 };
             });
             viewports.push(observed);

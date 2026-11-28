@@ -67,7 +67,7 @@ async function startViteServer(mode, { timeoutMs = 90000, cacheIsolationKey } = 
     const vite = path.join(root, 'node_modules/vite/bin/vite.js');
     const child = spawn(process.execPath, [vite, '--mode', mode, '--host', '127.0.0.1', '--port', String(port), '--strictPort'], {
         cwd: app,
-        env: { ...process.env, BOTSALES_VITE_CACHE_DIR: cacheDir },
+        env: { ...process.env, BOTSALES_VITE_CACHE_DIR: cacheDir, VITE_E2E_MOCK_CONTROL: '1' },
         stdio: ['ignore', 'pipe', 'pipe'],
         windowsHide: true,
     });

@@ -15,7 +15,7 @@ test.afterAll(async () => closeDemo?.());
 
 test('R35 creates a pending challenge from API and shows consent history without local opt-out state', async ({ page }) => {
     await page.goto(new URL('/s/shop-demo/settings/privacy', demoUrl).toString());
-    await expect(page.getByRole('heading', { name: 'Quyền riêng tư & vòng đời dữ liệu', exact: true })).toBeVisible();
+    await expect(page.getByRole('heading', { name: 'Quyền riêng tư', exact: true })).toBeVisible();
     await expect(page.getByRole('table', { name: 'Lịch sử consent khách hàng' })).toContainText('c1');
     await expect(page.getByRole('table', { name: 'Yêu cầu xác nhận đang chờ' })).toContainText('c3');
     await expect(page.getByRole('checkbox')).toHaveCount(0);

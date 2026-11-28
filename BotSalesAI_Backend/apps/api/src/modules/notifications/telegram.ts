@@ -1,3 +1,4 @@
+import { lockShopClosure } from '../../platform/database/shop-lifecycle.js';
 import { Body, Controller, Headers, HttpCode, NotFoundException, Post, ServiceUnavailableException } from '@nestjs/common';
 import { createHash, createHmac, timingSafeEqual } from 'node:crypto';
 import type { NotificationDevice, PrismaClient, TelegramPairing } from '../../generated/prisma/client.js';
@@ -93,6 +94,7 @@ export class TelegramWebhook {
             if (!pair || pair.usedAt || pair.expiresAt <= now || !equalSecret(code, telegramPairingCode(auth, pair))) return;
             if (await tx.telegramPairing.findUnique({ where: { telegramBotId_telegramUpdateId: { telegramBotId: botId, telegramUpdateId: updateId } } })) return;
             const { shopId, userId } = pair;
+            if (await lockShopClosure(tx, shopId)) return;
             if (!await canInShop(tx, userId, shopId, 'notifications.manage')) return;
             const binding = { shopId, userId, fingerprint: fingerprint('telegram:' + botId + ':' + chatId) };
             const where = { shopId_fingerprint: { shopId, fingerprint: binding.fingerprint } };

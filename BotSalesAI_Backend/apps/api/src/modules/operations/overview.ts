@@ -1,3 +1,4 @@
+import { lockShopClosure } from '../../platform/database/shop-lifecycle.js';
 import { NotFoundException } from '@nestjs/common';
 import type { IncomingHttpHeaders } from 'node:http';
 import type { OwnerDigest, Prisma, PrismaClient } from '../../generated/prisma/client.js';
@@ -105,13 +106,14 @@ export async function publishOwnerDigests(db: PrismaClient, now = new Date(), ho
         SELECT s.id AS "shopId" FROM shops s
         JOIN notification_policies p ON p.shop_id=s.id AND p.enabled AND cardinality(p.primary_user_ids)>0
         JOIN shop_automation a ON a.shop_id=s.id AND NOT a.paused
-        WHERE EXTRACT(hour FROM (${now}::timestamptz AT TIME ZONE s.timezone)) >= ${Number(hour)}
+        WHERE s.closed_at IS NULL AND EXTRACT(hour FROM (${now}::timestamptz AT TIME ZONE s.timezone)) >= ${Number(hour)}
           AND NOT EXISTS (
             SELECT 1 FROM owner_digests d WHERE d.shop_id=s.id AND d.period_day=(${now}::timestamptz AT TIME ZONE s.timezone)::date-1
           )
         ORDER BY s.id LIMIT 60
     `;
     for (const { shopId } of due) await serializable(db, async tx => {
+        if (await lockShopClosure(tx, shopId)) return;
         if ((await lockAutomationFence(tx, shopId)).paused) return;
         const policy = await tx.notificationPolicy.findUnique({ where: { shopId } });
         if (!policy?.enabled || !policy.primaryUserIds.length ||

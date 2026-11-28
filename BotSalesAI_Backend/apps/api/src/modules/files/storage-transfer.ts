@@ -1,3 +1,4 @@
+import { lockShopClosure } from '../../platform/database/shop-lifecycle.js';
 import { NotFoundException, ServiceUnavailableException } from '@nestjs/common';
 import { randomUUID } from 'node:crypto';
 import type { FileObject, FileStorageState, Prisma, PrismaClient } from '../../generated/prisma/client.js';
@@ -19,6 +20,7 @@ const retainedBytes = { OR: [{ blob: { isNot: null } }, { storage: { state: { in
 
 function stagedFiles(now: Date, available: Prisma.FileStorageWhereInput = {}): Prisma.FileObjectWhereInput {
     return { status: 'ready', blob: { isNot: null }, AND: [
+        { OR: [{ purpose: 'privacy_export' }, { uploader: { shop: { closedAt: null } } }] },
         { OR: [{ expiresAt: null }, { expiresAt: { gt: now } }] },
         { OR: [{ storage: null }, { storage: { ...available, state: 'pending' } }] },
     ] };
@@ -68,6 +70,7 @@ function availableForTransfer(targetId: string, now: Date) {
 
 async function claim(db: PrismaClient, targetId: string, shopId: string, fileId: string, purgeOnly: boolean) {
     return serializable(db, async tx => {
+        const closedAt = await lockShopClosure(tx, shopId);
         const now = new Date();
         const file = await tx.fileObject.findUnique({
             where: { shopId_id: { shopId, id: fileId } }, include: { ...fileContents, storage: true },
@@ -77,7 +80,7 @@ async function claim(db: PrismaClient, targetId: string, shopId: string, fileId:
         if (storage && (storage.targetId !== targetId || storage.state === 'purged' ||
             (storage.leaseUntil && storage.leaseUntil > now) || (storage.dueAt && storage.dueAt > now))) return undefined;
         const remove = expired(file, now);
-        if (purgeOnly && !remove) return undefined;
+        if (!remove && (purgeOnly || (closedAt && file.purpose !== 'privacy_export'))) return undefined;
         if (remove ? !storage && !blob : file.status !== 'ready' || !blob || storage?.state === 'stored') return undefined;
         const leaseUntil = new Date(now.getTime() + leaseMs);
         const key = keyFor(shopId, fileId);
@@ -87,7 +90,29 @@ async function claim(db: PrismaClient, targetId: string, shopId: string, fileId:
     }, true);
 }
 
-async function settle(db: PrismaClient, transfer: NonNullable<Awaited<ReturnType<typeof claim>>>, targetId: string) {
+type ClaimedTransfer = NonNullable<Awaited<ReturnType<typeof claim>>>;
+
+async function renewWriteLease(db: PrismaClient, work: ClaimedTransfer, targetId: string) {
+    const { shopId, id: fileId, purpose } = work.file;
+    return db.$transaction(async tx => {
+        const closedAt = await lockShopClosure(tx, shopId);
+        const held = { shopId, fileId, targetId, leaseUntil: work.leaseUntil, state: 'pending' } as const;
+        const now = new Date();
+        if (!closedAt || purpose === 'privacy_export') {
+            const leaseUntil = new Date(now.getTime() + leaseMs);
+            const result = await tx.fileStorage.updateMany({
+                where: { ...held, leaseUntil: { equals: work.leaseUntil, gt: now }, file: {
+                    status: 'ready', blob: { isNot: null }, OR: [{ expiresAt: null }, { expiresAt: { gt: now } }],
+                } },
+                data: { leaseUntil },
+            });
+            if (result.count) return leaseUntil;
+        }
+        await tx.fileStorage.updateMany({ where: held, data: { leaseUntil: null } });
+    });
+}
+
+async function settle(db: PrismaClient, transfer: ClaimedTransfer, targetId: string) {
     const { file, leaseUntil, remove } = transfer;
     const key = keyFor(file.shopId, file.id);
     return serializable(db, async tx => {
@@ -118,16 +143,24 @@ export async function transferFileObjects(db: PrismaClient, store: FileObjectSto
         where: purgeOnly ? { ...purgeScope, ...purge } : { OR: [stagedFiles(now, due), purge] },
         select: { shopId: true, id: true }, orderBy: [{ createdAt: 'asc' }, { shopId: 'asc' }, { id: 'asc' }], take: 8,
     });
-    if (!files.length) return 0;
-    await store.checkBucket();
+    let bucketChecked = false;
     let failed = false;
     let completed = 0;
     for (const candidate of files) {
         const work = await claim(db, store.id, candidate.shopId, candidate.id, purgeOnly);
         if (!work) continue;
         try {
+            if (!bucketChecked) {
+                await store.checkBucket();
+                bucketChecked = true;
+            }
             if (work.remove) await store.remove(work.file);
-            else await store.write(work.file, work.file.blob!.bytes);
+            else {
+                const leaseUntil = await renewWriteLease(db, work, store.id);
+                if (!leaseUntil) continue;
+                work.leaseUntil = leaseUntil;
+                await store.write(work.file, work.file.blob!.bytes);
+            }
             if (await settle(db, work, store.id)) completed++;
         } catch {
             const attempts = Math.min(work.attempts + 1, 10);

@@ -1,3 +1,4 @@
+import { lockShopClosure } from '../../platform/database/shop-lifecycle.js';
 import { Prisma, type PrismaClient, type WorkItemKind } from '../../generated/prisma/client.js';
 import { enqueueResourceUpdate } from '../../platform/outbox/index.js';
 import { serializable } from '../../platform/database/transactions.js';
@@ -22,7 +23,7 @@ const rules: readonly ExceptionRule[] = [
             FROM channel_conversations c
             JOIN channel_connections ch ON (ch.shop_id, ch.id) = (c.shop_id, c.channel_id)
             JOIN customers customer ON (customer.shop_id, customer.id) = (c.shop_id, c.customer_id)
-            WHERE c.status = 'open' AND ch.status = 'connected' AND customer.privacy_erased_at IS NULL
+            WHERE c.status = 'open' AND NOT c.last_inbound_while_closed AND ch.status = 'connected' AND customer.privacy_erased_at IS NULL
               AND c.last_inbound_at <= ${now}::timestamptz - interval '15 minutes'
               AND NOT EXISTS (
                 SELECT 1 FROM channel_messages m
@@ -72,7 +73,7 @@ export async function refreshOperationExceptions(db: PrismaClient, now = new Dat
             const resolved = await tx.$queryRaw<{ shopId: string; id: string }[]>`
                 WITH sources AS (${sourceQuery})
                 SELECT w.shop_id AS "shopId", w.id
-                FROM work_items w
+                FROM work_items w JOIN shops shop ON shop.id = w.shop_id AND shop.closed_at IS NULL
                 WHERE w.kind = ${rule.kind}::work_item_kind AND w.source_type = ${rule.sourceType}
                   AND w.rule_version IS NOT NULL AND w.state IN ${active}
                   AND NOT EXISTS (
@@ -80,19 +81,27 @@ export async function refreshOperationExceptions(db: PrismaClient, now = new Dat
                   )
                 ORDER BY w.updated_at, w.shop_id, w.id LIMIT ${batchSize}
             `;
-            for (const row of resolved) await setWorkState(tx, row.shopId, row.id, 'completed');
 
             const open = await tx.$queryRaw<Source[]>`
                 WITH sources AS (${sourceQuery})
                 SELECT s.shop_id AS "shopId", s.source_id AS "sourceId", s.due_at AS "dueAt", w.id AS "workId"
-                FROM sources s
+                FROM sources s JOIN shops shop ON shop.id = s.shop_id AND shop.closed_at IS NULL
                 LEFT JOIN work_items w ON (w.shop_id, w.source_id) = (s.shop_id, s.source_id)
                     AND w.kind = ${rule.kind}::work_item_kind AND w.source_type = ${rule.sourceType}
                 WHERE w.id IS NULL OR (w.rule_version IS NOT NULL AND w.state NOT IN ${active}
                     AND w.updated_at <= ${reopenBefore}::timestamptz)
                 ORDER BY s.due_at, s.shop_id, s.source_id LIMIT ${batchSize}
             `;
+            const activeShops = new Set<string>();
+            const candidates = new Set([...resolved, ...open].map(row => row.shopId));
+            for (const shopId of [...candidates].sort()) {
+                if (!await lockShopClosure(tx, shopId)) activeShops.add(shopId);
+            }
+            for (const row of resolved) {
+                if (activeShops.has(row.shopId)) await setWorkState(tx, row.shopId, row.id, 'completed');
+            }
             for (const { shopId, sourceId, dueAt, workId } of open) {
+                if (!activeShops.has(shopId)) continue;
                 if (!workId) {
                     await createWorkItem(tx, { shopId, sourceId, dueAt, ruleVersion, kind: rule.kind, sourceType: rule.sourceType });
                     continue;
